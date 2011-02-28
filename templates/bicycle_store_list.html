@@ -1,0 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<head>
+{% include "top.html" %}
+    <title>Bicycle Type</title>
+</head>
+<body>
+    <h1>Bicycle Type List</h1>
+
+    <table border="1">
+    {% for manufacture in bicycles %}
+    <tr>
+{% for field in manufacture %}
+<td>    {{field}} </td>
+{% endfor %}
+</tr>
+{% endfor %}
+    <table>
+
+<br><br>
+<a href="/">HOME</a>
+<br>
+<a href="/bicycle/add/">Add</a>        
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+   TABLE { 
+    /*width: 100%; */ /* Ширина таблицы */
+    /*border: 4px double black; /* Рамка вокруг таблицы */
+    border: 2px solid black; /* Рамка вокруг таблицы */
+    border-collapse: collapse; /* Отображать только одинарные линии */
+   }
+   TH { 
+    text-align: left; /* Выравнивание по левому краю */
+    background: #ccc; /* Цвет фона ячеек */
+    padding: 5px; /* Поля вокруг содержимого ячеек */
+    border: 1px solid black; /* Граница вокруг ячеек */
+   }
+   TD { 
+    /* padding: 5px; /* Поля вокруг содержимого ячеек */
+    border: 1px solid black; /* Граница вокруг ячеек */
+   }
+

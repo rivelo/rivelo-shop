@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+
+<head>
+    <title>Затрати</title>
+    <link rel="stylesheet" type="text/css" href="/media/table.css">
+</head>
+
+
+    <h1>Затрати</h1>
+	
+    <table border="1">
+    <tr>
+    	<th>ID</th>
+    	<th>Дата</th>
+    	<th>Тип витрат</th>
+    	<th>Ціна (грн.)</th>
+    	<th>Опис</th>
+    	<th>Дія</th>
+    </tr>    
+    {% for type in costs %}
+    <tr>
+	{% for element in type %}
+        <td>
+            {{ element }}
+        </td>
+    {% endfor %}
+            <td>
+        <a href="/cost/delete/{{ group|first }}">delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+    </table>
+
+
+<br><br>
+<a href="/">Головне меню (HOME)</a>
+<br>
+<a href="/cost/add/">Створити новий вид роботи</a>       
+
+
+
+

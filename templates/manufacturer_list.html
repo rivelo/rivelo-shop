@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<html lang="en">
+<head>
+{% include "top.html" %}
+    <title>Виробники</title>
+    <link rel="stylesheet" type="text/css" href="/media/table.css">
+</head>
+<body>
+    <h1>Список виробників</h1>
+
+    <table>
+	<tr>
+    	<th>ID</th>
+    	<th>Назва компанії</th>
+    	<th>Опис</th>
+    	<th>Адреса</th>
+    	<th>Логотип</th>
+    	<th>Країна</th>
+    	<th>Дія</th>
+    </tr>
+{% for manufacture in manufactures %}
+<tr>
+{% for field in manufacture %}
+<td>    {{field}} </td>
+{% endfor %}
+<td><a href="/manufacturer/delete/{{ manufacture|first }}">delete</a></td>
+</tr>
+{% endfor %}
+
+    <table>
+
+<br><br>
+<a href="/">HOME</a>    
+<br>
+<a href="/manufacturer/add/">Add</a> 
+</body>
+</html>
+
+

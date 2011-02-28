@@ -1,0 +1,5 @@
+mysqldump -u django -pdjangodjango catalog -t --tables accounting_bicycle > d:\dump_bicycle.txt
+
+
+mysql --verbose -u django -pdjangodjango catalog < d:\dump_bicycle.txtBicycleBicycle
+

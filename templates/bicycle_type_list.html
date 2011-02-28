@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<html lang="en">
+<head>
+
+{% include "top.html" %}
+    <title>Bicycle Type</title>
+        
+</head>
+   <link rel="stylesheet" type="text/css" href="/media/table.css">
+<body>
+    <h1>Типи велосипедів</h1>
+
+    <table>
+    <tr>
+    	<th>ID</th>
+    	<th>Назва типу</th>
+    	<th>Опис</th>
+    	<th>Дія</th>
+    </tr>
+    {% for type1 in types %}
+    <tr>
+    	<td>{{ type1.id }}</td>
+        <td>
+        {{ type1.type }}
+        </td>
+        <td>
+        {{ type1.description }}
+        </td>
+        <td>
+            <a href="/bicycle-type/delete/{{ type1.id }}">delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+    <table>
+
+<br><br>
+<a href="/">Головна сторінка (HOME)</a>
+<br>
+<a href="/bicycle-type/add/">Створити новий тип (Додати/Add)</a>        
+<br>
+<a href="/bicycle/add/">Додати велосипед до каталогу</a>
+
+</body>
+</html>

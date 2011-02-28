@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<html lang="en">
+<head>
+{% include "top.html" %}
+    <title>Country</title>
+    <link rel="stylesheet" type="text/css" href="/media/table.css">
+</head>
+<body>
+    <h1>Список країн</h1>
+
+    <table>
+    <tr>
+    	<th>Назва</th>
+    	<th>Дія</th>
+    </tr>
+    {% for country in countries %}
+    <tr>
+
+        <td>
+            {{ country }}
+        </td>
+    
+        <td>
+            <a href="/country/delete/{{ country.id }}">delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+    <table>
+
+<br><br>
+<a href="/">HOME</a>
+<br>
+<a href="/country/add/">Add</a>        
+
+</body>
+</html>

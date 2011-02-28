@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<head>
+{% include "top.html" %}
+    <title>Currency List</title>
+</head>
+<body>
+    <h1>Currency list</h1>
+
+    <table border="1">
+    {% for cur in currency %}
+    <tr>
+
+        <td>
+            {{ cur.name }}
+        </td>
+    	<td>
+            {{ cur.country_id }} {{ cur.country. }}
+        </td>
+        <td>
+            <a href="/curency/delete/{{ cur.id }}">delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+    <table>
+
+
+<br><br>
+<a href="/">HOME</a>
+<br>
+<a href="/curency/add/">Add</a>       
+
+</body>
+</html>

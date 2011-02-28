@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<html lang="en">
+<head>
+    <title>Список боржників</title>
+    <link rel="stylesheet" type="text/css" href="/media/table.css">
+</head>
+<body>
+    <h1>Історія боргів клієнтів</h1>
+	
+    <table border="1">
+    <tr>
+    	<th>ID</th>
+    	<th>Клієнт</th>
+    	<th>Дата</th>
+    	<th>Сумарна вартість покупок (грн.)</th>
+    	<th>Опис</th>
+    	<th>Дія</th>
+    </tr>    
+    {% for client in clients %}
+    <tr>
+	{% for element in client %}
+        <td>
+            {{ element }}
+        </td>
+    {% endfor %}
+            <td>
+        <a href="/clientdebts/delete/{{ client|first }}">delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+    <table>
+
+
+<br><br>
+<a href="/">Головне меню (HOME)</a>
+<br>
+<a href="/clientdebts/add/">Створити нового клієнта (Add)</a>       
+
+</body>
+</html>
+
+

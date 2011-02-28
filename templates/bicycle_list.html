@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<html lang="en">
+<head>
+{% include "top.html" %}
+    <title>Каталог велосипедів</title>
+    <link rel="stylesheet" type="text/css" href="/media/table.css">
+</head>
+<body>
+    <h1>Каталог велосипедів (Bicycle Type List)</h1>
+
+    <table border="1">
+    <tr>
+    	<th>ID</th>
+    	<th>Назва моделі</th>
+    	<th>Тип</th>
+    	<th>Виробник</th>
+    	<th>Колір</th>
+    	<th></th>
+    	<th>Фото</th>
+    	<th>Вага</th>
+    	<th>Ціна</th>
+    	<th>Валюта</th>
+    	<th>Опис</th>
+    	<th>Дія</th>
+    </tr>
+    {% for manufacture in bicycles %}
+    <tr>
+{% for field in manufacture %}
+<td>    {{field}} </td>
+{% endfor %}
+<td><a href="/bicycle/delete/{{ manufacture|first }}">delete</a></td>
+</tr>
+{% endfor %}
+    <table>
+
+
+<br><br>
+<a href="/">Головне меню (HOME)</a>
+<br>
+<a href="/bicycle/add/">Додати велосипед (Add)</a>
+<br>
+<a href="/bicycle-store/add/">Додати велосипед до магазину(Add)</a>        
+
+</body>
+</html>
