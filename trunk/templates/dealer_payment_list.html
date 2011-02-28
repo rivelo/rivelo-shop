@@ -1,0 +1,32 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<link rel="stylesheet" type="text/css" href="/media/table.css">
+
+    <h1>Список здійснених проплат</h1>
+
+    <table border="1">
+	<tr>
+    	<th>ID</th>
+    	<th>Номери накладних</th>
+    	<th>Дата</th>
+    	<th>Банк</th>
+    	<th>Сума</th>
+    	<th>Валюта</th>
+    	<th>Опис</th>
+    	<th>Дія</th>
+    </tr>    
+{% for element in dealer_payment %}
+<tr>
+{% for field in element %}
+<td>    {{field}} </td>
+{% endfor %}
+<td><a href="/dealer/payment/delete/{{ element|first }}">delete</a></td>
+</tr>
+{% endfor %}
+    
+    <table>
+
+<br><br>
+<a href="/">HOME</a>
+<br>
+<a href="/dealer/payment/add/">Add</a>      

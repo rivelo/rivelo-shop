@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<html lang="en">
+<head>
+    <title>Список кредитів</title>
+    <link rel="stylesheet" type="text/css" href="/media/table.css">
+</head>
+<body>
+    <h1>Список Клієнтських Переплат</h1>
+	
+    <table border="1">
+    <tr>
+    	<th>ID</th>
+    	<th>Клієнт</th>
+    	<th>Дата</th>
+    	<th>Сумарна вартість покупок (грн.)</th>
+    	<th>Опис</th>
+    	<th>Дія</th>
+    </tr>    
+    {% for client in clients %}
+    <tr>
+	{% for element in client %}
+        <td>
+            {{ element }}
+        </td>
+    {% endfor %}
+            <td>
+        <a href="/clientcredits/delete/{{ client|first }}">delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+    </table>
+
+
+<br><br>
+<a href="/">Головне меню (HOME)</a>
+<br>
+<a href="/clientcredits/add/">Створити нову проплату клієнта (Add)</a>    
+<br>   
+<a href="/client/add/">Створити нового клієнта(Add)</a>
+
+</body>
+</html>
+
+

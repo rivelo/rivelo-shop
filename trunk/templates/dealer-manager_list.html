@@ -1,0 +1,37 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<html lang="en">
+<head>
+    <title>Менеджери</title>
+    <link rel="stylesheet" type="text/css" href="/media/table.css">
+</head>
+<body>
+    <h1>Список менеджерів дилерів</h1>
+
+    <table border="1">
+	<tr>
+    	<th>ID</th>
+    	<th>ПІБ</th>
+    	<th>E-mail</th>
+    	<th>Опис</th>
+    	<th>Телефон</th>
+    	<th>Компанія</th>
+    	<th>Дія</th>
+    </tr>    
+{% for manager in dealer_managers %}
+<tr>
+{% for field in manager %}
+<td>    {{field}} </td>
+{% endfor %}
+<td><a href="/dealer-manager/delete/{{ manager|first }}">delete</a></td>
+</tr>
+{% endfor %}
+    
+    <table>
+
+<br><br>
+<a href="/">HOME</a>
+<br>
+<a href="/dealer-manager/add/">Add</a>      
+
+</body>
+</html>

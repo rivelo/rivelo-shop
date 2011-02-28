@@ -1,0 +1,25 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<html lang="en">
+
+<head>
+{% include "top.html" %}
+    <title>Створення нового розміру рами (Add New Frame Size)</title>
+</head>
+<body>
+    <h1>Створення нового розміру рами (Frame size)</h1>
+    <form action="." method="POST">
+        <table>
+            {{ form.as_ul }}
+        </table>
+        <p><input type="submit" value="Save"></p>
+    </form>
+    <br><br>
+<a href="/">HOME</a>
+<a href="/bicycle-framesize/add/">Додати новий розмір (Add)</a>
+<br>
+<a href="/bicycle-store/add/">Додати велосипед до магазину(Add)</a>        
+</body>
+</html>
+
+
+

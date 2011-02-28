@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+
+<head>
+    <title>Список груп</title>
+    <link rel="stylesheet" type="text/css" href="/media/table.css">
+</head>
+
+
+    <h1>Список груп</h1>
+	
+    <table border="1">
+    <tr>
+    	<th>ID</th>
+    	<th>Назва</th>
+    	<th>Опис</th>
+    	<th>Дія</th>
+    </tr>    
+    {% for group in workgroups %}
+    <tr>
+	{% for element in group %}
+        <td>
+            {{ element }}
+        </td>
+    {% endfor %}
+            <td>
+        <a href="/workgroup/delete/{{ group|first }}">delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+    </table>
+
+
+<br><br>
+<a href="/">Головне меню (HOME)</a>
+<br>
+<a href="/workgroup/add/">Створити нову групу</a>       
+
+
+
+

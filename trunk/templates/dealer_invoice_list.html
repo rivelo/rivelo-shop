@@ -1,0 +1,36 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<link rel="stylesheet" type="text/css" href="/media/table.css">
+
+    <h1>Рахунки</h1>
+
+    <table border="1">
+	<tr>
+    	<th>ID</th>
+    	<th>Номери накладних</th>
+    	<th>Дата</th>
+    	<th>Компанія</th>
+    	<th>Менеджер</th>
+    	<th>Сума</th>
+    	<th>Валюта</th>
+		<th>Файл</th>    	
+		<th>Отримано</th>
+		<th>Оплата</th>
+    	<th>Опис</th>
+    	<th>Дія</th>
+    </tr>    
+{% for element in dealer_invoice %}
+<tr>
+{% for field in element %}
+<td>    {{field}} </td>
+{% endfor %}
+<td><a href="/dealer/invoice/delete/{{ element|first }}">delete</a></td>
+</tr>
+{% endfor %}
+    
+    <table>
+
+<br><br>
+<a href="/">HOME</a>
+<br>
+<a href="/dealer/invoice/add/">Add</a>      

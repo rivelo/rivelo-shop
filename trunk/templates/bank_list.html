@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+
+<link rel="stylesheet" type="text/css" href="/media/table.css">
+
+
+    <h1>Список Банків</h1>
+
+    <table>
+    <tr>
+    	<th>Назва</th>
+    	<th>Дія</th>
+    </tr>
+    {% for element in banks %}
+    <tr>
+
+        <td>
+            {{ element }}
+        </td>
+    
+        <td>
+            <a href="/bank/delete/{{ element.id }}">delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+    <table>
+
+<br><br>
+<a href="/">HOME</a>
+<br>
+<a href="/bank/add/">Add</a>        
+

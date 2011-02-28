@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+
+<head>
+    <title>Затрати (Типи)</title>
+    <link rel="stylesheet" type="text/css" href="/media/table.css">
+</head>
+
+
+    <h1>Типи затрат</h1>
+	
+    <table border="1">
+    <tr>
+    	<th>ID</th>
+    	<th>Назва</th>
+    	<th>Опис</th>
+    	<th>Дія</th>
+    </tr>    
+    {% for type in costtypes %}
+    <tr>
+	{% for element in type %}
+        <td>
+            {{ element }}
+        </td>
+    {% endfor %}
+            <td>
+        <a href="/cost/type/delete/{{ group|first }}">delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+    </table>
+
+
+<br><br>
+<a href="/">Головне меню (HOME)</a>
+<br>
+<a href="/cost/type/add/">Створити новий вид роботи</a>       
+
+
+
+

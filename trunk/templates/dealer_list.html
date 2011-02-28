@@ -1,0 +1,39 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<html lang="en">
+<head>
+	<link rel="stylesheet" type="text/css" href="/media/table.css">
+    <title>Компанії дилери</title>
+</head>
+<body>
+    <h1>Список дилерів</h1>
+
+    <table>
+    <tr>
+    	<th>ID</th>
+    	<th>Назва компанії</th>
+    	<th></th>
+    	<th>Місто</th>
+    	<th>Вулиця</th>
+    	<th>www</th>
+    	<th>Опис</th>
+    	<th>Директор</th>    	    	
+    	<th>Дія</th>
+    </tr>    
+{% for dealer in dealers %}
+<tr>
+{% for field in dealer %}
+<td>    {{field}} </td>
+{% endfor %}
+<td><a href="/dealer/delete/{{ dealer|first }}">delete</a></td>
+</tr>
+{% endfor %}
+    
+    <table>
+
+<br><br>
+<a href="/">HOME</a>
+<br>
+<a href="/dealer/add/">Add</a>      
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+
+<head>
+    <title>Список клієнтів</title>
+    <link rel="stylesheet" type="text/css" href="/media/table.css">
+</head>
+
+
+    <h1>Список Клієнтів (List of Clients)</h1>
+	
+    <table border="1">
+    <tr>
+    	<th>ID</th>
+    	<th>ПІБ</th>
+    	<th>Нік на форумі</th>
+    	<th>Країна</th>
+    	<th>Місто</th>
+    	<th>email</th>
+    	<th>Телефон</th>
+    	<th>Знижка (%)</th>
+    	<th>Сумарна вартість покупок</th>
+    	<th>Опис</th>
+    	<th>Дія</th>
+    </tr>    
+    {% for client in clients %}
+    <tr>
+	{% for element in client %}
+        <td>
+            {{ element }}
+        </td>
+    {% endfor %}
+            <td>
+        <a href="/client/delete/{{ client|first }}">delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+    </table>
+
+
+<br><br>
+<a href="/">Головне меню (HOME)</a>
+<br>
+<a href="/client/add/">Створити нового клієнта (Add)</a>       
+
+
+
+

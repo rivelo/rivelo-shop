@@ -1,0 +1,25 @@
+DELETE FROM TABLE frame size WHERE id = 19
+Key = id - Value = 31
+Key = name - Value = 19
+Key = cm - Value = 48.0
+Key = inch - Value = 19.0
+DELETE FROM TABLE frame size WHERE id = 17.5"
+Key = id - Value = 32
+Key = name - Value = 17.5"
+Key = cm - Value = 12.0
+Key = inch - Value = 12.0
+DELETE FROM TABLE frame size WHERE id = 17.5" 
+Key = id - Value = 33
+Key = name - Value = 17.5"
+Key = cm - Value = 17.0
+Key = inch - Value = 12.0
+DELETE FROM TABLE country WHERE id = 17 
+Key = id - DELETE FROM TABLE country WHERE id = 17 
+Key = id - Value = 17
+Key = name - Value = Тестова країна
+DELETE FROM TABLE currency WHERE id = 11 
+Key = id - Value = 11
+Key = ids - Value = 01212454
+Key = ids_char - Value = YUO
+Key = name - Value = YYY
+Key = country - Value = 9
