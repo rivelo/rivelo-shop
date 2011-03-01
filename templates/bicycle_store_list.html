@@ -1,18 +1,28 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html lang="en">
-<head>
-{% include "top.html" %}
-    <title>Bicycle Type</title>
-</head>
-<body>
-    <h1>Bicycle Type List</h1>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="/media/table.css">
+
+    <h1>Список велосипедів у магазині</h1>
 
     <table border="1">
+    <tr>
+    	<th>ID</th>
+    	<th>Велосипед</th>
+    	<th>Номер рами</th>
+    	<th>Розмір рами</th>
+    	<th>Ціна</th>
+    	<th>Валюта</th>
+    	<th>Опис</th>
+    	<th>Реалізація</th>
+		<th>Кількість</th>    	
+    	<th>Дія</th>
+    </tr>    
     {% for manufacture in bicycles %}
     <tr>
 {% for field in manufacture %}
 <td>    {{field}} </td>
 {% endfor %}
+<td><a href="/bicycle-store/delete/{{ manufacture|first }}">delete</a></td>
 </tr>
 {% endfor %}
     <table>
@@ -20,7 +30,5 @@
 <br><br>
 <a href="/">HOME</a>
 <br>
-<a href="/bicycle/add/">Add</a>        
+<a href="/bicycle-store/add/">Add</a>        
 
-</body>
-</html>
