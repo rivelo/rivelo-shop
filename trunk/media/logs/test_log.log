@@ -23,3 +23,15 @@ Key = ids - Value = 01212454
 Key = ids_char - Value = YUO
 Key = name - Value = YYY
 Key = country - Value = 9
+DELETE FROM TABLE bicycle WHERE id = 54 
+Key = id - Value = 54
+Key = model - Value = slash111
+Key = type - Value = 5
+Key = brand - Value = 1
+Key = color - Value = green
+Key = sizes - Value = 
+Key = photo - Value = upload/hygia.jpg
+Key = weight - Value = 14.0
+Key = price - Value = 800.0
+Key = currency - Value = 3
+Key = description - Value = cool bike

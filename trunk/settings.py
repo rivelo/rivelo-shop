@@ -1,4 +1,7 @@
 # Django settings for catalog project.
+import os
+dirname = os.path.dirname(globals()["__file__"])
+
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -36,7 +39,8 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = 'd:/develop/catalog/media/'
+#MEDIA_ROOT = 'd:/develop/catalog/media/'
+MEDIA_ROOT = os.path.join(dirname, 'media/')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -74,8 +78,6 @@ ROOT_URLCONF = 'catalog.urls'
     # Don't forget to use absolute paths, not relative paths.
 #)
 
-import os
-dirname = os.path.dirname(globals()["__file__"])
 
 TEMPLATE_DIRS = (
     os.path.join(dirname, 'templates'),
@@ -95,6 +97,6 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.flatpages',
     'django.contrib.admin',
-    'catalog.book',
+    #'catalog.book',
     'catalog.accounting',
 )

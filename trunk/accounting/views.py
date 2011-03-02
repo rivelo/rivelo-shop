@@ -283,7 +283,8 @@ def bicycle_store_add(request):
             return HttpResponseRedirect('/bicycle-store/view/')
     else:
         form = BicycleStoreForm()
-    return render_to_response('bicycle_store.html', {'form': form})
+    #return render_to_response('bicycle_store.html', {'form': form})
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_store.html'})
 
 
 def bicycle_store_del(request, id):
@@ -295,7 +296,8 @@ def bicycle_store_del(request, id):
 
 def bicycle_store_list(request):
     list = Bicycle_Store.objects.all()
-    return render_to_response('bicycle_store_list.html', {'bicycles': list.values_list()})
+    #return render_to_response('bicycle_store_list.html', {'bicycles': list.values_list()})
+    return render_to_response('index.html', {'bicycles': list.values_list(), 'weblink': 'bicycle_store_list.html'})
 
 
 # --------------------Dealer company ------------------------
