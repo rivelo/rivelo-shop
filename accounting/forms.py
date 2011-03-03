@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django import forms
-from models import Manufacturer, Country, Type, Bicycle_Type, Bicycle, Currency, FrameSize, Bicycle_Store, Catalog, Size 
+from models import Manufacturer, Country, Type, Bicycle_Type, Bicycle, Currency, FrameSize, Bicycle_Store, Catalog, Size, Bicycle_Sale 
 from models import DealerManager, DealerPayment, DealerInvoice, Dealer, Bank
 from models import Client, ClientDebts, CostType, Costs, ClientCredits, WorkGroup, WorkType, WorkShop
 
@@ -123,6 +123,18 @@ class BicycleStoreForm(forms.Form):
     class Meta:
         model = Bicycle_Store
 
+
+class BicycleSaleForm(forms.Form):
+    model = forms.ModelChoiceField(queryset = Bicycle_Store.objects.all(), required=False)
+    client = forms.ModelChoiceField(queryset = Client.objects.all())
+    price = forms.FloatField()
+    currency = forms.ModelChoiceField(queryset = Currency.objects.all())
+    date = forms.DateTimeField(initial=datetime.date.today)
+    service = forms.BooleanField(required=False) 
+    description = forms.CharField(label='Description', widget=forms.Textarea())
+    
+    class Meta:
+        model = Bicycle_Sale
 
     
 # --------- Dealers ------------

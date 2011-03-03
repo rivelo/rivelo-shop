@@ -83,7 +83,7 @@ class Manufacturer(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     www = models.URLField(verify_exists=False, blank=True, null=True)
-    logo = models.ImageField(upload_to = 'media/upload/', null=True)
+    logo = models.ImageField(upload_to = 'media/upload/', blank=True, null=True)
     country = models.ForeignKey(Country, null=True)
     
     def __unicode__(self):
@@ -164,60 +164,6 @@ class FrameSize(models.Model):
         ordering = ["inch","name"]    
 
 
-#Bicycle type table
-class Bicycle_Type(models.Model):
-    type = models.CharField(max_length=255) #adult, kids, mtb, road, hybrid
-    description = models.TextField(blank=True, null=True)
-
-    def __unicode__(self):
-        return self.type
-
-    class Meta:
-        ordering = ["type"]    
-
-
-# Bicycle table (Bicycle)
-class Bicycle(models.Model):
-    model = models.CharField(max_length=255)
-    type = models.ForeignKey(Bicycle_Type) #adult, kids, mtb, road, hybrid
-    brand = models.ForeignKey(Manufacturer)
-#    year = models.DateField(input_formats=("%d/%m/%Y",))
-    color = models.CharField(max_length=255)
-    #sizes = models.CharField(max_length=255)    
-    sizes = models.CommaSeparatedIntegerField(max_length=10)
-    photo = models.ImageField(upload_to = 'media/upload/', max_length=255)
-    weight = models.FloatField()
-    #PositiveIntegerField()
-    price = models.FloatField()
-    currency = models.ForeignKey(Currency)
-    description = models.TextField(blank=True, null=True)
-
-    def __unicode__(self):
-        #return u'Велосипед %s. Ціна %s грн.' % (self.model, self.brand)
-        return u'Велосипед %s. Модель %s' % (self.brand, self.model)
-        #return u'Велосипед %s. Ціна %d грн.' % (self.model, self.price)
-        
-    class Meta:
-        ordering = ["model", "price"]    
-       
-        
-# Bicycle in store (BicycleStore)
-class Bicycle_Store(models.Model):
-    model = models.ForeignKey(Bicycle, blank = True, null = True)
-    serial_number = models.CharField(max_length=50)
-    size = models.ForeignKey(FrameSize, blank = True, null = True)
-    price = models.FloatField()
-    currency = models.ForeignKey(Currency)
-    description = models.TextField(blank=True, null=True)
-    realization = models.BooleanField() 
-    count = models.PositiveIntegerField()
-    
-    def __unicode__(self):
-        #return self.model
-        return u'%s' % self.model
-
-    class Meta:
-        ordering = ["model"]    
 
 
 # postach Dealer (Ukraine)
@@ -366,6 +312,77 @@ class Costs(models.Model):
         ordering = ["date"]
 
 
+
+#Bicycle type table
+class Bicycle_Type(models.Model):
+    type = models.CharField(max_length=255) #adult, kids, mtb, road, hybrid
+    description = models.TextField(blank=True, null=True)
+
+    def __unicode__(self):
+        return self.type
+
+    class Meta:
+        ordering = ["type"]    
+
+
+# Bicycle table (Bicycle)
+class Bicycle(models.Model):
+    model = models.CharField(max_length=255)
+    type = models.ForeignKey(Bicycle_Type) #adult, kids, mtb, road, hybrid
+    brand = models.ForeignKey(Manufacturer)
+#    year = models.DateField(input_formats=("%d/%m/%Y",))
+    color = models.CharField(max_length=255)
+    #sizes = models.CharField(max_length=255)    
+    sizes = models.CommaSeparatedIntegerField(max_length=10)
+    photo = models.ImageField(upload_to = 'media/upload/', max_length=255)
+    weight = models.FloatField()
+    #PositiveIntegerField()
+    price = models.FloatField()
+    currency = models.ForeignKey(Currency)
+    description = models.TextField(blank=True, null=True)
+
+    def __unicode__(self):
+        #return u'Велосипед %s. Ціна %s грн.' % (self.model, self.brand)
+        return u'Велосипед %s. Модель %s' % (self.brand, self.model)
+        #return u'Велосипед %s. Ціна %d грн.' % (self.model, self.price)
+        
+    class Meta:
+        ordering = ["model", "price"]    
+       
+        
+# Bicycle in store (BicycleStore)
+class Bicycle_Store(models.Model):
+    model = models.ForeignKey(Bicycle, blank = True, null = True)
+    serial_number = models.CharField(max_length=50)
+    size = models.ForeignKey(FrameSize, blank = True, null = True)
+    price = models.FloatField()
+    currency = models.ForeignKey(Currency)
+    description = models.TextField(blank=True, null=True)
+    realization = models.BooleanField() 
+    count = models.PositiveIntegerField()
+    
+    def __unicode__(self):
+        #return self.model
+        return u'%s' % self.model
+
+    class Meta:
+        ordering = ["model"]    
+# Bicycle sale to client
+class Bicycle_Sale(models.Model):
+    model = models.ForeignKey(Bicycle_Store)
+    client = models.ForeignKey(Client)
+    price = models.FloatField()
+    currency = models.ForeignKey(Currency)
+    date = models.DateField(auto_now_add=True)
+    service = models.BooleanField(default = True) 
+    description = models.TextField(blank=True, null=True)
+    
+    def __unicode__(self):
+        #return self.model
+        return u'%s' % self.model
+
+    class Meta:
+        ordering = ["client", "model"]    
 class WorkGroup(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
