@@ -2,8 +2,9 @@
 
 from django.db.models import Q
 from django.shortcuts import render_to_response
-from models import Manufacturer, Country, Type, Currency, Bicycle_Type, Bicycle,  Exchange,  FrameSize, Bicycle_Store
-from forms import ContactForm, ManufacturerForm, CountryForm, CurencyForm, CategoryForm, BicycleTypeForm, BicycleForm, ExchangeForm, BicycleFrameSizeForm, BicycleStoreForm 
+from models import Manufacturer, Country, Type, Currency, Bicycle_Type, Bicycle,  Exchange,  FrameSize, Bicycle_Store, Bicycle_Sale
+from forms import ContactForm, ManufacturerForm, CountryForm, CurencyForm, CategoryForm, BicycleTypeForm, BicycleForm, ExchangeForm, BicycleFrameSizeForm, BicycleStoreForm, BicycleSaleForm 
+
 
 from models import Catalog, Client, ClientDebts, ClientCredits 
 from forms import CatalogForm, ClientForm, ClientDebtsForm, ClientCreditsForm
@@ -300,6 +301,45 @@ def bicycle_store_list(request):
     return render_to_response('index.html', {'bicycles': list.values_list(), 'weblink': 'bicycle_store_list.html'})
 
 
+def bicycle_sale_add(request):
+    if request.method == 'POST':
+        form = BicycleSaleForm(request.POST)
+        if form.is_valid():
+            model = form.cleaned_data['model']
+            client = form.cleaned_data['client']
+            price = form.cleaned_data['price']
+            currency = form.cleaned_data['currency']
+            date = form.cleaned_data['date']
+            service = form.cleaned_data['service']
+            description = form.cleaned_data['description']
+            Bicycle_Sale(model = model, client=client, price = price, currency = currency, date=date, service=service, description=description).save()
+            
+            update_bicycle = Bicycle_Store.objects.get(id=model.id)
+            update_bicycle.count = 0
+            update_bicycle.save()
+            
+            update_client = Client.objects.get(id=client.id)
+            update_client.summ = update.summ + price 
+            update_client.save()
+            
+            return HttpResponseRedirect('/bicycle/sale/view/')
+    else:
+        form = BicycleSaleForm()
+    #return render_to_response('bicycle_store.html', {'form': form})
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_sale.html'})
+
+
+def bicycle_sale_del(request, id):
+    obj = Bicycle_Sale.objects.get(id=id)
+    del_logging(obj)
+    obj.delete()
+    return HttpResponseRedirect('/bicycle/sale/view/')
+
+
+def bicycle_sale_list(request):
+    list = Bicycle_Sale.objects.all()
+    return render_to_response('index.html', {'bicycles': list.values_list(), 'weblink': 'bicycle_sale_list.html'})
+
 # --------------------Dealer company ------------------------
 def dealer_add(request):
     if request.method == 'POST':
@@ -526,12 +566,14 @@ def manufacturer_add(request):
             return HttpResponseRedirect('/manufacturer/view/')
     else:
         form = ManufacturerForm()
-    return render_to_response('manufacturer.html', {'form': form})
+    #return render_to_response('manufacturer.html', {'form': form})
+    return render_to_response('index.html', {'form': form, 'weblink': 'manufacturer.html'})
 
 
 def manufaturer_list(request):
     list = Manufacturer.objects.all()
-    return render_to_response('manufacturer_list.html', {'manufactures': list.values_list()})
+    #return render_to_response('manufacturer_list.html', {'manufactures': list.values_list()})
+    return render_to_response('index.html', {'manufactures': list.values_list(), 'weblink': 'manufacturer_list.html'})
 
 
 def manufacturer_delete(request, id):
