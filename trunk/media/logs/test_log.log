@@ -35,3 +35,6 @@ Key = weight - Value = 14.0
 Key = price - Value = 800.0
 Key = currency - Value = 3
 Key = description - Value = cool bike
+DELETE FROM TABLE country WHERE id = 17 
+Key = id - Value = 17
+Key = name - Value = dfsdfd
