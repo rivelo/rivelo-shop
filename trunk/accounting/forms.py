@@ -2,7 +2,7 @@
 from django import forms
 from models import Manufacturer, Country, Type, Bicycle_Type, Bicycle, Currency, FrameSize, Bicycle_Store, Catalog, Size, Bicycle_Sale 
 from models import DealerManager, DealerPayment, DealerInvoice, Dealer, Bank
-from models import Client, ClientDebts, CostType, Costs, ClientCredits, WorkGroup, WorkType, WorkShop
+from models import Client, ClientDebts, CostType, Costs, ClientCredits, WorkGroup, WorkType, WorkShop, WorkTicket, WorkStatus
 
 TOPIC_CHOICES = (
     ('general', 'General enquiry'),
@@ -211,11 +211,11 @@ class CatalogForm(forms.Form):
 # ---------- Client -------------
 class ClientForm(forms.Form):
     name = forms.CharField(max_length=255)
-    forumname = forms.CharField(max_length=255)    
+    forumname = forms.CharField(max_length=255, required=False)    
     country = forms.ModelChoiceField(queryset = Country.objects.all())
     city = forms.CharField(max_length=255)
     email = forms.EmailField(required=False)
-    phone = forms.CharField(max_length=255)
+    phone = forms.CharField(max_length=255, required=False)
     sale = forms.IntegerField(required=False, initial=0)
     summ = forms.FloatField(initial=0)
     description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255)    
@@ -295,3 +295,22 @@ class WorkShopForm(forms.Form):
     
     class Meta:
         model = WorkShop
+
+
+class WorkStatusForm(forms.Form):
+    name = forms.CharField(max_length=255)
+    description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255)
+    
+    class Meta:
+        model = WorkStatus
+
+
+class WorkTicketForm(forms.Form):
+    client = forms.ModelChoiceField(queryset = Client.objects.all())
+    date = forms.DateTimeField(initial=datetime.date.today)
+    end_date = forms.DateTimeField(initial=datetime.date.today)
+    status = forms.ModelChoiceField(queryset = WorkStatus.objects.all())
+    description = forms.CharField(label='Ticket', widget=forms.Textarea())
+    
+    class Meta:
+        model = WorkTicket
