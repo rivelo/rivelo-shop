@@ -12,8 +12,8 @@ from forms import CatalogForm, ClientForm, ClientDebtsForm, ClientCreditsForm
 from models import Dealer, DealerManager, DealerManager, DealerPayment, DealerInvoice, Bank
 from forms import DealerManagerForm, DealerForm, DealerPaymentForm, DealerInvoiceForm, BankForm
 
-from models import WorkGroup, WorkType, WorkShop, CostType, Costs
-from forms import WorkGroupForm, WorkTypeForm, WorkShopForm, CostTypeForm, CostsForm
+from models import WorkGroup, WorkType, WorkShop, WorkStatus, WorkTicket, CostType, Costs
+from forms import WorkGroupForm, WorkTypeForm, WorkShopForm, WorkStatusForm, WorkTicketForm, CostTypeForm, CostsForm
   
 from django.http import HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
@@ -422,6 +422,7 @@ def dealer_payment_add(request):
  
 def dealer_payment_del(request, id):
     obj = DealerPayment.objects.get(id=id)
+    del_logging(obj)
     obj.delete()
     return HttpResponseRedirect('/dealer/payment/view/')
  
@@ -454,6 +455,7 @@ def dealer_invoice_add(request):
  
 def dealer_invoice_del(request, id):
     obj = DealerInvoice.objects.get(id=id)
+    del_logging(obj)
     obj.delete()
     return HttpResponseRedirect('/dealer/invoice/view/')
  
@@ -618,6 +620,7 @@ def catalog_list(request):
 
 def catalog_delete(request, id):
     obj = Catalog.objects.get(id=id)
+    del_logging(obj)
     obj.delete()
     return HttpResponseRedirect('/catalog/view/')
 
@@ -651,6 +654,7 @@ def client_list(request):
 
 def client_delete(request, id):
     obj = Client.objects.get(id=id)
+    del_logging(obj)
     obj.delete()
     return HttpResponseRedirect('/client/view/')
 
@@ -668,7 +672,8 @@ def clientdebts_add(request):
             return HttpResponseRedirect('/clientdebts/view/')
     else:
         form = ClientDebtsForm()
-    return render_to_response('clientdebts.html', {'form': form})
+    #return render_to_response('clientdebts.html', {'form': form})
+    return render_to_response('index.html', {'form': form, 'weblink': 'clientdebts.html'})
 
 
 def clientdebts_list(request):
@@ -678,6 +683,7 @@ def clientdebts_list(request):
 
 def clientdebts_delete(request, id):
     obj = ClientDebts.objects.get(id=id)
+    del_logging(obj)
     obj.delete()
     return HttpResponseRedirect('/clientdebts/view/')
 
@@ -694,7 +700,8 @@ def clientcredits_add(request):
             return HttpResponseRedirect('/clientcredits/view/')
     else:
         form = ClientCreditsForm()
-    return render_to_response('clientcredits.html', {'form': form})
+    #return render_to_response('clientcredits.html', {'form': form})
+    return render_to_response('index.html', {'form': form, 'weblink': 'clientcredits.html'})
 
 
 def clientcredits_list(request):
@@ -704,6 +711,7 @@ def clientcredits_list(request):
 
 def clientcredits_delete(request, id):
     obj = ClientCredits.objects.get(id=id)
+    del_logging(obj)
     obj.delete()
     return HttpResponseRedirect('/clientcredits/view/')
 
@@ -774,6 +782,7 @@ def workgroup_list(request):
 
 def workgroup_delete(request, id):
     obj = WorkGroup.objects.get(id=id)
+    del_logging(obj)
     obj.delete()
     return HttpResponseRedirect('/workgroup/view/')
 
@@ -800,8 +809,62 @@ def worktype_list(request):
 
 def worktype_delete(request, id):
     obj = WorkType.objects.get(id=id)
+    del_logging(obj)
     obj.delete()
     return HttpResponseRedirect('/worktype/view/')
+
+
+def workstatus_add(request):
+    if request.method == 'POST':
+        form = WorkStatusForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            description = form.cleaned_data['description']
+            WorkStatus(name=name, description=description).save()
+            return HttpResponseRedirect('/workstatus/view/')
+    else:
+        form = WorkStatusForm()
+    return render_to_response('index.html', {'form': form, 'weblink': 'workstatus.html'})
+
+
+def workstatus_list(request):
+    list = WorkStatus.objects.all()
+    return render_to_response('index.html', {'workstatus': list.values_list(), 'weblink': 'workstatus_list.html'})
+
+
+def workstatus_delete(request, id):
+    obj = WorkStatus.objects.get(id=id)
+    del_logging(obj)
+    obj.delete()
+    return HttpResponseRedirect('/workstatus/view/')
+
+
+def workticket_add(request):
+    if request.method == 'POST':
+        form = WorkTicketForm(request.POST)
+        if form.is_valid():
+            client = form.cleaned_data['client']
+            date = form.cleaned_data['date']
+            end_date = form.cleaned_data['end_date']
+            status = form.cleaned_data['status']
+            description = form.cleaned_data['description']
+            WorkTicket(client=client, date=date, end_date=end_date, status=status, description=description).save()
+            return HttpResponseRedirect('/workticket/view/')
+    else:
+        form = WorkTicketForm()
+    return render_to_response('index.html', {'form': form, 'weblink': 'workticket.html'})
+
+
+def workticket_list(request):
+    list = WorkTicket.objects.all()
+    return render_to_response('index.html', {'workticket': list.values_list(), 'weblink': 'workticket_list.html'})
+
+
+def workticket_delete(request, id):
+    obj = WorkTicket.objects.get(id=id)
+    del_logging(obj)
+    obj.delete()
+    return HttpResponseRedirect('/workticket/view/')
 
 
 def workshop_add(request):
@@ -827,6 +890,7 @@ def workshop_list(request):
 
 def workshop_delete(request, id):
     obj = WorkShop.objects.get(id=id)
+    del_logging(obj)
     obj.delete()
     return HttpResponseRedirect('/workshop/view/')
 
@@ -852,6 +916,7 @@ def costtype_list(request):
 
 def costtype_delete(request, id):
     obj = CostType.objects.get(id=id)
+    del_logging(obj)
     obj.delete()
     return HttpResponseRedirect('/cost/type/view/')
 
@@ -878,5 +943,6 @@ def cost_list(request):
 
 def cost_delete(request, id):
     obj = Costs.objects.get(id=id)
+    del_logging(obj)
     obj.delete()
     return HttpResponseRedirect('/cost/view/')
