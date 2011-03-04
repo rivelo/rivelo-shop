@@ -226,7 +226,7 @@ class DealerInvoice(models.Model):
     price = models.FloatField()
     currency = models.ForeignKey(Currency)
     file = models.CharField(max_length=255)
-    received = models.BooleanField(default=False, verbose_name="Товар отримано?" )
+    received = models.BooleanField(default=False, verbose_name="Товар отримано?", blank = True, null = True)
     payment = models.ForeignKey(DealerPayment, blank = True, null = True)
     description = models.TextField(blank = True, null = True)
             
@@ -422,4 +422,30 @@ class WorkShop(models.Model):
 
     class Meta:
         ordering = ["date"]
+
+
+class WorkStatus(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+
+    
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ["name"]
        
+
+class WorkTicket(models.Model):
+    client = models.ForeignKey(Client)
+    date = models.DateField(auto_now_add=True)
+    end_date = models.DateField()
+    status = models.ForeignKey(WorkStatus)
+    description = models.TextField(blank=True, null=True)
+
+    
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ["date", "status"]
