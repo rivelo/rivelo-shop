@@ -118,6 +118,14 @@ urlpatterns = patterns('',
     (r'^worktype/view/$', 'catalog.accounting.views.worktype_list'),
     (r'^worktype/delete/(?P<id>\d+)$', 'catalog.accounting.views.worktype_delete'),    
 
+    (r'^workstatus/add/$', 'catalog.accounting.views.workstatus_add'),
+    (r'^workstatus/view/$', 'catalog.accounting.views.workstatus_list'),
+    (r'^workstatus/delete/(?P<id>\d+)$', 'catalog.accounting.views.workstatus_delete'),
+
+    (r'^workticket/add/$', 'catalog.accounting.views.workticket_add'),
+    (r'^workticket/view/$', 'catalog.accounting.views.workticket_list'),
+    (r'^workticket/delete/(?P<id>\d+)$', 'catalog.accounting.views.workticket_delete'),
+
     (r'^workshop/add/$', 'catalog.accounting.views.workshop_add'),
     (r'^workshop/view/$', 'catalog.accounting.views.workshop_list'),
     (r'^workshop/delete/(?P<id>\d+)$', 'catalog.accounting.views.workshop_delete'),    
