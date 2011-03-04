@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+
+
+        <link rel="stylesheet" type="text/css" href="/media/table.css">
+
+	<h1>Замовлення на ремонт</h1>
+    	
+    <table border="1">
+    <tr>
+    	<th>ID</th>
+    	<th>Клієнт</th>
+    	<th>Дата створення</th>
+    	<th>Дата завершення</th>
+    	<th>Статус</th>
+    	<th>Опис</th>
+    	<th>Дія</th>
+    </tr>    
+    {% for type in workticket %}
+    <tr>
+	{% for element in type %}
+        <td>
+            {{ element }}
+        </td>
+    {% endfor %}
+            <td>
+        <a href="/workticket/delete/{{ group|first }}">delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+    </table>
+
+
+<br><br>
+<a href="/">Головне меню (HOME)</a>
+<br>
+<a href="/workticket/add/">Створити нову заявку на ремонт</a>       
+
+
+
+
