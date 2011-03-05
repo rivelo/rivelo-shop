@@ -180,7 +180,7 @@ class Dealer(models.Model):
     
     def __unicode__(self):
         #return self.name
-        return u'Країна %s' % self.name
+        return u'%s' % self.name
 
     class Meta:
         ordering = ["name"]    
@@ -226,7 +226,7 @@ class DealerInvoice(models.Model):
     price = models.FloatField()
     currency = models.ForeignKey(Currency)
     file = models.CharField(max_length=255)
-    received = models.BooleanField(default=False, verbose_name="Товар отримано?", blank = True, null = True)
+    received = models.BooleanField(default=False, verbose_name="Товар отримано?")
     payment = models.ForeignKey(DealerPayment, blank = True, null = True)
     description = models.TextField(blank = True, null = True)
             
@@ -418,7 +418,7 @@ class WorkShop(models.Model):
 
     
     def __unicode__(self):
-        return self.name
+        return self.description
 
     class Meta:
         ordering = ["date"]

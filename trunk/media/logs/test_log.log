@@ -38,3 +38,10 @@ Key = description - Value = cool bike
 DELETE FROM TABLE country WHERE id = 17 
 Key = id - Value = 17
 Key = name - Value = dfsdfd
+DELETE FROM TABLE work shop WHERE id = 1 
+Key = id - Value = 1
+Key = client - Value = 2
+Key = date - Value = 2011-02-17 01:50:05
+Key = work_type - Value = 1
+Key = price - Value = 10.0
+Key = description - Value = + заміна колодок

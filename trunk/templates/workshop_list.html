@@ -2,10 +2,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
 
-<head>
-    <title>Рахунки на виконані роботи</title>
-    <link rel="stylesheet" type="text/css" href="/media/table.css">
-</head>
+<link rel="stylesheet" type="text/css" href="/media/table.css">
 
 
     <h1>Рахунки на виконані роботи</h1>
@@ -19,19 +16,36 @@
     	<th>Ціна (грн.)</th>
     	<th>Опис</th>
     	<th>Дія</th>
-    </tr>    
-    {% for type in workshop %}
-    <tr>
-	{% for element in type %}
-        <td>
-            {{ element }}
-        </td>
-    {% endfor %}
-            <td>
-        <a href="/workshop/delete/{{ group|first }}">delete</a>
-        </td>
     </tr>
-    {% endfor %}
+ 
+{% for type in workshop %}
+<tr>
+	<td>       
+	{{type.id}}
+	</td>
+	<td>       
+	{{type.client}}
+	</td>
+	<td>       
+	{{type.date}}
+	</td>
+	<td>       
+	{{type.work_type}}
+	</td>	
+	<td>       
+	{{type.price}}
+	</td>
+	<td>       
+	{{type.description}}
+	</td>
+	<td>
+    <a href="/workshop/delete/{{ type.id }}">delete</a>
+    </td>
+</tr>
+{% endfor %}   
+
+ 
+
     </table>
 
 
