@@ -16,20 +16,35 @@
     	<th>Статус</th>
     	<th>Опис</th>
     	<th>Дія</th>
-    </tr>    
-    {% for type in workticket %}
-    <tr>
-	{% for element in type %}
-        <td>
-            {{ element }}
-        </td>
-    {% endfor %}
-            <td>
-        <a href="/workticket/delete/{{ group|first }}">delete</a>
-        </td>
-    </tr>
-    {% endfor %}
-    </table>
+    </tr>  
+{% for type in workticket %}
+<tr>
+	<td>       
+	{{type.id}}
+	</td>
+	<td>       
+	{{type.client}}
+	</td>
+	<td>       
+	{{type.date}}
+	</td>
+	<td>       
+	{{type.end_date}}
+	</td>	
+	<td>       
+	{{type.status}}
+	</td>
+	<td>       
+	{{type.description}}
+	</td>
+	<td>
+    <a href="/workticket/delete/{{ type.id }}">delete</a>
+    </td>
+</tr>
+{% endfor %}       
+      
+   
+	</table>
 
 
 <br><br>

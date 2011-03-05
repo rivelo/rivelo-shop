@@ -857,7 +857,7 @@ def workticket_add(request):
 
 def workticket_list(request):
     list = WorkTicket.objects.all()
-    return render_to_response('index.html', {'workticket': list.values_list(), 'weblink': 'workticket_list.html'})
+    return render_to_response('index.html', {'workticket': list, 'weblink': 'workticket_list.html'})
 
 
 def workticket_delete(request, id):
@@ -885,7 +885,7 @@ def workshop_add(request):
 
 def workshop_list(request):
     list = WorkShop.objects.all()
-    return render_to_response('index.html', {'workshop': list.values_list(), 'weblink': 'workshop_list.html'})
+    return render_to_response('index.html', {'workshop': list, 'weblink': 'workshop_list.html'})
 
 
 def workshop_delete(request, id):
