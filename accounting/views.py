@@ -587,6 +587,7 @@ def manufacturer_delete(request, id):
 
 
 def catalog_add(request):
+    upload_path = ''
     if request.method == 'POST':
         form = CatalogForm(request.POST, request.FILES)
         if form.is_valid():
@@ -602,9 +603,12 @@ def catalog_add(request):
             sale_to = form.cleaned_data['sale_to']
             color = form.cleaned_data['color']
             country = form.cleaned_data['country']
-            description = form.cleaned_data['description']               
-            upload_path = processUploadedImage(photo, 'catalog/') 
-            Catalog(ids=ids, name=name, manufacturer=manufacturer, type=type, size=size, weight=weight, year=year, sale=sale, sale_to=sale_to, color=color, description=description, photo=upload_path, country=country).save()
+            price = form.cleaned_data['price']
+            currency = form.cleaned_data['currency']
+            description = form.cleaned_data['description']
+            if photo != None:               
+                upload_path = processUploadedImage(photo, 'catalog/') 
+            Catalog(ids=ids, name=name, manufacturer=manufacturer, type=type, size=size, weight=weight, year=year, sale=sale, sale_to=sale_to, color=color, description=description, photo=upload_path, country=country, price=price, currency=currency).save()
             return HttpResponseRedirect('/catalog/view/')
     else:
         form = CatalogForm()
@@ -615,7 +619,7 @@ def catalog_add(request):
 def catalog_list(request):
     list = Catalog.objects.all()
     #return render_to_response('catalog_list.html', {'catalog': list.values_list()})
-    return render_to_response('index.html', {'catalog': list.values_list(), 'weblink': 'catalog_list.html'})
+    return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
 
 
 def catalog_delete(request, id):

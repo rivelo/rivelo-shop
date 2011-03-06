@@ -6,23 +6,81 @@
     <table>
 	<tr>
     	<th>ID</th>
-    	<th>IDs</th>
-    	<th>Назва компанії</th>
-    	<th>Опис</th>
-    	<th>Адреса</th>
-    	<th>Логотип</th>
+    	<th>Код</th>
+    	<th>Назва</th>
+    	<th>Виробник</th>
+    	<th>Тип</th>
+    	<th>Розмір</th>
+    	<th>Вага</th>
+    	<th>Фото</th>
+    	<th>Рік виготовлення</th>
+    	<th>Дата закінчення розпродажу</th>
+    	<th>Колір</th>
+    	<th>Ціна</th>
+    	<th>Валюта</th>
+    	<th>Ціна зі знижкою</th>
     	<th>Країна</th>
+    	<th>Опис</th>
     	<th>Дія</th>
     </tr>
-{% for products in catalog %}
-<tr>
-{% for field in products %}
-<td>    {{field}} </td>
-{% endfor %}
-<td><a href="/catalog/delete/{{ catalog|first }}">delete</a></td>
-</tr>
-{% endfor %}
 
+{% for type in catalog %}
+<tr>
+	<td>       
+	{{type.id}}
+	</td>
+	<td>       
+	{{type.ids}}
+	</td>
+	<td>       
+	{{type.name}}
+	</td>
+	<td>       
+	{{type.manufacturer}}
+	</td>
+	<td>       
+	{{type.type}}
+	</td>
+	<td>       
+	{{type.size}}
+	</td>
+	<td>       
+	{{type.weight}}
+	</td>	
+	<td>       
+	{{type.photo}}
+	</td>	
+	<td>       
+	{{type.year}}
+	</td>
+	<td>       
+	{{type.sale_to}}
+	</td>
+	<td>       
+	{{type.color}}
+	</td>
+	<td>       
+	{{type.price}}
+	</td>
+	<td>       
+	{{type.currency}}
+	</td>	
+	<td>       
+	{{type.sale}}
+	</td>
+	<td>       
+	{{type.country}}
+	</td>	
+	<td>       
+	{{type.description}}
+	</td>
+	<td>
+    <a href="/catalog/delete/{{ type.id }}">delete</a>
+    </td>
+</tr>
+{% endfor %}   
+    
+    
     <table>
 
 <br><br>

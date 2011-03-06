@@ -193,15 +193,18 @@ class CatalogForm(forms.Form):
     name = forms.CharField(max_length=255)
     manufacturer = forms.ModelChoiceField(queryset = Manufacturer.objects.all())
     type = forms.ModelChoiceField(queryset = Type.objects.all())
-    size = forms.ModelChoiceField(queryset = Size.objects.all())
-    weight = forms.FloatField(min_value=0)
-    photo = forms.ImageField()
-    year = forms.IntegerField(min_value = 1900, max_value = 2020)
-    sale = forms.FloatField()
-    sale_to = forms.DateField(initial=datetime.date.today)
+    size = forms.ModelChoiceField(queryset = Size.objects.all(), required=False)
+    weight = forms.FloatField(min_value=0, required=False)
+    photo = forms.ImageField(required=False)
     color = forms.CharField(max_length=255)
+    year = forms.IntegerField(min_value = 1900, max_value = 2020)
+    sale = forms.FloatField(initial=0)
+    #sale_to = forms.DateField(initial=datetime.date.today)
+    sale_to = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
+    price = forms.FloatField(min_value=0)
+    currency = forms.ModelChoiceField(queryset = Currency.objects.all())
     country = forms.ModelChoiceField(queryset = Country.objects.all())    
-    description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255)    
+    description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255, required=False)    
 
     class Meta:
         model = Catalog
@@ -257,7 +260,8 @@ class CostTypeForm(forms.Form):
 
     
 class CostsForm(forms.Form):
-    date = forms.DateTimeField(initial=datetime.date.today)
+    #date = forms.DateTimeField(initial=datetime.date.today)
+    date = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
     cost_type = forms.ModelChoiceField(queryset = CostType.objects.all())
     price = forms.FloatField()
     description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255)    
@@ -288,7 +292,7 @@ class WorkTypeForm(forms.Form):
 
 class WorkShopForm(forms.Form):
     client = forms.ModelChoiceField(queryset = Client.objects.all())
-    date = forms.DateTimeField(initial=datetime.date.today)
+    date = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
     work_type = forms.ModelChoiceField(queryset = WorkType.objects.all())
     price = forms.FloatField(initial=0)
     description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255)
@@ -307,8 +311,10 @@ class WorkStatusForm(forms.Form):
 
 class WorkTicketForm(forms.Form):
     client = forms.ModelChoiceField(queryset = Client.objects.all())
-    date = forms.DateTimeField(initial=datetime.date.today)
-    end_date = forms.DateTimeField(initial=datetime.date.today)
+    #date = forms.DateTimeField(initial=datetime.date.today)
+    date = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))    
+    #end_date = forms.DateTimeField(initial=datetime.date.today)
+    end_date = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
     status = forms.ModelChoiceField(queryset = WorkStatus.objects.all())
     description = forms.CharField(label='Ticket', widget=forms.Textarea())
     
