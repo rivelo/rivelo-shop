@@ -101,12 +101,12 @@ class Catalog(models.Model):
     type = models.ForeignKey(Type, related_name='type')
     size = models.ForeignKey(Size, blank=True, null=True)
     weight = models.FloatField(blank=True, null=True)    
-    photo = models.FileField(upload_to = 'media/upload/catalog/%Y/%m/%d', null=True)
+    photo = models.FileField(upload_to = 'media/upload/catalog/%Y/%m/%d', blank=True, null=True)
     year = models.IntegerField(blank=True, null=True)
     sale_to = models.DateField(auto_now_add=True)
     color = models.CharField(max_length=255, blank=True, null=True)
-    #count = models.IntegerField("how many something", default=1)
-    #price = models.FloatField()
+    price = models.FloatField()
+    currency = models.ForeignKey(Currency)
     sale = models.FloatField()
     country = models.ForeignKey(Country, null=True)
     description = models.CharField(max_length=255)
@@ -116,39 +116,6 @@ class Catalog(models.Model):
 
     class Meta:
         ordering = ["type", "name"]    
-
-
-# Bill table (nakladna)
-class Bill(models.Model):
-    ids = models.CharField("code", unique=True, max_length=50)
-    date = models.DateTimeField(auto_now_add=True)
-    product = models.ForeignKey(Catalog)
-    count = models.IntegerField("how many something", default=1)
-    price = models.FloatField(blank=True, null=True)
-    currency = models.ForeignKey(Currency)
-    description = models.CharField(max_length=255)
-    
-    def __unicode__(self):
-        return self.name
-
-    class Meta:
-        ordering = ["ids"]    
-
-
-# Check table (Check)
-class Check(models.Model):
-    ids = models.CharField("code", unique=True, max_length=50)
-    date = models.DateTimeField()
-    product = models.ForeignKey(Catalog)
-    count = models.IntegerField("how many something", default=1)
-    price = models.FloatField()
-    description = models.CharField(max_length=255, blank=True, null=True)
-    
-    def __unicode__(self):
-        return self.name
-
-    class Meta:
-        ordering = ["ids"]    
 
 
 # Frame Size
@@ -231,7 +198,7 @@ class DealerInvoice(models.Model):
     description = models.TextField(blank = True, null = True)
             
     def __unicode__(self):
-        return self.name
+        return self.origin_id + " - " + self.company 
 
     class Meta:
         ordering = ["company", "date"]    
@@ -449,3 +416,38 @@ class WorkTicket(models.Model):
 
     class Meta:
         ordering = ["date", "status"]
+
+
+# Bill table (nakladna)
+class Bill(models.Model):
+    #ids = models.CharField("code", unique=True, max_length=50)
+    invoice_id = models.ForeignKey(DealerInvoice)
+    date = models.DateTimeField(auto_now_add=True)
+    product = models.ForeignKey(Catalog)
+    count = models.IntegerField("how many something", default=1)
+    price = models.FloatField(blank=True, null=True)
+    currency = models.ForeignKey(Currency)
+    description = models.CharField(max_length=255, blank=True, null=True)
+    
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ["invoice_id"]    
+
+
+# Check table (Check)
+class Check(models.Model):
+    #ids = models.CharField("code", unique=True, max_length=50)
+    client = models.ForeignKey(Client)
+    date = models.DateTimeField(auto_now_add=True)
+    product = models.ForeignKey(Catalog)
+    count = models.IntegerField("how many something", default=1)
+    price = models.FloatField()
+    description = models.CharField(max_length=255, blank=True, null=True)
+    
+    def __unicode__(self):
+        return self.client
+
+    class Meta:
+        ordering = ["date"]    
