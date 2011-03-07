@@ -45,3 +45,6 @@ Key = date - Value = 2011-02-17 01:50:05
 Key = work_type - Value = 1
 Key = price - Value = 10.0
 Key = description - Value = + заміна колодок
+DELETE FROM TABLE country WHERE id = 17 
+Key = id - Value = 17
+Key = name - Value = France

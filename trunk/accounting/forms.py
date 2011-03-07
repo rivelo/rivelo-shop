@@ -33,8 +33,7 @@ class SelectFromModel(forms.Field):
 class ManufacturerForm(forms.Form):
     name = forms.CharField()
     www = forms.URLField(initial='http://', help_text='url')
-    #country = forms.CharField(widget=forms.Select())
-    country = SelectFromModel(objects=Country.objects.all())
+    country = forms.ModelChoiceField(queryset = Country.objects.all())
     logo = forms.ImageField()
     description = forms.CharField(widget=forms.Textarea())
 
@@ -50,7 +49,7 @@ class CurencyForm(forms.Form):
     ids = forms.CharField()
     ids_char = forms.CharField()
     name = forms.CharField()
-    country = SelectFromModel(objects=Country.objects.all())
+    country = forms.ModelChoiceField(queryset = Country.objects.all())
 
 
 
@@ -91,7 +90,7 @@ class BicycleForm(forms.Form):
     type = forms.ModelChoiceField(queryset = Bicycle_Type.objects.all()) #adult, kids, mtb, road, hybrid
     #brand = SelectFromModel(objects=Manufacturer.objects.all())
     brand = forms.ModelChoiceField(queryset = Manufacturer.objects.all())
-#    year = models.DateField(input_formats=("%d/%m/%Y",))
+    year = forms.DateField(input_formats=("%Y"))
     color = forms.CharField(max_length=255)
     #sizes = forms.MultipleChoiceField()
     sizes = forms.CharField()
@@ -174,7 +173,7 @@ class DealerInvoiceForm(forms.Form):
     price = forms.FloatField(initial=0)
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
     file = forms.CharField(max_length=255)
-    received = forms.BooleanField(initial = False, required=False) 
+    received = forms.BooleanField(initial = False) 
     payment = forms.ModelChoiceField(queryset = DealerPayment.objects.all(), required=False)
     description = forms.CharField(label='Description', widget=forms.Textarea())
         
