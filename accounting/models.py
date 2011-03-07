@@ -297,7 +297,7 @@ class Bicycle(models.Model):
     model = models.CharField(max_length=255)
     type = models.ForeignKey(Bicycle_Type) #adult, kids, mtb, road, hybrid
     brand = models.ForeignKey(Manufacturer)
-#    year = models.DateField(input_formats=("%d/%m/%Y",))
+    year = models.DateField(blank = True, null=True)
     color = models.CharField(max_length=255)
     #sizes = models.CharField(max_length=255)    
     sizes = models.CommaSeparatedIntegerField(max_length=10)

@@ -233,7 +233,7 @@ def bicycle_add(request):
             brand = form.cleaned_data['brand']
             color = form.cleaned_data['color']
             photo = form.cleaned_data['photo']
-
+	    year = form.cleaned_data['year']
             weight = form.cleaned_data['weight']
             price = form.cleaned_data['price']
             currency = form.cleaned_data['currency']
@@ -242,7 +242,7 @@ def bicycle_add(request):
             #photo = photo,
             upload_path = processUploadedImage(photo) 
             #handle_uploaded_file(photo)
-            Bicycle(model = model, type=type, brand = brand, color = color, photo=upload_path, weight = weight, price = price, currency = currency, description=description).save()
+            Bicycle(model = model, type=type, brand = brand, color = color, photo=upload_path, weight = weight, price = price, currency = currency, description=description, year=year).save()
             return HttpResponseRedirect('/bicycle/view/')
             #return HttpResponseRedirect(bicycle.get_absolute_url())
     else:
