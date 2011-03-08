@@ -80,9 +80,9 @@ class BicycleTypeForm(forms.Form):
 
 
 class BicycleFrameSizeForm(forms.Form):
-    name = forms.CharField(label='Bicycle Frame Size')
-    cm = forms.FloatField(min_value=0)
-    inch = forms.FloatField(min_value=0)
+    name = forms.CharField(label='Назва')
+    cm = forms.FloatField(min_value=0, label='Розмір, см (cm)')
+    inch = forms.FloatField(min_value=0, label='Розмір, дюйми (inch)')
     
 
 class BicycleForm(forms.Form):
@@ -99,7 +99,7 @@ class BicycleForm(forms.Form):
     price = forms.FloatField()
     #currency = SelectFromModel(objects=Currency.objects.all())
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
-    description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255)    
+    description = forms.CharField(label='Description', widget=forms.Textarea())    
 
     class Meta:
         model = Bicycle
@@ -108,17 +108,15 @@ class BicycleForm(forms.Form):
 
 class BicycleStoreForm(forms.Form):
     model = forms.ModelChoiceField(queryset = Bicycle.objects.all(), required=False)
-    #model_id = forms.ModelChoiceField(queryset = Bicycle.objects.all())
-    #model = forms.ModelChoiceField(queryset = FrameSize.objects.all())
-    
     serial_number = forms.CharField(max_length=50)
     size = forms.ModelChoiceField(queryset = FrameSize.objects.all())
     price = forms.FloatField()
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
-    description = forms.CharField()
-    realization = forms.BooleanField(required=False) 
-    count = forms.IntegerField(min_value=0)
-
+    count = forms.IntegerField(min_value=0, initial = 1)
+    realization = forms.BooleanField(required=False)
+    date = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
+    description = forms.CharField(label='Description', widget=forms.Textarea())
+    
     class Meta:
         model = Bicycle_Store
 

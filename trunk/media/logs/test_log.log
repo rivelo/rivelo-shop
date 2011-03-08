@@ -48,3 +48,29 @@ Key = description - Value = + заміна колодок
 DELETE FROM TABLE country WHERE id = 17 
 Key = id - Value = 17
 Key = name - Value = France
+DELETE FROM TABLE bicycle_ store WHERE id = 1 
+Key = id - Value = 1
+Key = model - Value = 55
+Key = serial_number - Value = 012345
+Key = size - Value = 21
+Key = price - Value = 2963.0
+Key = currency - Value = 3
+Key = description - Value = Знижка 10% і в результаті нова ціна 2963 грн.
+Key = realization - Value = 0
+Key = count - Value = 0
+DELETE FROM TABLE bicycle_ store WHERE id = 2 
+Key = id - Value = 2
+Key = model - Value = 11
+Key = serial_number - Value = 11221122
+Key = size - Value = 22
+Key = price - Value = 4430.0
+Key = currency - Value = 3
+Key = description - Value = Kellys Alutec 3B Lite 6061 RRC geometry
+Key = realization - Value = 0
+Key = count - Value = 1
+DELETE FROM TABLE currency WHERE id = 8 
+Key = id - Value = 8
+Key = ids - Value = 350261511
+Key = ids_char - Value = 111
+Key = name - Value = 1sa
+Key = country - Value = 2

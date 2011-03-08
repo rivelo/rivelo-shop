@@ -11,19 +11,21 @@
     	<th>ID</th>
     	<th>Назва типу</th>
     	<th>Опис</th>
+    	<th>Звіт</th>
     	<th>Дія</th>
     </tr>
-    {% for type1 in types %}
+    {% for type in types %}
     <tr>
-    	<td>{{ type1.id }}</td>
+    	<td>{{ type.id }}</td>
         <td>
-        {{ type1.type }}
+        {{ type.type }}
         </td>
         <td>
-        {{ type1.description }}
+        {{ type.description }}
         </td>
-        <td>
-            <a href="/bicycle-type/delete/{{ type1.id }}">delete</a>
+        	<td><a href="/bicycle/store/report/bytype/{{ type.id }}/">Наявні велосипеди</a></td>
+        <td>	
+            <a href="/bicycle-type/delete/{{ type.id }}">delete</a>
         </td>
     </tr>
     {% endfor %}

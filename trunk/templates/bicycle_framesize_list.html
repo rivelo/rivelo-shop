@@ -10,6 +10,7 @@
     	<th>Назва</th>
     	<th>Розмір (см)</th>
     	<th>Розмір (дюйми)</th>
+    	<th>Звіт</th>
     	<th>Дія</th>
     </tr>
     
@@ -21,6 +22,7 @@
 <td>    {{field}} </td>
 {% endfor %}
 
+<td><a href="/bicycle/store/report/bysize/{{ size|first }}/">Наявні велосипеди</a></td>
 <td><a href="/bicycle/framesize/delete/{{ size|first }}/">delete</a></td>
 </tr>
 {% endfor %}

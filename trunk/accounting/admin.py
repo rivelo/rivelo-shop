@@ -6,10 +6,10 @@ from catalog.accounting.models import Type, Size, Exchange, Manufacturer, Catalo
 
 
 class TypeAdmin(admin.ModelAdmin):
-   list_display = ('name', 'description')
-   list_filter = ('name', 'description')
-   ordering = ('-name',)
-   search_fields = ('name', 'description')
+    list_display = ('name', 'description')
+    list_filter = ('name', 'description')
+    ordering = ('-name',)
+    search_fields = ('name', 'description')
   
 admin.site.register(Type, TypeAdmin)
 
@@ -67,7 +67,7 @@ class CurrencyAdmin(admin.ModelAdmin):
     list_display = ('ids', 'ids_char', 'name', 'country')
     ordering = ('-ids',)
     search_fields = ('ids', 'name',)
-
+    
 admin.site.register(Currency, CurrencyAdmin)
     
 

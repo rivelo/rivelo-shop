@@ -265,10 +265,20 @@ def bicycle_del(request, id):
 def bicycle_list(request):
     list = Bicycle.objects.all()
     #return render_to_response('bicycle_list.html', {'bicycles': list.values_list()})
-    return render_to_response('index.html', {'bicycles': list.values_list(), 'weblink': 'bicycle_list.html'})
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_list.html'})
 
 
-def bicycle_store_add(request):
+def bicycle_photo(request, id):
+    obj = Bicycle.objects.get(id=id)
+    #return render_to_response('bicycle_list.html', {'bicycles': list.values_list()})
+    return render_to_response('index.html', {'bicycle': obj, 'weblink': 'bicycle_photo.html'})
+
+
+def bicycle_store_add(request, id=None):
+    bike = None
+    if id != None:
+        bike = Bicycle.objects.get(id=id)
+        
     if request.method == 'POST':
         form = BicycleStoreForm(request.POST)
         if form.is_valid():
@@ -280,10 +290,14 @@ def bicycle_store_add(request):
             description = form.cleaned_data['description']
             realization = form.cleaned_data['realization']
             count = form.cleaned_data['count']
-            Bicycle_Store(model = model, serial_number=serial_number, size = size, price = price, currency = currency, description=description, realization=realization, count=count).save()
+            date = form.cleaned_data['date']
+            Bicycle_Store(model = model, serial_number=serial_number, size = size, price = price, currency = currency, description=description, realization=realization, count=count, date=date).save()
             return HttpResponseRedirect('/bicycle-store/view/')
     else:
-        form = BicycleStoreForm()
+        if bike != None:
+            form = BicycleStoreForm(initial={'model': bike.id, 'count': '1'})
+        else:
+            form = BicycleStoreForm()
     #return render_to_response('bicycle_store.html', {'form': form})
     return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_store.html'})
 
@@ -297,8 +311,22 @@ def bicycle_store_del(request, id):
 
 def bicycle_store_list(request):
     list = Bicycle_Store.objects.all()
-    #return render_to_response('bicycle_store_list.html', {'bicycles': list.values_list()})
-    return render_to_response('index.html', {'bicycles': list.values_list(), 'weblink': 'bicycle_store_list.html'})
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list.html'})
+
+
+def store_report_bysize(request, id):
+    list = Bicycle_Store.objects.filter(size=id)
+    frame = FrameSize.objects.get(id=id)
+    frame_str = u"Розмір рами " + frame.name
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list.html', 'text': frame_str})
+
+    
+def store_report_bytype(request, id):
+    #list = Bicycle.objects.filter(type=id)
+    list = Bicycle_Store.objects.filter(model__type__exact=id)
+    frame = Bicycle_Type.objects.get(id=id)
+    text = u"Тип велосипеду: " + frame.type
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list.html', 'text': text})
 
 
 def bicycle_sale_add(request):
@@ -500,8 +528,8 @@ def curency_add(request):
             ids = form.cleaned_data['ids']
             ids_char = form.cleaned_data['ids_char']
             name = form.cleaned_data['name']
-            country = form.cleaned_data['country']
-            Currency(ids=ids, ids_char=ids_char, name=name, country=country).save()
+            country_id = form.cleaned_data['country_id']
+            Currency(ids=ids, ids_char=ids_char, name=name, country_id=country_id).save()
             return HttpResponseRedirect('/curency/view/')
     else:
         form = CurencyForm()
@@ -512,7 +540,7 @@ def curency_add(request):
 def curency_list(request):
     list = Currency.objects.all()
     #return render_to_response('curency_list.html', {'currency': list.values()})
-    return render_to_response('index.html', {'currency': list.values(), 'weblink': 'curency_list.html'})
+    return render_to_response('index.html', {'currency': list, 'weblink': 'curency_list.html'})
 
 
 def curency_del(request, id):
@@ -682,7 +710,7 @@ def clientdebts_add(request):
 
 def clientdebts_list(request):
     list = ClientDebts.objects.select_related().all()
-    return render_to_response('index.html', {'clients': list.values_list(), 'weblink': 'clientdebts_list.html'})
+    return render_to_response('index.html', {'clients': list, 'weblink': 'clientdebts_list.html'})
 
 
 def clientdebts_delete(request, id):
@@ -710,7 +738,7 @@ def clientcredits_add(request):
 
 def clientcredits_list(request):
     list = ClientCredits.objects.all()
-    return render_to_response('index.html', {'clients': list.values_list(), 'weblink': 'clientcredits_list.html'})
+    return render_to_response('index.html', {'clients': list, 'weblink': 'clientcredits_list.html'})
 
 
 def clientcredits_delete(request, id):
