@@ -1,28 +1,48 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html lang="en">
-<head>
-{% include "top.html" %}
-    <title>Currency List</title>
-</head>
-<body>
-    <h1>Currency list</h1>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-    <table border="1">
-    {% for cur in currency %}
+<link rel="stylesheet" type="text/css" href="/media/table.css">
+
+    <h1>Список валют</h1>
+
+    <table>
+    
+    <tr>
+    	<th>ID</th>
+    	<th>Код</th>
+    	<th>Скорочення</th>
+    	<th>Назва</th>
+    	<th>Країна</th>
+    	<th>Дія</th>
+    </tr>
+    
+	{% for type in currency %}
     <tr>
 
         <td>
-            {{ cur.name }}
-        </td>
-    	<td>
-            {{ cur.country_id }} {{ cur.country. }}
+            {{ type.id }}
         </td>
         <td>
-            <a href="/curency/delete/{{ cur.id }}">delete</a>
+            {{ type.ids }}
+        </td>
+        <td>
+            {{ type.ids_char }}
+        </td>
+        <td>
+            {{ type.name }}
+        </td>
+        <td>
+            {{ type.country }}
+        </td>
+    
+        <td>
+            <a href="/curency/delete/{{ type.id }}">delete</a>
         </td>
     </tr>
-    {% endfor %}
-    <table>
+    {% endfor %}    
+   
+    
+    </table>
 
 
 <br><br>
@@ -30,5 +50,3 @@
 <br>
 <a href="/curency/add/">Add</a>       
 
-</body>
-</html>

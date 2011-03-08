@@ -2,9 +2,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
-    <h1>Список велосипедів у магазині</h1>
+    <h1>Список велосипедів у магазині <br>{{text}}</h1>
 
-    <table border="1">
+<table border="1">
     <tr>
     	<th>ID</th>
     	<th>Велосипед</th>
@@ -14,21 +14,55 @@
     	<th>Валюта</th>
     	<th>Опис</th>
     	<th>Реалізація</th>
-		<th>Кількість</th>    	
+		<th>Кількість</th> 
+		<th>Дата</th>
     	<th>Дія</th>
     </tr>    
-    {% for manufacture in bicycles %}
-    <tr>
-{% for field in manufacture %}
-<td>    {{field}} </td>
-{% endfor %}
-<td><a href="/bicycle-store/delete/{{ manufacture|first }}">delete</a></td>
+    
+{% for type in bicycles %}
+<tr>
+	<td>       
+	<a href="/">{{type.id}}</a> 
+	</td>
+	<td>
+	<a href="/bicycle/photo/{{type.model.id}}">{{type.model}}</a>       
+	</td>
+	<td>       
+	{{type.serial_number}}
+	</td>
+	<td>       
+	{{type.size}}
+	</td>
+	<td>       
+	{{type.price}}
+	</td>
+	<td>       
+	{{type.currency}}
+	</td>
+	<td>       
+	{{type.description}}
+	</td>	
+	<td>
+<!-- 	<img src="/media/{{type.photo}}" alt="" title=""/>  -->       
+	{{type.realization}}
+	</td>	
+	<td>       
+	{{type.count}}
+	</td>
+	<td>       
+	{{type.date}}
+	</td>
+	<td>
+    <a href="/bicycle-store/delete/{{ type.id }}">delete</a>
+    </td>
 </tr>
-{% endfor %}
-    <table>
+{% endfor %}       
+    
+   
+<table>
 
 <br><br>
-<a href="/">HOME</a>
+<a href="/bicycle/view/">Каталог велосипедів</a>
 <br>
-<a href="/bicycle-store/add/">Add</a>        
+<a href="/bicycle-store/add/">Додати Велосипед в Магазин (Add Bicycle to shop)</a>        
 

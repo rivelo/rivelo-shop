@@ -26,6 +26,10 @@ DATABASE_PORT = '3306'             # Set to empty string for default. Not used w
 # system time zone.
 #TIME_ZONE = 'America/Chicago'
 TIME_ZONE = 'Europe/Kiev'
+DATE_FORMAT = 'd/m/Y'
+DATETIME_FORMAT = 'D d M Y'
+SHORT_DATE_FORMAT = 'd/m/Y'
+SHORT_DATETIME_FORMAT = 'd/m/Y'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html

@@ -52,8 +52,7 @@ class Bank(models.Model):
 # list of currency
 class Currency(models.Model):
     ids = models.CharField("code", max_length=50)
-    #поле скорочена назва валюти
-    ids_char = models.CharField("code", unique=True, max_length=5)
+    ids_char = models.CharField("code", unique=True, max_length=5) #поле скорочена назва валюти
     name = models.CharField("currency name", max_length=50)
     country = models.ForeignKey(Country)
 
@@ -314,7 +313,7 @@ class Bicycle(models.Model):
         #return u'Велосипед %s. Ціна %d грн.' % (self.model, self.price)
         
     class Meta:
-        ordering = ["model", "price"]    
+        ordering = ["brand", "year", "model", "price"]    
        
         
 # Bicycle in store (BicycleStore)
@@ -324,16 +323,19 @@ class Bicycle_Store(models.Model):
     size = models.ForeignKey(FrameSize, blank = True, null = True)
     price = models.FloatField()
     currency = models.ForeignKey(Currency)
-    description = models.TextField(blank=True, null=True)
-    realization = models.BooleanField() 
     count = models.PositiveIntegerField()
+    realization = models.BooleanField()
+    date = models.DateField(auto_now_add=True)
+    description = models.TextField(blank=True, null=True)
     
     def __unicode__(self):
         #return self.model
         return u'%s' % self.model
 
     class Meta:
-        ordering = ["model"]    
+        ordering = ["model"]
+        
+            
 # Bicycle sale to client
 class Bicycle_Sale(models.Model):
     model = models.ForeignKey(Bicycle_Store)

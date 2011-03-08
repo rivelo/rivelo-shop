@@ -12,24 +12,36 @@
     <tr>
     	<th>ID</th>
     	<th>Клієнт</th>
-    	<th>Дата</th>
-    	<th>Сумарна вартість покупок (грн.)</th>
+    	<th>Дата операції</th>
+    	<th>Сума (грн.)</th>
     	<th>Опис</th>
     	<th>Дія</th>
     </tr>    
-    {% for client in clients %}
-    <tr>
-	{% for element in client %}
-        <td>
-            {{ element }}
-        </td>
-    {% endfor %}
-            <td>
-        <a href="/clientdebts/delete/{{ client|first }}">delete</a>
-        </td>
-    </tr>
-    {% endfor %}
-    <table>
+    
+    {% for type in clients %}
+<tr>
+	<td>       
+	<a href="/">{{type.id}}</a> 
+	</td>
+	<td>
+	<a href="/{{type.client.id}}">{{type.client}}</a>       
+	</td>
+	<td>       
+	{{type.date|date}}
+	</td>
+	<td>       
+	{{type.price}}
+	</td>
+	<td>       
+	{{type.description}}
+	</td>	
+	<td>
+    <a href="/clientdebts/delete/{{ type.id }}">delete</a>
+    </td>
+</tr>
+{% endfor %}           
+    
+<table>
 
 
 <br><br>
