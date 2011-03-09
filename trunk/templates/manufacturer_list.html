@@ -8,20 +8,35 @@
 	<tr>
     	<th>ID</th>
     	<th>Назва компанії</th>
-    	<th>Опис</th>
     	<th>Адреса</th>
     	<th>Логотип</th>
     	<th>Країна</th>
     	<th>Дія</th>
     </tr>
-{% for manufacture in manufactures %}
+    
+{% for type in manufactures %}
 <tr>
-{% for field in manufacture %}
-<td>    {{field}} </td>
-{% endfor %}
-<td><a href="/manufacturer/delete/{{ manufacture|first }}">delete</a></td>
+	<td>       
+	{{type.id}}
+	</td>
+	<td>       
+	{{type.name}}
+	</td>
+	<td>       
+	{{type.www}}
+	</td>
+	<td>       
+	{{type.logo}}
+	</td>
+	<td>       
+	{{type.country}}
+	</td>	
+	<td>
+    <a href="/manufacturer/delete/{{ type.id }}">delete</a>
+    </td>
 </tr>
-{% endfor %}
+{% endfor %}       
+    
 
     <table>
 
