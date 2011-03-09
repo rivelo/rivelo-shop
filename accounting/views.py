@@ -603,7 +603,7 @@ def manufacturer_add(request):
 def manufaturer_list(request):
     list = Manufacturer.objects.all()
     #return render_to_response('manufacturer_list.html', {'manufactures': list.values_list()})
-    return render_to_response('index.html', {'manufactures': list.values_list(), 'weblink': 'manufacturer_list.html'})
+    return render_to_response('index.html', {'manufactures': list, 'weblink': 'manufacturer_list.html'})
 
 
 def manufacturer_delete(request, id):
