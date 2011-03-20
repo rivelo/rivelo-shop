@@ -31,7 +31,8 @@
             {{ element }}
         </td>
     {% endfor %}
-            <td>
+        <td>
+        <a href="/client/edit/{{ client|first }}">edit</a>
         <a href="/client/delete/{{ client|first }}">delete</a>
         </td>
     </tr>
@@ -43,7 +44,3 @@
 <a href="/">Головне меню (HOME)</a>
 <br>
 <a href="/client/add/">Створити нового клієнта (Add)</a>       
-
-
-
-

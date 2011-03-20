@@ -2,7 +2,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
-    <h1>Каталог велосипедів (Bicycle Type List)</h1>
+    <h1>Каталог велосипедів (Bicycle Type List) <a href="/bicycle/add/">(Створити)</a></h1>
 
     <table border="1">
     <tr>
@@ -17,7 +17,8 @@
     	<th>Вага</th>
     	<th>Ціна</th>
     	<th>Валюта</th>
-    	<th>Опис</th>
+<!--    	<th>Опис</th> -->
+		<th>Edit</th>
     	<th>Дія</th>
     </tr>
 
@@ -36,7 +37,7 @@
 	{{type.brand}}
 	</td>
 	<td>       
-	{{type.year}}
+	{{type.year.year}}
 	</td>
 	<td>       
 	{{type.color}}
@@ -57,9 +58,14 @@
 	<td>       
 	{{type.currency}}
 	</td>
-	<td>
+<!-- 	<td>
 	{{type.description}}
 	</td>
+ -->
+ 	<td>
+    <a href="/bicycle/edit/{{ type.id }}">edit</a>
+    </td>
+ 
 	<td>
     <a href="/bicycle/delete/{{ type.id }}">delete</a>
     </td>

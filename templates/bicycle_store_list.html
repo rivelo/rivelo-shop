@@ -12,7 +12,7 @@
     	<th>Розмір рами</th>
     	<th>Ціна</th>
     	<th>Валюта</th>
-    	<th>Опис</th>
+    <!-- <th>Опис</th> -->
     	<th>Реалізація</th>
 		<th>Кількість</th> 
 		<th>Дата</th>
@@ -39,9 +39,10 @@
 	<td>       
 	{{type.currency}}
 	</td>
-	<td>       
+<!-- <td>       
 	{{type.description}}
-	</td>	
+	</td>
+ -->	
 	<td>
 <!-- 	<img src="/media/{{type.photo}}" alt="" title=""/>  -->       
 	{{type.realization}}
@@ -50,7 +51,7 @@
 	{{type.count}}
 	</td>
 	<td>       
-	{{type.date}}
+	{{type.date.year}}
 	</td>
 	<td>
     <a href="/bicycle-store/delete/{{ type.id }}">delete</a>

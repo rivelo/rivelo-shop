@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from django.forms import ModelForm
 from django.contrib import admin
 
 # Type = Component category 
@@ -313,7 +314,7 @@ class Bicycle(models.Model):
         #return u'Велосипед %s. Ціна %d грн.' % (self.model, self.price)
         
     class Meta:
-        ordering = ["brand", "year", "model", "price"]    
+        ordering = ["brand", "year", "type", "model", "price"]    
        
         
 # Bicycle in store (BicycleStore)
@@ -351,7 +352,9 @@ class Bicycle_Sale(models.Model):
         return u'%s' % self.model
 
     class Meta:
-        ordering = ["client", "model"]    
+        ordering = ["client", "model"]
+        
+            
 class WorkGroup(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
@@ -372,10 +375,11 @@ class WorkType(models.Model):
 
     
     def __unicode__(self):
-        return self.name
+        return u'Розділ %s. Робота: %s' % (self.work_group, self.name)
+        #return self.name
 
     class Meta:
-        ordering = ["name"]
+        ordering = ["work_group", "name"]
      
     
 class WorkShop(models.Model):

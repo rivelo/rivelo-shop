@@ -18,6 +18,8 @@ from forms import WorkGroupForm, WorkTypeForm, WorkShopForm, WorkStatusForm, Wor
 from django.http import HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 
+from django.conf import settings
+
 
 def search(request):
     query = request.GET.get('q', '')
@@ -87,15 +89,15 @@ def contact(request):
 # ------------ Country -----------------
 
 def country_add(request):
+    a = Country()
     if request.method == 'POST':
-        form = CountryForm(request.POST)
+        form = CountryForm(request.POST, instance=a)
         if form.is_valid():
             name = form.cleaned_data['name']
             Country(name=name).save()
             return HttpResponseRedirect('/country/view/')
     else:
-        form = CountryForm()
-    #return render_to_response('country.html', {'form': form})
+        form = CountryForm(instance = a)
     return render_to_response('index.html', {'form': form, 'weblink': 'country.html'})
 
 
@@ -104,6 +106,18 @@ def country_delete(request, id):
     del_logging(obj)
     obj.delete() 
     return HttpResponseRedirect('/country/view/')
+
+
+def country_edit(request, id):
+    a = Country.objects.get(pk=id)
+    if request.method == 'POST':
+        form = CountryForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/country/view/')
+    else:
+        form = CountryForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'country.html'})
 
 
 def country_del(request, id):
@@ -123,16 +137,29 @@ def country_list(request):
 # ----------------- Bank --------------------
 
 def bank_add(request):
+    a = Bank()
     if request.method == 'POST':
-        form = BankForm(request.POST)
+        form = BankForm(request.POST, instance=a)
         if form.is_valid():
             name = form.cleaned_data['name']
             Bank(name=name).save()
             return HttpResponseRedirect('/bank/view/')
     else:
-        form = BankForm()
+        form = BankForm(instance=a)
     #return render_to_response('bank.html', {'form': form})
-    return render_to_response('index.html', {'form': form, 'weblink': 'bank.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'bank.html', 'text': 'Додати новий банк'})
+
+
+def bank_edit(request, id):
+    a = Bank.objects.get(pk=id)
+    if request.method == 'POST':
+        form = BankForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/bank/view/')
+    else:
+        form = BankForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'bank.html', 'text': 'Редагувати банк'})
 
 
 def bank_del(request, id):
@@ -151,17 +178,30 @@ def bank_list(request):
 # ----------- Bicycle --------------
 
 def bicycle_type_add(request):
+    a = Bicycle_Type()
     if request.method == 'POST':
-        form = BicycleTypeForm(request.POST)
+        form = BicycleTypeForm(request.POST, instance=a)
         if form.is_valid():
             type = form.cleaned_data['type']
             description = form.cleaned_data['description']
             Bicycle_Type(type=type, description=description).save()
             return HttpResponseRedirect('/bicycle-type/view/')
     else:
-        form = BicycleTypeForm()
+        form = BicycleTypeForm(instance=a)
     #return render_to_response('bicycle_type.html', {'form': form})
     return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_type.html'})
+
+
+def bicycle_type_edit(request, id):
+    a = Bicycle_Type.objects.get(pk=id)
+    if request.method == 'POST':
+        form = BicycleTypeForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/bicycle-type/view/')
+    else:
+        form = BicycleTypeForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_type.html', 'text': 'Редагувати тип'})
 
 
 def bicycle_type_del(request, id):
@@ -178,8 +218,9 @@ def bicycle_type_list(request):
 
 
 def bicycle_framesize_add(request):
+    a = FrameSize()
     if request.method == 'POST':
-        form = BicycleFrameSizeForm(request.POST)
+        form = BicycleFrameSizeForm(request.POST, instance=a)
         if form.is_valid():
             name = form.cleaned_data['name']
             cm = form.cleaned_data['cm']
@@ -187,9 +228,21 @@ def bicycle_framesize_add(request):
             FrameSize(name=name, cm=cm, inch=inch).save()
             return HttpResponseRedirect('/bicycle-framesize/view/')
     else:
-        form = BicycleFrameSizeForm()
+        form = BicycleFrameSizeForm(instance=a)
     #return render_to_response('bicycle_framesize.html', {'form': form})
-    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_framesize.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_framesize.html', 'text': 'Розмір рами (редагування)'})
+
+
+def bicycle_framesize_edit(request, id):
+    a = FrameSize.objects.get(pk=id)
+    if request.method == 'POST':
+        form = BicycleFrameSizeForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/bicycle-framesize/view/')
+    else:
+        form = BicycleFrameSizeForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_framesize.html', 'text': 'Розмір рами (редагування)'})
 
 
 def bicycle_framesize_del(request, id):
@@ -202,10 +255,8 @@ def bicycle_framesize_del(request, id):
 def bicycle_framesize_list(request):
     list = FrameSize.objects.all()
     #return render_to_response('bicycle_framesize_list.html', {'framesizes': list.values_list()})
-    return render_to_response('index.html', {'framesizes': list.values_list(), 'weblink': 'bicycle_framesize_list.html'})
+    return render_to_response('index.html', {'framesizes': list, 'weblink': 'bicycle_framesize_list.html'})
 
-
-from django.conf import settings
 
 def processUploadedImage(file, dir=''): 
 #    img = Image.open(file) 
@@ -224,8 +275,9 @@ def processUploadedImage(file, dir=''):
 
 
 def bicycle_add(request):
+    a = Bicycle()
     if request.method == 'POST':
-        form = BicycleForm(request.POST, request.FILES)
+        form = BicycleForm(request.POST, request.FILES, instance=a)
         if form.is_valid():
             #bicycle = form.save()
             model = form.cleaned_data['model']
@@ -246,13 +298,24 @@ def bicycle_add(request):
             return HttpResponseRedirect('/bicycle/view/')
             #return HttpResponseRedirect(bicycle.get_absolute_url())
     else:
-        form = BicycleForm()
+        form = BicycleForm(instance=a)
 
     #return render_to_response('bicycle.html', {'form': form})
-    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle.html', 'text': 'Велосипед з каталогу (створення)'})
     #context = {'form': form, }
     #return direct_to_template(request, 'bicycle.html', extra_context=context)
-    
+
+
+def bicycle_edit(request, id):
+    a = Bicycle.objects.get(pk=id)
+    if request.method == 'POST':
+        form = BicycleForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/bicycle/view/')
+    else:
+        form = BicycleForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle.html', 'text': 'Велосипед з каталогу (редагування)'})
 
 
 def bicycle_del(request, id):
@@ -347,7 +410,7 @@ def bicycle_sale_add(request):
             update_bicycle.save()
             
             update_client = Client.objects.get(id=client.id)
-            update_client.summ = update.summ + price 
+            update_client.summ = update_client.summ + price 
             update_client.save()
             
             return HttpResponseRedirect('/bicycle/sale/view/')
@@ -360,13 +423,17 @@ def bicycle_sale_add(request):
 def bicycle_sale_del(request, id):
     obj = Bicycle_Sale.objects.get(id=id)
     del_logging(obj)
+    update_client = Client.objects.get(id=obj.client.id)
+    update_client.summ = update_client.summ - obj.price 
+    update_client.save()
     obj.delete()
     return HttpResponseRedirect('/bicycle/sale/view/')
 
 
 def bicycle_sale_list(request):
     list = Bicycle_Sale.objects.all()
-    return render_to_response('index.html', {'bicycles': list.values_list(), 'weblink': 'bicycle_sale_list.html'})
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_sale_list.html'})
+
 
 # --------------------Dealer company ------------------------
 def dealer_add(request):
@@ -514,6 +581,9 @@ def category_add(request):
     return render_to_response('index.html', {'form': form, 'weblink': 'category.html'})
 
 
+
+
+
 def category_del(request, id):
     obj = Type.objects.get(id=id)
     del_logging(obj)
@@ -582,6 +652,7 @@ def exchange_del(request, id):
 # -------- Catalog ---------------- 
 
 def manufacturer_add(request):
+    a = Manufacturer()
     if request.method == 'POST':
         form = ManufacturerForm(request.POST, request.FILES)
         if form.is_valid():
@@ -595,9 +666,21 @@ def manufacturer_add(request):
             Manufacturer(name=name, description=description, www=www, logo=upload_path, country=country).save()
             return HttpResponseRedirect('/manufacturer/view/')
     else:
-        form = ManufacturerForm()
+        form = ManufacturerForm(instance=a)
     #return render_to_response('manufacturer.html', {'form': form})
     return render_to_response('index.html', {'form': form, 'weblink': 'manufacturer.html'})
+
+
+def manufacturer_edit(request, id):
+    a = Manufacturer.objects.get(pk=id)
+    if request.method == 'POST':
+        form = ManufacturerForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/bank/view/')
+    else:
+        form = ManufacturerForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'manufacturer.html', 'text': 'Виробник (редагування)'})
 
 
 def manufaturer_list(request):
@@ -644,6 +727,18 @@ def catalog_add(request):
     return render_to_response('index.html', {'form': form, 'weblink': 'catalog.html'})
 
 
+def catalog_edit(request, id):
+    a = Catalog.objects.get(pk=id)
+    if request.method == 'POST':
+        form = CatalogForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/catalog/view/')
+    else:
+        form = CatalogForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'catalog.html'})
+
+
 def catalog_list(request):
     list = Catalog.objects.all()
     #return render_to_response('catalog_list.html', {'catalog': list.values_list()})
@@ -679,6 +774,26 @@ def client_add(request):
     return render_to_response('index.html', {'form': form, 'weblink': 'client.html'})
 
 
+def client_edit(request, id):
+    a = Client.objects.get(pk=id)
+    if request.method == 'POST':
+        form = ClientForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+#===============================================================================
+#            client = form.cleaned_data['client']
+#            date = form.cleaned_data['date']
+#            work_type = form.cleaned_data['work_type']
+#            price = form.cleaned_data['price']
+#            description = form.cleaned_data['description']
+#            WorkShop(id=id, client=client, date=date, work_type=work_type, price=price, description=description).save()
+#===============================================================================
+            return HttpResponseRedirect('/client/view/')
+    else:
+        form = ClientForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'client.html'})
+
+
 def client_list(request):
     list = Client.objects.all()
     return render_to_response('index.html', {'clients': list.values_list(), 'weblink': 'client_list.html'})
@@ -690,6 +805,11 @@ def client_delete(request, id):
     obj.delete()
     return HttpResponseRedirect('/client/view/')
 
+
+def client_data(request, id):
+    obj = Client.objects.get(id=id)
+    #return render_to_response('bicycle_list.html', {'bicycles': list.values_list()})
+    return render_to_response('index.html', {'client': obj, 'weblink': 'client_data.html'})
 
 
 def clientdebts_add(request):
@@ -706,6 +826,26 @@ def clientdebts_add(request):
         form = ClientDebtsForm()
     #return render_to_response('clientdebts.html', {'form': form})
     return render_to_response('index.html', {'form': form, 'weblink': 'clientdebts.html'})
+
+
+def clientdebts_edit(request, id):
+    a = ClientDebts.objects.get(pk=id)
+    if request.method == 'POST':
+        form = ClientDebtsForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+#===============================================================================
+#            client = form.cleaned_data['client']
+#            date = form.cleaned_data['date']
+#            work_type = form.cleaned_data['work_type']
+#            price = form.cleaned_data['price']
+#            description = form.cleaned_data['description']
+#            WorkShop(id=id, client=client, date=date, work_type=work_type, price=price, description=description).save()
+#===============================================================================
+            return HttpResponseRedirect('/clientdebts/view/')
+    else:
+        form = ClientDebtsForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'client.html'})
 
 
 def clientdebts_list(request):
@@ -807,6 +947,18 @@ def workgroup_add(request):
     return render_to_response('index.html', {'form': form, 'weblink': 'workgroup.html'})
 
 
+def workgroup_edit(request, id):
+    a = WorkGroup.objects.get(pk=id)
+    if request.method == 'POST':
+        form = WorkGroupForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/workgroup/view/')
+    else:
+        form = WorkGroupForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'workgroup.html'})
+
+
 def workgroup_list(request):
     list = WorkGroup.objects.all()
     return render_to_response('index.html', {'workgroups': list.values_list(), 'weblink': 'workgroup_list.html'})
@@ -834,9 +986,21 @@ def worktype_add(request):
     return render_to_response('index.html', {'form': form, 'weblink': 'worktype.html'})
 
 
+def worktype_edit(request, id):
+    a = WorkType.objects.get(pk=id)
+    if request.method == 'POST':
+        form = WorkTypeForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/worktype/view/')
+    else:
+        form = WorkTypeForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'worktype.html'})
+
+
 def worktype_list(request):
     list = WorkType.objects.all()
-    return render_to_response('index.html', {'worktypes': list.values_list(), 'weblink': 'worktype_list.html'})
+    return render_to_response('index.html', {'worktypes': list, 'weblink': 'worktype_list.html'})
 
 
 def worktype_delete(request, id):
@@ -856,6 +1020,18 @@ def workstatus_add(request):
             return HttpResponseRedirect('/workstatus/view/')
     else:
         form = WorkStatusForm()
+    return render_to_response('index.html', {'form': form, 'weblink': 'workstatus.html'})
+
+
+def workstatus_edit(request, id):
+    a = WorkStatus.objects.get(pk=id)
+    if request.method == 'POST':
+        form = WorkStatusForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/workstatus/view/')
+    else:
+        form = WorkStatusForm(instance=a)
     return render_to_response('index.html', {'form': form, 'weblink': 'workstatus.html'})
 
 
@@ -899,7 +1075,11 @@ def workticket_delete(request, id):
     return HttpResponseRedirect('/workticket/view/')
 
 
-def workshop_add(request):
+def workshop_add(request, id=None):
+    work = None
+    if id != None:
+        work = WorkType.objects.get(id=id)
+        
     if request.method == 'POST':
         form = WorkShopForm(request.POST)
         if form.is_valid():
@@ -911,7 +1091,27 @@ def workshop_add(request):
             WorkShop(client=client, date=date, work_type=work_type, price=price, description=description).save()
             return HttpResponseRedirect('/workshop/view/')
     else:
-        form = WorkShopForm()
+        if work != None:
+            form = WorkShopForm(initial={'work_type': work.id, 'price': work.price})
+        else:        
+            form = WorkShopForm()
+    return render_to_response('index.html', {'form': form, 'weblink': 'workshop.html'})
+
+
+def workshop_edit(request, id):
+    a = WorkShop.objects.get(pk=id)
+    if request.method == 'POST':
+        form = WorkShopForm(request.POST, instance=a)
+        if form.is_valid():
+            client = form.cleaned_data['client']
+            date = form.cleaned_data['date']
+            work_type = form.cleaned_data['work_type']
+            price = form.cleaned_data['price']
+            description = form.cleaned_data['description']
+            WorkShop(id=id, client=client, date=date, work_type=work_type, price=price, description=description).save()
+            return HttpResponseRedirect('/workshop/view/')
+    else:
+        form = WorkShopForm(instance=a)
     return render_to_response('index.html', {'form': form, 'weblink': 'workshop.html'})
 
 
@@ -978,3 +1178,65 @@ def cost_delete(request, id):
     del_logging(obj)
     obj.delete()
     return HttpResponseRedirect('/cost/view/')
+
+
+
+from django.forms.models import inlineformset_factory, modelformset_factory
+from django.forms.models import formset_factory
+
+def formset_test(request):
+    #client = WorkShop.objects.get(pk=2)
+    client = Client.objects.get(pk=2)
+    ArticleFormSet = inlineformset_factory(Client, WorkShop,  extra=1, form=WorkShopForm, fk_name="client")
+    if request.method == 'POST':
+        formset = ArticleFormSet(request.POST, instance=client)
+        if formset.is_valid():
+            formset.save()
+#===============================================================================
+#            for form in formset.forms:
+#                id = form.cleaned_data['id']
+#                clientf = form.cleaned_data['client']
+#                #clientf = client.id
+#                date = form.cleaned_data['date']
+#                work_type = form.cleaned_data['work_type']
+#                price = form.cleaned_data['price']
+#                description = form.cleaned_data['description']
+#                WorkShop(id=id, client=clientf, date=date, work_type=work_type, price=price, description=description).save()            
+#===============================================================================
+             #do something with the formset.cleaned_data
+            return HttpResponseRedirect('/workshop/view/')
+    else:
+        #formset = ArticleFormSet()
+        formset = ArticleFormSet(instance=client)
+#    return render_to_response("formset_test.html", {"formset": formset,})
+    return render_to_response("manage_client.html", {"property_formset": formset,})
+
+    
+
+
+def manage_works(request, author_id):
+    client = WorkShop.objects.get(pk=author_id)
+    MyFormSet = inlineformset_factory(Client, WorkShop, extra=1)
+    if request.method == "POST":
+        property_formset = MyFormSet(request.POST, request.FILES, instance=client)
+        if property_formset.is_valid():
+#===============================================================================
+#            for form in property_formset.forms:
+#                client = form.cleaned_data['client']
+#                #date = form.cleaned_data['date']
+#                work_type = form.cleaned_data['work_type']
+#                price = form.cleaned_data['price']
+#                description = form.cleaned_data['description']
+#===============================================================================
+#                WorkShop(id=form.id, client=author_id, work_type=work_type, price=price, description=description).save()            
+            
+            property_formset.save()
+            property_formset = MyFormSet(instance=client)
+            return HttpResponseRedirect('/workshop/view/')
+            # Do something.
+    else:
+        property_formset = MyFormSet(instance=client)
+    return render_to_response("formset_test.html", {"formset": property_formset,})        
+#    return render_to_response("manage_client.html", {"property_formset": property_formset,})
+
+

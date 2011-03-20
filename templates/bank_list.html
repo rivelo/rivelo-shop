@@ -14,11 +14,9 @@
     </tr>
     {% for element in banks %}
     <tr>
-
         <td>
-            {{ element }}
+            <a href="/bank/edit/{{ element.id }}">{{ element }}</a>
         </td>
-    
         <td>
             <a href="/bank/delete/{{ element.id }}">delete</a>
         </td>
@@ -29,5 +27,5 @@
 <br><br>
 <a href="/">HOME</a>
 <br>
-<a href="/bank/add/">Add</a>        
+<a href="/bank/add/">Створити новий банк</a>        
 

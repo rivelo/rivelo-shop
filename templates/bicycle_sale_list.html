@@ -16,14 +16,42 @@
 		<th>Опис</th>    	
     	<th>Дія</th>
     </tr>    
-    {% for manufacture in bicycles %}
-    <tr>
-{% for field in manufacture %}
-<td>    {{field}} </td>
-{% endfor %}
-<td><a href="/bicycle/sale/delete/{{ manufacture|first }}">delete</a></td>
+    
+{% for type in bicycles %}
+<tr>
+	<td>       
+	{{type.id}}
+	</td>
+	<td>
+	<a href="/bicycle/photo/{{type.model.model.id}}">{{type.model}}</a>       
+	</td>
+	<td>       
+	<a href="/client/{{type.client.id}}">{{type.client}}</a> 
+	</td>
+	<td>       
+	{{type.price}}
+	</td>
+	<td>       
+	{{type.currency}}
+	</td>
+	<td>       
+	{{type.date}}
+	</td>
+	<td>       
+	{{type.service}}
+	</td>	
+	</td>
+ 	<td>
+	{{type.description}}
+	</td>
+	<td>
+    <a href="/bicycle/sale/delete/{{ type.id }}">delete</a>
+    </td>
 </tr>
-{% endfor %}
+{% endfor %}       
+    
+   
+    
     <table>
 
 <br><br>

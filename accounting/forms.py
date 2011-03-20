@@ -4,6 +4,8 @@ from models import Manufacturer, Country, Type, Bicycle_Type, Bicycle, Currency,
 from models import DealerManager, DealerPayment, DealerInvoice, Dealer, Bank
 from models import Client, ClientDebts, CostType, Costs, ClientCredits, WorkGroup, WorkType, WorkShop, WorkTicket, WorkStatus
 
+import datetime
+
 TOPIC_CHOICES = (
     ('general', 'General enquiry'),
     ('bug', 'Bug report'),
@@ -30,22 +32,23 @@ class SelectFromModel(forms.Field):
 
 
 
-class ManufacturerForm(forms.Form):
+class ManufacturerForm(forms.ModelForm):
     name = forms.CharField()
     www = forms.URLField(initial='http://', help_text='url')
     country = forms.ModelChoiceField(queryset = Country.objects.all())
     logo = forms.ImageField()
     description = forms.CharField(widget=forms.Textarea())
 
-class CountryForm(forms.Form):
+
+class CountryForm(forms.ModelForm):
     name = forms.CharField(label='Country name')
 
 
-class BankForm(forms.Form):
+class BankForm(forms.ModelForm):
     name = forms.CharField(label='Bank name')
 
 
-class CurencyForm(forms.Form):
+class CurencyForm(forms.ModelForm):
     ids = forms.CharField()
     ids_char = forms.CharField()
     name = forms.CharField()
@@ -57,9 +60,8 @@ class MyModelChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
         return "My Object - %i" % obj.name
 
-import datetime
 
-class ExchangeForm(forms.Form):
+class ExchangeForm(forms.ModelForm):
     date = forms.DateField(initial=datetime.date.today)
     #currency = SelectFromModel(objects = Currency.objects.all())
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
@@ -74,23 +76,24 @@ class CategoryForm(forms.Form):
 
 # --------- Bicycle -------------
     
-class BicycleTypeForm(forms.Form):
+class BicycleTypeForm(forms.ModelForm):
     type = forms.CharField(label='Bicycle type')
     description = forms.CharField(label='Description of type', widget=forms.Textarea(), max_length=255)
 
 
-class BicycleFrameSizeForm(forms.Form):
+class BicycleFrameSizeForm(forms.ModelForm):
     name = forms.CharField(label='Назва')
     cm = forms.FloatField(min_value=0, label='Розмір, см (cm)')
     inch = forms.FloatField(min_value=0, label='Розмір, дюйми (inch)')
     
 
-class BicycleForm(forms.Form):
+class BicycleForm(forms.ModelForm):
     model = forms.CharField(max_length=255)
     type = forms.ModelChoiceField(queryset = Bicycle_Type.objects.all()) #adult, kids, mtb, road, hybrid
     #brand = SelectFromModel(objects=Manufacturer.objects.all())
     brand = forms.ModelChoiceField(queryset = Manufacturer.objects.all())
-    year = forms.DateField(input_formats=("%Y"))
+    #year = forms.DateField(initial=datetime.date.today, input_formats=("%d.%m.%Y"), widget=forms.DateTimeInput(format='%d.%m.%Y'))
+    year = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))    
     color = forms.CharField(max_length=255)
     #sizes = forms.MultipleChoiceField()
     sizes = forms.CharField()
@@ -106,7 +109,7 @@ class BicycleForm(forms.Form):
     
     
 
-class BicycleStoreForm(forms.Form):
+class BicycleStoreForm(forms.ModelForm):
     model = forms.ModelChoiceField(queryset = Bicycle.objects.all(), required=False)
     serial_number = forms.CharField(max_length=50)
     size = forms.ModelChoiceField(queryset = FrameSize.objects.all())
@@ -115,27 +118,27 @@ class BicycleStoreForm(forms.Form):
     count = forms.IntegerField(min_value=0, initial = 1)
     realization = forms.BooleanField(required=False)
     date = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
-    description = forms.CharField(label='Description', widget=forms.Textarea())
+    description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
     
     class Meta:
         model = Bicycle_Store
 
 
-class BicycleSaleForm(forms.Form):
+class BicycleSaleForm(forms.ModelForm):
     model = forms.ModelChoiceField(queryset = Bicycle_Store.objects.all(), required=False)
     client = forms.ModelChoiceField(queryset = Client.objects.all())
     price = forms.FloatField()
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
-    date = forms.DateTimeField(initial=datetime.date.today)
+    date = forms.DateTimeField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
     service = forms.BooleanField(required=False) 
-    description = forms.CharField(label='Description', widget=forms.Textarea())
+    description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
     
     class Meta:
         model = Bicycle_Sale
 
     
 # --------- Dealers ------------
-class DealerForm(forms.Form):
+class DealerForm(forms.ModelForm):
     name = forms.CharField(max_length=255)
     country = forms.ModelChoiceField(queryset = Country.objects.all())
     city = forms.CharField()
@@ -145,7 +148,7 @@ class DealerForm(forms.Form):
     director = forms.CharField()
 
 
-class DealerManagerForm(forms.Form):
+class DealerManagerForm(forms.ModelForm):
     name = forms.CharField(max_length=255)
     email = forms.EmailField()
     phone = forms.CharField()
@@ -154,7 +157,7 @@ class DealerManagerForm(forms.Form):
     #company = SelectFromModel(objects=Dealer.objects.all())
 
 
-class DealerPaymentForm(forms.Form):
+class DealerPaymentForm(forms.ModelForm):
     invoice_number = forms.CharField(max_length=255)
     date = forms.DateField(initial = datetime.date.today)
     bank = forms.ModelChoiceField(queryset = Bank.objects.all())
@@ -163,7 +166,7 @@ class DealerPaymentForm(forms.Form):
     description = forms.CharField(label='Description', widget=forms.Textarea())
   
 
-class DealerInvoiceForm(forms.Form):
+class DealerInvoiceForm(forms.ModelForm):
     origin_id = forms.CharField(max_length=255, label='Номер накладної')
     date = forms.DateTimeField(initial = datetime.date.today, label='Дата')
     company = forms.ModelChoiceField(queryset = Dealer.objects.all())
@@ -176,7 +179,7 @@ class DealerInvoiceForm(forms.Form):
     description = forms.CharField(label='Description', widget=forms.Textarea())
         
     
-class ContactForm(forms.Form):
+class ContactForm(forms.ModelForm):
     topic = forms.ChoiceField(choices=TOPIC_CHOICES)
     message = forms.CharField(widget=forms.Textarea())
     sender = forms.EmailField(required=False)
@@ -185,7 +188,7 @@ class ContactForm(forms.Form):
 
 # --------- Product Catalog ------------
 
-class CatalogForm(forms.Form):
+class CatalogForm(forms.ModelForm):
     ids = forms.CharField(max_length=50)
     name = forms.CharField(max_length=255)
     manufacturer = forms.ModelChoiceField(queryset = Manufacturer.objects.all())
@@ -194,12 +197,12 @@ class CatalogForm(forms.Form):
     weight = forms.FloatField(min_value=0, required=False)
     photo = forms.ImageField(required=False)
     color = forms.CharField(max_length=255)
-    year = forms.IntegerField(min_value = 1900, max_value = 2020)
+    year = forms.IntegerField(initial = 2011, min_value = 1900, max_value = 2020)
     sale = forms.FloatField(initial=0)
     #sale_to = forms.DateField(initial=datetime.date.today)
     sale_to = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
     price = forms.FloatField(min_value=0)
-    currency = forms.ModelChoiceField(queryset = Currency.objects.all())
+    currency = forms.ModelChoiceField(initial = 3, queryset = Currency.objects.all())
     country = forms.ModelChoiceField(queryset = Country.objects.all())    
     description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255, required=False)    
 
@@ -209,7 +212,7 @@ class CatalogForm(forms.Form):
 
 
 # ---------- Client -------------
-class ClientForm(forms.Form):
+class ClientForm(forms.ModelForm):
     name = forms.CharField(max_length=255)
     forumname = forms.CharField(max_length=255, required=False)    
     country = forms.ModelChoiceField(queryset = Country.objects.all())
@@ -218,14 +221,13 @@ class ClientForm(forms.Form):
     phone = forms.CharField(max_length=255, required=False)
     sale = forms.IntegerField(required=False, initial=0)
     summ = forms.FloatField(initial=0)
-    description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255)    
+    description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255, required=False)    
 
     class Meta:
         model = Client
 
 
-
-class ClientDebtsForm(forms.Form):
+class ClientDebtsForm(forms.ModelForm):
     client = forms.ModelChoiceField(queryset = Client.objects.all())
     date = forms.DateTimeField(initial=datetime.date.today)
     price = forms.FloatField()
@@ -236,7 +238,7 @@ class ClientDebtsForm(forms.Form):
 
    
 
-class ClientCreditsForm(forms.Form):
+class ClientCreditsForm(forms.ModelForm):
     client = forms.ModelChoiceField(queryset = Client.objects.all())
     date = forms.DateTimeField(initial=datetime.date.today)
     price = forms.FloatField()
@@ -247,7 +249,7 @@ class ClientCreditsForm(forms.Form):
 
 
 
-class CostTypeForm(forms.Form):
+class CostTypeForm(forms.ModelForm):
     name = forms.CharField(max_length=255)
     description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255)    
  
@@ -256,7 +258,7 @@ class CostTypeForm(forms.Form):
 
 
     
-class CostsForm(forms.Form):
+class CostsForm(forms.ModelForm):
     #date = forms.DateTimeField(initial=datetime.date.today)
     date = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
     cost_type = forms.ModelChoiceField(queryset = CostType.objects.all())
@@ -269,7 +271,7 @@ class CostsForm(forms.Form):
 
 
 # ================== WorkShop ==========================
-class WorkGroupForm(forms.Form):
+class WorkGroupForm(forms.ModelForm):
     name = forms.CharField(max_length=255)
     description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255) 
 
@@ -277,7 +279,7 @@ class WorkGroupForm(forms.Form):
         model = WorkGroup
 
         
-class WorkTypeForm(forms.Form):
+class WorkTypeForm(forms.ModelForm):
     name = forms.CharField(max_length=255)
     work_group = forms.ModelChoiceField(queryset = WorkGroup.objects.all())
     price = forms.FloatField()
@@ -287,18 +289,18 @@ class WorkTypeForm(forms.Form):
         model = WorkType
     
 
-class WorkShopForm(forms.Form):
+class WorkShopForm(forms.ModelForm):
     client = forms.ModelChoiceField(queryset = Client.objects.all())
-    date = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
+    date = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'), required=False)
     work_type = forms.ModelChoiceField(queryset = WorkType.objects.all())
     price = forms.FloatField(initial=0)
-    description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255)
+    description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255, required=False)
     
     class Meta:
         model = WorkShop
 
 
-class WorkStatusForm(forms.Form):
+class WorkStatusForm(forms.ModelForm):
     name = forms.CharField(max_length=255)
     description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255)
     
@@ -306,7 +308,7 @@ class WorkStatusForm(forms.Form):
         model = WorkStatus
 
 
-class WorkTicketForm(forms.Form):
+class WorkTicketForm(forms.ModelForm):
     client = forms.ModelChoiceField(queryset = Client.objects.all())
     #date = forms.DateTimeField(initial=datetime.date.today)
     date = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))    

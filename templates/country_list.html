@@ -13,6 +13,7 @@
     <tr>
     	<th>Назва</th>
     	<th>Дія</th>
+    	<th>Дія</th>
     </tr>
     {% for country in countries %}
     <tr>
@@ -21,6 +22,9 @@
             {{ country }}
         </td>
     
+        <td>
+        	<a href="/country/edit/{{ country.id }}">edit</a>
+        </td>
         <td>
             <a href="/country/delete/{{ country.id }}">delete</a>
         </td>

@@ -18,19 +18,37 @@
     	<th>Ціна (грн.)</th>
     	<th>Опис</th>
     	<th>Дія</th>
+    	<th>Дія</th>
     </tr>    
-    {% for type in worktypes %}
-    <tr>
-	{% for element in type %}
-        <td>
-            {{ element }}
-        </td>
-    {% endfor %}
-            <td>
-        <a href="/worktype/delete/{{ group|first }}">delete</a>
-        </td>
-    </tr>
-    {% endfor %}
+
+{% for type in worktypes %}
+<tr>
+	<td>       
+	{{type.id}}
+	</td>
+	<td>       
+	{{type.name}}
+	</td>
+	<td>       
+	{{type.work_group}}
+	</td>
+	<td>       
+	{{type.price}}
+	</td>	
+	<td>       
+	{{type.description}}
+	</td>
+	<td>
+	<a href="/workshop/add/{{type.id}}">+</a>
+	</td>
+	<td>
+	<a href="/worktype/edit/{{ type.id }}">edit</a>            
+    <a href="/worktype/delete/{{ type.id }}">delete</a>
+    </td>
+</tr>
+{% endfor %}       
+    
+    
     </table>
 
 

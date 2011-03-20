@@ -74,3 +74,187 @@ Key = ids - Value = 350261511
 Key = ids_char - Value = 111
 Key = name - Value = 1sa
 Key = country - Value = 2
+DELETE FROM TABLE bicycle_ sale WHERE id = 1 
+Key = id - Value = 1
+Key = model - Value = 5
+Key = client - Value = 11
+Key = price - Value = 8000.0
+Key = currency - Value = 3
+Key = date - Value = 2011-03-10
+Key = service - Value = 0
+Key = description - Value = Стоїть в магазині
+DELETE FROM TABLE bicycle_ sale WHERE id = 2 
+Key = id - Value = 2
+Key = model - Value = 5
+Key = client - Value = 11
+Key = price - Value = 8000.0
+Key = currency - Value = 3
+Key = date - Value = 2011-03-10
+Key = service - Value = 0
+Key = description - Value = Стоїть в магазині
+DELETE FROM TABLE bicycle_ sale WHERE id = 3 
+Key = id - Value = 3
+Key = model - Value = 5
+Key = client - Value = 2
+Key = price - Value = 10000.0
+Key = currency - Value = 3
+Key = date - Value = 2011-03-10
+Key = service - Value = 0
+Key = description - Value = 
+DELETE FROM TABLE bicycle_ sale WHERE id = 4 
+Key = id - Value = 4
+Key = model - Value = 5
+Key = client - Value = 11
+Key = price - Value = 8000.0
+Key = currency - Value = 3
+Key = date - Value = 2011-03-10
+Key = service - Value = 0
+Key = description - Value = 
+DELETE FROM TABLE work shop WHERE id = 9 
+Key = id - Value = 9
+Key = client - Value = 2
+Key = date - Value = 2011-03-14 00:03:16
+Key = work_type - Value = 3
+Key = price - Value = 77.0
+Key = description - Value = 777777
+DELETE FROM TABLE client credits WHERE id = 2 
+Key = id - Value = 2
+Key = client - Value = 9
+Key = date - Value = 2011-03-20 15:44:45
+Key = price - Value = 560.0
+Key = description - Value = раов
+DELETE FROM TABLE bank WHERE id = 5 
+Key = id - Value = 5
+Key = name - Value = Тестовий банк 1
+DELETE FROM TABLE bank WHERE id = 6 
+Key = id - Value = 6
+Key = name - Value = Тестовий банк
+DELETE FROM TABLE country WHERE id = 25 
+Key = id - Value = 25
+Key = name - Value = Тестова країна1
+DELETE FROM TABLE bank WHERE id = 7 
+Key = id - Value = 7
+Key = name - Value = Тестовий банк545
+DELETE FROM TABLE work type WHERE id = 132 
+Key = id - Value = 132
+Key = name - Value = 1
+Key = work_group - Value = 2
+Key = price - Value = 0.0
+Key = description - Value = 10
+
+DELETE FROM TABLE work type WHERE id = 182 
+Key = id - Value = 182
+Key = name - DELETE FROM TABLE work type WHERE id = 58 
+Key = id - Value = 58
+Key = name - Value =  Rapid Fire
+Key = work_group - Value = 12
+Key = price - Value = 0.0
+Key = description - Value =  RevoShift
+DELETE FROM TABLE work type WHERE id = 59 
+Key = id - Value = 59
+Key = name - Value =  Rapid Fire
+Key = work_group - Value = 12
+Key = price - Value = 0.0
+Key = description - Value =  RevoShift
+DELETE FROM TABLE work type WHERE id = 142 
+Key = id - Value = 142
+Key = name - Value = "
+Key = work_group - Value = 1
+Key = price - Value = 0.0
+Key = description - Value = 15
+DELETE FROM TABLE work type WHERE id = 154 
+Key = id - Value = 154
+Key = name - Value = "
+Key = work_group - Value = 13
+Key = price - Value = 0.0
+Key = description - Value = 10
+DELETE FROM TABLE work type WHERE id = 211 
+Key = id - Value = 211
+Key = name - Value = "
+Key = work_group - Value = 2
+Key = price - Value = 0.0
+Key = description - Value = 10
+DELETE FROM TABLE work type WHERE id = 221 
+Key = id - Value = 221
+Key = name - Value = "
+Key = work_group - Value = 1
+Key = price - Value = 0.0
+Key = description - Value = 15
+DELETE FROM TABLE work type WHERE id = 233 
+Key = id - Value = 233
+Key = name - Value = "
+Key = work_group - Value = 13
+Key = price - Value = 0.0
+Key = description - Value = 10
+DELETE FROM TABLE work type WHERE id = 182 
+Key = id - Value = 182
+Key = name - Value = 4
+Key = work_group - Value = 5
+Key = price - Value = 0.0
+Key = description - Value = 15
+
+DELETE FROM TABLE work type WHERE id = 103 
+Key = id - Value = 103
+Key = name - Value = 4
+Key = work_group - Value = 5
+Key = price - Value = 0.0
+Key = description - Value = 15
+DELETE FROM TABLE work shop WHERE id = 3 
+Key = id - Value = 3
+Key = client - Value = 2
+Key = date - Value = 2011-03-17 00:00:00
+Key = work_type - Value = 2
+Key = price - Value = 10.0
+Key = description - Value = brake
+DELETE FROM TABLE work shop WHERE id = 6 
+Key = id - Value = 6
+Key = client - Value = 2
+Key = date - Value = 2011-03-17 00:00:00
+Key = work_type - Value = 2
+Key = price - Value = 3333.0
+Key = description - Value = 3333
+DELETE FROM TABLE work shop WHERE id = 7 
+Key = id - Value = 7
+Key = client - Value = 2
+Key = date - Value = 2011-03-17 00:00:00
+Key = work_type - Value = 3
+Key = price - Value = 44.0
+Key = description - Value = 4444
+DELETE FROM TABLE work shop WHERE id = 8 
+Key = id - Value = 8
+Key = client - Value = 2
+Key = date - Value = 2011-03-17 00:00:00
+Key = work_type - Value = 1
+Key = price - Value = 55.0
+Key = description - Value = 5555
+DELETE FROM TABLE work shop WHERE id = 9 
+Key = id - Value = 9
+Key = client - Value = 2
+Key = date - Value = 2011-03-17 01:30:56
+Key = work_type - Value = 1
+Key = price - Value = 66.0
+Key = description - Value = 6666
+DELETE FROM TABLE work shop WHERE id = 10 
+Key = id - Value = 10
+Key = client - Value = 2
+Key = date - Value = 2011-03-19 00:00:00
+Key = work_type - Value = 2
+Key = price - Value = 10.0
+Key = description - Value = 454
+DELETE FROM TABLE work shop WHERE id = 4 
+Key = id - Value = 4
+Key = client - Value = 2
+Key = date - Value = 2011-03-20 00:00:00
+Key = work_type - Value = 3
+Key = price - Value = 111.0
+Key = description - Value = 111
+DELETE FROM TABLE work shop WHERE id = 5 
+Key = id - Value = 5
+Key = client - Value = 2
+Key = date - Value = 2011-03-20 00:00:00
+Key = work_type - Value = 3
+Key = price - Value = 22.0
+Key = description - Value = 2222
+DELETE FROM TABLE work type WHERE id = 103 
+Key = id - Value = 103
+Key = name - 

@@ -24,7 +24,7 @@
 	<a href="/">{{type.id}}</a> 
 	</td>
 	<td>
-	<a href="/{{type.client.id}}">{{type.client}}</a>       
+	<a href="/client/{{type.client.id}}">{{type.client}}</a>       
 	</td>
 	<td>       
 	{{type.date|date}}
@@ -36,6 +36,8 @@
 	{{type.description}}
 	</td>	
 	<td>
+    <a href="/clientdebts/edit/{{ type.id }}">edit</a>
+    <br>	
     <a href="/clientdebts/delete/{{ type.id }}">delete</a>
     </td>
 </tr>

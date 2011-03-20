@@ -21,31 +21,37 @@ urlpatterns = patterns('',
     (r'^manufacturer/search/$', 'catalog.accounting.views.search'), 
     (r'^manufacturer/view/$', 'catalog.accounting.views.manufaturer_list'), 
     (r'^manufacturer/add/$', 'catalog.accounting.views.manufacturer_add'),
+    (r'^manufacturer/edit/(?P<id>\d+)/$', 'catalog.accounting.views.manufacturer_edit'),    
     (r'^manufacturer/delete/(?P<id>\d+)/$', 'catalog.accounting.views.manufacturer_delete'),
 
     # Country operation
     (r'^country/add/$', 'catalog.accounting.views.country_add'),
     (r'^country/view/$', 'catalog.accounting.views.country_list'),
+    (r'^country/edit/(?P<id>\d+)/$', 'catalog.accounting.views.country_edit'),    
     (r'^country/delete/(?P<id>\d+)/$', 'catalog.accounting.views.country_delete'),
     #(r'^country/delete/(?P<id>\d)/$', 'catalog.accounting.views.dealer2_del'),
 
     # Bank operation
     (r'^bank/add/$', 'catalog.accounting.views.bank_add'),
     (r'^bank/view/$', 'catalog.accounting.views.bank_list'),
+    (r'^bank/edit/(?P<id>\d+)/$', 'catalog.accounting.views.bank_edit'),    
     (r'^bank/delete/(?P<id>\d+)/$', 'catalog.accounting.views.bank_del'),
 
     # Bicycle operation
     (r'^bicycle-type/add/$', 'catalog.accounting.views.bicycle_type_add'),
     (r'^bicycle-type/view/$', 'catalog.accounting.views.bicycle_type_list'),
+    (r'^bicycle-type/edit/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_type_edit'),    
     (r'^bicycle-type/delete/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_type_del'),
 
     (r'^bicycle-framesize/add/$', 'catalog.accounting.views.bicycle_framesize_add'),
     (r'^bicycle-framesize/view/$', 'catalog.accounting.views.bicycle_framesize_list'),
+    (r'^bicycle/framesize/edit/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_framesize_edit'),    
     (r'^bicycle/framesize/delete/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_framesize_del'),
     #(r'^bicycle/framesize/delete/(?P<id>\d)/$', 'catalog.accounting.views.bicycle_framesize_del'),
 
     (r'^bicycle/add/$', 'catalog.accounting.views.bicycle_add'),
     (r'^bicycle/view/$', 'catalog.accounting.views.bicycle_list'),
+    (r'^bicycle/edit/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_edit'),    
     (r'^bicycle/delete/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_del'),
     (r'^bicycle/photo/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_photo'),
 
@@ -96,10 +102,15 @@ urlpatterns = patterns('',
     # Catalog operation
     (r'^catalog/add/$', 'catalog.accounting.views.catalog_add'),
     (r'^catalog/view/$', 'catalog.accounting.views.catalog_list'),
+    (r'^catalog/edit/(?P<id>\d+)$', 'catalog.accounting.views.catalog_edit'),
     (r'^catalog/delete/(?P<id>\d+)$', 'catalog.accounting.views.catalog_delete'),
 
     # Client
+    (r'^client/(?P<id>\d+)$', 'catalog.accounting.views.client_data'),
+    (r'^client/id/(?P<author_id>\d+)$', 'catalog.accounting.views.manage_works'),
+    (r'^client/id/test/$', 'catalog.accounting.views.formset_test'),
     (r'^client/add/$', 'catalog.accounting.views.client_add'),
+    (r'^client/edit/(?P<id>\d+)$', 'catalog.accounting.views.client_edit'),
     (r'^client/view/$', 'catalog.accounting.views.client_list'),
     (r'^client/delete/(?P<id>\d+)$', 'catalog.accounting.views.client_delete'),
     (r'^client/result/search/$', 'catalog.accounting.views.client_result'),
@@ -107,30 +118,37 @@ urlpatterns = patterns('',
 
     (r'^clientdebts/add/$', 'catalog.accounting.views.clientdebts_add'),
     (r'^clientdebts/view/$', 'catalog.accounting.views.clientdebts_list'),
+    (r'^clientdebts/edit/(?P<id>\d+)$', 'catalog.accounting.views.clientdebts_edit'),
     (r'^clientdebts/delete/(?P<id>\d+)$', 'catalog.accounting.views.clientdebts_delete'),
 
     (r'^clientcredits/add/$', 'catalog.accounting.views.clientcredits_add'),
     (r'^clientcredits/view/$', 'catalog.accounting.views.clientcredits_list'),
     (r'^clientcredits/delete/(?P<id>\d+)$', 'catalog.accounting.views.clientcredits_delete'),
 
-    # WorkShop operation
+    # WorkShop 
+    #operation by GROUP
     (r'^workgroup/add/$', 'catalog.accounting.views.workgroup_add'),
+    (r'^workgroup/edit/(?P<id>\d+)$', 'catalog.accounting.views.workgroup_edit'),
     (r'^workgroup/view/$', 'catalog.accounting.views.workgroup_list'),
     (r'^workgroup/delete/(?P<id>\d+)$', 'catalog.accounting.views.workgroup_delete'),
 
     (r'^worktype/add/$', 'catalog.accounting.views.worktype_add'),
+    (r'^worktype/edit/(?P<id>\d+)$', 'catalog.accounting.views.worktype_edit'),    
     (r'^worktype/view/$', 'catalog.accounting.views.worktype_list'),
     (r'^worktype/delete/(?P<id>\d+)$', 'catalog.accounting.views.worktype_delete'),    
 
     (r'^workstatus/add/$', 'catalog.accounting.views.workstatus_add'),
     (r'^workstatus/view/$', 'catalog.accounting.views.workstatus_list'),
+    (r'^workstatus/edit/(?P<id>\d+)$', 'catalog.accounting.views.workstatus_edit'),
     (r'^workstatus/delete/(?P<id>\d+)$', 'catalog.accounting.views.workstatus_delete'),
 
     (r'^workticket/add/$', 'catalog.accounting.views.workticket_add'),
     (r'^workticket/view/$', 'catalog.accounting.views.workticket_list'),
     (r'^workticket/delete/(?P<id>\d+)$', 'catalog.accounting.views.workticket_delete'),
 
+    (r'^workshop/add/(?P<id>\d+)/$', 'catalog.accounting.views.workshop_add'),
     (r'^workshop/add/$', 'catalog.accounting.views.workshop_add'),
+    (r'^workshop/edit/(?P<id>\d+)$', 'catalog.accounting.views.workshop_edit'),
     (r'^workshop/view/$', 'catalog.accounting.views.workshop_list'),
     (r'^workshop/delete/(?P<id>\d+)$', 'catalog.accounting.views.workshop_delete'),    
     
