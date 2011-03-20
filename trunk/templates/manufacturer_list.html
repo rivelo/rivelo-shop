@@ -2,7 +2,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <link rel="stylesheet" type="text/css" href="/media/table.css">
-    <h1>Список виробників</h1>
+    <h1>Список виробників <a href="/manufacturer/add/">(Додати)</a></h1>
 
     <table>
 	<tr>
@@ -17,13 +17,13 @@
 {% for type in manufactures %}
 <tr>
 	<td>       
-	{{type.id}}
+	<a href="/manufacturer/edit/{{ type.id }}">{{type.id}}</a>
 	</td>
 	<td>       
 	{{type.name}}
 	</td>
 	<td>       
-	{{type.www}}
+	<a href="{{type.www}}">{{type.www}}</a>
 	</td>
 	<td>       
 	{{type.logo}}
@@ -41,8 +41,8 @@
     <table>
 
 <br><br>
-<a href="/">HOME</a>    
+<a href="/manufacturer/add/">Додати нову компанію</a>
 <br>
-<a href="/manufacturer/add/">Add</a> 
+<a href="/">HOME</a> 
 
 

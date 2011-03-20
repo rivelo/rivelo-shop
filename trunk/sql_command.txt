@@ -3,6 +3,16 @@ mysqldump -u django -pdjangodjango catalog -t --tables accounting_bicycle > d:\d
 mysql --verbose -u django -pdjangodjango catalog < d:\dump_bicycle.txtBicycleBicycle
 
 
-
-
 mysql -h rivelo.mysql.ukraine.com.ua -u rivelo_db -ppiopio
+
+
+LOAD DATA LOCAL INFILE '/importfile.csv' 
+INTO TABLE test_table 
+FIELDS TERMINATED BY ',' 
+LINES TERMINATED BY '\n' 
+(field1, filed2, field3);
+
+
+LOAD DATA LOCAL INFILE 'd:/importfile.csv' into table accounting_worktype character set utf8 fields terminated by ';' lines terminated by '\n' (work_group_id, name, description, price);
+
+

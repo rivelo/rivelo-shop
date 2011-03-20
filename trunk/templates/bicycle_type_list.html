@@ -16,7 +16,7 @@
     </tr>
     {% for type in types %}
     <tr>
-    	<td>{{ type.id }}</td>
+    	<td><a href="/bicycle-type/edit/{{ type.id }}">{{ type.id }}</a></td>
         <td>
         {{ type.type }}
         </td>

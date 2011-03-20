@@ -1,6 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="/media/table.css">
+    
+<a href="/catalog/add/">Додати новий товар</a>    
+    
     <h1>Список Продукції</h1>
 
     <table>
@@ -33,7 +36,7 @@
 	{{type.ids}}
 	</td>
 	<td>       
-	{{type.name}}
+	<a href="/catalog/edit/{{ type.id }}">{{type.name}}</a>
 	</td>
 	<td>       
 	{{type.manufacturer}}

@@ -22,7 +22,9 @@
         </td>
     {% endfor %}
             <td>
-        <a href="/workstatus/delete/{{ group|first }}">delete</a>
+        <a href="/workstatus/edit/{{ type|first }}">edit</a>
+        <br>            
+        <a href="/workstatus/delete/{{ type|first }}">delete</a>
         </td>
     </tr>
     {% endfor %}

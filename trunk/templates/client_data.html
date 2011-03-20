@@ -2,17 +2,24 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
-<h1>Велосипед {{bicycle.brand}} {{bicycle.model}} {{bicycle.year}}</h1>
+<h1>Клієнт: {{client.name}} ({{client.forumname}})</h1>
+
 
 <br>
-
-<img src="/media/{{bicycle.photo}}" alt="{{bicycle.brand}} {{bicycle.model}} {{bicycle.year}}" title="" width = "800" />
+Країна: {{client.country}}
+<br>
+Місто: {{client.city}}
 
 <br>
-<b>Специфікація:</b>
-{{bicycle.description}}
+Телефон: {{client.phone}}
 <br>
-<b>Ціна: {{bicycle.price}} {{bicycle.currency}}</b>
+E-mail: {{client.email}}
+
+<br>
+<b>Опис:</b>
+{{Client.description}}
+<br>
+<b>Сума з накопиченням: {{client.summ}} грн.</b>
 
 
 <br><br>

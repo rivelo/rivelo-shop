@@ -14,18 +14,26 @@
     	<th>Дія</th>
     </tr>
     
-    
-{% for size in framesizes %}
+{% for type in framesizes %}
 <tr>
-{% comment %} <td>{{size|first}}</td> {% endcomment %}
-{% for field in size %}
-<td>    {{field}} </td>
-{% endfor %}
-
-<td><a href="/bicycle/store/report/bysize/{{ size|first }}/">Наявні велосипеди</a></td>
-<td><a href="/bicycle/framesize/delete/{{ size|first }}/">delete</a></td>
+	<td>       
+	<a href="/bicycle/framesize/edit/{{ type.id }}">{{type.id}}</a>
+	</td>
+	<td>       
+	{{type.name}}
+	</td>
+	<td>       
+	{{type.cm}}
+	</td>
+	<td>       
+	{{type.inch}}
+	</td>
+	<td><a href="/bicycle/store/report/bysize/{{ type.id }}/">Наявні велосипеди</a></td>	
+	<td>
+    <a href="/manufacturer/delete/{{ type.id }}">delete</a>
+    </td>
 </tr>
-{% endfor %}
+{% endfor %}    
     
     <table>
 
