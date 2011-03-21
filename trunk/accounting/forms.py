@@ -96,13 +96,13 @@ class BicycleForm(forms.ModelForm):
     year = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))    
     color = forms.CharField(max_length=255)
     #sizes = forms.MultipleChoiceField()
-    sizes = forms.CharField()
+    sizes = forms.CharField(required=False)
     photo = forms.ImageField()
     weight = forms.FloatField(min_value=0)
     price = forms.FloatField()
     #currency = SelectFromModel(objects=Currency.objects.all())
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
-    description = forms.CharField(label='Description', widget=forms.Textarea())    
+    description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)    
 
     class Meta:
         model = Bicycle

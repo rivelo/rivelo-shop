@@ -365,6 +365,30 @@ def bicycle_store_add(request, id=None):
     return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_store.html'})
 
 
+def bicycle_store_edit(request, id):
+    a = Bicycle_Store.objects.get(pk=id)
+    if request.method == 'POST':
+        form = BicycleStoreForm(request.POST, instance=a)
+        if form.is_valid():
+#===============================================================================
+#            model = form.cleaned_data['model']
+#            serial_number = form.cleaned_data['serial_number']
+#            size = form.cleaned_data['size']
+#            price = form.cleaned_data['price']
+#            currency = form.cleaned_data['currency']
+#            description = form.cleaned_data['description']
+#            realization = form.cleaned_data['realization']
+#            count = form.cleaned_data['count']
+#            date = form.cleaned_data['date']            
+#            Bicycle_Store(id = id, model = model, serial_number=serial_number, size = size, price = price, currency = currency, description=description, realization=realization, count=count, date=date).save()
+#===============================================================================
+            form.save()
+            return HttpResponseRedirect('/bicycle-store/view/')
+    else:
+        form = BicycleStoreForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_store.html', 'text': 'Редагувати тип'})
+
+
 def bicycle_store_del(request, id):
     obj = Bicycle_Store.objects.get(id=id)
     del_logging(obj)
@@ -374,7 +398,15 @@ def bicycle_store_del(request, id):
 
 def bicycle_store_list(request):
     list = Bicycle_Store.objects.all()
-    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list.html'})
+    price_summ = 0
+    real_summ = 0
+    bike_summ = 0
+    for item in list:
+        if item.count != 0:
+            price_summ = price_summ + item.price * item.count 
+        real_summ = real_summ + item.realization
+        bike_summ = bike_summ + item.count
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list.html', 'price_summ': price_summ, 'real_summ': real_summ, 'bike_summ': bike_summ})
 
 
 def store_report_bysize(request, id):
@@ -392,7 +424,13 @@ def store_report_bytype(request, id):
     return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list.html', 'text': text})
 
 
-def bicycle_sale_add(request):
+def bicycle_sale_add(request, id=None):
+    bike = None
+    serial_number = ''
+    if id != None:
+        bike = Bicycle_Store.objects.get(id=id)
+        serial_number = bike.serial_number
+        
     if request.method == 'POST':
         form = BicycleSaleForm(request.POST)
         if form.is_valid():
@@ -406,7 +444,7 @@ def bicycle_sale_add(request):
             Bicycle_Sale(model = model, client=client, price = price, currency = currency, date=date, service=service, description=description).save()
             
             update_bicycle = Bicycle_Store.objects.get(id=model.id)
-            update_bicycle.count = 0
+            update_bicycle.count = update_bicycle.count - 1
             update_bicycle.save()
             
             update_client = Client.objects.get(id=client.id)
@@ -415,9 +453,26 @@ def bicycle_sale_add(request):
             
             return HttpResponseRedirect('/bicycle/sale/view/')
     else:
-        form = BicycleSaleForm()
+        if bike != None:
+            form = BicycleSaleForm(initial={'model': bike.id, 'price': bike.model.price, 'currency': bike.model.currency.id})
+        else:
+            form = BicycleSaleForm()
+        #form = BicycleSaleForm()
     #return render_to_response('bicycle_store.html', {'form': form})
-    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_sale.html'})
+    
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_sale.html', 'serial_number': serial_number})
+
+
+def bicycle_sale_edit(request, id):
+    a = Bicycle_Sale.objects.get(pk=id)
+    if request.method == 'POST':
+        form = BicycleSaleForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/bicycle/sale/view/')
+    else:
+        form = BicycleSaleForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_sale.html', 'text': 'Редагувати проданий велосипед'})
 
 
 def bicycle_sale_del(request, id):
@@ -426,13 +481,22 @@ def bicycle_sale_del(request, id):
     update_client = Client.objects.get(id=obj.client.id)
     update_client.summ = update_client.summ - obj.price 
     update_client.save()
+    update_storebike = Bicycle_Store.objects.get(id=obj.model.id)
+    update_storebike.count = update_storebike.count + 1
+    update_storebike.save()
     obj.delete()
     return HttpResponseRedirect('/bicycle/sale/view/')
 
 
 def bicycle_sale_list(request):
     list = Bicycle_Sale.objects.all()
-    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_sale_list.html'})
+    price_summ = 0
+    service_summ = 0
+    for item in list:
+        price_summ = price_summ + item.price
+        if item.service == False:
+            service_summ =  service_summ + 1
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_sale_list.html', 'price_summ':price_summ, 'service_summ':service_summ})
 
 
 # --------------------Dealer company ------------------------

@@ -257,4 +257,39 @@ Key = price - Value = 22.0
 Key = description - Value = 2222
 DELETE FROM TABLE work type WHERE id = 103 
 Key = id - Value = 103
-Key = name - 
+Key = name - DELETE FROM TABLE bicycle_ sale WHERE id = 6 
+Key = id - Value = 6
+Key = model - Value = 7
+Key = client - Value = 2
+Key = price - Value = 4140.0
+Key = currency - Value = 3
+Key = date - Value = 2011-03-22
+Key = service - Value = 0
+Key = description - Value = 
+DELETE FROM TABLE bicycle_ sale WHERE id = 7 
+Key = id - Value = 7
+Key = model - Value = 6
+Key = client - Value = 2
+Key = price - Value = 4140.0
+Key = currency - Value = 3
+Key = date - Value = 2011-03-22
+Key = service - Value = 0
+Key = description - Value = 
+DELETE FROM TABLE bicycle_ sale WHERE id = 7 
+Key = id - Value = 7
+Key = model - Value = 6
+Key = client - Value = 2
+Key = price - Value = 4140.0
+Key = currency - Value = 3
+Key = date - Value = 2011-03-22
+Key = service - Value = 0
+Key = description - Value = 
+DELETE FROM TABLE bicycle_ sale WHERE id = 7 
+Key = id - Value = 7
+Key = model - Value = 6
+Key = client - Value = 2
+Key = price - Value = 4140.0
+Key = currency - Value = 3
+Key = date - Value = 2011-03-22
+Key = service - Value = 0
+Key = description - Value = 
