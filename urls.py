@@ -60,10 +60,13 @@ urlpatterns = patterns('',
     (r'^bicycle-store/add/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_store_add'),
     (r'^bicycle-store/add/$', 'catalog.accounting.views.bicycle_store_add'),
     (r'^bicycle-store/view/$', 'catalog.accounting.views.bicycle_store_list'),
+    (r'^bicycle-store/edit/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_store_edit'),
     (r'^bicycle-store/delete/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_store_del'),
 
+    (r'^bicycle/sale/add/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_sale_add'),
     (r'^bicycle/sale/add/$', 'catalog.accounting.views.bicycle_sale_add'),
     (r'^bicycle/sale/view/$', 'catalog.accounting.views.bicycle_sale_list'),
+    (r'^bicycle/sale/edit/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_sale_edit'),    
     (r'^bicycle/sale/delete/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_sale_del'),
 
     

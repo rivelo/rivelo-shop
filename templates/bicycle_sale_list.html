@@ -20,7 +20,7 @@
 {% for type in bicycles %}
 <tr>
 	<td>       
-	{{type.id}}
+    <a href="/bicycle/sale/edit/{{ type.id }}">{{type.id}}</a>
 	</td>
 	<td>
 	<a href="/bicycle/photo/{{type.model.model.id}}">{{type.model}}</a>       
@@ -35,10 +35,10 @@
 	{{type.currency}}
 	</td>
 	<td>       
-	{{type.date}}
+	{{type.date|date:"D d M Y"}}
 	</td>
 	<td>       
-	{{type.service}}
+	{{type.service|yesno:"Пройдено,Непройдено,Невідомо"}}
 	</td>	
 	</td>
  	<td>
@@ -50,7 +50,17 @@
 </tr>
 {% endfor %}       
     
-   
+    <tr>
+    	<th></th>
+    	<th></th>
+    	<th></th>
+    	<th>{{price_summ}}</th>
+    	<th>грн</th>
+    	<th>Не пройдено ТО:</th>
+		<th>{{service_summ}}</th>
+		<th></th>    	
+    	<th></th>
+    </tr>    
     
     <table>
 

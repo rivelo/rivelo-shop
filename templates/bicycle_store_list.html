@@ -48,21 +48,38 @@
 	{{type.realization}}
 	</td>	
 	<td>       
-	{{type.count}}
+	<a href="/bicycle/sale/add/{{type.id}}">{{type.count}}</a>
 	</td>
 	<td>       
-	{{type.date.year}}
+	{{type.date|date:"D d M Y"}}
 	</td>
 	<td>
+    <a href="/bicycle-store/edit/{{ type.id }}">edit</a>
+    <br>	
     <a href="/bicycle-store/delete/{{ type.id }}">delete</a>
     </td>
 </tr>
 {% endfor %}       
-    
+
+
+<tr>
+    	<th></th>
+    	<th></th>
+    	<th></th>
+    	<th></th>
+    	<th>{{price_summ}}</th>
+    	<th></th>
+    	<th>{{real_summ}}</th>
+		<th>{{bike_summ}}</th> 
+		<th></th>
+    	<th></th>
+    </tr>        
    
 <table>
 
 <br><br>
+<a href="/bicycle/store/report/sum/">Сумарна вартість велосипедів у магазині</a>
+<br>
 <a href="/bicycle/view/">Каталог велосипедів</a>
 <br>
 <a href="/bicycle-store/add/">Додати Велосипед в Магазин (Add Bicycle to shop)</a>        
