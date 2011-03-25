@@ -18,6 +18,7 @@ from django.http import HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 
 from django.conf import settings
+import datetime
 
 
 def search(request):
@@ -648,7 +649,10 @@ def dealer_invoice_del(request, id):
  
 def dealer_invoice_list(request):
     list = DealerInvoice.objects.all()
-    return render_to_response('index.html', {'dealer_invoice': list, 'weblink': 'dealer_invoice_list.html'})
+    exchange = Exchange.objects.filter(date=datetime.date.today)
+    exchange_d = Exchange.objects.get(date=datetime.date.today, currency=2)
+    d = exchange_d
+    return render_to_response('index.html', {'dealer_invoice': list, 'exchange': exchange, 'exchange_d': d, 'weblink': 'dealer_invoice_list.html'})
 
 
 # --------------- Classification ---------
