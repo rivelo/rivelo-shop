@@ -2,15 +2,14 @@
 
 from django.db.models import Q
 from django.shortcuts import render_to_response
-from models import Manufacturer, Country, Type, Currency, Bicycle_Type, Bicycle,  Exchange,  FrameSize, Bicycle_Store, Bicycle_Sale
-from forms import ContactForm, ManufacturerForm, CountryForm, CurencyForm, CategoryForm, BicycleTypeForm, BicycleForm, ExchangeForm, BicycleFrameSizeForm, BicycleStoreForm, BicycleSaleForm 
-
+from models import Manufacturer, Country, Type, Currency, Bicycle_Type, Bicycle,  FrameSize, Bicycle_Store, Bicycle_Sale
+from forms import ContactForm, ManufacturerForm, CountryForm, CurencyForm, CategoryForm, BicycleTypeForm, BicycleForm, BicycleFrameSizeForm, BicycleStoreForm, BicycleSaleForm
 
 from models import Catalog, Client, ClientDebts, ClientCredits 
 from forms import CatalogForm, ClientForm, ClientDebtsForm, ClientCreditsForm
 
-from models import Dealer, DealerManager, DealerManager, DealerPayment, DealerInvoice, Bank
-from forms import DealerManagerForm, DealerForm, DealerPaymentForm, DealerInvoiceForm, BankForm
+from models import Dealer, DealerManager, DealerManager, DealerPayment, DealerInvoice, Bank, Exchange
+from forms import DealerManagerForm, DealerForm, DealerPaymentForm, DealerInvoiceForm, BankForm, ExchangeForm
 
 from models import WorkGroup, WorkType, WorkShop, WorkStatus, WorkTicket, CostType, Costs
 from forms import WorkGroupForm, WorkTypeForm, WorkShopForm, WorkStatusForm, WorkTicketForm, CostTypeForm, CostsForm
@@ -501,6 +500,7 @@ def bicycle_sale_list(request):
 
 # --------------------Dealer company ------------------------
 def dealer_add(request):
+    a = Dealer()
     if request.method == 'POST':
         form = DealerForm(request.POST)
         if form.is_valid():
@@ -514,7 +514,7 @@ def dealer_add(request):
             Dealer(name=name, country=country, city=city, street=street, www=www, description=description, director=director).save()
             return HttpResponseRedirect('/dealer/view/')
     else:
-        form = DealerForm()
+        form = DealerForm(instance = a)
     #return render_to_response('dealer.html', {'form': form})
     return render_to_response('index.html', {'form': form, 'weblink': 'dealer.html'})
 
@@ -533,8 +533,9 @@ def dealer_list(request):
 
 
 def dealer_manager_add(request):
+    a = DealerManager()
     if request.method == 'POST':
-        form = DealerManagerForm(request.POST)
+        form = DealerManagerForm(request.POST, instance = a)
         if form.is_valid():
             name = form.cleaned_data['name']
             email = form.cleaned_data['email']
@@ -544,8 +545,20 @@ def dealer_manager_add(request):
             DealerManager(name=name, email=email, phone=phone, company=company, description=description).save()
             return HttpResponseRedirect('/dealer-manager/view/')
     else:
-        form = DealerManagerForm()
+        form = DealerManagerForm(instance = a)
     #return render_to_response('dealer-manager.html', {'form': form})
+    return render_to_response('index.html', {'form': form, 'weblink': 'dealer-manager.html'})
+
+
+def dealer_manager_edit(request, id):
+    a = DealerManager.objects.get(pk=id)
+    if request.method == 'POST':
+        form = DealerManagerForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/dealer-manager/view/')
+    else:
+        form = DealerManagerForm(instance=a)
     return render_to_response('index.html', {'form': form, 'weblink': 'dealer-manager.html'})
 
  
@@ -559,12 +572,13 @@ def dealer_manager_del(request, id):
 def dealer_manager_list(request):
     list = DealerManager.objects.all()
     #return render_to_response('dealer-manager_list.html', {'dealer_managers': list.values_list()})
-    return render_to_response('index.html', {'dealer_managers': list.values_list(), 'weblink': 'dealer-manager_list.html'})
+    return render_to_response('index.html', {'dealer_managers': list, 'weblink': 'dealer-manager_list.html'})
 
 
 def dealer_payment_add(request):
+    a = DealerPayment()
     if request.method == 'POST':
-        form = DealerPaymentForm(request.POST)
+        form = DealerPaymentForm(request.POST, instance = a)
         if form.is_valid():
             invoice_number = form.cleaned_data['invoice_number']
             date = form.cleaned_data['date']
@@ -575,7 +589,7 @@ def dealer_payment_add(request):
             DealerPayment(invoice_number=invoice_number, date=date, bank=bank, price=price, currency=currency, description=description).save()
             return HttpResponseRedirect('/dealer/payment/view/')
     else:
-        form = DealerPaymentForm()
+        form = DealerPaymentForm(instance = a)
     return render_to_response('index.html', {'form': form, 'weblink': 'dealer_payment.html'})
 
  
@@ -592,8 +606,9 @@ def dealer_payment_list(request):
 
 
 def dealer_invoice_add(request):
+    a = DealerInvoice()
     if request.method == 'POST':
-        form = DealerInvoiceForm(request.POST)
+        form = DealerInvoiceForm(request.POST, instance = a)
         if form.is_valid():
             origin_id = form.cleaned_data['origin_id']
             date = form.cleaned_data['date']
@@ -608,7 +623,19 @@ def dealer_invoice_add(request):
             DealerInvoice(origin_id=origin_id, date=date, company=company, manager=manager, price=price, currency=currency, file=file, received=received, payment=payment, description=description).save()
             return HttpResponseRedirect('/dealer/invoice/view/')
     else:
-        form = DealerInvoiceForm()
+        form = DealerInvoiceForm(instance = a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'dealer_invoice.html'})
+
+
+def dealer_invoice_edit(request, id):
+    a = DealerInvoice.objects.get(pk=id)
+    if request.method == 'POST':
+        form = DealerInvoiceForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/dealer/invoice/view/')
+    else:
+        form = DealerInvoiceForm(instance=a)
     return render_to_response('index.html', {'form': form, 'weblink': 'dealer_invoice.html'})
 
  
@@ -621,7 +648,7 @@ def dealer_invoice_del(request, id):
  
 def dealer_invoice_list(request):
     list = DealerInvoice.objects.all()
-    return render_to_response('index.html', {'dealer_invoice': list.values_list(), 'weblink': 'dealer_invoice_list.html'})
+    return render_to_response('index.html', {'dealer_invoice': list, 'weblink': 'dealer_invoice_list.html'})
 
 
 # --------------- Classification ---------
@@ -685,8 +712,9 @@ def curency_del(request, id):
 
 
 def exchange_add(request):
+    a = Exchange()
     if request.method == 'POST':
-        form = ExchangeForm(request.POST)
+        form = ExchangeForm(request.POST, instance = a)
         if form.is_valid():
             date = form.cleaned_data['date']
             currency = form.cleaned_data['currency']
@@ -694,7 +722,7 @@ def exchange_add(request):
             Exchange(date=date, currency=currency, value=value).save()
             return HttpResponseRedirect('/exchange/view/')
     else:
-        form = ExchangeForm()
+        form = ExchangeForm(instance = a)
     #return render_to_response('exchange.html', {'form': form})
     return render_to_response('index.html', {'form': form, 'weblink': 'exchange.html'})
 
@@ -702,7 +730,7 @@ def exchange_add(request):
 def exchange_list(request):
     list = Exchange.objects.all()
     #return render_to_response('exchange_list.html', {'exchange': list.values()})
-    return render_to_response('index.html', {'exchange': list.values(), 'weblink': 'exchange_list.html'})
+    return render_to_response('index.html', {'exchange': list, 'weblink': 'exchange_list.html'})
 
 
 def exchange_del(request, id):
