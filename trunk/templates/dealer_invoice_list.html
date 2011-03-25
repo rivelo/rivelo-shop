@@ -1,5 +1,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
+{% load template_math %}
+
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
     <h1>Рахунки</h1>
@@ -13,7 +15,8 @@
     	<th>Менеджер</th>
     	<th>Сума</th>
     	<th>Валюта</th>
-		<th>Файл</th>    	
+		<th>Файл</th>    
+		<th>Сума в гривнях</th>	
 		<th>Отримано</th>
 		<th>Оплата</th>
     	<th>Опис</th>
@@ -47,6 +50,9 @@
 	{{type.file}}
 	</td>
 	<td>       
+ 	{{type.price|mul:exchange_d.value}} грн.
+	</td>
+	<td>       
 	{{type.received|yesno:"Отримано,В дрозі,Не забрано"}}
 	</td>
 	<td>       
@@ -61,8 +67,45 @@
 </tr>
 {% endfor %}             
     
+    </table>
+
+<br>    
+
+Курс валют на сьогодні:
+<table border="1">
+	<tr>
+    	<th>ID</th>
+    	<th>Дата</th>
+    	<th>Валюта</th>
+		<th>Курс</th>
+    	<th>Дія</th>
+    </tr>    
+
+	
     
-    <table>
+{% for type in exchange %}
+<tr>
+	<td>       
+    <a href="{{ type.id }}">{{type.id}}</a>
+	</td>
+	<td>       
+	{{type.date|date:"D d M Y"}}
+	</td>
+	<td>       
+	{{type.currency}}
+	</td>
+ 	<td>
+	{{type.value}}
+	</td>
+	<td>
+    <a href="/exchange/delete/{{ type.id }}">delete</a>
+    </td>
+</tr>
+{% endfor %}             
+
+</table>
+
+
 
 <br><br>
 <a href="/">HOME</a>
