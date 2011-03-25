@@ -12,19 +12,38 @@
     	<th>ID</th>
     	<th>ПІБ</th>
     	<th>E-mail</th>
-    	<th>Опис</th>
+    	
     	<th>Телефон</th>
     	<th>Компанія</th>
+    	<th>Опис</th>
     	<th>Дія</th>
-    </tr>    
-{% for manager in dealer_managers %}
+    </tr>
+    
+{% for type in dealer_managers %}
 <tr>
-{% for field in manager %}
-<td>    {{field}} </td>
-{% endfor %}
-<td><a href="/dealer-manager/delete/{{ manager|first }}">delete</a></td>
+	<td>       
+    <a href="/dealer-manager/edit/{{ type.id }}">{{type.id}}</a>
+	</td>
+	<td>
+	{{type.name}}       
+	</td>
+	<td>       
+	{{type.email}}s
+	</td>
+	<td>       
+	{{type.phone}}
+	</td>
+	<td>       
+	{{type.company.name}}
+	</td>
+ 	<td>
+	{{type.description}}
+	</td>
+	<td>
+    <a href="/dealer-manager/delete/{{ type.id }}">delete</a>
+    </td>
 </tr>
-{% endfor %}
+{% endfor %}         
     
     <table>
 

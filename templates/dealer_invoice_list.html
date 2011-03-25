@@ -19,14 +19,48 @@
     	<th>Опис</th>
     	<th>Дія</th>
     </tr>    
-{% for element in dealer_invoice %}
+    
+{% for type in dealer_invoice %}
 <tr>
-{% for field in element %}
-<td>    {{field}} </td>
-{% endfor %}
-<td><a href="/dealer/invoice/delete/{{ element|first }}">delete</a></td>
+	<td>       
+    <a href="/dealer/invoice/edit/{{ type.id }}">{{type.id}}</a>
+	</td>
+	<td>
+	{{type.origin_id}}       
+	</td>
+	<td>       
+	{{type.date|date:"D d M Y"}}
+	</td>
+	<td>       
+	{{type.company.name}}
+	</td>
+	<td>       
+	{{type.manager.name}}
+	</td>
+	<td>       
+	{{type.price}}
+	</td>
+	<td>       
+	{{type.currency}}
+	</td>
+	<td>       
+	{{type.file}}
+	</td>
+	<td>       
+	{{type.received|yesno:"Отримано,В дрозі,Не забрано"}}
+	</td>
+	<td>       
+	{{type.payment}}
+	</td>
+ 	<td>
+	{{type.description}}
+	</td>
+	<td>
+    <a href="/dealer/invoice/delete/{{ type.id }}">delete</a>
+    </td>
 </tr>
-{% endfor %}
+{% endfor %}             
+    
     
     <table>
 

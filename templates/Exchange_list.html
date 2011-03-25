@@ -1,21 +1,32 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html lang="en">
-<head>
-{% include "top.html" %}
-    <title>Currency List</title>
-</head>
-<body>
-    <h1>Exchange list</h1>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-    <table border="1">
+<link rel="stylesheet" type="text/css" href="/media/table.css">
+
+    <h1>Exchange list</h1>
+    
+   <table border="1">
+	<tr>
+    	<th>ID</th>
+    	<th>Дата</th>
+    	<th>Валюта</th>
+		<th>Курс</th>    	
+    	<th>Дія</th>
+    </tr>    
+    
+    
     {% for cur in exchange %}
     <tr>
     	<td>
-            {{ cur.date }}
+            {{ cur.id }}
+        </td>
+    
+    	<td>
+            {{ cur.date|date:"D d M Y" }}
         </td>
 
         <td>
-            {{ cur.currency_id }}
+            {{ cur.currency.name }}
         </td>
     	<td>
             {{ cur.value }}
@@ -33,5 +44,3 @@
 <br>
 <a href="/exchange/add/">Add</a>       
 
-</body>
-</html>
