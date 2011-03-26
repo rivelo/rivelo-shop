@@ -82,6 +82,7 @@ urlpatterns = patterns('',
     
     (r'^dealer/add/$', 'catalog.accounting.views.dealer_add'),
     (r'^dealer/view/$', 'catalog.accounting.views.dealer_list'),
+    (r'^dealer/edit/(?P<id>\d+)/$', 'catalog.accounting.views.dealer_edit'),
     (r'^dealer/delete/(?P<id>\d+)/$', 'catalog.accounting.views.dealer_del'),
 
     (r'^dealer-manager/add/$', 'catalog.accounting.views.dealer_manager_add'),
@@ -97,6 +98,7 @@ urlpatterns = patterns('',
     
     (r'^exchange/add/$', 'catalog.accounting.views.exchange_add'),
     (r'^exchange/view/$', 'catalog.accounting.views.exchange_list'),
+    (r'^exchange/edit/(?P<id>\d+)/$', 'catalog.accounting.views.exchange_edit'),
     (r'^exchange/delete/(?P<id>\d+)/$', 'catalog.accounting.views.exchange_del'),
 
     # Component Type operation

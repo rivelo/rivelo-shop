@@ -62,8 +62,8 @@ class MyModelChoiceField(forms.ModelChoiceField):
 
 
 class ExchangeForm(forms.ModelForm):
-#    date = forms.DateField(initial=datetime.date.today)
-    date = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))    
+    date = forms.DateField(initial=datetime.date.today)
+    #date = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))    
     #currency = SelectFromModel(objects = Currency.objects.all())
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
     value = forms.DecimalField()
@@ -178,7 +178,7 @@ class DealerInvoiceForm(forms.ModelForm):
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
     file = forms.CharField(max_length=255)
     received = forms.BooleanField(initial = False, required=False) 
-    payment = forms.ModelChoiceField(queryset = DealerPayment.objects.all(), required=False)
+    #payment = forms.ModelChoiceField(queryset = DealerPayment.objects.all())
     description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
         
     

@@ -4,7 +4,42 @@
 
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
-    <h1>Рахунки</h1>
+    <h1>Рахунки <a href="/dealer/invoice/add/">(Додати)</a> </h1>
+
+Курс валют на сьогодні:
+<table border="1">
+	<tr>
+    	<th>ID</th>
+    	<th>Дата</th>
+    	<th>Валюта</th>
+		<th>Курс</th>
+    	<th>Дія</th>
+    </tr>    
+    
+{% for type in exchange %}
+<tr>
+	<td>       
+    <a href="/exchange/edit/{{ type.id }}">{{type.id}}</a>
+	</td>
+	<td>       
+	{{type.date|date:"D d M Y"}}
+	</td>
+	<td>       
+	{{type.currency}}
+	</td>
+ 	<td>
+	{{type.value}}
+	</td>
+	<td>
+    <a href="/exchange/delete/{{ type.id }}">delete</a>
+    </td>
+</tr>
+{% endfor %}             
+
+</table>
+
+<br>    
+    
 
     <table border="1">
 	<tr>
@@ -49,11 +84,23 @@
 	<td>       
 	{{type.file}}
 	</td>
+	{% ifequal type.currency.id 2 %}
 	<td>       
  	{{type.price|mul:exchange_d.value}} грн.
 	</td>
+	{% endifequal %}
+	{% ifequal type.currency.id 4 %}
 	<td>       
-	{{type.received|yesno:"Отримано,В дрозі,Не забрано"}}
+ 	{{type.price|mul:exchange_e.value}} грн.
+	</td>
+	{% endifequal %}
+	{% ifequal type.currency.id 3 %}
+	<td>       
+ 	{{type.price}} грн.
+	</td>
+	{% endifequal %}
+	<td>       
+	{{type.received|yesno:"Отримано,В дорозі,Не забрано"}}
 	</td>
 	<td>       
 	{{type.payment}}
@@ -67,43 +114,26 @@
 </tr>
 {% endfor %}             
     
+    	<tr>
+    	<th></th>
+    	<th></th>
+    	<th></th>
+    	<th></th>
+    	<th></th>
+    	<th></th>
+    	<th></th>
+		<th>Сума</th>
+		<th>{{summ}}</th>	
+		<th></th>
+		<th></th>
+    	<th></th>
+    	<th></th>
+    </tr>    
+    
     </table>
 
 <br>    
 
-Курс валют на сьогодні:
-<table border="1">
-	<tr>
-    	<th>ID</th>
-    	<th>Дата</th>
-    	<th>Валюта</th>
-		<th>Курс</th>
-    	<th>Дія</th>
-    </tr>    
-
-	
-    
-{% for type in exchange %}
-<tr>
-	<td>       
-    <a href="{{ type.id }}">{{type.id}}</a>
-	</td>
-	<td>       
-	{{type.date|date:"D d M Y"}}
-	</td>
-	<td>       
-	{{type.currency}}
-	</td>
- 	<td>
-	{{type.value}}
-	</td>
-	<td>
-    <a href="/exchange/delete/{{ type.id }}">delete</a>
-    </td>
-</tr>
-{% endfor %}             
-
-</table>
 
 
 
