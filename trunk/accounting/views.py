@@ -503,7 +503,7 @@ def bicycle_sale_list(request):
 def dealer_add(request):
     a = Dealer()
     if request.method == 'POST':
-        form = DealerForm(request.POST)
+        form = DealerForm(request.POST, instance = a)
         if form.is_valid():
             name = form.cleaned_data['name']
             country = form.cleaned_data['country']
@@ -519,6 +519,18 @@ def dealer_add(request):
     #return render_to_response('dealer.html', {'form': form})
     return render_to_response('index.html', {'form': form, 'weblink': 'dealer.html'})
 
+
+def dealer_edit(request, id):
+    a = Dealer.objects.get(pk=id)
+    if request.method == 'POST':
+        form = DealerForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/dealer/view/')
+    else:
+        form = DealerForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'dealer.html'})
+
  
 def dealer_del(request, id):
     obj = Dealer.objects.get(id=id)
@@ -530,7 +542,7 @@ def dealer_del(request, id):
 def dealer_list(request):
     list = Dealer.objects.all()
     #return render_to_response('dealer_list.html', {'dealers': list.values_list()})
-    return render_to_response('index.html', {'dealers': list.values_list(), 'weblink': 'dealer_list.html'})
+    return render_to_response('index.html', {'dealers': list, 'weblink': 'dealer_list.html'})
 
 
 def dealer_manager_add(request):
@@ -619,9 +631,9 @@ def dealer_invoice_add(request):
             currency = form.cleaned_data['currency']
             file = form.cleaned_data['file']
             received = form.cleaned_data['received']
-            payment = form.cleaned_data['payment']
+            #payment = form.cleaned_data['payment']
             description = form.cleaned_data['description']
-            DealerInvoice(origin_id=origin_id, date=date, company=company, manager=manager, price=price, currency=currency, file=file, received=received, payment=payment, description=description).save()
+            DealerInvoice(origin_id=origin_id, date=date, company=company, manager=manager, price=price, currency=currency, file=file, received=received, description=description).save()
             return HttpResponseRedirect('/dealer/invoice/view/')
     else:
         form = DealerInvoiceForm(instance = a)
@@ -646,13 +658,34 @@ def dealer_invoice_del(request, id):
     obj.delete()
     return HttpResponseRedirect('/dealer/invoice/view/')
  
+from django.http import HttpResponse 
+from django.http import Http404  
  
 def dealer_invoice_list(request):
     list = DealerInvoice.objects.all()
     exchange = Exchange.objects.filter(date=datetime.date.today)
-    exchange_d = Exchange.objects.get(date=datetime.date.today, currency=2)
-    d = exchange_d
-    return render_to_response('index.html', {'dealer_invoice': list, 'exchange': exchange, 'exchange_d': d, 'weblink': 'dealer_invoice_list.html'})
+    try:
+        exchange_d = Exchange.objects.get(date=datetime.date.today, currency=2)
+        exchange_e = Exchange.objects.get(date=datetime.date.today, currency=4)
+        summ = 0
+        for e in DealerInvoice.objects.all():
+            if e.currency.id == 2:
+                summ = summ + (float(e.price) * float(exchange_d.value))
+            if e.currency.id == 4:
+                summ = summ + (float(e.price) * float(exchange_e.value))
+            if e.currency.id == 3:
+                summ = summ + e.price
+                
+        
+    except Exchange.DoesNotExist:
+        now = datetime.date.today()
+        html = "<html><body>Не має курсу валют. Введіть <a href=""/exchange/view/"" >курс валют на сьогодні</a> (%s) та спробуйте знову.</body></html>" % now
+        return HttpResponse(html)
+         
+        exchange_d = 0
+        exchange_e = 0
+    
+    return render_to_response('index.html', {'dealer_invoice': list, 'exchange': exchange, 'exchange_d': exchange_d, 'exchange_e': exchange_e, 'summ': summ, 'weblink': 'dealer_invoice_list.html'})
 
 
 # --------------- Classification ---------
@@ -687,8 +720,9 @@ def category_del(request, id):
 
 # -------------- Currency and operations ----------------------
 def curency_add(request):
+    a = Currency()
     if request.method == 'POST':
-        form = CurencyForm(request.POST)
+        form = CurencyForm(request.POST, instance = a)
         if form.is_valid():
             ids = form.cleaned_data['ids']
             ids_char = form.cleaned_data['ids_char']
@@ -697,7 +731,7 @@ def curency_add(request):
             Currency(ids=ids, ids_char=ids_char, name=name, country_id=country_id).save()
             return HttpResponseRedirect('/curency/view/')
     else:
-        form = CurencyForm()
+        form = CurencyForm(instance = a)
     #return render_to_response('curency.html', {'form': form})
     return render_to_response('index.html', {'form': form, 'weblink': 'curency.html'})
 
@@ -716,7 +750,7 @@ def curency_del(request, id):
 
 
 def exchange_add(request):
-    a = Exchange()
+    a = Exchange(date = datetime.datetime.now())
     if request.method == 'POST':
         form = ExchangeForm(request.POST, instance = a)
         if form.is_valid():
@@ -737,6 +771,18 @@ def exchange_list(request):
     return render_to_response('index.html', {'exchange': list, 'weblink': 'exchange_list.html'})
 
 
+def exchange_edit(request, id):
+    a = Exchange.objects.get(pk=id)
+    if request.method == 'POST':
+        form = ExchangeForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/exchange/view/')
+    else:
+        form = ExchangeForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'exchange.html', 'text': 'Обмін валют (редагування)'})
+
+
 def exchange_del(request, id):
     obj = Exchange.objects.get(id=id)
     del_logging(obj)
@@ -750,7 +796,7 @@ def exchange_del(request, id):
 def manufacturer_add(request):
     a = Manufacturer()
     if request.method == 'POST':
-        form = ManufacturerForm(request.POST, request.FILES)
+        form = ManufacturerForm(request.POST, request.FILES, instance=a)
         if form.is_valid():
             name = form.cleaned_data['name']
             description = form.cleaned_data['description']
