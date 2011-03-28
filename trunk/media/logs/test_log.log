@@ -293,3 +293,97 @@ Key = currency - Value = 3
 Key = date - Value = 2011-03-22
 Key = service - Value = 0
 Key = description - Value = 
+DELETE FROM TABLE type WHERE id = 95 
+Key = id - Value = 95
+Key = name - Value = Насос
+Key = description - Value = Насос
+DELETE FROM TABLE client debts WHERE id = 1 
+Key = id - Value = 1
+Key = client - Value = 2
+Key = date - Value = 2011-02-06 22:54:02
+Key = price - Value = 11.0
+Key = description - Value = Тестовий запис
+DELETE FROM TABLE client credits WHERE id = 1 
+Key = id - Value = 1
+Key = client - Value = 2
+Key = date - Value = 2011-02-13 16:39:51
+Key = price - Value = 10.0
+Key = description - Value = pay
+DELETE FROM TABLE type WHERE id = 100 
+Key = id - Value = 100
+Key = name - Value = test
+Key = description - Value = test
+Key = name_ukr - Value = тест
+Key = description_ukr - Value = тест
+DELETE FROM TABLE bicycle_ sale WHERE id = 6 
+Key = id - Value = 6
+Key = model - Value = 14
+Key = client - Value = 14
+Key = price - Value = 6170.0
+Key = currency - Value = 3
+Key = date - Value = 2011-03-27
+Key = service - Value = 0
+Key = description - Value = знижка 5%
+DELETE FROM TABLE bicycle_ sale WHERE id = 7 
+Key = id - Value = 7
+Key = model - Value = 14
+Key = client - Value = 14
+Key = price - Value = 6170.0
+Key = currency - Value = 3
+Key = date - Value = 2011-03-27
+Key = service - Value = 0
+Key = description - Value = знижка 5%
+DELETE FROM TABLE bicycle_ sale WHERE id = 8 
+Key = id - Value = 8
+Key = model - Value = 14
+Key = client - Value = 14
+Key = price - Value = 6170.0
+Key = currency - Value = 3
+Key = date - Value = 2011-03-27
+Key = service - Value = 0
+Key = description - Value = знижка 5%
+DELETE FROM TABLE bicycle_ sale WHERE id = 9 
+Key = id - Value = 9
+Key = model - Value = 14
+Key = client - Value = 14
+Key = price - Value = 6170.0
+Key = currency - Value = 3
+Key = date - Value = 2011-03-27
+Key = service - Value = 0
+Key = description - Value = знижка 5%
+DELETE FROM TABLE bicycle_ sale WHERE id = 10 
+Key = id - Value = 10
+Key = model - Value = 14
+Key = client - Value = 14
+Key = price - Value = 6495.0
+Key = currency - Value = 3
+Key = date - Value = 2011-03-27
+Key = service - Value = 0
+Key = description - Value = 5% знижка
+DELETE FROM TABLE bicycle_ sale WHERE id = 11 
+Key = id - Value = 11
+Key = model - Value = 14
+Key = client - Value = 14
+Key = price - Value = 6495.0
+Key = currency - Value = 3
+Key = date - Value = 2011-03-27
+Key = service - Value = 0
+Key = description - Value = 5% знижка
+DELETE FROM TABLE bicycle_ sale WHERE id = 14 
+Key = id - Value = 14
+Key = model - Value = 12
+Key = client - Value = 2
+Key = price - Value = 3280.0
+Key = currency - Value = 3
+Key = date - Value = 2011-03-27
+Key = service - Value = 0
+Key = description - Value = 
+DELETE FROM TABLE bicycle_ sale WHERE id = 15 
+Key = id - Value = 15
+Key = model - Value = 16
+Key = client - Value = 2
+Key = price - Value = 4440.0
+Key = currency - Value = 3
+Key = date - Value = 2011-03-27
+Key = service - Value = 0
+Key = description - Value = 

@@ -4,13 +4,18 @@ from django.db import models
 from django.forms import ModelForm
 from django.contrib import admin
 
+
 # Type = Component category 
 class Type(models.Model):
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=255)
+    name_ukr = models.CharField(max_length=100, blank=True, null=True)
+    description_ukr = models.CharField(max_length=255, blank=True, null=True)
+    
     
     def __unicode__(self):
-        return self.name
+        return u'%s - %s' % (self.name, self.name_ukr) 
+    
 
     class Meta:
         ordering = ["name"]    

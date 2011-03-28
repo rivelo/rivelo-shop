@@ -3,12 +3,12 @@
 
 
 <head>
-    <title>Список робіт</title>
+    <title>Список робіт  </title>
     <link rel="stylesheet" type="text/css" href="/media/table.css">
 </head>
 
 
-    <h1>Список робіт</h1>
+    <h1>Список робіт <a href="/worktype/add/">(Додати)</a></h1>
 	
     <table border="1">
     <tr>
@@ -30,7 +30,7 @@
 	{{type.name}}
 	</td>
 	<td>       
-	{{type.work_group}}
+	<a href="/worktype/view/group/{{ type.work_group.id }}">{{type.work_group}}</a>
 	</td>
 	<td>       
 	{{type.price}}

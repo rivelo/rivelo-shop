@@ -444,7 +444,9 @@ def bicycle_sale_add(request, id=None):
             Bicycle_Sale(model = model, client=client, price = price, currency = currency, date=date, service=service, description=description).save()
             
             update_bicycle = Bicycle_Store.objects.get(id=model.id)
-            update_bicycle.count = update_bicycle.count - 1
+            if update_bicycle.count != 0: 
+                update_bicycle.count = update_bicycle.count - 1 
+            #update_bicycle.count - 1
             update_bicycle.save()
             
             update_client = Client.objects.get(id=client.id)
@@ -457,8 +459,6 @@ def bicycle_sale_add(request, id=None):
             form = BicycleSaleForm(initial={'model': bike.id, 'price': bike.model.price, 'currency': bike.model.currency.id})
         else:
             form = BicycleSaleForm()
-        #form = BicycleSaleForm()
-    #return render_to_response('bicycle_store.html', {'form': form})
     
     return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_sale.html', 'serial_number': serial_number})
 
@@ -615,7 +615,7 @@ def dealer_payment_del(request, id):
  
 def dealer_payment_list(request):
     list = DealerPayment.objects.all()
-    return render_to_response('index.html', {'dealer_payment': list.values_list(), 'weblink': 'dealer_payment_list.html'})
+    return render_to_response('index.html', {'dealer_payment': list, 'weblink': 'dealer_payment_list.html'})
 
 
 def dealer_invoice_add(request):
@@ -693,24 +693,35 @@ def dealer_invoice_list(request):
 def category_list(request):
     list = Type.objects.all()
     #return render_to_response('category_list.html', {'categories': list.values_list()})
-    return render_to_response('index.html', {'categories': list.values_list(), 'weblink': 'category_list.html'})
+    return render_to_response('index.html', {'categories': list, 'weblink': 'category_list.html'})
 
 def category_add(request):
+    a = Type()
     if request.method == 'POST':
-        form = CategoryForm(request.POST)
+        form = CategoryForm(request.POST, instance = a)
         if form.is_valid():
             name = form.cleaned_data['name']
             description = form.cleaned_data['description']
-            Type(name=name, description=description).save()
+            name_ukr = form.cleaned_data['name_ukr']
+            description_ukr = form.cleaned_data['description_ukr']
+
+            Type(name=name, description=description, name_ukr=name_ukr, description_ukr=description_ukr).save()
             return HttpResponseRedirect('/category/view/')
     else:
-        form = CategoryForm()
+        form = CategoryForm(instance = a)
     #return render_to_response('category.html', {'form': form})
     return render_to_response('index.html', {'form': form, 'weblink': 'category.html'})
 
-
-
-
+def category_edit(request, id):
+    a = Type.objects.get(pk=id)
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/category/view/')
+    else:
+        form = CategoryForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'category.html', 'text': 'Обмін валют (редагування)'})
 
 def category_del(request, id):
     obj = Type.objects.get(id=id)
@@ -938,7 +949,7 @@ def client_edit(request, id):
 
 def client_list(request):
     list = Client.objects.all()
-    return render_to_response('index.html', {'clients': list.values_list(), 'weblink': 'client_list.html'})
+    return render_to_response('index.html', {'clients': list, 'weblink': 'client_list.html'})
 
 
 def client_delete(request, id):
@@ -1059,7 +1070,7 @@ def client_result(request):
         res = credit[0] - debts[0]
         
     except TypeError:
-        res = "Такого клієнта не існує"
+        res = "Такого клієнта не існує, або в нього не має заборгованостей"
     
     try:
         client_name = Client.objects.values('name', 'forumname').get(id=user)
@@ -1101,9 +1112,9 @@ def workgroup_edit(request, id):
     return render_to_response('index.html', {'form': form, 'weblink': 'workgroup.html'})
 
 
-def workgroup_list(request):
+def workgroup_list(request, id=None):
     list = WorkGroup.objects.all()
-    return render_to_response('index.html', {'workgroups': list.values_list(), 'weblink': 'workgroup_list.html'})
+    return render_to_response('index.html', {'workgroups': list, 'weblink': 'workgroup_list.html'})
 
 
 def workgroup_delete(request, id):
@@ -1143,6 +1154,28 @@ def worktype_edit(request, id):
 def worktype_list(request):
     list = WorkType.objects.all()
     return render_to_response('index.html', {'worktypes': list, 'weblink': 'worktype_list.html'})
+
+
+def worktype_list(request, id=None):
+    list = None
+    if id != None:
+        list = WorkType.objects.filter(work_group=id)
+    else:
+        list = WorkType.objects.all()
+    
+    return render_to_response('index.html', {'worktypes': list, 'weblink': 'worktype_list.html'})
+
+
+
+def workgroup_list(request, id=None):
+    list = None
+    if id != None:
+        list = WorkType.objects.filter(worktype=id)
+    else:
+        list = WorkGroup.objects.all()
+    
+    return render_to_response('index.html', {'workgroups': list, 'weblink': 'workgroup_list.html'})
+
 
 
 def worktype_delete(request, id):
@@ -1259,7 +1292,10 @@ def workshop_edit(request, id):
 
 def workshop_list(request):
     list = WorkShop.objects.all()
-    return render_to_response('index.html', {'workshop': list, 'weblink': 'workshop_list.html'})
+    sum = 0 
+    for item in list:
+        sum = sum + item.price
+    return render_to_response('index.html', {'workshop': list, 'summ':sum, 'weblink': 'workshop_list.html'})
 
 
 def workshop_delete(request, id):
@@ -1285,7 +1321,7 @@ def costtype_add(request):
 
 def costtype_list(request):
     list = CostType.objects.all()
-    return render_to_response('index.html', {'costtypes': list.values_list(), 'weblink': 'costtype_list.html'})
+    return render_to_response('index.html', {'costtypes': list, 'weblink': 'costtype_list.html'})
 
 
 def costtype_delete(request, id):
@@ -1295,7 +1331,11 @@ def costtype_delete(request, id):
     return HttpResponseRedirect('/cost/type/view/')
 
 
-def cost_add(request):
+def cost_add(request, id = None):
+    cost = None
+    if id != None: 
+        cost = CostType(id=id)
+        
     if request.method == 'POST':
         form = CostsForm(request.POST)
         if form.is_valid():
@@ -1306,13 +1346,37 @@ def cost_add(request):
             Costs(date=date, cost_type=cost_type, price=price, description=description).save()
             return HttpResponseRedirect('/cost/view/')
     else:
-        form = CostsForm()
+        if cost != None:
+            form = CostsForm(initial={'cost_type': cost.id})
+        else:        
+            form = CostsForm()
+    return render_to_response('index.html', {'form': form, 'weblink': 'cost.html'})
+
+
+def cost_edit(request, id):
+    a = Costs.objects.get(pk=id)
+    if request.method == 'POST':
+        form = CostsForm(request.POST, instance=a)
+        if form.is_valid():
+            date = form.cleaned_data['date']
+            cost_type = form.cleaned_data['cost_type']
+            description = form.cleaned_data['description']
+            price = form.cleaned_data['price']
+            Costs(id=id, date=date, cost_type=cost_type, price=price, description=description).save()            
+
+#            form.save()
+            return HttpResponseRedirect('/cost/view/')
+    else:
+        form = CostsForm(instance=a)
     return render_to_response('index.html', {'form': form, 'weblink': 'cost.html'})
 
 
 def cost_list(request):
     list = Costs.objects.all()
-    return render_to_response('index.html', {'costs': list.values_list(), 'weblink': 'cost_list.html'})
+    sum = 0
+    for item in list:
+        sum = sum + item.price
+    return render_to_response('index.html', {'costs': list, 'summ': sum, 'weblink': 'cost_list.html'})
 
 
 def cost_delete(request, id):
@@ -1351,7 +1415,7 @@ def formset_test(request):
         #formset = ArticleFormSet()
         formset = ArticleFormSet(instance=client)
 #    return render_to_response("formset_test.html", {"formset": formset,})
-    return render_to_response("manage_client.html", {"property_formset": formset,})
+    return render_to_response("manage_client.html", {"property_formset": formset, 'client': client})
 
     
 
@@ -1362,18 +1426,18 @@ def manage_works(request, author_id):
     if request.method == "POST":
         property_formset = MyFormSet(request.POST, request.FILES, instance=client)
         if property_formset.is_valid():
-#===============================================================================
-#            for form in property_formset.forms:
-#                client = form.cleaned_data['client']
-#                #date = form.cleaned_data['date']
-#                work_type = form.cleaned_data['work_type']
-#                price = form.cleaned_data['price']
-#                description = form.cleaned_data['description']
-#===============================================================================
-#                WorkShop(id=form.id, client=author_id, work_type=work_type, price=price, description=description).save()            
-            
-            property_formset.save()
-            property_formset = MyFormSet(instance=client)
+            for form in property_formset.forms:
+                client = form.cleaned_data['client']
+                #date = form.cleaned_data['date']
+                work_type = form.cleaned_data['work_type']
+                price = form.cleaned_data['price']
+                description = form.cleaned_data['description']
+                if form.id != None:
+                    WorkShop(id=form.id, client=author_id, work_type=work_type, price=price, description=description).save()            
+                else:
+                    WorkShop(client=author_id, work_type=work_type, price=price, description=description).save()
+#            property_formset.save()
+#            property_formset = MyFormSet(instance=client)
             return HttpResponseRedirect('/workshop/view/')
             # Do something.
     else:

@@ -72,9 +72,12 @@ class ExchangeForm(forms.ModelForm):
     
 
 #Type model
-class CategoryForm(forms.Form):
+class CategoryForm(forms.ModelForm):
     name = forms.CharField(label='Component type')
-    description = forms.CharField(label='Description of type', widget=forms.Textarea(), max_length=255)
+    description = forms.CharField(label='Description of type', widget=forms.Textarea())
+    name_ukr = forms.CharField(label='Назва (українською)')
+    description_ukr = forms.CharField(label='Опис (українською)', widget=forms.Textarea())
+
     
 
 # --------- Bicycle -------------
@@ -276,7 +279,7 @@ class CostsForm(forms.ModelForm):
 # ================== WorkShop ==========================
 class WorkGroupForm(forms.ModelForm):
     name = forms.CharField(max_length=255)
-    description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255) 
+    description = forms.CharField(label='Description', widget=forms.Textarea()) 
 
     class Meta:
         model = WorkGroup
@@ -286,7 +289,7 @@ class WorkTypeForm(forms.ModelForm):
     name = forms.CharField(max_length=255)
     work_group = forms.ModelChoiceField(queryset = WorkGroup.objects.all())
     price = forms.FloatField()
-    description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255)
+    description = forms.CharField(label='Description', widget=forms.Textarea())
     
     class Meta:
         model = WorkType

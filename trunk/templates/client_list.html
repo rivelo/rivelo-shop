@@ -8,7 +8,7 @@
 </head>
 
 
-    <h1>Список Клієнтів (List of Clients)</h1>
+    <h1>Список Клієнтів <a href="/client/add/">(Додати)</a></h1>
 	
     <table border="1">
     <tr>
@@ -24,20 +24,50 @@
     	<th>Опис</th>
     	<th>Дія</th>
     </tr>    
-    {% for client in clients %}
-    <tr>
-	{% for element in client %}
-        <td>
-            {{ element }}
-        </td>
-    {% endfor %}
-        <td>
-        <a href="/client/edit/{{ client|first }}">edit</a>
-        <a href="/client/delete/{{ client|first }}">delete</a>
-        </td>
-    </tr>
-    {% endfor %}
-    </table>
+
+
+{% for type in clients %}
+<tr>
+	<td>       
+	{{type.id}}
+	</td>
+	<td>       
+	<a href="/client/result/search/?id={{ type.id }}">{{type.name}}</a>
+	</td>
+	<td>       
+	{{type.forumname}}
+	</td>
+	<td>       
+	{{type.country}}
+	</td>
+	<td>       
+	{{type.city}}
+	</td>
+	<td>       
+	{{type.email}}
+	</td>
+	<td>       
+	{{type.phone}}
+	</td>
+	<td>       
+	{{type.sale}}
+	</td>
+	<td>       
+	{{type.summ}}
+	</td>
+	<td>       
+	{{type.description}}
+	</td>
+	<td>
+	<a href="/client/edit/{{ type.id }}">edit</a>            
+    <a href="/client/delete/{{ type.id }}">delete</a>
+    </td>
+</tr>
+{% endfor %}           
+    
+    
+
+</table>
 
 
 <br><br>

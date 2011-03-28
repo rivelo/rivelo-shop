@@ -5,7 +5,7 @@
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
 
-    <h1>Рахунки на виконані роботи</h1>
+    <h1>Рахунки на виконані роботи <a href="/workshop/add/">(Додати)</a></h1>
 	
     <table border="1">
     <tr>
@@ -45,15 +45,23 @@
 </tr>
 {% endfor %}   
 
- 
+<tr>
+    	<th></th>
+    	<th></th>
+    	<th></th>
+    	<th>Сума</th>
+    	<th>{{summ}} грн.</th>
+    	<th></th>
+    	<th></th>
+</tr> 
 
-    </table>
+</table>
 
 
 <br><br>
 <a href="/">Головне меню (HOME)</a>
 <br>
-<a href="/workshop/add/">Створити новий вид роботи</a>       
+<a href="/workshop/add/">Створити новий рахунок на виконані роботи</a>       
 
 
 
