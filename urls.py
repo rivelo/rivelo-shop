@@ -17,6 +17,11 @@ urlpatterns = patterns('',
     (r'^contact/thanks/$', direct_to_template, {'template': 'thanks.html'}),
     (r'^contact/$', 'catalog.accounting.views.contact'),
 
+
+    (r'^manyforms/(?P<author_id>\d+)$', 'catalog.accounting.views.manage_works'),
+    (r'^manyforms/test/$', 'catalog.accounting.views.formset_test'),
+
+
     # Manufacturer operation
     (r'^manufacturer/search/$', 'catalog.accounting.views.search'), 
     (r'^manufacturer/view/$', 'catalog.accounting.views.manufaturer_list'), 
@@ -104,7 +109,8 @@ urlpatterns = patterns('',
     # Component Type operation
     (r'^category/add/$', 'catalog.accounting.views.category_add'),
     (r'^category/view/$', 'catalog.accounting.views.category_list'),
-    (r'^category/delete/(?P<id>\d+)$', 'catalog.accounting.views.category_del'),
+    (r'^category/edit/(?P<id>\d+)$', 'catalog.accounting.views.category_edit'),
+    (r'^category/delete/(?P<id>\d+)$', 'catalog.accounting.views.category_del'),    
 
     # Catalog operation
     (r'^catalog/add/$', 'catalog.accounting.views.catalog_add'),
@@ -114,8 +120,6 @@ urlpatterns = patterns('',
 
     # Client
     (r'^client/(?P<id>\d+)$', 'catalog.accounting.views.client_data'),
-    (r'^client/id/(?P<author_id>\d+)$', 'catalog.accounting.views.manage_works'),
-    (r'^client/id/test/$', 'catalog.accounting.views.formset_test'),
     (r'^client/add/$', 'catalog.accounting.views.client_add'),
     (r'^client/edit/(?P<id>\d+)$', 'catalog.accounting.views.client_edit'),
     (r'^client/view/$', 'catalog.accounting.views.client_list'),
@@ -140,7 +144,8 @@ urlpatterns = patterns('',
     (r'^workgroup/delete/(?P<id>\d+)$', 'catalog.accounting.views.workgroup_delete'),
 
     (r'^worktype/add/$', 'catalog.accounting.views.worktype_add'),
-    (r'^worktype/edit/(?P<id>\d+)$', 'catalog.accounting.views.worktype_edit'),    
+    (r'^worktype/edit/(?P<id>\d+)$', 'catalog.accounting.views.worktype_edit'),
+    (r'^worktype/view/group/(?P<id>\d+)$', 'catalog.accounting.views.worktype_list'),        
     (r'^worktype/view/$', 'catalog.accounting.views.worktype_list'),
     (r'^worktype/delete/(?P<id>\d+)$', 'catalog.accounting.views.worktype_delete'),    
 
@@ -164,9 +169,11 @@ urlpatterns = patterns('',
     (r'^cost/type/view/$', 'catalog.accounting.views.costtype_list'),
     (r'^cost/type/delete/(?P<id>\d+)$', 'catalog.accounting.views.costtype_delete'),    
 
+    (r'^cost/add/(?P<id>\d+)$', 'catalog.accounting.views.cost_add'),
     (r'^cost/add/$', 'catalog.accounting.views.cost_add'),
     (r'^cost/view/$', 'catalog.accounting.views.cost_list'),
     (r'^cost/delete/(?P<id>\d+)$', 'catalog.accounting.views.cost_delete'),    
+    (r'^cost/edit/(?P<id>\d+)$', 'catalog.accounting.views.cost_edit'),
 
 
     # Example:

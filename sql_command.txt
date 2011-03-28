@@ -16,3 +16,7 @@ LINES TERMINATED BY '\n'
 LOAD DATA LOCAL INFILE 'd:/importfile.csv' into table accounting_worktype character set utf8 fields terminated by ';' lines terminated by '\n' (work_group_id, name, description, price);
 
 
+mysqldump -u django -pdjangodjango catalog > d:\dump.txt
+
+
+

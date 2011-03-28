@@ -3,12 +3,12 @@
 
 
 <head>
-    <title>Список груп</title>
+    <title>Групи робіт</title>
     <link rel="stylesheet" type="text/css" href="/media/table.css">
 </head>
 
 
-    <h1>Список груп</h1>
+    <h1>Групи робіт</h1>
 	
     <table border="1">
     <tr>
@@ -17,26 +17,39 @@
     	<th>Опис</th>
     	<th>Дія</th>
     </tr>    
-    {% for group in workgroups %}
-    <tr>
-	{% for element in group %}
-        <td>
-            {{ element }}
-        </td>
-    {% endfor %}
-            <td>
-        <a href="/workgroup/edit/{{ group|first }}">edit</a>            
-        <a href="/workgroup/delete/{{ group|first }}">delete</a>
-        </td>
-    </tr>
-    {% endfor %}
-    </table>
+    
+    {% for type in workgroups %}
+<tr>
+	<td>       
+	{{type.id}}
+	</td>
+	<td>    
+	<a href="/worktype/view/group/{{ type.id }}">	{{type.name}} </a>
+	</td>	
+	<td>       
+	{{type.description}}
+	</td>
+	<td>
+	<a href="/workgroup/edit/{{ type.id }}">edit</a>
+    <a href="/workgroup/delete/{{ type.id }}">delete</a>
+    </td>
+</tr>
+{% endfor %}   
+    
 
 
-<br><br>
-<a href="/">Головне меню (HOME)</a>
+
+</table>
+
+
 <br>
-<a href="/workgroup/add/">Створити нову групу</a>       
+<br>
+<a href="/workgroup/add/">Створити нову групу</a>
+<br>
+<a href="/workgroup/view/">Групи робіт</a>
+<br>
+<a href="/">Головне меню (HOME)</a>
+       
 
 
 

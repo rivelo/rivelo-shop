@@ -1,14 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" type="text/css" href="/media/table.css">
 
-
-<head>
-    <title>Затрати</title>
-    <link rel="stylesheet" type="text/css" href="/media/table.css">
-</head>
-
-
-    <h1>Затрати</h1>
+    <h1>Затрати <a href="/cost/add/">(Додати)</a> </h1>
 	
     <table border="1">
     <tr>
@@ -19,26 +13,49 @@
     	<th>Опис</th>
     	<th>Дія</th>
     </tr>    
-    {% for type in costs %}
+
+
+{% for type in costs %}
+<tr>
+	<td>       
+	<a href="/cost/edit/{{ type.id }}">{{type.id}}</a>
+	</td>
+	<td>       
+	{{type.date|date}}
+	</td>
+	<td>       
+	{{type.cost_type}}
+	</td>
+	<td>       
+	{{type.price}}
+	</td>
+	<td>       
+	{{type.description}}
+	</td>
+	<td>
+    <a href="/cost/delete/{{ type.id }}">delete</a>
+    </td>
+</tr>
+{% endfor %}
+
     <tr>
-	{% for element in type %}
-        <td>
-            {{ element }}
-        </td>
-    {% endfor %}
-            <td>
-        <a href="/cost/delete/{{ type|first }}">delete</a>
-        </td>
-    </tr>
-    {% endfor %}
-    </table>
+    	<th></th>
+    	<th></th>
+    	<th>Сума</th>
+    	<th>{{summ}} грн.</th>
+    	<th></th>
+    	<th></th>
+    </tr>    
 
 
-<br><br>
-<a href="/">Головне меню (HOME)</a>
+</table>
+
+
 <br>
-<a href="/cost/add/">Створити новий вид роботи</a>       
-
+<br>
+<a href="/cost/add/">Додати затрати</a>       
+<br>
+<a href="/">Головне меню (HOME)</a>
 
 
 
