@@ -40,8 +40,8 @@
     	        <td>Date {{ form.date }}</td>
     	        <td>Work {{ form.work_type }}</td>
     	        <td>Description {{ form.description }}</td>
-    	        <td{% if forloop.first %} class="hidden"{% endif %}>
-    	            <a id="remove-{{ form.prefix }}-row" href="javascript:void(0)" class="delete-row"></a>
+    	        <td>
+    	            <a id="remove-{{ form.prefix }}-row" href="javascript:void(0)" class="delete-row">del</a>
     	        </td>
             </tr>
     	    {% endfor %}
@@ -56,7 +56,12 @@
 </form>        
     </div>
 
-<!-- 
+<!--
+    	        <td{% if forloop.first %} class="hidden"{% endif %}>
+    	            <a id="remove-{{ form.prefix }}-row" href="javascript:void(0)" class="delete-row"></a>
+    	        </td>
+
+ 
     <h1>FORMSET test</h1>
     
 <form method="post" action="">

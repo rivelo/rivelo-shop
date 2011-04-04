@@ -1390,33 +1390,46 @@ def cost_delete(request, id):
 from django.forms.models import inlineformset_factory, modelformset_factory
 from django.forms.models import formset_factory
 
+
 def formset_test(request):
-    #client = WorkShop.objects.get(pk=2)
     client = Client.objects.get(pk=2)
-    ArticleFormSet = inlineformset_factory(Client, WorkShop,  extra=1, form=WorkShopForm, fk_name="client")
+    
+    ArticleFormSet = formset_factory(WorkShopForm, extra=2, can_delete=True)
+    formset = ArticleFormSet(initial=[{'client': u'2', 'price': '1122'},])
+    
     if request.method == 'POST':
-        formset = ArticleFormSet(request.POST, instance=client)
+        #formset = ArticleFormSet(request.POST, instance=client)
+        formset = ArticleFormSet(request.POST)
         if formset.is_valid():
-            formset.save()
-#===============================================================================
-#            for form in formset.forms:
-#                id = form.cleaned_data['id']
-#                clientf = form.cleaned_data['client']
-#                #clientf = client.id
-#                date = form.cleaned_data['date']
-#                work_type = form.cleaned_data['work_type']
-#                price = form.cleaned_data['price']
-#                description = form.cleaned_data['description']
-#                WorkShop(id=id, client=clientf, date=date, work_type=work_type, price=price, description=description).save()            
-#===============================================================================
-             #do something with the formset.cleaned_data
+            #formset.save()
+            for form in formset.forms:
+                form.save()
+
             return HttpResponseRedirect('/workshop/view/')
     else:
-        #formset = ArticleFormSet()
-        formset = ArticleFormSet(instance=client)
-#    return render_to_response("formset_test.html", {"formset": formset,})
-    return render_to_response("manage_client.html", {"property_formset": formset, 'client': client})
+        formset = ArticleFormSet(initial=[{'client': u'2', 'price': '1122'},{'client': u'2', 'price': '1122'},{'client': u'2', 'price': '1122'},])
+        
+    return render_to_response("client_workshop.html", {"property_formset": formset, 'client': client})
+    #return render_to_response("formset_test.html", {"formset": formset, 'client': client})
 
+
+def inline_formset_test(request):
+    #client = WorkShop.objects.get(pk=2)
+    client = Client.objects.get(pk=2)
+    WorkInlineFormSet = inlineformset_factory(Client, WorkShop, extra=1)
+    
+    if request.method == 'POST':
+        #formset = ArticleFormSet(request.POST, instance=client)
+        formset = WorkInlineFormSet(request.POST, instance=client)
+        if formset.is_valid():
+            #formset.save()
+            for form in formset.forms:
+                form.save()
+            return HttpResponseRedirect('/workshop/view/')
+    else:
+        formset = WorkInlineFormSet(instance=client)
+    return render_to_response("manage_client.html", {"property_formset": formset, 'client': client})
+    #return render_to_response("formset_test.html", {"formset": formset, 'client': client})
     
 
 

@@ -387,3 +387,133 @@ Key = currency - Value = 3
 Key = date - Value = 2011-03-27
 Key = service - Value = 0
 Key = description - Value = 
+DELETE FROM TABLE exchange WHERE id = 9 
+Key = id - Value = 9
+Key = date - Value = 2011-03-29 00:00:00
+Key = currency - Value = 2
+Key = value - Value = 8.00
+DELETE FROM TABLE exchange WHERE id = 10 
+Key = id - Value = 10
+Key = date - Value = 2011-03-29 00:00:00
+Key = currency - Value = 2
+Key = value - Value = 11.30
+DELETE FROM TABLE work shop WHERE id = 32 
+Key = id - Value = 32
+Key = client - Value = 2
+Key = date - Value = 2011-04-04 00:38:27
+Key = work_type - Value = 592
+Key = price - Value = 112211.0
+Key = description - Value = 
+DELETE FROM TABLE work shop WHERE id = 22 
+Key = id - Value = 22
+Key = client - Value = 2
+Key = date - Value = 2011-04-03 01:10:57
+Key = work_type - Value = 642
+Key = price - Value = 5.0
+Key = description - Value = 
+DELETE FROM TABLE work shop WHERE id = 23 
+Key = id - Value = 23
+Key = client - Value = 2
+Key = date - Value = 2011-04-03 01:10:58
+Key = work_type - Value = 608
+Key = price - Value = 55.0
+Key = description - Value = 
+DELETE FROM TABLE work shop WHERE id = 24 
+Key = id - Value = 24
+Key = client - Value = 2
+Key = date - Value = 2011-04-03 01:34:06
+Key = work_type - Value = 649
+Key = price - Value = 99.0
+Key = description - Value = 999999
+DELETE FROM TABLE work shop WHERE id = 25 
+Key = id - Value = 25
+Key = client - Value = 2
+Key = date - Value = 2011-04-03 01:34:06
+Key = work_type - Value = 650
+Key = price - Value = 99.0
+Key = description - Value = 9999999
+DELETE FROM TABLE work shop WHERE id = 26 
+Key = id - Value = 26
+Key = client - Value = 2
+Key = date - Value = 2011-04-03 01:37:53
+Key = work_type - Value = 589
+Key = price - Value = 888.0
+Key = description - Value = 8888888
+DELETE FROM TABLE work shop WHERE id = 27 
+Key = id - Value = 27
+Key = client - Value = 2
+Key = date - Value = 2011-04-04 00:17:46
+Key = work_type - Value = 650
+Key = price - Value = 1122.0
+Key = description - Value = 000000
+DELETE FROM TABLE work shop WHERE id = 28 
+Key = id - Value = 28
+Key = client - Value = 2
+Key = date - Value = 2011-04-04 00:17:47
+Key = work_type - Value = 649
+Key = price - Value = 1122.0
+Key = description - Value = 000000
+DELETE FROM TABLE work shop WHERE id = 29 
+Key = id - Value = 29
+Key = client - Value = 2
+Key = date - Value = 2011-04-04 00:17:47
+Key = work_type - Value = 645
+Key = price - Value = 1122.0
+Key = description - Value = 000000
+DELETE FROM TABLE work shop WHERE id = 30 
+Key = id - Value = 30
+Key = client - Value = 2
+Key = date - Value = 2011-04-04 00:38:27
+Key = work_type - Value = 592
+Key = price - Value = 112211.0
+Key = description - Value = 
+DELETE FROM TABLE work shop WHERE id = 31 
+Key = id - Value = 31
+Key = client - Value = 2
+Key = date - Value = 2011-04-04 00:38:27
+Key = work_type - Value = 592
+Key = price - Value = 112211.0
+Key = description - Value = 
+DELETE FROM TABLE work shop WHERE id = 16 
+Key = id - Value = 16
+Key = client - Value = 2
+Key = date - Value = 2011-04-03 00:57:03
+Key = work_type - Value = 590
+Key = price - Value = 5.0
+Key = description - Value = formset
+2222222
+DELETE FROM TABLE work shop WHERE id = 17 
+Key = id - Value = 17
+Key = client - Value = 2
+Key = date - Value = 2011-04-03 00:57:03
+Key = work_type - Value = 589
+Key = price - Value = 11.0
+Key = description - Value = formset
+DELETE FROM TABLE work shop WHERE id = 18 
+Key = id - Value = 18
+Key = client - Value = 2
+Key = date - Value = 2011-04-03 00:59:34
+Key = work_type - Value = 648
+Key = price - Value = 22.0
+Key = description - Value = java
+DELETE FROM TABLE work shop WHERE id = 19 
+Key = id - Value = 19
+Key = client - Value = 2
+Key = date - Value = 2011-04-03 00:59:34
+Key = work_type - Value = 592
+Key = price - Value = 22.0
+Key = description - Value = java
+DELETE FROM TABLE work shop WHERE id = 20 
+Key = id - Value = 20
+Key = client - Value = 2
+Key = date - Value = 2011-04-03 00:59:34
+Key = work_type - Value = 635
+Key = price - Value = 22.0
+Key = description - Value = java
+DELETE FROM TABLE work shop WHERE id = 21 
+Key = id - Value = 21
+Key = client - Value = 2
+Key = date - Value = 2011-04-03 01:10:57
+Key = work_type - Value = 641
+Key = price - Value = 5.0
+Key = description - Value = 

@@ -20,7 +20,7 @@ urlpatterns = patterns('',
 
     (r'^manyforms/(?P<author_id>\d+)$', 'catalog.accounting.views.manage_works'),
     (r'^manyforms/test/$', 'catalog.accounting.views.formset_test'),
-
+    (r'^manyforms/test1/$', 'catalog.accounting.views.inline_formset_test'),
 
     # Manufacturer operation
     (r'^manufacturer/search/$', 'catalog.accounting.views.search'), 

@@ -62,7 +62,7 @@ class MyModelChoiceField(forms.ModelChoiceField):
 
 
 class ExchangeForm(forms.ModelForm):
-    date = forms.DateField(initial=datetime.date.today)
+    date = forms.DateField(initial=datetime.datetime.today)
     #date = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))    
     #currency = SelectFromModel(objects = Currency.objects.all())
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())

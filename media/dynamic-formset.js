@@ -12,7 +12,7 @@
         $(row).removeAttr('id').insertAfter($('.dynamic-form:last')).children('.hidden').removeClass('hidden');
         $(row).children().not(':last').children().each(function() {
     	    updateElementIndex(this, prefix, formCount);
-    	    $(this).val('');
+            //$(this).val('');
         });
         $(row).find('.delete-row').click(function() {
     	    deleteForm(this, prefix);
