@@ -517,3 +517,31 @@ Key = date - Value = 2011-04-03 01:10:57
 Key = work_type - Value = 641
 Key = price - Value = 5.0
 Key = description - Value = 
+DELETE FROM TABLE work shop WHERE id = 16 
+Key = id - Value = 16
+Key = client - Value = 5
+Key = date - Value = 2011-04-07 22:54:04
+Key = work_type - Value = 650
+Key = price - Value = 50.0
+Key = description - Value = 
+DELETE FROM TABLE work shop WHERE id = 17 
+Key = id - Value = 17
+Key = client - Value = 5
+Key = date - Value = 2011-04-07 22:54:04
+Key = work_type - Value = 650
+Key = price - Value = 50.0
+Key = description - Value = 
+DELETE FROM TABLE work ticket WHERE id = 5 
+Key = id - Value = 5
+Key = client - Value = 6
+Key = date - Value = 2011-04-07
+Key = end_date - Value = 2011-03-16
+Key = status - Value = 3
+Key = description - Value = Заміна "лепестка" в шосейному дуал контролі
+DELETE FROM TABLE work ticket WHERE id = 4 
+Key = id - Value = 4
+Key = client - Value = 5
+Key = date - Value = 2011-04-07
+Key = end_date - Value = 2011-03-09
+Key = status - Value = 3
+Key = description - Value = Переспицювати колесо на новий обід Mach1 240 28" 36от.

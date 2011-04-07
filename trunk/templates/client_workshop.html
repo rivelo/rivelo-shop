@@ -31,10 +31,14 @@ function calc()
             // сумма по наименованию = количество * цену
         
             // "вытаскиваем" все, что есть внутри нашей формы с id = 'me_order_form'
-            
+		var formCount = parseInt($('#id_' + 'form-TOTAL_FORMS').val());            
         var meForm
-        for (i = 0; i <=2 ; i++) { 
-        meForm   = document.getElementById('form-'+i+'-price');
+        var suma = 0
+        for (i = 0; i <= formCount-1; i++) { 
+  	    	meForm   = document.getElementById('id_form-' + i + '-price');
+  	    	var val = parseFloat($('#id_' + 'form-'+ i +'-price').val())
+    	    suma = suma + val;
+    	    //suma = val
         }
 
             // устанавливаем начальное нулевое значение ОБЩЕЙ суммы
@@ -50,7 +54,8 @@ function calc()
 var q = parseFloat(document.getElementById('id_form-0-price').value)+parseFloat(document.getElementById('id_form-1-price').value); 
 
 //document.getElementById('summ').innerHTML = allSumm; 
-document.getElementById('summ').innerHTML = q;
+//document.getElementById('summ').innerHTML = q;
+document.getElementById('summ').innerHTML = "Сума " + suma + " грн.";
 
 //summ.value = format(form-0-price + form-1-price); 
  
@@ -75,19 +80,33 @@ document.getElementById('summ').innerHTML = q;
     	    </tr>
         </thead>
         <tbody>
+        
             {% for form in property_formset.forms %}
+            
     	    <tr id="{{ form.prefix }}-row" class="dynamic-form">
-    	    {{formset}}
-    	        <td{% if forloop.first %} class="hidden"{% endif %}>{{ form.operand }}</td>
+            <!--    	    
+            <LEGEND>Робота {{forloop.counter}}</LEGEND>
+      	    {{ form.client }}
+    	    Price {{ form.price }}
+    	        Date {{ form.date }}
+    	        Description {{ form.description }} 
+    	       Work {{ form.work_type }}
+    	      <a id="remove-{{ form.prefix }}-row" href="javascript:void(0)" class="delete-row">del</a>
+    	                    -->
+ 
+    	        <td {% if forloop.first %} class="hidden"{% endif %}>{{ form.operand }}</td>
       	        <td hidden="true">{{ form.client }}</td> 
-    	        <td>Price {{ form.price }}</td>
-    	        <td>Date {{ form.date }}</td>
+    	        <td width="10">Price {{ form.price }}</td>
+    	        <td width="5">Date {{ form.date }}</td>
     	        <td hidden="true">Description {{ form.description }}</td> 
     	        <td>Work {{ form.work_type }}</td>
     	        <td>
     	            <a id="remove-{{ form.prefix }}-row" href="javascript:void(0)" class="delete-row">del</a>
     	        </td>
+    	        
+	    	        
             </tr>
+            
     	    {% endfor %}
             <tr>
     	        <td colspan="4"><a href="javascript:void(0)" class="add-row">add property</a></td>
@@ -100,7 +119,7 @@ document.getElementById('summ').innerHTML = q;
         <input type="button" value="Sum " id="sum" onclick="calc();" />
 </form>        
 
-<h1 id="summ" name="summ">Сума = </h1><h1 id="summ_res" name="summ_res">0</h1>
+<h1 id="summ" name="summ">Сума = </h1>
     </div>
 
 <!--

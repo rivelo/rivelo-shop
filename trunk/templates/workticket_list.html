@@ -23,7 +23,9 @@
 	{{type.id}}
 	</td>
 	<td>       
+	<a href="/workshop/done/client/{{ type.client.id }}/">
 	{{type.client}}
+	</a>
 	</td>
 	<td>       
 	{{type.date|date}}
@@ -31,8 +33,10 @@
 	<td>       
 	{{type.end_date|date}}
 	</td>	
-	<td>       
+	<td>
+	<a href="/workticket/edit/{{ type.id }}/">       
 	{{type.status}}
+	</a>
 	</td>
 	<td>       
 	{{type.description}}
