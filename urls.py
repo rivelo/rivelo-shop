@@ -20,6 +20,7 @@ urlpatterns = patterns('',
 
     (r'^manyforms/(?P<author_id>\d+)$', 'catalog.accounting.views.manage_works'),
     (r'^manyforms/test/$', 'catalog.accounting.views.formset_test'),
+    (r'^workshop/done/client/(?P<id>\d+)/$', 'catalog.accounting.views.formset_test'),
     (r'^manyforms/test1/$', 'catalog.accounting.views.inline_formset_test'),
 
     # Manufacturer operation
@@ -115,6 +116,8 @@ urlpatterns = patterns('',
     # Catalog operation
     (r'^catalog/add/$', 'catalog.accounting.views.catalog_add'),
     (r'^catalog/view/$', 'catalog.accounting.views.catalog_list'),
+    (r'^catalog/manufacture/(?P<id>\d+)/view/$', 'catalog.accounting.views.catalog_manufacture_list'),
+    (r'^catalog/type/(?P<id>\d+)/view/$', 'catalog.accounting.views.catalog_type_list'),    
     (r'^catalog/edit/(?P<id>\d+)$', 'catalog.accounting.views.catalog_edit'),
     (r'^catalog/delete/(?P<id>\d+)$', 'catalog.accounting.views.catalog_delete'),
 
@@ -156,13 +159,14 @@ urlpatterns = patterns('',
 
     (r'^workticket/add/$', 'catalog.accounting.views.workticket_add'),
     (r'^workticket/view/$', 'catalog.accounting.views.workticket_list'),
-    (r'^workticket/delete/(?P<id>\d+)$', 'catalog.accounting.views.workticket_delete'),
+    (r'^workticket/edit/(?P<id>\d+)/$', 'catalog.accounting.views.workticket_edit'),
+    (r'^workticket/delete/(?P<id>\d+)/$', 'catalog.accounting.views.workticket_delete'),
 
     (r'^workshop/add/(?P<id>\d+)/$', 'catalog.accounting.views.workshop_add'),
     (r'^workshop/add/$', 'catalog.accounting.views.workshop_add'),
-    (r'^workshop/edit/(?P<id>\d+)$', 'catalog.accounting.views.workshop_edit'),
+    (r'^workshop/edit/(?P<id>\d+)/$', 'catalog.accounting.views.workshop_edit'),
     (r'^workshop/view/$', 'catalog.accounting.views.workshop_list'),
-    (r'^workshop/delete/(?P<id>\d+)$', 'catalog.accounting.views.workshop_delete'),    
+    (r'^workshop/delete/(?P<id>\d+)/$', 'catalog.accounting.views.workshop_delete'),    
     
     # my cost
     (r'^cost/type/add/$', 'catalog.accounting.views.costtype_add'),

@@ -873,7 +873,8 @@ def catalog_add(request):
             if photo != None:               
                 upload_path = processUploadedImage(photo, 'catalog/') 
             Catalog(ids=ids, name=name, manufacturer=manufacturer, type=type, size=size, weight=weight, year=year, sale=sale, sale_to=sale_to, color=color, description=description, photo=upload_path, country=country, price=price, currency=currency).save()
-            return HttpResponseRedirect('/catalog/view/')
+            #return HttpResponseRedirect('/catalog/view/')
+            return HttpResponseRedirect('/catalog/manufacture/' + str(manufacturer.id) + '/view/')
     else:
         form = CatalogForm()
     #return render_to_response('catalog.html', {'form': form})
@@ -885,8 +886,9 @@ def catalog_edit(request, id):
     if request.method == 'POST':
         form = CatalogForm(request.POST, instance=a)
         if form.is_valid():
+            manufacturer = form.cleaned_data['manufacturer']
             form.save()
-            return HttpResponseRedirect('/catalog/view/')
+            return HttpResponseRedirect('/catalog/manufacture/' + str(manufacturer.id) + '/view/')
     else:
         form = CatalogForm(instance=a)
     return render_to_response('index.html', {'form': form, 'weblink': 'catalog.html'})
@@ -894,6 +896,18 @@ def catalog_edit(request, id):
 
 def catalog_list(request):
     list = Catalog.objects.all()
+    #return render_to_response('catalog_list.html', {'catalog': list.values_list()})
+    return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
+
+
+def catalog_manufacture_list(request, id):
+    list = Catalog.objects.filter(manufacturer=id)
+    #return render_to_response('catalog_list.html', {'catalog': list.values_list()})
+    return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
+
+
+def catalog_type_list(request, id):
+    list = Catalog.objects.filter(type=id)
     #return render_to_response('catalog_list.html', {'catalog': list.values_list()})
     return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
 
@@ -1238,6 +1252,23 @@ def workticket_add(request):
     return render_to_response('index.html', {'form': form, 'weblink': 'workticket.html'})
 
 
+def workticket_edit(request, id):
+    a = WorkTicket.objects.get(pk=id)
+    if request.method == 'POST':
+        form = WorkTicketForm(request.POST, instance=a)
+        if form.is_valid():
+            client = form.cleaned_data['client']
+            date = form.cleaned_data['date']
+            end_date = form.cleaned_data['end_date']
+            status = form.cleaned_data['status']
+            description = form.cleaned_data['description']
+            WorkTicket(id = id, client=client, date=date, end_date=end_date, status=status, description=description).save()
+            return HttpResponseRedirect('/workticket/view/')
+    else:
+        form = WorkTicketForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'workticket.html'})
+
+
 def workticket_list(request):
     list = WorkTicket.objects.all()
     return render_to_response('index.html', {'workticket': list, 'weblink': 'workticket_list.html'})
@@ -1391,11 +1422,11 @@ from django.forms.models import inlineformset_factory, modelformset_factory
 from django.forms.models import formset_factory
 
 
-def formset_test(request):
-    client = Client.objects.get(pk=2)
+def formset_test(request, id):
+    client = Client.objects.get(pk=id)
     
-    ArticleFormSet = formset_factory(WorkShopForm, extra=2, can_delete=True)
-    formset = ArticleFormSet(initial=[{'client': u'2', 'price': '1122'},])
+    ArticleFormSet = formset_factory(WorkShopForm, extra=1, can_delete=True)
+    formset = ArticleFormSet(initial=[{'client': id, 'price': '1122'},])
     
     if request.method == 'POST':
         #formset = ArticleFormSet(request.POST, instance=client)
@@ -1407,9 +1438,10 @@ def formset_test(request):
 
             return HttpResponseRedirect('/workshop/view/')
     else:
-        formset = ArticleFormSet(initial=[{'client': u'2', 'price': '1122'},{'client': u'2', 'price': '1122'},{'client': u'2', 'price': '1122'},])
+        formset = ArticleFormSet(initial=[{'client': id, 'price': '1122'},{'client': id, 'price': '1122'},{'client': id, 'price': '1122'},])
         
-    return render_to_response("client_workshop.html", {"property_formset": formset, 'client': client})
+    #return render_to_response("client_workshop.html", {"property_formset": formset, 'client': client})
+    return render_to_response('index.html', {'property_formset': formset, 'client': client, 'weblink': 'client_workshop.html'})
     #return render_to_response("formset_test.html", {"formset": formset, 'client': client})
 
 
