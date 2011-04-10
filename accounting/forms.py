@@ -181,6 +181,7 @@ class DealerInvoiceForm(forms.ModelForm):
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
     file = forms.CharField(max_length=255)
     received = forms.BooleanField(initial = False, required=False) 
+    payment = forms.BooleanField(initial = False, required=False)
     #payment = forms.ModelChoiceField(queryset = DealerPayment.objects.all())
     description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
         

@@ -545,3 +545,24 @@ Key = date - Value = 2011-04-07
 Key = end_date - Value = 2011-03-09
 Key = status - Value = 3
 Key = description - Value = Переспицювати колесо на новий обід Mach1 240 28" 36от.
+DELETE FROM TABLE work shop WHERE id = 11 
+Key = id - Value = 11
+Key = client - Value = 2
+Key = date - Value = 2011-03-21 00:58:19
+Key = work_type - Value = 591
+Key = price - Value = 10.0
+Key = description - Value = 
+DELETE FROM TABLE dealer manager WHERE id = 7 
+Key = id - Value = 7
+Key = name - Value = Александр Клещёв
+Key = email - Value = sasha@paul-lange-ukraine.com
+Key = description - Value = Виписує рахунки
+Key = phone - Value = 0445371466
+Key = company - Value = 5
+DELETE FROM TABLE dealer manager WHERE id = 6 
+Key = id - Value = 6
+Key = name - Value = Александр Клещёв
+Key = email - Value = sasha@paul-lange-ukraine.com
+Key = description - Value = Виписує рахунки
+Key = phone - Value = 0445371466
+Key = company - Value = 5

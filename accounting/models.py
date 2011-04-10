@@ -199,14 +199,15 @@ class DealerInvoice(models.Model):
     currency = models.ForeignKey(Currency)
     file = models.CharField(max_length=255)
     received = models.BooleanField(default=False, verbose_name="Товар отримано?")
-    payment = models.ForeignKey(DealerPayment, blank = True, null = True)
+    #payment = models.ForeignKey(DealerPayment, blank = True, null = True)
+    payment = models.BooleanField(default=False, verbose_name="Оплачено?")
     description = models.TextField(blank = True, null = True)
             
     def __unicode__(self):
         return self.origin_id + " - " + self.company 
 
     class Meta:
-        ordering = ["company", "date"]    
+        ordering = ["payment", "company", "date"]    
 
 
 #Client database
