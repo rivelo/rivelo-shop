@@ -20,3 +20,15 @@ mysqldump -u django -pdjangodjango catalog > d:\dump.txt
 
 
 
+mysql -h 188.165.174.53 --verbose -u rivelo -pSZEw2QjzyEyo38oyTlAsYu55Lhnv1ZDM rivelo < d:\dump.txt
+
+select u.username, u.user_password, u.user_email, u.user_birthday, u.user_avatar, u.user_from, u.user_icq, u.user_jabber, u.user_website, u.user_interest
+s, p.pf_bike, p.pf_surname_name, p.pf_phone_number  from phpbb_users u LEFT outer join phpbb_profile_fields_data p on u.user_id=p.user_id INTO OUTFILE 'd:/result.txt';
+
+
+mysql> select u.username, u.user_password, u.user_email, u.user_birthday, u.user
+_avatar, u.user_from, u.user_icq, u.user_jabber, u.user_website, u.user_interest
+s, p.pf_bike, p.pf_surname_name, p.pf_phone_number  from phpbb_users u LEFT oute
+r join phpbb_profile_fields_data p on u.user_id=p.user_id INTO OUTFILE 'd:/resul
+t.txt' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n' ;
+
