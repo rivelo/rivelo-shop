@@ -919,6 +919,17 @@ def catalog_delete(request, id):
     return HttpResponseRedirect('/catalog/view/')
 
 
+def catalog_search(request):
+    #query = request.GET.get('q', '')
+    return render_to_response('index.html', {'weblink': 'catalog_search.html'})
+
+def catalog_search_result(request):
+    name = request.GET['name']
+    list = Catalog.objects.filter(name__icontains = name)
+    return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
+     
+
+
 # ------------- Clients -------------
 def client_add(request):
     if request.method == 'POST':
