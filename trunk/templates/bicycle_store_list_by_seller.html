@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="/media/table.css">
+
+    <h1>Список велосипедів у магазині <br>{{text}}</h1>
+
+<table border="1">
+    <tr>
+    	<th>#</th>
+    	<th>ID</th>
+    	<th>Велосипед</th>
+    	<th>Номер рами</th>
+    	<th>Розмір рами</th>
+    <!-- <th>Опис</th> -->
+    	<th>Реалізація</th>
+		<th>Кількість</th> 
+		<th>Дата</th>
+    	<th>Дія</th>
+    </tr>    
+    
+{% for type in bicycles %}
+{% ifequal type.count 0 %}
+<tr>
+{% else %}
+<tr BGCOLOR="#CCCC99">
+{% endifequal %}
+
+	<td>
+	{{forloop.counter}}
+	</td>
+	<td>       
+	<a href="/">{{type.id}}</a> 
+	</td>
+	<td>
+	<a href="/bicycle/photo/{{type.model.id}}">{{type.model}}</a>       
+	</td>
+	<td>       
+	{{type.serial_number}}
+	</td>
+	<td>       
+	{{type.size}}
+	</td>
+<!-- <td>       
+	{{type.description}}
+	</td>
+ -->	
+	<td>
+<!-- 	<img src="/media/{{type.photo}}" alt="" title=""/>  -->       
+	{{type.realization}}
+	</td>	
+	<td>       
+	<a href="/bicycle/sale/add/{{type.id}}">{{type.count}}</a>
+	</td>
+	<td>       
+	{{type.date|date:"D d M Y"}}
+	</td>
+	<td>
+    <a href="/bicycle-store/edit/{{ type.id }}">edit</a>
+    <br>	
+    <a href="/bicycle-store/delete/{{ type.id }}">delete</a>
+    </td>
+</tr>
+{% endfor %}       
+
+
+<tr>
+    	<th></th>
+    	<th></th>
+    	<th></th>
+    	<th></th>
+    	<th>{{price_summ}}</th>
+    	<th></th>
+    	<th>{{real_summ}}</th>
+		<th>{{bike_summ}}</th> 
+		<th></th>
+    	<th></th>
+    </tr>        
+   
+<table>
+
+<br><br>
+<a href="/bicycle/store/report/sum/">Сумарна вартість велосипедів у магазині</a>
+<br>
+<a href="/bicycle/view/">Каталог велосипедів</a>
+<br>
+<a href="/bicycle-store/add/">Додати Велосипед в Магазин (Add Bicycle to shop)</a>        
+

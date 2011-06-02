@@ -6,6 +6,7 @@
 
     <table border="1">
     <tr>
+    	<th>№</th>
     	<th>ID</th>
     	<th>Велосипед</th>
     	<th>Клієнт</th>
@@ -19,6 +20,9 @@
     
 {% for type in bicycles %}
 <tr>
+	<td>
+	{{forloop.counter}}
+	</td>
 	<td>       
     <a href="/bicycle/sale/edit/{{ type.id }}">{{type.id}}</a>
 	</td>

@@ -59,7 +59,12 @@
     </tr>    
     
 {% for type in dealer_invoice %}
+{% if type.payment %}
 <tr>
+{% else %}
+<tr BGCOLOR="#CCCC99">
+{% endif %}
+
 	<td>       
     <a href="/dealer/invoice/edit/{{ type.id }}">{{type.id}}</a>
 	</td>

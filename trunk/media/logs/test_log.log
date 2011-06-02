@@ -566,3 +566,26 @@ Key = email - Value = sasha@paul-lange-ukraine.com
 Key = description - Value = Виписує рахунки
 Key = phone - Value = 0445371466
 Key = company - Value = 5
+DELETE FROM TABLE work ticket WHERE id = 6 
+Key = id - Value = 6
+Key = client - Value = 2
+Key = date - Value = 2011-04-10
+Key = end_date - Value = 2011-04-07
+Key = status - Value = 3
+Key = description - Value = тест
+DELETE FROM TABLE exchange WHERE id = 49 
+Key = id - Value = 49
+Key = date - Value = 2011-06-02 00:00:00
+Key = currency - Value = 4
+Key = value - Value = 11.30
+DELETE FROM TABLE bicycle_ store WHERE id = 13 
+Key = id - Value = 13
+Key = model - Value = 66
+Key = serial_number - Value = WTU280C0546F
+Key = size - Value = 26
+Key = price - Value = 341.0
+Key = currency - Value = 2
+Key = count - Value = 1
+Key = realization - Value = 0
+Key = date - Value = 2011-03-21
+Key = description - Value = 
