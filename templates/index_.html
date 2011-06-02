@@ -1,9 +1,71 @@
-<html><body>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-{% include "top.html" %}
-     
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Rivelo shop</title>
+  <style type="text/css">
+   body {
+    font: 11pt Arial, Helvetica, sans-serif; /* Рубленый шрифт текста */
+    margin: 0; /* Отступы на странице */
+   }
+   h1 {
+    font-size: 36px; /* Размер шрифта */
+    margin: 0; /* Убираем отступы */
+    color: #339900; /* Цвет текста */
+   }
+   h2 {
+    margin-top: 0; /* Убираем отступ сверху */
+   }
+   #header { /* Верхний блок */
+    /* background: #0080c0; /* Цвет фона */ */
+    padding: 20px; /* Поля вокруг текста */
+   }
+   #header1 { /* Верхний блок 1 */
+    /* background: #339900; /* Цвет фона */ */ 
+    padding: 10px; /* Поля вокруг текста */
+   }
+   #sidebar { /* Левая колонка */
+    float: left; /* Обтекание справа */
+    border: 1px solid #333; /* Параметры рамки вокруг */
+    width: 20%; /* Ширина колонки */
+    padding: 5px; /* Поля вокруг текста */
+    margin: 10px 10px 20px 5px; /* Значения отступов */
+   }
+   #content { /* Правая колонка */
+    margin: 10px 5px 20px 25%; /* Значения отступов */
+    padding: 5px; /* Поля вокруг текста */
+    border: 1px solid #333; /* Параметры рамки */
+   }
+   #footer { /* Нижний блок */
+    background: #333; /* Цвет фона */
+    padding: 5px; /* Поля вокруг текста */
+    color: #fff; /* Цвет текста */
+    clear: left; /* Отменяем действие float */
+   }
+  </style>
+ </head>
+ <body>
+<!--  <div id="header"> {% include "top.html" %} </div> --> 
+  <div id="header1"> <h1>{% include "top.html" %} {% include "menu.html" %} </h1> </div>
+  
+  <div id="sidebar">
+          <br> 
+        <h3>Виробники *** (Bike Company):</h3>
+        <a href="/manufacturer/add/">Додати компанію</a>
+        <br> 
+        <a href="/manufacturer/search/">Пошук виробника</a> 
+        <br>        
+        <a href="/manufacturer/view/">Список виробників (Company List)</a>        
 
-       
+        <br> 
+        <h3>Типи запчастин (Type of Bike components list):</h3>
+        <a href="/category/add/">add Category</a>
+        <br>
+        <a href="/category/search/">search Category</a> 
+        <br>        
+        <a href="/category/view/">List</a>        
+
         <br> 
         <h3>Каталог запчастин (Bike components list):</h3>
         <a href="/catalog/add/">Додати продукт</a>
@@ -106,6 +168,14 @@
         <a href="/clientcredits/search/">Пошук клієнтів</a> 
         <br>        
         <a href="/clientcredits/view/">Список кредетів клієнтів</a>
-
-
-</body></html>
+  
+  </div>
+  
+  
+  <div id="content">
+    {% include weblink %}
+  </div>
+  
+  <div id="footer">&copy; Rivelo shop </div>
+ </body>
+</html>

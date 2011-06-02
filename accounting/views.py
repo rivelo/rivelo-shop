@@ -355,7 +355,7 @@ def bicycle_store_add(request, id=None):
             count = form.cleaned_data['count']
             date = form.cleaned_data['date']
             Bicycle_Store(model = model, serial_number=serial_number, size = size, price = price, currency = currency, description=description, realization=realization, count=count, date=date).save()
-            return HttpResponseRedirect('/bicycle-store/view/')
+            return HttpResponseRedirect('/bicycle-store/view/seller/')
     else:
         if bike != None:
             form = BicycleStoreForm(initial={'model': bike.id, 'count': '1'})
@@ -383,7 +383,7 @@ def bicycle_store_edit(request, id):
 #            Bicycle_Store(id = id, model = model, serial_number=serial_number, size = size, price = price, currency = currency, description=description, realization=realization, count=count, date=date).save()
 #===============================================================================
             form.save()
-            return HttpResponseRedirect('/bicycle-store/view/')
+            return HttpResponseRedirect('/bicycle-store/view/seller/')
     else:
         form = BicycleStoreForm(instance=a)
     return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_store.html', 'text': 'Редагувати тип'})
@@ -393,7 +393,7 @@ def bicycle_store_del(request, id):
     obj = Bicycle_Store.objects.get(id=id)
     del_logging(obj)
     obj.delete()
-    return HttpResponseRedirect('/bicycle-store/view/')
+    return HttpResponseRedirect('/bicycle-store/view/seller/')
 
 
 def bicycle_store_list(request):
@@ -407,6 +407,19 @@ def bicycle_store_list(request):
         real_summ = real_summ + item.realization
         bike_summ = bike_summ + item.count
     return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list.html', 'price_summ': price_summ, 'real_summ': real_summ, 'bike_summ': bike_summ})
+
+
+def bicycle_store_list_by_seller(request):
+    list = Bicycle_Store.objects.all()
+    price_summ = 0
+    real_summ = 0
+    bike_summ = 0
+    for item in list:
+        if item.count != 0:
+            price_summ = price_summ + item.price * item.count 
+        real_summ = real_summ + item.realization
+        bike_summ = bike_summ + item.count
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list_by_seller.html', 'price_summ': price_summ, 'real_summ': real_summ, 'bike_summ': bike_summ})
 
 
 def store_report_bysize(request, id):
