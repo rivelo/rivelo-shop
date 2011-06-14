@@ -170,6 +170,15 @@ urlpatterns = patterns('',
     (r'^workshop/edit/(?P<id>\d+)/$', 'catalog.accounting.views.workshop_edit'),
     (r'^workshop/view/$', 'catalog.accounting.views.workshop_list'),
     (r'^workshop/delete/(?P<id>\d+)/$', 'catalog.accounting.views.workshop_delete'),    
+
+
+    (r'^shop/sale/day/add/$', 'catalog.accounting.views.shopdailysales_add'),
+    (r'^shop/sale/day/edit/(?P<id>\d+)/$', 'catalog.accounting.views.shopdailysales_edit'),
+    (r'^shop/sale/view/$', 'catalog.accounting.views.shopdailysales_list'),
+    (r'^shop/sale/day/(?P<id>\d+)/delete/$', 'catalog.accounting.views.shopdailysales_delete'),    
+    (r'^shop/price/company/(?P<id>\d+)/view/$', 'catalog.accounting.views.shop_price'),
+    (r'^shop/price/company/(?P<id>\d+)/print/$', 'catalog.accounting.views.shop_price_print'),
+    
     
     # my cost
     (r'^cost/type/add/$', 'catalog.accounting.views.costtype_add'),

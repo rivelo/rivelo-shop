@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+
+<link rel="stylesheet" type="text/css" href="/media/table.css">
+
+
+    <h1>Денна виручка від продажу товарів <a href="/shop/sale/day/add/">(Додати)</a></h1>
+	
+    <table border="1">
+    <tr>
+    	<th>ID</th>
+    	<th>Дата</th>
+    	<th>Сума (грн.)</th>
+    	<th>Опис</th>
+    	<th>Дія</th>
+    </tr>
+ 
+{% for type in shopsales %}
+<tr>
+	<td>       
+	{{type.id}}
+	</td>
+	<td>       
+	{{type.date|date}}
+	</td>
+	<td>       
+	{{type.price}}
+	</td>
+	<td>       
+	{{type.description}}
+	</td>
+	<td>
+	<a href="/shop/sale/day/edit/{{ type.id }}">edit</a>
+    <a href="/shop/sale/day/{{ type.id }}/delete/" onclick="return confirm('Видалити виручку?')">delete</a>
+    </td>
+</tr>
+{% endfor %}   
+
+<tr>
+    	<th></th>
+    	<th></th>
+    	<th></th>
+    	<th>Сума</th>
+    	<th>{{summ}} грн.</th>
+
+</tr> 
+
+</table>
+
+
+<br><br>
+<a href="/">Головне меню (HOME)</a>
+<br>
+<a href="/workshop/add/">Створити новий рахунок на виконані роботи</a>       
+
+
+
+

@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" type="text/css" href="/media/table.css">
+
+{% if view %}
+    
+<h1>Цінники на продукцію {{company.name}}  ({{catalog.count}})  <a href="/shop/price/company/{{company.id}}/print/">(Версія для друку)</a> </h1>
+
+<br>
+{% for company in company_list %}
+<a href="/shop/price/company/{{company.id}}/view/">{{company.name}}</a>
+{% endfor %}
+<br>
+
+{% endif %}
+
+
+<table BORDER=0 CELLPADDING=4>
+<tr>
+{% for type in catalog %}
+
+
+<td>
+
+
+<table>
+<tr>
+
+	<td>
+<b><FONT COLOR=black FACE="Geneva, Arial" SIZE=2>	Код </FONT></b> 
+	</td>
+	<td>
+	<FONT COLOR=black FACE="Geneva, Arial" SIZE=2>	       
+	{{type.ids}}
+	</FONT>
+	</td>
+</tr>
+
+<tr>
+	<td>       
+<b>	Назва </b>
+	</td>
+	<td width = 175>       
+	<a href="/catalog/edit/{{ type.id }}">{{type.name}}</a>
+	</td>
+</tr>
+	
+<tr>
+	<td>
+<b>	Виробник </b>
+	</td>	
+	<td>       
+	{{type.manufacturer}}
+	</td>
+</tr>
+<!--
+<tr>
+	<td>
+	Вага
+	</td>
+	<td>       
+	{{type.weight}}
+	</td>	
+</tr>
+-->
+
+<tr>
+	<td>
+<b>	Країна виробник </b>
+	</td>
+	<td>
+	{{type.country}}
+	</td>	
+</tr>
+<tr>
+	<td>
+<b>	Ціна </b>
+	</td>
+	<td>       
+<b>	{{type.price}} грн. </b>
+	</td>
+</tr>       
+
+</table>
+
+</td>
+
+
+{% if forloop.counter|divisibleby:"2"  %}
+</tr><tr>
+{% endif %}
+ 
+{% endfor %}   
+
+</table>

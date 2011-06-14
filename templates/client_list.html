@@ -60,7 +60,7 @@
 	</td>
 	<td>
 	<a href="/client/edit/{{ type.id }}">edit</a>            
-    <a href="/client/delete/{{ type.id }}">delete</a>
+    <a href="/client/delete/{{ type.id }}" onclick="return confirm('Видалити клієнта?')">delete</a>
     </td>
 </tr>
 {% endfor %}           

@@ -430,6 +430,19 @@ class WorkTicket(models.Model):
         ordering = ["date", "status"]
 
 
+class ShopDailySales(models.Model):
+    date = models.DateField(auto_now_add=True)
+    price = models.FloatField()
+    description = models.TextField(blank=True, null=True)
+
+    
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ["date", "price"]
+
+
 # Bill table (nakladna)
 class Bill(models.Model):
     #ids = models.CharField("code", unique=True, max_length=50)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django import forms
 from models import Manufacturer, Country, Type, Bicycle_Type, Bicycle, Currency, FrameSize, Bicycle_Store, Catalog, Size, Bicycle_Sale 
-from models import DealerManager, DealerPayment, DealerInvoice, Dealer, Bank
+from models import DealerManager, DealerPayment, DealerInvoice, Dealer, Bank, ShopDailySales
 from models import Client, ClientDebts, CostType, Costs, ClientCredits, WorkGroup, WorkType, WorkShop, WorkTicket, WorkStatus
 
 import datetime
@@ -326,3 +326,14 @@ class WorkTicketForm(forms.ModelForm):
     
     class Meta:
         model = WorkTicket
+
+
+class ShopDailySalesForm(forms.ModelForm):
+    #date = forms.DateTimeField(initial=datetime.date.today)
+    date = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
+    price = forms.FloatField(initial=0)    
+    description = forms.CharField(label='description', widget=forms.Textarea())
+    
+    class Meta:
+        model = ShopDailySales
+
