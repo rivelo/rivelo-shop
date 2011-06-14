@@ -11,8 +11,8 @@ from forms import CatalogForm, ClientForm, ClientDebtsForm, ClientCreditsForm
 from models import Dealer, DealerManager, DealerManager, DealerPayment, DealerInvoice, Bank, Exchange
 from forms import DealerManagerForm, DealerForm, DealerPaymentForm, DealerInvoiceForm, BankForm, ExchangeForm
 
-from models import WorkGroup, WorkType, WorkShop, WorkStatus, WorkTicket, CostType, Costs
-from forms import WorkGroupForm, WorkTypeForm, WorkShopForm, WorkStatusForm, WorkTicketForm, CostTypeForm, CostsForm
+from models import WorkGroup, WorkType, WorkShop, WorkStatus, WorkTicket, CostType, Costs, ShopDailySales
+from forms import WorkGroupForm, WorkTypeForm, WorkShopForm, WorkStatusForm, WorkTicketForm, CostTypeForm, CostsForm, ShopDailySalesForm
   
 from django.http import HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
@@ -936,11 +936,12 @@ def catalog_search(request):
     #query = request.GET.get('q', '')
     return render_to_response('index.html', {'weblink': 'catalog_search.html'})
 
+
 def catalog_search_result(request):
     name = request.GET['name']
     list = Catalog.objects.filter(name__icontains = name)
     return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
-     
+    
 
 
 # ------------- Clients -------------
@@ -1358,6 +1359,116 @@ def workshop_delete(request, id):
     del_logging(obj)
     obj.delete()
     return HttpResponseRedirect('/workshop/view/')
+
+
+#------------- Shop operation --------------
+def shopdailysales_add(request):
+    if request.method == 'POST':
+        form = ShopDailySalesForm(request.POST)
+        if form.is_valid():
+            date = form.cleaned_data['date']
+            price = form.cleaned_data['price']
+            description = form.cleaned_data['description']
+            ShopDailySales(date=date, price=price, description=description).save()
+            return HttpResponseRedirect('/shop/sale/view/')
+    else:        
+        form = ShopDailySalesForm()
+    return render_to_response('index.html', {'form': form, 'weblink': 'shop_daily_sales.html'})
+
+
+def shopdailysales_edit(request, id):
+    a = ShopDailySales.objects.get(pk=id)
+    if request.method == 'POST':
+        form = ShopDailySalesForm(request.POST, instance=a)
+        if form.is_valid():
+            date = form.cleaned_data['date']
+            price = form.cleaned_data['price']
+            description = form.cleaned_data['description']
+            ShopDailySales(id=id, date=date, price=price, description=description).save()
+            return HttpResponseRedirect('/shop/sale/view/')
+    else:
+        form = ShopDailySalesForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'shop_daily_sales.html'})
+
+
+def shopdailysales_list(request):
+    list = ShopDailySales.objects.all()
+    sum = 0 
+    for item in list:
+        sum = sum + item.price
+    return render_to_response('index.html', {'shopsales': list, 'summ':sum, 'weblink': 'shop_sales_list.html'})
+
+
+def shopdailysales_delete(request, id):
+    obj = ShopDailySales.objects.get(id=id)
+    del_logging(obj)
+    obj.delete()
+    return HttpResponseRedirect('/shop/sale/view/')
+
+
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase import ttfonts
+
+
+
+def shop_price(request, id):
+
+    list = Catalog.objects.filter(manufacturer = id)
+    company = Manufacturer.objects.get(id=id)
+    company_list = Manufacturer.objects.all()
+    
+    # Создаём объект HttpResponse с соответствующим PDF заголовком.
+#===============================================================================
+#    response = HttpResponse(mimetype='application/pdf')
+#    response['Content-Disposition'] = 'attachment; filename=price_.pdf'
+# 
+#    MyFontObject = ttfonts.TTFont('Arial', 'arial.ttf')
+#    pdfmetrics.registerFont(MyFontObject)
+# 
+#    canvas1 = canvas.Canvas("form.pdf")
+#    canvas1.setLineWidth(.3)
+#    #canvas1.setFont('Helvetica', 12)
+#    canvas1 .setFont("Arial", 12)
+#    
+# 
+# 
+#    x = 0
+#    y = 750
+# 
+#    for item in list:
+#        x = x + 30
+#        y = y - 30
+#        canvas1.drawString(30, y, item.ids + '   ' + item.name)
+#        canvas1.drawString(30,735,'Виробник')
+#        canvas1.drawString(500,750,"12/12/2011")
+#        canvas1.line(480,747,580,747)
+# 
+#    canvas1.drawString(275,725,'AMOUNT OWED:')
+#    canvas1.drawString(500,725,"$1,000.00")
+#    canvas1.line(378,723,580,723)
+# 
+#    canvas1.drawString(30,703,'RECEIVED BY:')
+#    canvas1.line(120,700,580,700)
+#    canvas1.drawString(120,703,"JOHN DOE")
+# 
+# 
+# 
+#    canvas1.save()
+#===============================================================================
+    #return response
+    
+    #name = request.GET['name']
+
+    return render_to_response('index.html', {'catalog': list, 'company': company, 'company_list': company_list, 'weblink': 'price_list.html', 'view': True})
+
+
+def shop_price_print(request, id):
+    list = Catalog.objects.filter(manufacturer = id)
+    company = Manufacturer.objects.get(id=id)
+    company_list = Manufacturer.objects.all()
+    return render_to_response('price_list.html', {'catalog': list, 'company': company, 'company_list': company_list})
 
 
 #--------------------- MY Costs -------------------------

@@ -114,7 +114,7 @@
 	{{type.description}}
 	</td>
 	<td>
-    <a href="/dealer/invoice/delete/{{ type.id }}">delete</a>
+    <a href="/dealer/invoice/delete/{{ type.id }}" onclick="return confirm('Видалити накладну?')">delete</a>
     </td>
 </tr>
 {% endfor %}             

@@ -589,3 +589,19 @@ Key = count - Value = 1
 Key = realization - Value = 0
 Key = date - Value = 2011-03-21
 Key = description - Value = 
+DELETE FROM TABLE client WHERE id = 50 
+Key = id - Value = 50
+Key = name - Value = test uzver
+Key = forumname - Value = uzver
+Key = country - Value = 1
+Key = city - Value = Рівне
+Key = email - Value = 
+Key = phone - Value = 000000005
+Key = sale - Value = 0
+Key = summ - Value = 0.0
+Key = description - Value = тестовий користувач
+DELETE FROM TABLE shop daily sales WHERE id = 2 
+Key = id - Value = 2
+Key = date - Value = 2011-06-13
+Key = price - Value = 428.0
+Key = description - Value = Болотники келіс
