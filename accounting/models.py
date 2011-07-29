@@ -207,7 +207,7 @@ class DealerInvoice(models.Model):
         return self.origin_id + " - " + self.company 
 
     class Meta:
-        ordering = ["payment", "company", "date"]    
+        ordering = ["payment", "company", "manager", "date"]    
 
 
 #Client database
