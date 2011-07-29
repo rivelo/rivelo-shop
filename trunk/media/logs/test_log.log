@@ -605,3 +605,15 @@ Key = id - Value = 2
 Key = date - Value = 2011-06-13
 Key = price - Value = 428.0
 Key = description - Value = Болотники келіс
+DELETE FROM TABLE dealer invoice WHERE id = 66 
+Key = id - Value = 66
+Key = origin_id - Value = 2646
+Key = date - Value = 2011-07-01
+Key = company - Value = 1
+Key = manager - Value = 2
+Key = price - Value = 1161.19
+Key = currency - Value = 2
+Key = file - Value = № 2646 от 29 июня 2011 г. Alligator Панчук.xls
+Key = received - Value = 0
+Key = payment - Value = 0
+Key = description - Value = Предзаказ алігатор

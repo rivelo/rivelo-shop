@@ -681,13 +681,20 @@ def dealer_invoice_list(request):
         exchange_d = Exchange.objects.get(date=datetime.date.today, currency=2)
         exchange_e = Exchange.objects.get(date=datetime.date.today, currency=4)
         summ = 0
+        summ_debt = 0
         for e in DealerInvoice.objects.all():
             if e.currency.id == 2:
                 summ = summ + (float(e.price) * float(exchange_d.value))
+                if e.payment != True:
+                    summ_debt = summ_debt + (float(e.price) * float(exchange_d.value))
             if e.currency.id == 4:
                 summ = summ + (float(e.price) * float(exchange_e.value))
+                if e.payment != True:
+                    summ_debt = summ_debt + (float(e.price) * float(exchange_e.value))
             if e.currency.id == 3:
                 summ = summ + e.price
+                if e.payment != True:
+                    summ_debt = summ_debt + e.price
                 
         
     except Exchange.DoesNotExist:
@@ -698,7 +705,7 @@ def dealer_invoice_list(request):
         exchange_d = 0
         exchange_e = 0
     
-    return render_to_response('index.html', {'dealer_invoice': list, 'exchange': exchange, 'exchange_d': exchange_d, 'exchange_e': exchange_e, 'summ': summ, 'weblink': 'dealer_invoice_list.html'})
+    return render_to_response('index.html', {'dealer_invoice': list, 'exchange': exchange, 'exchange_d': exchange_d, 'exchange_e': exchange_e, 'summ': summ, 'summ_debt': summ_debt, 'weblink': 'dealer_invoice_list.html'})
 
 
 # --------------- Classification ---------
@@ -887,7 +894,7 @@ def catalog_add(request):
                 upload_path = processUploadedImage(photo, 'catalog/') 
             Catalog(ids=ids, name=name, manufacturer=manufacturer, type=type, size=size, weight=weight, year=year, sale=sale, sale_to=sale_to, color=color, description=description, photo=upload_path, country=country, price=price, currency=currency).save()
             #return HttpResponseRedirect('/catalog/view/')
-            return HttpResponseRedirect('/catalog/manufacture/' + str(manufacturer.id) + '/view/')
+            return HttpResponseRedirect('/catalog/manufacture/' + str(manufacturer.id) + '/view/5')
     else:
         form = CatalogForm()
     #return render_to_response('catalog.html', {'form': form})
@@ -919,6 +926,12 @@ def catalog_manufacture_list(request, id):
     return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
 
 
+def catalog_part_list(request, id, num=5):
+    list = Catalog.objects.filter(manufacturer=id)[:num]
+    #return render_to_response('catalog_list.html', {'catalog': list.values_list()})
+    return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
+
+
 def catalog_type_list(request, id):
     list = Catalog.objects.filter(type=id)
     #return render_to_response('catalog_list.html', {'catalog': list.values_list()})
@@ -929,7 +942,7 @@ def catalog_delete(request, id):
     obj = Catalog.objects.get(id=id)
     del_logging(obj)
     obj.delete()
-    return HttpResponseRedirect('/catalog/view/')
+    return HttpResponseRedirect('/catalog/search/')
 
 
 def catalog_search(request):
@@ -1392,7 +1405,8 @@ def shopdailysales_edit(request, id):
 
 
 def shopdailysales_list(request):
-    list = ShopDailySales.objects.all()
+    #list = ShopDailySales.objects.all()
+    list = ShopDailySales.objects.filter(date__year=2011, date__month=07)
     sum = 0 
     for item in list:
         sum = sum + item.price

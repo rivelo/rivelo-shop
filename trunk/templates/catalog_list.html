@@ -78,7 +78,7 @@
 	{{type.description}}
 	</td>
 	<td>
-    <a href="/catalog/delete/{{ type.id }}">delete</a>
+    <a href="/catalog/delete/{{ type.id }}" onclick="return confirm('Видалити запис?')">delete</a>
     </td>
 </tr>
 {% endfor %}   

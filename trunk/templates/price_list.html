@@ -15,7 +15,7 @@
 {% endif %}
 
 
-<table BORDER=0 CELLPADDING=4>
+<table BORDER=0 CELLPADDING=4> 
 <tr>
 {% for type in catalog %}
 
@@ -89,7 +89,12 @@
 {% if forloop.counter|divisibleby:"2"  %}
 </tr><tr>
 {% endif %}
+
+{% if forloop.counter|divisibleby:"14"  %}
+</table>
+<br style="page-break-after: always">
+<table BORDER=0 CELLPADDING=4> 
+{% endif %}
  
 {% endfor %}   
 
-</table>
