@@ -1054,7 +1054,8 @@ def clientdebts_edit(request, id):
 
 
 def clientdebts_list(request):
-    list = ClientDebts.objects.select_related().all()
+    #list = ClientDebts.objects.select_related().all()
+    list = ClientDebts.objects.all()
     return render_to_response('index.html', {'clients': list, 'weblink': 'clientdebts_list.html'})
 
 
@@ -1403,10 +1404,11 @@ def shopdailysales_edit(request, id):
         form = ShopDailySalesForm(instance=a)
     return render_to_response('index.html', {'form': form, 'weblink': 'shop_daily_sales.html'})
 
+now = datetime.datetime.now()
 
-def shopdailysales_list(request):
+def shopdailysales_list(request, month=now.month):
     #list = ShopDailySales.objects.all()
-    list = ShopDailySales.objects.filter(date__year=2011, date__month=07)
+    list = ShopDailySales.objects.filter(date__year=2011, date__month=month)
     sum = 0 
     for item in list:
         sum = sum + item.price

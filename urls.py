@@ -175,6 +175,7 @@ urlpatterns = patterns('',
 
     (r'^shop/sale/day/add/$', 'catalog.accounting.views.shopdailysales_add'),
     (r'^shop/sale/day/edit/(?P<id>\d+)/$', 'catalog.accounting.views.shopdailysales_edit'),
+    (r'^shop/sale/view/month/(\d+)/$', 'catalog.accounting.views.shopdailysales_list'),
     (r'^shop/sale/view/$', 'catalog.accounting.views.shopdailysales_list'),
     (r'^shop/sale/day/(?P<id>\d+)/delete/$', 'catalog.accounting.views.shopdailysales_delete'),    
     (r'^shop/price/company/(?P<id>\d+)/view/$', 'catalog.accounting.views.shop_price'),
