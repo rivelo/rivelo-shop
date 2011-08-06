@@ -617,3 +617,38 @@ Key = file - Value = № 2646 от 29 июня 2011 г. Alligator Панчук.xls
 Key = received - Value = 0
 Key = payment - Value = 0
 Key = description - Value = Предзаказ алігатор
+DELETE FROM TABLE shop daily sales WHERE id = 33 
+Key = id - Value = 33
+Key = date - Value = 2011-08-01
+Key = price - Value = 2099.0
+Key = description - Value = рюкзак-200
+очки-195
+фара-130
+DELETE FROM TABLE shop daily sales WHERE id = 32 
+Key = id - Value = 32
+Key = date - Value = 2011-08-01
+Key = price - Value = 2099.0
+Key = description - Value = рюкзак-200
+рожки-175
+болотник-180
+
+DELETE FROM TABLE shop daily sales WHERE id = 34 
+Key = id - Value = 34
+Key = date - Value = 2011-08-01
+Key = price - Value = 2099.0
+Key = description - Value = рюкзак-200
+фара-130
+болотник-180
+DELETE FROM TABLE shop daily sales WHERE id = 35 
+Key = id - Value = 35
+Key = date - Value = 2011-08-01
+Key = price - Value = 2099.0
+Key = description - Value = рюкзак-200
+рожки-175
+болотник-180
+очки-195
+DELETE FROM TABLE shop daily sales WHERE id = 38 
+Key = id - Value = 38
+Key = date - Value = 2011-08-06
+Key = price - Value = 1000.0
+Key = description - Value = останній день місяця
