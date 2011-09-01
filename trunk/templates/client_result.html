@@ -1,11 +1,67 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-    <h1>Виписка по клієнту: {{client_name.name}} ({{client_name.forumname}})</h1>
+    <h1>Виписка по клієнту: <a href=/client/edit/{{client_name.id}}> {{client_name.name}} ({{client_name.forumname}}) </a></h1>
 	<br>
 	 <h2 style="color:red;"> Cума:  {{clients}} грн.<h2>
-	
 	<br>
+	
+	<table border=1>
+	<tr><th>Дата</th>
+	<th>Опис</th>
+	<th>Сума (грн)</th>
+	</tr>
+	
+	<tr BGCOLOR="#29AE48">
+	<td>
+	Проплати клієнта
+	</td>
+	<td>
+	</td>
+	<td>
+	</td>
+	</tr>
+	
+	
+	{% for credit in credit_list %}
+	<tr>
+	<td>
+	{{credit.date|date}}
+	</td>
+	<td>
+	{{credit.description}}
+	</td>
+	<td>
+	{{credit.price}}
+	</td>
+	{% endfor %}
+	</tr>
+
+	<tr BGCOLOR="#F11111">
+	<td>
+	Борги
+	</td>
+	<td>
+	</td>
+	<td>
+	</td>
+	</tr>
+
+	{% for debt in debt_list %}
+	<tr>
+	<td>
+	{{debt.date|date}}
+	</td>
+	<td>
+	{{debt.description}}
+	</td>
+	<td>
+	{{debt.price}}
+	</td>
+	{% endfor %}
+	</tr>
+	
+	</table>
 
 	<a href=/client/result/> Повторний пошук </a> 
 

@@ -60,7 +60,11 @@
     
 {% for type in dealer_invoice %}
 {% if type.payment %}
-<tr>
+	{% if type.received %}
+	<tr>
+	{% else %}
+	<tr BGCOLOR="#B9B9B6">
+	{% endif %}
 {% else %}
 <tr BGCOLOR="#CCCC99">
 {% endif %}
@@ -68,9 +72,15 @@
 	<td>       
     <a href="/dealer/invoice/edit/{{ type.id }}">{{type.id}}</a>
 	</td>
+	{% if type.received %}
+	
 	<td>
+	{% else %}
+	<td BGCOLOR="#B9B9B6">
+	{% endif %}
 	{{type.origin_id}}       
 	</td>
+	
 	<td>       
 	{{type.date|date:"D d M Y"}}
 	</td>
