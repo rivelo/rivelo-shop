@@ -20,6 +20,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 import datetime
 
+now = datetime.datetime.now()
 
 def search(request):
     query = request.GET.get('q', '')
@@ -659,7 +660,10 @@ def dealer_invoice_edit(request, id):
         form = DealerInvoiceForm(request.POST, instance=a)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect('/dealer/invoice/view/')
+            mmm = a.date.month
+            now = datetime.datetime.now()
+            m = now.month
+            return HttpResponseRedirect('/dealer/invoice/month/'+str(mmm)+'/view/')
     else:
         form = DealerInvoiceForm(instance=a)
     return render_to_response('index.html', {'form': form, 'weblink': 'dealer_invoice.html'})
@@ -706,6 +710,44 @@ def dealer_invoice_list(request):
         exchange_e = 0
     
     return render_to_response('index.html', {'dealer_invoice': list, 'exchange': exchange, 'exchange_d': exchange_d, 'exchange_e': exchange_e, 'summ': summ, 'summ_debt': summ_debt, 'weblink': 'dealer_invoice_list.html'})
+
+
+def dealer_invoice_list_month(request, month):
+    if month == False:
+        now = datetime.datetime.now()
+        month=now.month
+    list = DealerInvoice.objects.filter(date__year=2011, date__month=month)
+    exchange = Exchange.objects.filter(date=datetime.date.today)
+    try:
+        exchange_d = Exchange.objects.get(date=datetime.date.today, currency=2)
+        exchange_e = Exchange.objects.get(date=datetime.date.today, currency=4)
+        summ = 0
+        summ_debt = 0
+        for e in DealerInvoice.objects.filter(date__year=2011, date__month=month):
+            if e.currency.id == 2:
+                summ = summ + (float(e.price) * float(exchange_d.value))
+                if e.payment != True:
+                    summ_debt = summ_debt + (float(e.price) * float(exchange_d.value))
+            if e.currency.id == 4:
+                summ = summ + (float(e.price) * float(exchange_e.value))
+                if e.payment != True:
+                    summ_debt = summ_debt + (float(e.price) * float(exchange_e.value))
+            if e.currency.id == 3:
+                summ = summ + e.price
+                if e.payment != True:
+                    summ_debt = summ_debt + e.price
+                
+        
+    except Exchange.DoesNotExist:
+        now = datetime.date.today()
+        html = "<html><body>Не має курсу валют. Введіть <a href=""/exchange/view/"" >курс валют на сьогодні</a> (%s) та спробуйте знову.</body></html>" % now
+        return HttpResponse(html)
+         
+        exchange_d = 0
+        exchange_e = 0
+    
+    return render_to_response('index.html', {'dealer_invoice': list, 'exchange': exchange, 'exchange_d': exchange_d, 'exchange_e': exchange_e, 'summ': summ, 'summ_debt': summ_debt, 'weblink': 'dealer_invoice_list.html'})
+
 
 
 # --------------- Classification ---------
@@ -1126,17 +1168,18 @@ def client_result(request):
         res = "Такого клієнта не існує, або в нього не має заборгованостей"
     
     try:
-        client_name = Client.objects.values('name', 'forumname').get(id=user)
+        client_name = Client.objects.values('name', 'forumname', 'id').get(id=user)
     except ObjectDoesNotExist:
         client_name = ""
     
-    #list_credit = ClientCredits.objects.values('client', 'price').filter(client="2")
+    credit_list = ClientCredits.objects.filter(client=user)
+    debt_list = ClientDebts.objects.filter(client=user)
     #list_debt = ClientDebts.objects.filter(client='2').values("client", "price").select_related('client')
     #list_debt = ClientDebts.objects.filter(client='2').select_related('client')
     #list_debt = ClientDebts.objects.filter(client='2').annotate(Sum("price"))
     #return render_to_response('index.html', {'clients': list_credit.values_list(), 'weblink': 'client_result.html'})
     #return render_to_response('index.html', {'clients': list_debt.values_list(), 'weblink': 'client_result.html'})
-    return render_to_response('index.html', {'clients': res, 'weblink': 'client_result.html', 'client_name': client_name})
+    return render_to_response('index.html', {'clients': res, 'weblink': 'client_result.html', 'debt_list': debt_list, 'credit_list': credit_list, 'client_name': client_name})
 
 
 # --------------- WorkShop -----------------
@@ -1404,7 +1447,6 @@ def shopdailysales_edit(request, id):
         form = ShopDailySalesForm(instance=a)
     return render_to_response('index.html', {'form': form, 'weblink': 'shop_daily_sales.html'})
 
-now = datetime.datetime.now()
 
 def shopdailysales_list(request, month=now.month):
     #list = ShopDailySales.objects.all()

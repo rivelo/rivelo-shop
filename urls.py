@@ -83,6 +83,8 @@ urlpatterns = patterns('',
     (r'^dealer/payment/delete/(?P<id>\d+)/$', 'catalog.accounting.views.dealer_payment_del'),
 
     (r'^dealer/invoice/add/$', 'catalog.accounting.views.dealer_invoice_add'),
+    (r'^dealer/invoice/month/(?P<month>\d+)/view/$', 'catalog.accounting.views.dealer_invoice_list_month'),
+    (r'^dealer/invoice/view/all/$', 'catalog.accounting.views.dealer_invoice_list'),
     (r'^dealer/invoice/view/$', 'catalog.accounting.views.dealer_invoice_list'),
     (r'^dealer/invoice/edit/(?P<id>\d+)/$', 'catalog.accounting.views.dealer_invoice_edit'),
     (r'^dealer/invoice/delete/(?P<id>\d+)/$', 'catalog.accounting.views.dealer_invoice_del'),
