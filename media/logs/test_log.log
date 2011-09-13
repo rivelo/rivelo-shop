@@ -652,3 +652,15 @@ Key = id - Value = 38
 Key = date - Value = 2011-08-06
 Key = price - Value = 1000.0
 Key = description - Value = останн≥й день м≥с€ц€
+DELETE FROM TABLE client debts WHERE id = 25 
+Key = id - Value = 25
+Key = client - Value = 2
+Key = date - Value = 2011-09-03 23:15:44
+Key = price - Value = 15.0
+Key = description - Value = test
+DELETE FROM TABLE client debts WHERE id = 24 
+Key = id - Value = 24
+Key = client - Value = 2
+Key = date - Value = 2011-09-03 23:07:57
+Key = price - Value = 10.0
+Key = description - Value = hj

@@ -1059,7 +1059,7 @@ def client_data(request, id):
     return render_to_response('index.html', {'client': obj, 'weblink': 'client_data.html'})
 
 
-def clientdebts_add(request):
+def clientdebts_add(request, id=None):
     if request.method == 'POST':
         form = ClientDebtsForm(request.POST)
         if form.is_valid():
@@ -1068,9 +1068,15 @@ def clientdebts_add(request):
             price = form.cleaned_data['price']
             description = form.cleaned_data['description']
             ClientDebts(client=client, date=date, price=price, description=description).save()
-            return HttpResponseRedirect('/clientdebts/view/')
+            if id != None:
+                return HttpResponseRedirect('/client/result/search/?id='+str(id))
+            else:
+                return HttpResponseRedirect('/clientdebts/view/')
     else:
-        form = ClientDebtsForm()
+        if id != None:
+            form = ClientDebtsForm(initial={'client': id, 'date': now, })
+        else:
+            form = ClientDebtsForm()
     #return render_to_response('clientdebts.html', {'form': form})
     return render_to_response('index.html', {'form': form, 'weblink': 'clientdebts.html'})
 
@@ -1108,7 +1114,7 @@ def clientdebts_delete(request, id):
     return HttpResponseRedirect('/clientdebts/view/')
 
 
-def clientcredits_add(request):
+def clientcredits_add(request, id=None):
     if request.method == 'POST':
         form = ClientCreditsForm(request.POST)
         if form.is_valid():
@@ -1117,9 +1123,17 @@ def clientcredits_add(request):
             price = form.cleaned_data['price']
             description = form.cleaned_data['description']
             ClientCredits(client=client, date=date, price=price, description=description).save()
-            return HttpResponseRedirect('/clientcredits/view/')
+            if id != None:
+                return HttpResponseRedirect('/client/result/search/?id='+str(id))
+            else:
+                return HttpResponseRedirect('/clientcredits/view/')
+            
     else:
-        form = ClientCreditsForm()
+        if id != None:
+            form = ClientCreditsForm(initial={'client': id, 'date': now, })
+        else:
+            form = ClientCreditsForm()
+        #form = ClientCreditsForm()
     #return render_to_response('clientcredits.html', {'form': form})
     return render_to_response('index.html', {'form': form, 'weblink': 'clientcredits.html'})
 
