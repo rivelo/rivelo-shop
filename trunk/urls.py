@@ -136,12 +136,12 @@ urlpatterns = patterns('',
     (r'^client/result/search/$', 'catalog.accounting.views.client_result'),
     (r'^client/result/$', 'catalog.accounting.views.search_client_id'),
 
-    (r'^clientdebts/add/$', 'catalog.accounting.views.clientdebts_add'),
+    (r'^clientdebts/add/(?P<id>\d+)$', 'catalog.accounting.views.clientdebts_add'),
     (r'^clientdebts/view/$', 'catalog.accounting.views.clientdebts_list'),
     (r'^clientdebts/edit/(?P<id>\d+)$', 'catalog.accounting.views.clientdebts_edit'),
     (r'^clientdebts/delete/(?P<id>\d+)$', 'catalog.accounting.views.clientdebts_delete'),
 
-    (r'^clientcredits/add/$', 'catalog.accounting.views.clientcredits_add'),
+    (r'^clientcredits/add/(?P<id>\d+)$', 'catalog.accounting.views.clientcredits_add'),
     (r'^clientcredits/view/$', 'catalog.accounting.views.clientcredits_list'),
     (r'^clientcredits/delete/(?P<id>\d+)$', 'catalog.accounting.views.clientcredits_delete'),
 

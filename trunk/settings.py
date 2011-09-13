@@ -16,7 +16,7 @@ DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysq
 DATABASE_NAME = 'rivelo'             # Or path to database file if using sqlite3.
 DATABASE_USER = 'rivelo'             # Not used with sqlite3.
 DATABASE_PASSWORD = 'SZEw2QjzyEyo38oyTlAsYu55Lhnv1ZDM'         # Not used with sqlite3.
-DATABASE_HOST = '188.165.174.53'             # Set to empty string for localhost. Not used with sqlite3.
+DATABASE_HOST = '212.224.118.173'             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = '3306'             # Set to empty string for default. Not used with sqlite3.
 
 # Local time zone for this installation. Choices can be found here:
