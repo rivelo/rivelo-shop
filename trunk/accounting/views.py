@@ -8,8 +8,8 @@ from forms import ContactForm, ManufacturerForm, CountryForm, CurencyForm, Categ
 from models import Catalog, Client, ClientDebts, ClientCredits 
 from forms import CatalogForm, ClientForm, ClientDebtsForm, ClientCreditsForm
 
-from models import Dealer, DealerManager, DealerManager, DealerPayment, DealerInvoice, Bank, Exchange
-from forms import DealerManagerForm, DealerForm, DealerPaymentForm, DealerInvoiceForm, BankForm, ExchangeForm
+from models import Dealer, DealerManager, DealerManager, DealerPayment, DealerInvoice, Bank, Exchange, PreOrder
+from forms import DealerManagerForm, DealerForm, DealerPaymentForm, DealerInvoiceForm, BankForm, ExchangeForm, PreOrderForm
 
 from models import WorkGroup, WorkType, WorkShop, WorkStatus, WorkTicket, CostType, Costs, ShopDailySales
 from forms import WorkGroupForm, WorkTypeForm, WorkShopForm, WorkStatusForm, WorkTicketForm, CostTypeForm, CostsForm, ShopDailySalesForm
@@ -1698,3 +1698,37 @@ def manage_works(request, author_id):
 #    return render_to_response("manage_client.html", {"property_formset": property_formset,})
 
 
+def preorder_add(request):
+    a = PreOrder()
+    if request.method == 'POST':
+        form = PreOrderForm(request.POST, instance = a)
+        if form.is_valid():
+            date = form.cleaned_data['date']
+            date_pay = form.cleaned_data['date_pay']
+            date_delivery = form.cleaned_data['date_delivery']
+            company = form.cleaned_data['company']
+            manager = form.cleaned_data['manager']
+            price = form.cleaned_data['price']
+            price_pay = form.cleaned_data['price_pay']
+            currency = form.cleaned_data['currency']
+            file = form.cleaned_data['file']
+            received = form.cleaned_data['received']
+            description = form.cleaned_data['description']
+            PreOrder(date=date, date_pay=date_pay, date_delivery=date_delivery, company=company, manager=manager, price=price, price_pay=price_pay, currency=currency, file=file, received=received, description=description).save()
+            return HttpResponseRedirect('/preorder/view/')
+    else:
+        form = PreOrderForm(instance = a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'preorder.html'})
+
+
+def preorder_list(request):
+    list = PreOrder.objects.all()
+    #return render_to_response('dealer_list.html', {'dealers': list.values_list()})
+    return render_to_response('index.html', {'preorder1': list, 'weblink': 'preorder_list.html'})
+
+
+def preorder_delete(request, id):
+    obj = PreOrder.objects.get(id=id)
+    del_logging(obj)
+    obj.delete()
+    return HttpResponseRedirect('/preorder/view/')

@@ -664,3 +664,31 @@ Key = client - Value = 2
 Key = date - Value = 2011-09-03 23:07:57
 Key = price - Value = 10.0
 Key = description - Value = hj
+DELETE FROM TABLE pre order WHERE id = 3 
+Key = id - Value = 3
+Key = date - Value = 2011-09-28
+Key = date_pay - Value = 2011-09-28
+Key = date_delivery - Value = 2011-09-28
+Key = company - Value = 1
+Key = manager - Value = 4
+Key = price - Value = 1000.0
+Key = price_pay - Value = 100.0
+Key = currency - Value = 2
+Key = file - Value = test.xls
+Key = received - Value = 0
+Key = payment - Value = 0
+Key = description - Value = kellys components
+DELETE FROM TABLE pre order WHERE id = 2 
+Key = id - Value = 2
+Key = date - Value = 2011-09-28
+Key = date_pay - Value = 2011-09-28
+Key = date_delivery - Value = 2011-09-28
+Key = company - Value = 1
+Key = manager - Value = 4
+Key = price - Value = 1000.0
+Key = price_pay - Value = 100.0
+Key = currency - Value = 2
+Key = file - Value = test.xls
+Key = received - Value = 0
+Key = payment - Value = 0
+Key = description - Value = kellys components

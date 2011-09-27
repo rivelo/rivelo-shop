@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django import forms
 from models import Manufacturer, Country, Type, Bicycle_Type, Bicycle, Currency, FrameSize, Bicycle_Store, Catalog, Size, Bicycle_Sale 
-from models import DealerManager, DealerPayment, DealerInvoice, Dealer, Bank, ShopDailySales
+from models import DealerManager, DealerPayment, DealerInvoice, Dealer, Bank, ShopDailySales, PreOrder
 from models import Client, ClientDebts, CostType, Costs, ClientCredits, WorkGroup, WorkType, WorkShop, WorkTicket, WorkStatus
 
 import datetime
@@ -337,3 +337,18 @@ class ShopDailySalesForm(forms.ModelForm):
     class Meta:
         model = ShopDailySales
 
+
+class PreOrderForm(forms.ModelForm):
+    date = forms.DateTimeField(initial = datetime.date.today, label='Дата замовлення')
+    date_pay = forms.DateTimeField(initial = datetime.date.today, label='Кінцева дата внесення предоплати')
+    date_delivery = forms.DateTimeField(initial = datetime.date.today, label='Дата поставки')
+    company = forms.ModelChoiceField(queryset = Dealer.objects.all())
+    manager = forms.ModelChoiceField(queryset = DealerManager.objects.all(), required=False)
+    price = forms.FloatField(initial=0)
+    price_pay = forms.FloatField(initial=0)
+    currency = forms.ModelChoiceField(queryset = Currency.objects.all())
+    file = forms.CharField(max_length=255)
+    received = forms.BooleanField(initial = False, required=False) 
+    payment = forms.BooleanField(initial = False, required=False)
+    #payment = forms.ModelChoiceField(queryset = DealerPayment.objects.all())
+    description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)

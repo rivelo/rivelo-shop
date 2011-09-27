@@ -196,6 +196,11 @@ urlpatterns = patterns('',
     (r'^cost/edit/(?P<id>\d+)$', 'catalog.accounting.views.cost_edit'),
 
 
+    (r'^preorder/add/$', 'catalog.accounting.views.preorder_add'),
+    (r'^preorder/view/$', 'catalog.accounting.views.preorder_list'),
+    (r'^preorder/delete/(?P<id>\d+)$', 'catalog.accounting.views.preorder_delete'),
+
+
     # Example:
     # (r'^catalog/', include('catalog.foo.urls')),
 
