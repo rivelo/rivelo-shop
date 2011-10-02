@@ -192,13 +192,14 @@ urlpatterns = patterns('',
     (r'^cost/add/(?P<id>\d+)$', 'catalog.accounting.views.cost_add'),
     (r'^cost/add/$', 'catalog.accounting.views.cost_add'),
     (r'^cost/view/$', 'catalog.accounting.views.cost_list'),
-    (r'^cost/delete/(?P<id>\d+)$', 'catalog.accounting.views.cost_delete'),    
-    (r'^cost/edit/(?P<id>\d+)$', 'catalog.accounting.views.cost_edit'),
+    (r'^cost/delete/(?P<id>\d+)/$', 'catalog.accounting.views.cost_delete'),    
+    (r'^cost/edit/(?P<id>\d+)/$', 'catalog.accounting.views.cost_edit'),
 
 
     (r'^preorder/add/$', 'catalog.accounting.views.preorder_add'),
     (r'^preorder/view/$', 'catalog.accounting.views.preorder_list'),
-    (r'^preorder/delete/(?P<id>\d+)$', 'catalog.accounting.views.preorder_delete'),
+    (r'^preorder/edit/(?P<id>\d+)/$', 'catalog.accounting.views.preorder_edit'),
+    (r'^preorder/delete/(?P<id>\d+)/$', 'catalog.accounting.views.preorder_delete'),
 
 
     # Example:

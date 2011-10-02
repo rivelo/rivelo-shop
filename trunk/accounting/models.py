@@ -480,8 +480,8 @@ class Check(models.Model):
 
 class PreOrder(models.Model):
     date = models.DateField(auto_now_add=True)
-    date_pay = models.DateField(auto_now_add=True)
-    date_delivery = models.DateField(auto_now_add=True)
+    date_pay = models.DateField(auto_now_add=False)
+    date_delivery = models.DateField()
     company = models.ForeignKey(Dealer)
     manager = models.ForeignKey(DealerManager, blank = True, null = True)
     price = models.FloatField()
@@ -490,11 +490,11 @@ class PreOrder(models.Model):
     file = models.CharField(max_length=255)
     received = models.BooleanField(default=False, verbose_name="Товар отримано?")
     #payment = models.ForeignKey(DealerPayment, blank = True, null = True)
-    payment = models.BooleanField(default=False, verbose_name="Оплачено?")
+    payment = models.BooleanField(verbose_name="Оплачено?")
     description = models.TextField(blank = True, null = True)
             
     def __unicode__(self):
-        return self.company 
+        return self.file 
 
     class Meta:
         ordering = ["company", "manager", "date"]    
