@@ -1699,7 +1699,7 @@ def manage_works(request, author_id):
 
 
 def preorder_add(request):
-    a = PreOrder()
+    a = PreOrder(price=0, price_pay=0, date_pay=datetime.date.today(), date_delivery=datetime.date.today())
     if request.method == 'POST':
         form = PreOrderForm(request.POST, instance = a)
         if form.is_valid():
@@ -1732,3 +1732,15 @@ def preorder_delete(request, id):
     del_logging(obj)
     obj.delete()
     return HttpResponseRedirect('/preorder/view/')
+
+
+def preorder_edit(request, id):
+    a = PreOrder.objects.get(pk=id)
+    if request.method == 'POST':
+        form = PreOrderForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/preorder/view/')
+    else:
+        form = PreOrderForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'preorder.html'})

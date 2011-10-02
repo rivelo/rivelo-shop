@@ -35,3 +35,19 @@ s, p.pf_bike, p.pf_surname_name, p.pf_phone_number  from phpbb_users u LEFT oute
 r join phpbb_profile_fields_data p on u.user_id=p.user_id INTO OUTFILE 'd:/resul
 t.txt' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n' ;
 
+
+
+Итак, перед нами стоит задача: конвертировать данные, из изначально некорректно заявленной кодировки latin1 в корректную кодировку cp1251. Идем в документацию по языку:
+
+If you want to change the table default character set and all character columns (CHAR, VARCHAR, TEXT) to a new character set, use a statement like this:
+ALTER TABLE tbl_name CONVERT TO CHARACTER SET charset_name; (1)
+
+Не спешим выполнять предложенное решение, а читаем дальше:
+
+
+Warning: The preceding operation converts column values between the character sets. This is not what you want if you have a column in one character set (like latin1) but the stored values actually use some other, incompatible character set (like cp1251). In this case, you have to do the following for each such column:
+ALTER TABLE t1 CHANGE c1 c1 BLOB; (2)
+ALTER TABLE t1 CHANGE c1 c1 TEXT CHARACTER SET cp1251; (3)
+
+The reason this works is that there is no conversion when you convert to or from BLOB columns.
+

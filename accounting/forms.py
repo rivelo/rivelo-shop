@@ -352,3 +352,7 @@ class PreOrderForm(forms.ModelForm):
     payment = forms.BooleanField(initial = False, required=False)
     #payment = forms.ModelChoiceField(queryset = DealerPayment.objects.all())
     description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
+
+    class Meta:
+        model = PreOrder
+
