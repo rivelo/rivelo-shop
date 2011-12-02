@@ -5,27 +5,23 @@
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
 
-    <h1>Список Банків</h1>
+<h1>Список Банків</h1>
 
-    <table>
-    <tr>
-    	<th>Назва</th>
-    	<th>Дія</th>
-    </tr>
-    {% for element in banks %}
-    <tr>
-        <td>
-            <a href="/bank/edit/{{ element.id }}">{{ element }}</a>
-        </td>
-        <td>
-            <a href="/bank/delete/{{ element.id }}">delete</a>
-        </td>
-    </tr>
-    {% endfor %}
-    <table>
+<table>
+	<tr>
+		<th>Назва</th>
+		<th>Дія</th>
+	</tr>
+	{% for element in banks %}
+	<tr>
+		<td><a href="/bank/edit/{{ element.id }}">{{ element }}</a></td>
+		<td><a href="/bank/delete/{{ element.id }}">delete</a></td>
+	</tr>
+	{% endfor %}
+	<table>
 
-<br><br>
-<a href="/">HOME</a>
-<br>
-<a href="/bank/add/">Створити новий банк</a>        
-
+		<br>
+		<br>
+		<a href="/">HOME</a>
+		<br>
+		<a href="/bank/add/">Створити новий банк</a>

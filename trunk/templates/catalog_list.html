@@ -39,10 +39,10 @@
 	<a href="/catalog/edit/{{ type.id }}">{{type.name}}</a>
 	</td>
 	<td>       
-	{{type.manufacturer}}
+	<a href="/catalog/manufacture/{{ type.manufacturer.id }}/view">{{type.manufacturer}}</a>
 	</td>
 	<td>       
-	{{type.type}}
+	<a href="/catalog/type/{{type.type.id}}/view">{{type.type}}</a>
 	</td>
 	<td>       
 	{{type.size}}
