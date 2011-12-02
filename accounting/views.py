@@ -839,7 +839,8 @@ def exchange_add(request):
 
 
 def exchange_list(request):
-    list = Exchange.objects.all()
+    curdate = datetime.datetime.now()
+    list = Exchange.objects.filter(date__month=curdate.month)
     #return render_to_response('exchange_list.html', {'exchange': list.values()})
     return render_to_response('index.html', {'exchange': list, 'weblink': 'exchange_list.html'})
 
@@ -963,7 +964,7 @@ def catalog_list(request):
 
 
 def catalog_manufacture_list(request, id):
-    list = Catalog.objects.filter(manufacturer=id)
+    list = Catalog.objects.filter(manufacturer=id)[:10]
     #return render_to_response('catalog_list.html', {'catalog': list.values_list()})
     return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
 
@@ -1478,10 +1479,10 @@ def shopdailysales_delete(request, id):
     return HttpResponseRedirect('/shop/sale/view/')
 
 
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase import ttfonts
+#from reportlab.pdfgen import canvas
+#from reportlab.lib.pagesizes import A4
+#from reportlab.pdfbase import pdfmetrics
+#from reportlab.pdfbase import ttfonts
 
 
 

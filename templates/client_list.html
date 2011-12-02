@@ -12,6 +12,7 @@
 	
     <table border="1">
     <tr>
+    	<th>#</th>
     	<th>ID</th>
     	<th>ПІБ</th>
     	<th>Нік на форумі</th>
@@ -28,6 +29,7 @@
 
 {% for type in clients %}
 <tr>
+	<td>{{forloop.counter}}</td>
 	<td>       
 	{{type.id}}
 	</td>

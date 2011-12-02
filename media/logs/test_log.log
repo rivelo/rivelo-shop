@@ -706,3 +706,8 @@ Key = file - Value = test.xls
 Key = received - Value = 0
 Key = payment - Value = 0
 Key = description - Value = kellys components
+DELETE FROM TABLE exchange WHERE id = 151 
+Key = id - Value = 151
+Key = date - Value = 2011-11-30 00:00:00
+Key = currency - Value = 2
+Key = value - Value = 8.06
