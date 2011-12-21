@@ -125,6 +125,7 @@ urlpatterns = patterns('',
     (r'^catalog/edit/(?P<id>\d+)$', 'catalog.accounting.views.catalog_edit'),
     (r'^catalog/delete/(?P<id>\d+)$', 'catalog.accounting.views.catalog_delete'),
     (r'^catalog/search/$', 'catalog.accounting.views.catalog_search'),
+    (r'^catalog/search/id/$', 'catalog.accounting.views.catalog_search_id'),
     (r'^catalog/search/result/$', 'catalog.accounting.views.catalog_search_result'),
 
     # Client

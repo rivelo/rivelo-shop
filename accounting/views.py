@@ -951,7 +951,7 @@ def catalog_edit(request, id):
         if form.is_valid():
             manufacturer = form.cleaned_data['manufacturer']
             form.save()
-            return HttpResponseRedirect('/catalog/manufacture/' + str(manufacturer.id) + '/view/')
+            return HttpResponseRedirect('/catalog/manufacture/' + str(manufacturer.id) + '/view/5')
     else:
         form = CatalogForm(instance=a)
     return render_to_response('index.html', {'form': form, 'weblink': 'catalog.html'})
@@ -964,13 +964,15 @@ def catalog_list(request):
 
 
 def catalog_manufacture_list(request, id):
-    list = Catalog.objects.filter(manufacturer=id)[:10]
+    company_list = Manufacturer.objects.all()
+    #list = Catalog.objects.filter(manufacturer=id)[:10]
+    list = Catalog.objects.filter(manufacturer=id).order_by("-id")
     #return render_to_response('catalog_list.html', {'catalog': list.values_list()})
-    return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
+    return render_to_response('index.html', {'catalog': list, 'company_list': company_list, 'view': True, 'weblink': 'catalog_list.html'})
 
 
 def catalog_part_list(request, id, num=5):
-    list = Catalog.objects.filter(manufacturer=id)[:num]
+    list = Catalog.objects.filter(manufacturer=id).order_by("-id")[:num]
     #return render_to_response('catalog_list.html', {'catalog': list.values_list()})
     return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
 
@@ -993,9 +995,19 @@ def catalog_search(request):
     return render_to_response('index.html', {'weblink': 'catalog_search.html'})
 
 
+def catalog_search_id(request):
+    return render_to_response('index.html', {'weblink': 'catalog_search_id.html'})
+
+
 def catalog_search_result(request):
-    name = request.GET['name']
-    list = Catalog.objects.filter(name__icontains = name)
+    list = None
+    if 'name' in request.GET and request.GET['name']:
+        name = request.GET['name']
+        list = Catalog.objects.filter(name__icontains = name)
+    elif  'id' in request.GET and request.GET['id']:
+        id = request.GET['id']
+        list = Catalog.objects.filter(ids__icontains = id)
+        
     return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
     
 
