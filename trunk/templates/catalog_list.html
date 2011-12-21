@@ -1,10 +1,20 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="stylesheet" type="text/css" href="/media/table.css">
-    
-<a href="/catalog/add/">Додати новий товар</a>    
+
+{% if view %}
+
+<br>
+{% for company in company_list %}
+<a href="/catalog/manufacture/{{company.id}}/view/">{{company.name}}</a>
+{% endfor %}
+<br>
+
+{% endif %}
+
     
     <h1>Список Продукції  ({{catalog.count}})</h1>
+    <a href="/catalog/add/">Додати новий товар</a>
 
     <table>
 	<tr>
