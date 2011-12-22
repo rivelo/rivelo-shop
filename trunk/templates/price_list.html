@@ -27,10 +27,10 @@
 <tr>
 
 	<td>
-<b><FONT COLOR=black FACE="Geneva, Arial" SIZE=2>	Код </FONT></b> 
+<b><FONT COLOR=black FACE="Geneva, Arial" SIZE=1>	Код </FONT></b> 
 	</td>
 	<td>
-	<FONT COLOR=black FACE="Geneva, Arial" SIZE=2>	       
+	<FONT COLOR=black FACE="Geneva, Arial" SIZE=1>	       
 	{{type.ids}}
 	</FONT>
 	</td>
@@ -38,9 +38,9 @@
 
 <tr>
 	<td>       
-<b>	Назва </b>
+<b>	Назва </FONT></b>
 	</td>
-	<td width = 175>       
+	<td width = 190>       
 	<a href="/catalog/edit/{{ type.id }}">{{type.name}}</a>
 	</td>
 </tr>
@@ -90,7 +90,7 @@
 </tr><tr>
 {% endif %}
 
-{% if forloop.counter|divisibleby:"12"  %}
+{% if forloop.counter|divisibleby:"16"  %}
 </table>
 <br style="page-break-after: always">
 <table BORDER=0 CELLPADDING=4> 
