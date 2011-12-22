@@ -13,4 +13,5 @@ TH {
 
 TD { /* padding: 5px; /* ѕол€ вокруг содержимого €чеек */
 	border: 1px solid black; /* √раница вокруг €чеек */
+	font-size: 10pt;
 }

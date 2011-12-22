@@ -1116,7 +1116,7 @@ def clientdebts_edit(request, id):
 
 def clientdebts_list(request):
     #list = ClientDebts.objects.select_related().all()
-    list = ClientDebts.objects.all()
+    list = ClientDebts.objects.all().order_by("-id")
     return render_to_response('index.html', {'clients': list, 'weblink': 'clientdebts_list.html'})
 
 
@@ -1152,7 +1152,7 @@ def clientcredits_add(request, id=None):
 
 
 def clientcredits_list(request):
-    list = ClientCredits.objects.all()
+    list = ClientCredits.objects.all().order_by("-id")
     return render_to_response('index.html', {'clients': list, 'weblink': 'clientcredits_list.html'})
 
 
@@ -1550,7 +1550,7 @@ def shop_price(request, id):
 
 
 def shop_price_print(request, id):
-    list = Catalog.objects.filter(manufacturer = id)
+    list = Catalog.objects.filter(manufacturer = id).order_by("-id")
     company = Manufacturer.objects.get(id=id)
     company_list = Manufacturer.objects.all()
     return render_to_response('price_list.html', {'catalog': list, 'company': company, 'company_list': company_list})
