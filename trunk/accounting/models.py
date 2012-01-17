@@ -192,7 +192,7 @@ class DealerPayment(models.Model):
 # Dealer invoice (Ukraine)
 class DealerInvoice(models.Model):
     origin_id = models.CharField(max_length=255)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField(auto_now_add=False)
     company = models.ForeignKey(Dealer)
     manager = models.ForeignKey(DealerManager, blank = True, null = True)
     price = models.FloatField()

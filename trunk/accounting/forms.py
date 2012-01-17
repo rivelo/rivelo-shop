@@ -174,7 +174,7 @@ class DealerPaymentForm(forms.ModelForm):
 
 class DealerInvoiceForm(forms.ModelForm):
     origin_id = forms.CharField(max_length=255, label='Номер накладної')
-    date = forms.DateTimeField(initial = datetime.date.today, label='Дата')
+    date = forms.DateTimeField(initial = datetime.date.today, label='Дата', input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
     company = forms.ModelChoiceField(queryset = Dealer.objects.all())
     manager = forms.ModelChoiceField(queryset = DealerManager.objects.all(), required=False)
     price = forms.FloatField(initial=0)

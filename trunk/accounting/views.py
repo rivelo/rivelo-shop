@@ -633,7 +633,7 @@ def dealer_payment_list(request):
 
 
 def dealer_invoice_add(request):
-    a = DealerInvoice()
+    a = DealerInvoice(date=datetime.date.today())
     if request.method == 'POST':
         form = DealerInvoiceForm(request.POST, instance = a)
         if form.is_valid():
@@ -645,7 +645,7 @@ def dealer_invoice_add(request):
             currency = form.cleaned_data['currency']
             file = form.cleaned_data['file']
             received = form.cleaned_data['received']
-            #payment = form.cleaned_data['payment']
+            payment = form.cleaned_data['payment']
             description = form.cleaned_data['description']
             DealerInvoice(origin_id=origin_id, date=date, company=company, manager=manager, price=price, currency=currency, file=file, received=received, description=description).save()
             return HttpResponseRedirect('/dealer/invoice/view/')
@@ -661,9 +661,10 @@ def dealer_invoice_edit(request, id):
         if form.is_valid():
             form.save()
             mmm = a.date.month
+            yyy = a.date.year
             now = datetime.datetime.now()
-            m = now.month
-            return HttpResponseRedirect('/dealer/invoice/month/'+str(mmm)+'/view/')
+            #m = now.month
+            return HttpResponseRedirect('/dealer/invoice/year/'+str(yyy)+'/month/'+str(mmm)+'/view/')
     else:
         form = DealerInvoiceForm(instance=a)
     return render_to_response('index.html', {'form': form, 'weblink': 'dealer_invoice.html'})

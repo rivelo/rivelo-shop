@@ -780,3 +780,63 @@ Key = currency - Value = 3
 Key = sale - Value = 0.0
 Key = country - Value = 3
 Key = description - Value = 
+DELETE FROM TABLE dealer invoice WHERE id = 185 
+Key = id - Value = 185
+Key = origin_id - Value = 111
+Key = date - Value = 2012-01-12
+Key = company - Value = 7
+Key = manager - Value = 11
+Key = price - Value = 111.0
+Key = currency - Value = 2
+Key = file - Value = 1111
+Key = received - Value = 0
+Key = payment - Value = 1
+Key = description - Value = 
+DELETE FROM TABLE dealer invoice WHERE id = 184 
+Key = id - Value = 184
+Key = origin_id - Value = 111
+Key = date - Value = 2012-01-16
+Key = company - Value = 7
+Key = manager - Value = 11
+Key = price - Value = 111.0
+Key = currency - Value = 2
+Key = file - Value = 1111
+Key = received - Value = 0
+Key = payment - Value = 0
+Key = description - Value = 
+DELETE FROM TABLE dealer invoice WHERE id = 176 
+Key = id - Value = 176
+Key = origin_id - Value = 3605
+Key = date - Value = 2012-01-16
+Key = company - Value = 1
+Key = manager - Value = 10
+Key = price - Value = 1645.06
+Key = currency - Value = 2
+Key = file - Value = № P0000003605 от 16 января 2012 г .XLS
+Key = received - Value = 0
+Key = payment - Value = 0
+Key = description - Value = предзаказ велосипедів trek
+DELETE FROM TABLE dealer invoice WHERE id = 181 
+Key = id - Value = 181
+Key = origin_id - Value = 3605
+Key = date - Value = 2012-01-17
+Key = company - Value = 1
+Key = manager - Value = 10
+Key = price - Value = 1645.06
+Key = currency - Value = 2
+Key = file - Value = № P0000003605 от 16 января 2012 г .XLS
+Key = received - Value = 0
+Key = payment - Value = 0
+Key = description - Value = предзаказ велосипедів trek
+DELETE FROM TABLE dealer invoice WHERE id = 183 
+Key = id - Value = 183
+Key = origin_id - Value = 111
+Key = date - Value = 2012-01-15
+Key = company - Value = 7
+Key = manager - Value = 11
+Key = price - Value = 111.0
+Key = currency - Value = 2
+Key = file - Value = 1111
+Key = received - Value = 1
+Key = payment - Value = 0
+Key = description - Value = 
