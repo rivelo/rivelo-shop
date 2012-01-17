@@ -14,7 +14,7 @@ from forms import DealerManagerForm, DealerForm, DealerPaymentForm, DealerInvoic
 from models import WorkGroup, WorkType, WorkShop, WorkStatus, WorkTicket, CostType, Costs, ShopDailySales
 from forms import WorkGroupForm, WorkTypeForm, WorkShopForm, WorkStatusForm, WorkTicketForm, CostTypeForm, CostsForm, ShopDailySalesForm
   
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpRequest
 from django.core.exceptions import ObjectDoesNotExist
 
 from django.conf import settings
@@ -712,18 +712,31 @@ def dealer_invoice_list(request):
     return render_to_response('index.html', {'dealer_invoice': list, 'exchange': exchange, 'exchange_d': exchange_d, 'exchange_e': exchange_e, 'summ': summ, 'summ_debt': summ_debt, 'weblink': 'dealer_invoice_list.html'})
 
 
-def dealer_invoice_list_month(request, month):
+def dealer_invoice_list_month(request, year=False, month=False, pay='all'):
     if month == False:
         now = datetime.datetime.now()
         month=now.month
-    list = DealerInvoice.objects.filter(date__year=2011, date__month=month)
+    if year == False:
+        now = datetime.datetime.now()
+        year=now.year
+    list = None
+    if pay == 'paid':
+            list = DealerInvoice.objects.filter(date__year=year, payment=True)
+    if pay == 'notpaid':
+            list = DealerInvoice.objects.filter(date__year=year, payment=False)
+    if pay == 'sending':
+            list = DealerInvoice.objects.filter(date__year=year, received=False)
+    if pay == 'all':
+            list = DealerInvoice.objects.filter(date__year=year, date__month=month)                        
+    #list = DealerInvoice.objects.filter(date__year=year, date__month=month, payment=)
     exchange = Exchange.objects.filter(date=datetime.date.today)
     try:
         exchange_d = Exchange.objects.get(date=datetime.date.today, currency=2)
         exchange_e = Exchange.objects.get(date=datetime.date.today, currency=4)
         summ = 0
         summ_debt = 0
-        for e in DealerInvoice.objects.filter(date__year=2011, date__month=month):
+        #DealerInvoice.objects.filter(date__year=year, date__month=month):
+        for e in list:
             if e.currency.id == 2:
                 summ = summ + (float(e.price) * float(exchange_d.value))
                 if e.payment != True:
@@ -746,8 +759,21 @@ def dealer_invoice_list_month(request, month):
         exchange_d = 0
         exchange_e = 0
     
-    return render_to_response('index.html', {'dealer_invoice': list, 'exchange': exchange, 'exchange_d': exchange_d, 'exchange_e': exchange_e, 'summ': summ, 'summ_debt': summ_debt, 'weblink': 'dealer_invoice_list.html'})
+    return render_to_response('index.html', {'dealer_invoice': list, 'exchange': exchange, 'exchange_d': exchange_d, 'exchange_e': exchange_e, 'summ': summ, 'summ_debt': summ_debt, 'sel_month':month, 'sel_year':year, 'weblink': 'dealer_invoice_list.html'})
 
+
+def dealer_invoice_search(request):
+    #query = request.GET.get('q', '')
+    return render_to_response('index.html', {'weblink': 'dealer_invoice_search.html'})
+
+
+def dealer_invoice_search_result(request):
+    list = None
+    if 'number' in request.GET and request.GET['number']:
+        num = request.GET['number']
+        list = DealerInvoice.objects.filter(origin_id__icontains = num)
+    #list1 = DealerInvoice.objects.all()
+    return render_to_response('index.html', {'invoice_list': list, 'weblink': 'dealer_invoice_list_search.html'})
 
 
 # --------------- Classification ---------
@@ -946,15 +972,20 @@ def catalog_add(request):
 
 def catalog_edit(request, id):
     a = Catalog.objects.get(pk=id)
+    url1=request.META['HTTP_REFERER']
     if request.method == 'POST':
         form = CatalogForm(request.POST, instance=a)
         if form.is_valid():
             manufacturer = form.cleaned_data['manufacturer']
+            type = form.cleaned_data['type']
             form.save()
-            return HttpResponseRedirect('/catalog/manufacture/' + str(manufacturer.id) + '/view/5')
+            #return HttpResponseRedirect('/catalog/manufacture/' + str(manufacturer.id) + '/view/5')
+            return HttpResponseRedirect('/catalog/manufacture/' + str(manufacturer.id) + '/type/'+str(type.id)+'/view')
+            #return HttpResponseRedirect(str(url1))
     else:
         form = CatalogForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'catalog.html'})
+    #url=request.META['HTTP_REFERER']
+    return render_to_response('index.html', {'form': form, 'myurl':url1, 'weblink': 'catalog.html'})
 
 
 def catalog_list(request):
@@ -973,6 +1004,12 @@ def catalog_manufacture_list(request, id):
 
 def catalog_part_list(request, id, num=5):
     list = Catalog.objects.filter(manufacturer=id).order_by("-id")[:num]
+    #return render_to_response('catalog_list.html', {'catalog': list.values_list()})
+    return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
+
+
+def catalog_manu_type_list(request, id, tid):
+    list = Catalog.objects.filter(manufacturer=id, type=tid).order_by("-id")
     #return render_to_response('catalog_list.html', {'catalog': list.values_list()})
     return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
 
@@ -1007,7 +1044,6 @@ def catalog_search_result(request):
     elif  'id' in request.GET and request.GET['id']:
         id = request.GET['id']
         list = Catalog.objects.filter(ids__icontains = id)
-        
     return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
     
 
@@ -1503,6 +1539,7 @@ def shop_price(request, id):
     list = Catalog.objects.filter(manufacturer = id)
     company = Manufacturer.objects.get(id=id)
     company_list = Manufacturer.objects.all()
+    url = '/shop/price/company/'+id+'/print/'
     
     # Создаём объект HttpResponse с соответствующим PDF заголовком.
 #===============================================================================
@@ -1546,7 +1583,7 @@ def shop_price(request, id):
     
     #name = request.GET['name']
 
-    return render_to_response('index.html', {'catalog': list, 'company': company, 'company_list': company_list, 'weblink': 'price_list.html', 'view': True})
+    return render_to_response('index.html', {'catalog': list, 'company': company, 'company_list': company_list, 'weblink': 'price_list.html', 'view': True, 'link': url})
 
 
 def shop_price_print(request, id):
@@ -1555,6 +1592,17 @@ def shop_price_print(request, id):
     company_list = Manufacturer.objects.all()
     return render_to_response('price_list.html', {'catalog': list, 'company': company, 'company_list': company_list})
 
+
+def shop_price_lastadd(request, id):
+    url = '/shop/price/lastadded/'+id+'/print/'
+    list = Catalog.objects.all().order_by("-id")[:id]
+    return render_to_response('index.html', {'catalog': list, 'weblink': 'price_list.html', 'view': True, 'link': url})    
+
+    
+def shop_price_lastadd_print(request, id):
+    list = Catalog.objects.all().order_by("-id")[:id]
+    return render_to_response('price_list.html', {'catalog': list})    
+    
 
 #--------------------- MY Costs -------------------------
 def costtype_add(request):

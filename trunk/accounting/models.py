@@ -204,7 +204,8 @@ class DealerInvoice(models.Model):
     description = models.TextField(blank = True, null = True)
             
     def __unicode__(self):
-        return self.origin_id + " - " + self.company 
+        #return self.origin_id + " - " + self.company 
+        return self.origin_id 
 
     class Meta:
         ordering = ["payment", "company", "manager", "date"]    

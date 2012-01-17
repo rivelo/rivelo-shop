@@ -711,3 +711,72 @@ Key = id - Value = 151
 Key = date - Value = 2011-11-30 00:00:00
 Key = currency - Value = 2
 Key = value - Value = 8.06
+DELETE FROM TABLE dealer invoice WHERE id = 170 
+Key = id - Value = 170
+Key = origin_id - Value = 5009
+Key = date - Value = 2011-12-27
+Key = company - Value = 1
+Key = manager - Value = 4
+Key = price - Value = 1728.0
+Key = currency - Value = 2
+Key = file - Value = № 5009 от 26 декабря 2011 г .XLS
+Key = received - Value = 0
+Key = payment - Value = 0
+Key = description - Value = предзаказ велосипедів
+DELETE FROM TABLE client credits WHERE id = 80 
+Key = id - Value = 80
+Key = client - Value = 11
+Key = date - Value = 2011-12-29 00:38:28
+Key = price - Value = 1759.0
+Key = description - Value = оплата кредиту
+DELETE FROM TABLE catalog WHERE id = 112 
+Key = id - Value = 112
+Key = ids - Value = 99001343
+Key = name - Value = Веломайка KELLYS IRIS женская, 
+Key = manufacturer - Value = 1
+Key = type - Value = 89
+Key = size - Value = None
+Key = weight - Value = None
+Key = photo - Value = 
+Key = year - Value = 2011
+Key = sale_to - Value = 2011-03-20
+Key = color - Value = різні
+Key = price - Value = 185.0
+Key = currency - Value = 3
+Key = sale - Value = 0.0
+Key = country - Value = 3
+Key = description - Value = 
+DELETE FROM TABLE catalog WHERE id = 113 
+Key = id - Value = 113
+Key = ids - Value = 99007744
+Key = name - Value = Веломайка KELLYS LUKE
+Key = manufacturer - Value = 1
+Key = type - Value = 89
+Key = size - Value = None
+Key = weight - Value = None
+Key = photo - Value = 
+Key = year - Value = 2011
+Key = sale_to - Value = 2011-03-20
+Key = color - Value = хакі
+Key = price - Value = 400.0
+Key = currency - Value = 3
+Key = sale - Value = 0.0
+Key = country - Value = 3
+Key = description - Value = 
+DELETE FROM TABLE catalog WHERE id = 111 
+Key = id - Value = 111
+Key = ids - Value = 99001302
+Key = name - Value = Веломайка KELLYS Arwen женская
+Key = manufacturer - Value = 1
+Key = type - Value = 89
+Key = size - Value = None
+Key = weight - Value = None
+Key = photo - Value = 
+Key = year - Value = 2011
+Key = sale_to - Value = 2011-03-20
+Key = color - Value = голубий
+Key = price - Value = 450.0
+Key = currency - Value = 3
+Key = sale - Value = 0.0
+Key = country - Value = 3
+Key = description - Value = 
