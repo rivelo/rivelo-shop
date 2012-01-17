@@ -83,9 +83,14 @@ urlpatterns = patterns('',
     (r'^dealer/payment/delete/(?P<id>\d+)/$', 'catalog.accounting.views.dealer_payment_del'),
 
     (r'^dealer/invoice/add/$', 'catalog.accounting.views.dealer_invoice_add'),
-    (r'^dealer/invoice/month/(?P<month>\d+)/view/$', 'catalog.accounting.views.dealer_invoice_list_month'),
+    (r'^dealer/invoice/view/$', 'catalog.accounting.views.dealer_invoice_list_month'),
+    (r'^dealer/invoice/year/(?P<year>\d+)/(?P<pay>paid|notpaid|sending)/$', 'catalog.accounting.views.dealer_invoice_list_month'),
+    (r'^dealer/invoice/year/(?P<year>\d+)/month/(?P<month>\d+)/view/$', 'catalog.accounting.views.dealer_invoice_list_month'),
+    #(r'^dealer/invoice/month/(?P<month>\d+)/view/$', 'catalog.accounting.views.dealer_invoice_list_month'),
     (r'^dealer/invoice/view/all/$', 'catalog.accounting.views.dealer_invoice_list'),
     (r'^dealer/invoice/view/$', 'catalog.accounting.views.dealer_invoice_list'),
+    (r'^dealer/invoice/search/$', 'catalog.accounting.views.dealer_invoice_search'),
+    (r'^dealer/invoice/search/result/$', 'catalog.accounting.views.dealer_invoice_search_result'),
     (r'^dealer/invoice/edit/(?P<id>\d+)/$', 'catalog.accounting.views.dealer_invoice_edit'),
     (r'^dealer/invoice/delete/(?P<id>\d+)/$', 'catalog.accounting.views.dealer_invoice_del'),
     
@@ -119,6 +124,7 @@ urlpatterns = patterns('',
     # Catalog operation
     (r'^catalog/add/$', 'catalog.accounting.views.catalog_add'),
     (r'^catalog/view/$', 'catalog.accounting.views.catalog_list'),
+    (r'^catalog/manufacture/(?P<id>\d+)/type/(?P<tid>\d+)/view/$', 'catalog.accounting.views.catalog_manu_type_list'),
     (r'^catalog/manufacture/(?P<id>\d+)/view/(\d+)$', 'catalog.accounting.views.catalog_part_list'),
     (r'^catalog/manufacture/(?P<id>\d+)/view/$', 'catalog.accounting.views.catalog_manufacture_list'),
     (r'^catalog/type/(?P<id>\d+)/view/$', 'catalog.accounting.views.catalog_type_list'),    
@@ -175,15 +181,15 @@ urlpatterns = patterns('',
     (r'^workshop/view/$', 'catalog.accounting.views.workshop_list'),
     (r'^workshop/delete/(?P<id>\d+)/$', 'catalog.accounting.views.workshop_delete'),    
 
-
     (r'^shop/sale/day/add/$', 'catalog.accounting.views.shopdailysales_add'),
     (r'^shop/sale/day/edit/(?P<id>\d+)/$', 'catalog.accounting.views.shopdailysales_edit'),
     (r'^shop/sale/view/month/(\d+)/$', 'catalog.accounting.views.shopdailysales_list'),
     (r'^shop/sale/view/$', 'catalog.accounting.views.shopdailysales_list'),
-    (r'^shop/sale/day/(?P<id>\d+)/delete/$', 'catalog.accounting.views.shopdailysales_delete'),    
+    (r'^shop/sale/day/(?P<id>\d+)/delete/$', 'catalog.accounting.views.shopdailysales_delete'),
+    (r'^shop/price/lastadded/(?P<id>\d+)/view/$', 'catalog.accounting.views.shop_price_lastadd'),    
+    (r'^shop/price/lastadded/(?P<id>\d+)/print/$', 'catalog.accounting.views.shop_price_lastadd_print'),
     (r'^shop/price/company/(?P<id>\d+)/view/$', 'catalog.accounting.views.shop_price'),
     (r'^shop/price/company/(?P<id>\d+)/print/$', 'catalog.accounting.views.shop_price_print'),
-    
     
     # my cost
     (r'^cost/type/add/$', 'catalog.accounting.views.costtype_add'),

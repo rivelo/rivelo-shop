@@ -4,7 +4,7 @@
 
 {% if view %}
     
-<h1>Цінники на продукцію {{company.name}}  ({{catalog.count}})  <a href="/shop/price/company/{{company.id}}/print/">(Версія для друку)</a> </h1>
+<h1>Цінники на продукцію {{company.name}}  ({{catalog.count}})  <a href="{{link}}">(Версія для друку)</a> </h1>
 
 <br>
 {% for company in company_list %}
@@ -90,7 +90,7 @@
 </tr><tr>
 {% endif %}
 
-{% if forloop.counter|divisibleby:"16"  %}
+{% if forloop.counter|divisibleby:"18"  %}
 </table>
 <br style="page-break-after: always">
 <table BORDER=0 CELLPADDING=4> 
