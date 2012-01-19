@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+
+<head>
+    <title>Баланс клієнтів</title>
+    <link rel="stylesheet" type="text/css" href="/media/table.css">
+</head>
+
+
+    <h1>Баланс по клієнтам</h1>
+	<h2>Debt = {{sum_debt}} грн</h2>
+	<h2>Cred = {{sum_cred}} грн</h2>
+    <table border="1">
+    <tr>
+    	<th>#</th>
+    	<th>ID</th>
+    	<th width=180>ПІБ</th>
+    	<th width=120>Нік на форумі</th>
+    	<th>Країна</th>
+    	<th>Сума</th>
+    	<th>Операція</th>
+    	<th>Знижка (%)</th>
+    	<th>Сумарна вартість покупок</th>
+    	<th>Дія</th>
+    </tr>    
+
+
+{% for type in clients %}
+<tr>
+	<td>{{forloop.counter}}</td>
+	<td>       
+	{{type.client.id}}
+	</td>
+	<td>       
+	<a href="/client/result/search/?id={{ type.client.id }}">{{type.client.name}} - ({{type.client.forumname}})</a>
+	</td>
+	<td>       
+	{{type.date}}
+	</td>
+	<td>       
+	{{type.country}}
+	</td>
+	<td>       
+	{{type.price}}
+	</td>
+	<td>       
+	{{type.description}}
+	</td>
+	<td>       
+	{{type.description}}
+	</td>
+	<td>       
+	{{type.description}}
+	</td>
+	<td>
+	
+    </td>
+</tr>
+{% endfor %}           
+    
+    
+
+</table>
+
+
+<br><br>
+<a href="/">Головне меню (HOME)</a>
+<br>
+<a href="/client/add/">Створити нового клієнта (Add)</a>       

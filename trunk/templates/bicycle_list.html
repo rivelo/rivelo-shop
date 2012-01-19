@@ -2,10 +2,19 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
-<h1>Каталог велосипедів (Bicycle Type List) <a href="/bicycle/add/">(Створити)</a></h1>
+<h1>Каталог велосипедів ({{bicycles.count}}) <a href="/bicycle/add/">(Створити)</a></h1>
+<h2>
+    За рік: 
+    <a href="/bicycle/year/2010/view">2010,</a>
+    <a href="/bicycle/year/2011/view">2011,</a>
+	<a href="/bicycle/year/2012/view">2012,</a>
+	<a href="/bicycle/all/view">Всі</a>
+</h2>    
+
 
 <table border="1">
 	<tr>
+		<th>#</th>
 		<th>ID</th>
 		<th>Назва моделі</th>
 		<th>Тип</th>
@@ -24,6 +33,7 @@
 
 	{% for type in bicycles %}
 	<tr>
+		<td>{{forloop.counter}}</td>
 		<td><a href="/bicycle-store/add/{{type.id}}">{{type.id}}</a></td>
 		<td><a href="/bicycle/photo/{{type.id}}">{{type.model}}</a></td>
 		<td>{{type.type}}</td>

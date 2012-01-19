@@ -56,6 +56,8 @@ urlpatterns = patterns('',
     #(r'^bicycle/framesize/delete/(?P<id>\d)/$', 'catalog.accounting.views.bicycle_framesize_del'),
 
     (r'^bicycle/add/$', 'catalog.accounting.views.bicycle_add'),
+    (r'^bicycle/year/(?P<year>\d+)/view/$', 'catalog.accounting.views.bicycle_list'),
+    (r'^bicycle/all/view/$', 'catalog.accounting.views.bicycle_all_list'),
     (r'^bicycle/view/$', 'catalog.accounting.views.bicycle_list'),
     (r'^bicycle/edit/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_edit'),    
     (r'^bicycle/delete/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_del'),
@@ -136,6 +138,7 @@ urlpatterns = patterns('',
 
     # Client
     (r'^client/(?P<id>\d+)$', 'catalog.accounting.views.client_data'),
+    (r'^clients/balance/$', 'catalog.accounting.views.client_balance_list'),
     (r'^client/add/$', 'catalog.accounting.views.client_add'),
     (r'^client/edit/(?P<id>\d+)$', 'catalog.accounting.views.client_edit'),
     (r'^client/view/$', 'catalog.accounting.views.client_list'),
