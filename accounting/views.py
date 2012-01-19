@@ -276,7 +276,7 @@ def processUploadedImage(file, dir=''):
 
 
 def bicycle_add(request):
-    a = Bicycle()
+    a = Bicycle(year=datetime.date.today())
     if request.method == 'POST':
         form = BicycleForm(request.POST, request.FILES, instance=a)
         if form.is_valid():
@@ -286,7 +286,7 @@ def bicycle_add(request):
             brand = form.cleaned_data['brand']
             color = form.cleaned_data['color']
             photo = form.cleaned_data['photo']
-	    year = form.cleaned_data['year']
+            year = form.cleaned_data['year']
             weight = form.cleaned_data['weight']
             price = form.cleaned_data['price']
             currency = form.cleaned_data['currency']
@@ -326,7 +326,17 @@ def bicycle_del(request, id):
     return HttpResponseRedirect('/bicycle/view/')
 
 
-def bicycle_list(request):
+def bicycle_list(request, year=None):
+    #yyy = None
+    if year == None:
+        now = datetime.datetime.now()
+        year = now.year
+    list = Bicycle.objects.filter(year__year=year)
+    #return render_to_response('bicycle_list.html', {'bicycles': list.values_list()})
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_list.html'})
+
+
+def bicycle_all_list(request):
     list = Bicycle.objects.all()
     #return render_to_response('bicycle_list.html', {'bicycles': list.values_list()})
     return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_list.html'})
@@ -503,7 +513,7 @@ def bicycle_sale_del(request, id):
 
 
 def bicycle_sale_list(request):
-    list = Bicycle_Sale.objects.all()
+    list = Bicycle_Sale.objects.all().order_by('date')
     price_summ = 0
     service_summ = 0
     for item in list:
@@ -1089,6 +1099,28 @@ def client_edit(request, id):
     else:
         form = ClientForm(instance=a)
     return render_to_response('index.html', {'form': form, 'weblink': 'client.html'})
+
+
+def client_balance_list(request):
+    list_debt = ClientDebts.objects.all().order_by("-client")
+    #list_debt = ClientDebts.objects.filter(client=118).order_by("-client")
+    list_cred = ClientCredits.objects.all().order_by("-client")
+    #list = Client.objects.all()
+    sum_d = 0
+    sum_c = 0
+    id_last = None
+    idd_sum = 0
+    for i in list_debt:
+        sum_d = sum_d + i.price
+        if id_last == i.client.id:
+            i.price = i.price + sum_last
+        id_last = i.client.id
+        sum_last = i.price        
+    
+    for i in list_cred:
+        sum_c = sum_c + i.price
+                
+    return render_to_response('index.html', {'sum_cred':sum_c, 'sum_debt':sum_d, 'clients': list_debt, 'weblink': 'client_balance_list.html'})
 
 
 def client_list(request):
