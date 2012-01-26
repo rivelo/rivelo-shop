@@ -407,8 +407,12 @@ def bicycle_store_del(request, id):
     return HttpResponseRedirect('/bicycle-store/view/seller/')
 
 
-def bicycle_store_list(request):
-    list = Bicycle_Store.objects.all()
+def bicycle_store_list(request, all=False):
+    list = None
+    if all==True:
+        list = Bicycle_Store.objects.all()
+    else:
+        list = Bicycle_Store.objects.filter(count=1)
     price_summ = 0
     real_summ = 0
     bike_summ = 0
@@ -420,8 +424,12 @@ def bicycle_store_list(request):
     return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list.html', 'price_summ': price_summ, 'real_summ': real_summ, 'bike_summ': bike_summ})
 
 
-def bicycle_store_list_by_seller(request):
-    list = Bicycle_Store.objects.all()
+def bicycle_store_list_by_seller(request, all=False):
+    list = None
+    if all==True:
+        list = Bicycle_Store.objects.all()
+    else:
+        list = Bicycle_Store.objects.filter(count=1)
     price_summ = 0
     real_summ = 0
     bike_summ = 0
@@ -477,6 +485,8 @@ def bicycle_sale_add(request, id=None):
             update_client.summ = update_client.summ + price 
             update_client.save()
             
+            ClientDebts(client=client, date=date, price=price, description=""+str(model)).save()
+            
             return HttpResponseRedirect('/bicycle/sale/view/')
     else:
         if bike != None:
@@ -521,6 +531,33 @@ def bicycle_sale_list(request):
         if item.service == False:
             service_summ =  service_summ + 1
     return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_sale_list.html', 'price_summ':price_summ, 'service_summ':service_summ})
+
+
+def dictfetchall(cursor):
+    "Returns all rows from a cursor as a dict"
+    desc = cursor.description
+    return [
+        dict(zip([col[0] for col in desc], row))
+        for row in cursor.fetchall()
+    ]
+    
+
+def bicycle_sale_report(request):
+    query = "SELECT EXTRACT(year FROM date) as year, EXTRACT(month from date) as month, COUNT(*) as bike_count FROM accounting_bicycle_sale GROUP BY year,month;"
+    #sql2 = "SELECT sum(price) FROM accounting_clientdebts WHERE client_id = %s;"
+    #user = id;
+    list = None
+    try:
+        cursor = connection.cursor()
+        cursor.execute(query)
+        list = dictfetchall(cursor)
+        #list = cursor.execute(sql1, )   
+        
+    except TypeError:
+        res = "Помилка"
+
+    #list = Bicycle_Sale.objects.all().order_by('date')
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_sale_report.html'})
 
 
 # --------------------Dealer company ------------------------
@@ -1049,13 +1086,16 @@ def catalog_search_id(request):
 
 def catalog_search_result(request):
     list = None
+    print_url = None
     if 'name' in request.GET and request.GET['name']:
         name = request.GET['name']
-        list = Catalog.objects.filter(name__icontains = name)
+        list = Catalog.objects.filter(name__icontains = name).order_by('manufacturer')
+        print_url = "/shop/price/bysearch_name/"+name+"/view/"
     elif  'id' in request.GET and request.GET['id']:
         id = request.GET['id']
-        list = Catalog.objects.filter(ids__icontains = id)
-    return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
+        list = Catalog.objects.filter(ids__icontains = id).order_by('manufacturer')
+        print_url = "/shop/price/bysearch_id/"+id+"/view/"
+    return render_to_response('index.html', {'catalog': list, 'url':print_url, 'weblink': 'catalog_list.html'})
     
 
 
@@ -1150,6 +1190,11 @@ def clientdebts_add(request, id=None):
             price = form.cleaned_data['price']
             description = form.cleaned_data['description']
             ClientDebts(client=client, date=date, price=price, description=description).save()
+            
+            update_client = Client.objects.get(id=client.id)
+            update_client.summ = update_client.summ + price 
+            update_client.save()
+            
             if id != None:
                 return HttpResponseRedirect('/client/result/search/?id='+str(id))
             else:
@@ -1635,7 +1680,29 @@ def shop_price_lastadd(request, id):
 def shop_price_lastadd_print(request, id):
     list = Catalog.objects.all().order_by("-id")[:id]
     return render_to_response('price_list.html', {'catalog': list})    
+
+
+def shop_price_bysearch_id(request, id):
+    url = '/shop/price/bysearch_id/'+id+'/print/'
+    list = Catalog.objects.filter(ids__icontains=id).order_by("-id")
+    return render_to_response('index.html', {'catalog': list, 'weblink': 'price_list.html', 'view': True, 'link': url})    
+
     
+def shop_price_bysearch_id_print(request, id):
+    list = Catalog.objects.filter(ids__icontains=id).order_by("-id")
+    return render_to_response('price_list.html', {'catalog': list})    
+
+
+def shop_price_bysearch_name(request, id):
+    url = '/shop/price/bysearch_name/'+id+'/print/'
+    list = Catalog.objects.filter(name__icontains=id).order_by("manufacturer","-id")
+    return render_to_response('index.html', {'catalog': list, 'weblink': 'price_list.html', 'view': True, 'link': url})    
+
+    
+def shop_price_bysearch_name_print(request, id):
+    list = Catalog.objects.filter(name__icontains=id).order_by("manufacturer","-id")
+    return render_to_response('price_list.html', {'catalog': list})    
+
 
 #--------------------- MY Costs -------------------------
 def costtype_add(request):

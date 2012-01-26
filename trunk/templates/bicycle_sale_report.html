@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="/media/table.css">
+
+<h1>Список проданих велосипедів по місяцях</h1>
+
+<table border="1">
+	<tr>
+		<th>№</th>
+		<th>Рік</th>
+		<th>Місяць</th>
+		<th>Кількість велосипедів</th>
+	</tr>
+
+	{% for type in bicycles %}
+	<tr>
+		<td>{{forloop.counter}}</td>
+		<td><a href="/">{{type.year}}</a></td>
+		<td><a href="/">{{type.month}}</a></td>
+		<td>{{type.bike_count}}</td>
+	</tr>
+	{% endfor %}
+
+
+</table>
+
+		<br>
+		<a href="/bicycle/sale/report/month/">Звіт продаж по місяцях</a>
+		<br>
+		<a href="/">HOME</a>
+		<br>
+		<a href="/bicycle/sale/add/">Add</a>
+		

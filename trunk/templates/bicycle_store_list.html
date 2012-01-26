@@ -3,7 +3,9 @@
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
 <h1>Список велосипедів у магазині <br>
-{{text}}</h1>
+</h1>
+<a href="/bicycle-store/all/view/">Всі</a>
+<a href="/bicycle-store/now/view/">Наявні</a>
 
 <table border="1">
 	<tr>
@@ -15,13 +17,18 @@
 		<th>Валюта</th>
 		<!-- <th>Опис</th> -->
 		<th>Реалізація</th>
-		<th>Кількість</th>
+		<th align="center">Кількість</th>
 		<th>Дата</th>
 		<th>Дія</th>
 	</tr>
 
 	{% for type in bicycles %}
-	<tr>
+{% ifequal type.count 0 %}
+<tr>
+{% else %}
+<tr BGCOLOR="#CCCC99">
+{% endifequal %}
+
 		<td><a href="/">{{type.id}}</a></td>
 		<td><a href="/bicycle/photo/{{type.model.id}}">{{type.model}}</a>
 		</td>
@@ -33,9 +40,13 @@
 	{{type.description}}
 	</td>
  -->
-		<td><!-- 	<img src="/media/{{type.photo}}" alt="" title=""/>  -->
+		<td align="center"><!-- 	<img src="/media/{{type.photo}}" alt="" title=""/>  -->
 		{{type.realization}}</td>
-		<td><a href="/bicycle/sale/add/{{type.id}}">{{type.count}}</a></td>
+		{% ifequal type.count 1 %}
+			<td align="center"><a href="/bicycle/sale/add/{{type.id}}">{{type.count}}</a></td>
+		{% else %}
+			<td align="center">{{type.count}}</td>
+		{% endifequal %}
 		<td>{{type.date|date:"D d M Y"}}</td>
 		<td><a href="/bicycle-store/edit/{{ type.id }}">edit</a> <br>
 		<a href="/bicycle-store/delete/{{ type.id }}">delete</a></td>
