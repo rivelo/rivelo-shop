@@ -3,6 +3,9 @@
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
     <h1>Список велосипедів у магазині <br>{{text}}</h1>
+<a href="/bicycle-store/all/view/seller/">Всі</a>
+<a href="/bicycle-store/view/seller/">Наявні</a>
+
 
 <table border="1">
     <tr>
@@ -44,13 +47,15 @@
 	{{type.description}}
 	</td>
  -->	
-	<td>
+	<td align="center">
 <!-- 	<img src="/media/{{type.photo}}" alt="" title=""/>  -->       
 	{{type.realization}}
 	</td>	
-	<td>       
-	<a href="/bicycle/sale/add/{{type.id}}">{{type.count}}</a>
-	</td>
+	{% ifequal type.count 1 %}
+			<td align="center"><a href="/bicycle/sale/add/{{type.id}}">{{type.count}}</a></td>
+		{% else %}
+			<td align="center">{{type.count}}</td>
+		{% endifequal %}
 	<td>       
 	{{type.date|date:"D d M Y"}}
 	</td>
@@ -69,7 +74,6 @@
     	<th></th>
     	<th></th>
     	<th>{{price_summ}}</th>
-    	<th></th>
     	<th>{{real_summ}}</th>
 		<th>{{bike_summ}}</th> 
 		<th></th>

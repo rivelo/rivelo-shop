@@ -840,3 +840,9 @@ Key = file - Value = 1111
 Key = received - Value = 1
 Key = payment - Value = 0
 Key = description - Value = 
+DELETE FROM TABLE client debts WHERE id = 123 
+Key = id - Value = 123
+Key = client - Value = 129
+Key = date - Value = 2012-01-26 23:15:02
+Key = price - Value = 50.0
+Key = description - Value = тест

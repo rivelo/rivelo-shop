@@ -67,7 +67,10 @@ urlpatterns = patterns('',
     (r'^bicycle/store/report/bytype/(?P<id>\d+)/$', 'catalog.accounting.views.store_report_bytype'),
     (r'^bicycle-store/add/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_store_add'),
     (r'^bicycle-store/add/$', 'catalog.accounting.views.bicycle_store_add'),
+    (r'^bicycle-store/all/view/seller/$', 'catalog.accounting.views.bicycle_store_list_by_seller', {'all': True}),
     (r'^bicycle-store/view/seller/$', 'catalog.accounting.views.bicycle_store_list_by_seller'),
+    (r'^bicycle-store/now/view/$', 'catalog.accounting.views.bicycle_store_list'),
+    (r'^bicycle-store/all/view/$', 'catalog.accounting.views.bicycle_store_list',{'all': True}),
     (r'^bicycle-store/view/$', 'catalog.accounting.views.bicycle_store_list'),
     (r'^bicycle-store/edit/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_store_edit'),
     (r'^bicycle-store/delete/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_store_del'),
@@ -77,7 +80,8 @@ urlpatterns = patterns('',
     (r'^bicycle/sale/view/$', 'catalog.accounting.views.bicycle_sale_list'),
     (r'^bicycle/sale/edit/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_sale_edit'),    
     (r'^bicycle/sale/delete/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_sale_del'),
-
+    (r'^bicycle/sale/report/month/$', 'catalog.accounting.views.bicycle_sale_report'),
+    
     
     # Dealer/Dealer Managers operation
     (r'^dealer/payment/add/$', 'catalog.accounting.views.dealer_payment_add'),
@@ -193,6 +197,10 @@ urlpatterns = patterns('',
     (r'^shop/price/lastadded/(?P<id>\d+)/print/$', 'catalog.accounting.views.shop_price_lastadd_print'),
     (r'^shop/price/company/(?P<id>\d+)/view/$', 'catalog.accounting.views.shop_price'),
     (r'^shop/price/company/(?P<id>\d+)/print/$', 'catalog.accounting.views.shop_price_print'),
+    (r'^shop/price/bysearch_id/(?P<id>.*)/view/$', 'catalog.accounting.views.shop_price_bysearch_id'),
+    (r'^shop/price/bysearch_id/(?P<id>.*)/print/$', 'catalog.accounting.views.shop_price_bysearch_id_print'),
+    (r'^shop/price/bysearch_name/(?P<id>.*)/view/$', 'catalog.accounting.views.shop_price_bysearch_name'),
+    (r'^shop/price/bysearch_name/(?P<id>.*)/print/$', 'catalog.accounting.views.shop_price_bysearch_name_print'),
     
     # my cost
     (r'^cost/type/add/$', 'catalog.accounting.views.costtype_add'),
