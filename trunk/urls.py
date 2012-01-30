@@ -78,6 +78,7 @@ urlpatterns = patterns('',
     (r'^bicycle/sale/add/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_sale_add'),
     (r'^bicycle/sale/add/$', 'catalog.accounting.views.bicycle_sale_add'),
     (r'^bicycle/sale/view/$', 'catalog.accounting.views.bicycle_sale_list'),
+    (r'^bicycle/sale/year/(?P<year>\d+)/month/(?P<month>\d+)/view/$', 'catalog.accounting.views.bicycle_sale_list'),
     (r'^bicycle/sale/edit/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_sale_edit'),    
     (r'^bicycle/sale/delete/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_sale_del'),
     (r'^bicycle/sale/report/month/$', 'catalog.accounting.views.bicycle_sale_report'),
@@ -157,6 +158,7 @@ urlpatterns = patterns('',
 
     (r'^clientcredits/add/(?P<id>\d+)$', 'catalog.accounting.views.clientcredits_add'),
     (r'^clientcredits/view/$', 'catalog.accounting.views.clientcredits_list'),
+    (r'^clientcredits/edit/(?P<id>\d+)$', 'catalog.accounting.views.clientcredits_edit'),    
     (r'^clientcredits/delete/(?P<id>\d+)$', 'catalog.accounting.views.clientcredits_delete'),
 
     # WorkShop 
