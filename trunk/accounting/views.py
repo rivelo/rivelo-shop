@@ -543,7 +543,7 @@ def dictfetchall(cursor):
     
 
 def bicycle_sale_report(request):
-    query = "SELECT EXTRACT(year FROM date) as year, EXTRACT(month from date) as month, COUNT(*) as bike_count FROM accounting_bicycle_sale GROUP BY year,month;"
+    query = "SELECT EXTRACT(year FROM date) as year, EXTRACT(month from date) as month, COUNT(*) as bike_count, sum(price) as s_price FROM accounting_bicycle_sale GROUP BY year,month;"
     #sql2 = "SELECT sum(price) FROM accounting_clientdebts WHERE client_id = %s;"
     #user = id;
     list = None
@@ -1142,26 +1142,67 @@ def client_edit(request, id):
 
 
 def client_balance_list(request):
-    list_debt = ClientDebts.objects.all().order_by("-client")
-    #list_debt = ClientDebts.objects.filter(client=118).order_by("-client")
-    list_cred = ClientCredits.objects.all().order_by("-client")
-    #list = Client.objects.all()
-    sum_d = 0
-    sum_c = 0
-    id_last = None
-    idd_sum = 0
-    for i in list_debt:
-        sum_d = sum_d + i.price
-        if id_last == i.client.id:
-            i.price = i.price + sum_last
-        id_last = i.client.id
-        sum_last = i.price        
-    
-    for i in list_cred:
-        sum_c = sum_c + i.price
-                
-    return render_to_response('index.html', {'sum_cred':sum_c, 'sum_debt':sum_d, 'clients': list_debt, 'weblink': 'client_balance_list.html'})
+    query = '''select accounting_client.id as id, accounting_client.name as name, sum(accounting_clientdebts.price) as sum_deb 
+            from accounting_client 
+            left join accounting_clientdebts on accounting_clientdebts.client_id=accounting_client.id 
+            group by accounting_client.id order by accounting_client.id;
+            '''
+    query1 = '''select accounting_client.id as id, sum(accounting_clientcredits.price) as sum_cred 
+            from accounting_client 
+            left join accounting_clientcredits on accounting_clientcredits.client_id=accounting_client.id 
+            group by accounting_client.id order by accounting_client.id;
+            '''
+            
+#===============================================================================
+#    query = '''select accounting_client.id as id, accounting_client.name as name, sum(accounting_clientcredits.price) as sum_cred, sum(accounting_clientdebts.price) as sum_deb    
+#            from accounting_client left join accounting_clientcredits on accounting_client.id=accounting_clientcredits.client_id 
+#            left join accounting_clientdebts on  accounting_client.id=accounting_clientdebts.client_id 
+#            group by accounting_clientcredits.client_id, accounting_clientdebts.client_id;
+#            '''
+#                
+#===============================================================================
+            
+    list = None
+    list1 = None
+    try:
+        cursor = connection.cursor()
+        cursor.execute(query)
+        list = dictfetchall(cursor)
+        cursor1 = connection.cursor()
+        cursor1.execute(query1)
+        list1 = cursor1.fetchall()
+        #list = cursor.execute(sql1, )   
+        
+    except TypeError:
+        res = "Помилка"
 
+
+    for item in list1:
+        for key in list:
+            if item[0]==key['id']:
+                key['sum_cred']=item[1]
+                try:
+                    key['sum_cred'] = int(key['sum_cred'])
+                except TypeError:
+                    key['sum_cred'] = 0  # or whatever you want to do
+                try:
+                    key['sum_deb'] = int(key['sum_deb'])
+                except TypeError:
+                    key['sum_deb'] = 0
+                key['minus']=key['sum_cred']-key['sum_deb']
+            #item[1]
+    s_debt = 0
+    s_cred = 0
+    for key1 in list[:]:
+        s_debt+=key1['sum_deb']
+        s_cred+=key1['sum_cred']
+        if (key1['sum_deb']==False) & (key1['sum_cred']==False):
+            #key1['minus']=9999
+            list.remove(key1)
+            
+    #list = Bicycle_Sale.objects.all().order_by('date')
+    return render_to_response('index.html', {'clients': list, 'sum_debt':s_debt, 'sum_cred':s_cred, 'weblink': 'client_balance_list.html'})
+            
 
 def client_list(request):
     list = Client.objects.all()
