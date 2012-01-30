@@ -6,10 +6,11 @@
     <link rel="stylesheet" type="text/css" href="/media/table.css">
 </head>
 <body>
-    <h1>Список Клієнтських Переплат</h1>
+    <h1>Список Клієнтських Проплат</h1>
 	
     <table border="1">
     <tr>
+    	<th>№</th>    
     	<th>ID</th>
     	<th>Клієнт</th>
     	<th>Дата операції</th>
@@ -21,7 +22,10 @@
 {% for type in clients %}
 <tr>
 	<td>       
-	<a href="/">{{type.id}}</a> 
+	{{forloop.counter}}
+	</td>
+	<td>       
+	<a href="/clientcredits/edit/{{ type.id }}">{{type.id}}</a> 
 	</td>
 	<td>
 	<a href="/client/result/search/?id={{type.client.id}}">{{type.client}}</a>

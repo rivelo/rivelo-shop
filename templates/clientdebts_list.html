@@ -10,8 +10,9 @@
 	
     <table border="1">
     <tr>
+       	<th>№</th>
     	<th>ID</th>
-    	<th>Клієнт</th>
+    	<th width="230">Клієнт</th>
     	<th>Дата операції</th>
     	<th>Сума (грн.)</th>
     	<th>Опис</th>
@@ -21,7 +22,10 @@
     {% for type in clients %}
 <tr>
 	<td>       
-	<a href="/">{{type.id}}</a> 
+	{{forloop.counter}}
+	</td>
+	<td>       
+	<a href="/clientdebts/edit/{{ type.id }}">{{type.id}}</a> 
 	</td>
 	<td>
 	<a href="/client/result/search/?id={{type.client.id}}">{{type.client}}</a>       
@@ -36,8 +40,6 @@
 	{{type.description}}
 	</td>	
 	<td>
-    <a href="/clientdebts/edit/{{ type.id }}">edit</a>
-    <br>	
     <a href="/clientdebts/delete/{{ type.id }}">delete</a>
     </td>
 </tr>
@@ -48,7 +50,6 @@
 
 <br><br>
 <a href="/">Головне меню (HOME)</a>
-<br>
 <a href="/clientdebts/add/">Створити нового клієнта (Add)</a>       
 
 </body>

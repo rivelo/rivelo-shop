@@ -522,8 +522,12 @@ def bicycle_sale_del(request, id):
     return HttpResponseRedirect('/bicycle/sale/view/')
 
 
-def bicycle_sale_list(request):
-    list = Bicycle_Sale.objects.all().order_by('date')
+def bicycle_sale_list(request, year=False, month=False):
+    list = None
+    if (year==False) & (month==False):
+        list = Bicycle_Sale.objects.all().order_by('date')
+    else:
+        list = Bicycle_Sale.objects.filter(date__year=year, date__month=month).order_by('date')
     price_summ = 0
     service_summ = 0
     for item in list:
@@ -1309,6 +1313,17 @@ def clientcredits_add(request, id=None):
 def clientcredits_list(request):
     list = ClientCredits.objects.all().order_by("-id")
     return render_to_response('index.html', {'clients': list, 'weblink': 'clientcredits_list.html'})
+
+def clientcredits_edit(request, id):
+    a = ClientCredits.objects.get(pk=id)
+    if request.method == 'POST':
+        form = ClientCreditsForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/clientcredits/view/')
+    else:
+        form = ClientCreditsForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'clientcredits.html'})
 
 
 def clientcredits_delete(request, id):
