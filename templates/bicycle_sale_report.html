@@ -10,6 +10,7 @@
 		<th>Рік</th>
 		<th>Місяць</th>
 		<th>Кількість велосипедів</th>
+		<th>Сума проданих велосипедів</th>
 	</tr>
 
 	{% for type in bicycles %}
@@ -18,6 +19,7 @@
 		<td><a href="/">{{type.year}}</a></td>
 		<td><a href="/">{{type.month}}</a></td>
 		<td>{{type.bike_count}}</td>
+		<td>{{type.s_price}}</td>
 	</tr>
 	{% endfor %}
 
