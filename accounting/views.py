@@ -658,13 +658,15 @@ def dealer_payment_add(request):
     if request.method == 'POST':
         form = DealerPaymentForm(request.POST, instance = a)
         if form.is_valid():
+            dealer_invoice = form.cleaned_data['dealer_invoice']
             invoice_number = form.cleaned_data['invoice_number']
             date = form.cleaned_data['date']
             bank = form.cleaned_data['bank']
             price = form.cleaned_data['price']
             currency = form.cleaned_data['currency']
+            letter = form.cleaned_data['letter']
             description = form.cleaned_data['description']
-            DealerPayment(invoice_number=invoice_number, date=date, bank=bank, price=price, currency=currency, description=description).save()
+            DealerPayment(dealer_invoice=dealer_invoice, invoice_number=invoice_number, date=date, bank=bank, price=price, currency=currency, letter=letter, description=description).save()
             return HttpResponseRedirect('/dealer/payment/view/')
     else:
         form = DealerPaymentForm(instance = a)

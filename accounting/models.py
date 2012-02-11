@@ -173,22 +173,6 @@ class DealerManager(models.Model):
         ordering = ["company", "name"]    
 
 
-# Dealer payment (Ukraine)
-class DealerPayment(models.Model):
-    invoice_number = models.CharField(max_length=255)
-    date = models.DateField(auto_now_add=True)
-    bank = models.ForeignKey(Bank)
-    price = models.FloatField()
-    currency = models.ForeignKey(Currency)
-    description = models.TextField(blank = True, null = True)
-            
-    def __unicode__(self):
-        return self.name
-
-    class Meta:
-        ordering = ["invoice_number", "date"]    
-
-
 # Dealer invoice (Ukraine)
 class DealerInvoice(models.Model):
     origin_id = models.CharField(max_length=255)
@@ -204,11 +188,46 @@ class DealerInvoice(models.Model):
     description = models.TextField(blank = True, null = True)
             
     def __unicode__(self):
-        #return self.origin_id + " - " + self.company 
-        return self.origin_id 
+        return "%s - %s" % (self.origin_id, self.company) 
+        #return self.origin_id 
 
     class Meta:
         ordering = ["payment", "company", "manager", "date"]    
+
+
+class DealerInvoice_ComponentList(models.Model):
+    invoice = models.ForeignKey(DealerInvoice)
+    catalog = models.ForeignKey(Catalog)
+    count = models.IntegerField()
+    price = models.FloatField()
+    currency = models.ForeignKey(Currency)
+    date = models.DateField(auto_now_add=False)
+    description = models.TextField(null = True)
+            
+    def __unicode__(self):
+        return "%s - %s" % (self.invoice, self.catalog) 
+        #return self.origin_id 
+
+    class Meta:
+        ordering = ["invoice", "catalog", "price", "date"]    
+
+
+# Dealer payment (Ukraine)
+class DealerPayment(models.Model):
+    dealer_invoice = models.ForeignKey(DealerInvoice)
+    invoice_number = models.CharField(max_length=255, null = True)
+    date = models.DateField(auto_now_add=True)
+    bank = models.ForeignKey(Bank)
+    price = models.FloatField()
+    currency = models.ForeignKey(Currency)
+    letter = models.BooleanField(default=False, verbose_name="Лист відправлено?")
+    description = models.TextField(blank = True, null = True)
+            
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ["invoice_number", "date"]    
 
 
 #Client database
