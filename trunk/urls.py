@@ -111,6 +111,9 @@ urlpatterns = patterns('',
     (r'^dealer-manager/edit/(?P<id>\d+)/$', 'catalog.accounting.views.dealer_manager_edit'),    
     (r'^dealer-manager/delete/(?P<id>\d+)/$', 'catalog.accounting.views.dealer_manager_del'),
 
+    #Invoice
+    (r'^invoice/add/$', 'catalog.accounting.views.invoicecomponent_add'),
+    (r'^invoice/list/view/$', 'catalog.accounting.views.invoicecomponent_list'),    
 
     # Curency operation
     (r'^curency/add/$', 'catalog.accounting.views.curency_add'),

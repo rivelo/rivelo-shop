@@ -31,7 +31,6 @@ class SelectFromModel(forms.Field):
         raise forms.ValidationError(u'Error Country')
 
 
-
 class ManufacturerForm(forms.ModelForm):
     name = forms.CharField()
     www = forms.URLField(initial='http://', help_text='url')
@@ -190,19 +189,19 @@ class DealerInvoiceForm(forms.ModelForm):
 
 class InvoiceComponentListForm(forms.ModelForm):
     invoice = forms.ModelChoiceField(queryset = DealerInvoice.objects.all(), required=False)
-    catalog = forms.ModelChoiceField(queryset = Catalog.objects.all())
+    #catalog = forms.ModelChoiceField(queryset = Catalog.objects.all())
+    catalog = forms.ModelChoiceField(queryset = Catalog.objects.filter(manufacturer=36))
     count = forms.IntegerField(min_value=0, initial = 1)
     price = forms.FloatField(initial=0)
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
     date = forms.DateTimeField(initial = datetime.date.today, label='Дата', input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
-    description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
+    description = forms.CharField(label='Description', max_length=255, required=False)
         
     
 class ContactForm(forms.ModelForm):
     topic = forms.ChoiceField(choices=TOPIC_CHOICES)
     message = forms.CharField(widget=forms.Textarea())
     sender = forms.EmailField(required=False)
-
 
 
 # --------- Product Catalog ------------

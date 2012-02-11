@@ -117,7 +117,7 @@ class Catalog(models.Model):
     description = models.CharField(max_length=255)
     
     def __unicode__(self):
-        return self.name
+        return "[%s] %s - %s" % (self.ids, self.manufacturer, self.name)
 
     class Meta:
         ordering = ["type", "name"]    
@@ -195,7 +195,7 @@ class DealerInvoice(models.Model):
         ordering = ["payment", "company", "manager", "date"]    
 
 
-class DealerInvoice_ComponentList(models.Model):
+class InvoiceComponentList(models.Model):
     invoice = models.ForeignKey(DealerInvoice)
     catalog = models.ForeignKey(Catalog)
     count = models.IntegerField()

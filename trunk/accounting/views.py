@@ -8,14 +8,17 @@ from forms import ContactForm, ManufacturerForm, CountryForm, CurencyForm, Categ
 from models import Catalog, Client, ClientDebts, ClientCredits 
 from forms import CatalogForm, ClientForm, ClientDebtsForm, ClientCreditsForm
 
-from models import Dealer, DealerManager, DealerManager, DealerPayment, DealerInvoice, Bank, Exchange, PreOrder
-from forms import DealerManagerForm, DealerForm, DealerPaymentForm, DealerInvoiceForm, BankForm, ExchangeForm, PreOrderForm
+from models import Dealer, DealerManager, DealerManager, DealerPayment, DealerInvoice, InvoiceComponentList, Bank, Exchange, PreOrder
+from forms import DealerManagerForm, DealerForm, DealerPaymentForm, DealerInvoiceForm, InvoiceComponentListForm, BankForm, ExchangeForm, PreOrderForm
 
 from models import WorkGroup, WorkType, WorkShop, WorkStatus, WorkTicket, CostType, Costs, ShopDailySales
 from forms import WorkGroupForm, WorkTypeForm, WorkShopForm, WorkStatusForm, WorkTicketForm, CostTypeForm, CostsForm, ShopDailySalesForm
   
 from django.http import HttpResponseRedirect, HttpRequest
 from django.core.exceptions import ObjectDoesNotExist
+
+from django.http import HttpResponse 
+from django.http import Http404  
 
 from django.conf import settings
 import datetime
@@ -729,8 +732,6 @@ def dealer_invoice_del(request, id):
     obj.delete()
     return HttpResponseRedirect('/dealer/invoice/view/')
  
-from django.http import HttpResponse 
-from django.http import Http404  
  
 def dealer_invoice_list(request):
     list = DealerInvoice.objects.all()
@@ -828,6 +829,32 @@ def dealer_invoice_search_result(request):
         list = DealerInvoice.objects.filter(origin_id__icontains = num)
     #list1 = DealerInvoice.objects.all()
     return render_to_response('index.html', {'invoice_list': list, 'weblink': 'dealer_invoice_list_search.html'})
+
+
+#-------------- InvoiceComponentList -----------------------
+def invoicecomponent_add(request):
+    a = InvoiceComponentList(date=datetime.date.today(), price=0, count=1, currency=Currency.objects.get(id=2))
+    if request.method == 'POST':
+        form = InvoiceComponentListForm(request.POST, instance = a)
+        if form.is_valid():
+            invoice = form.cleaned_data['invoice']
+            date = form.cleaned_data['date']
+            catalog = form.cleaned_data['catalog']
+            count = form.cleaned_data['count']
+            price = form.cleaned_data['price']
+            currency = form.cleaned_data['currency']
+            description = form.cleaned_data['description']
+            InvoiceComponentList(date=date, invoice=invoice, catalog=catalog, price=price, currency=currency, count=count, description=description).save()
+            return HttpResponseRedirect('/invoice/list/view/')
+    else:
+        form = InvoiceComponentListForm(instance = a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'invoicecomponent.html'})
+
+
+def invoicecomponent_list(request):
+    list = InvoiceComponentList.objects.all()
+    #return render_to_response('category_list.html', {'categories': list.values_list()})
+    return render_to_response('index.html', {'componentlist': list, 'weblink': 'invoicecomponent_list.html'})
 
 
 # --------------- Classification ---------
