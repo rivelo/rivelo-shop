@@ -164,11 +164,13 @@ class DealerManagerForm(forms.ModelForm):
 
 
 class DealerPaymentForm(forms.ModelForm):
+    dealer_invoice = forms.ModelChoiceField(queryset = DealerInvoice.objects.all())
     invoice_number = forms.CharField(max_length=255)
     date = forms.DateField(initial = datetime.date.today)
     bank = forms.ModelChoiceField(queryset = Bank.objects.all())
     price = forms.FloatField(initial=0)
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
+    letter = forms.BooleanField(initial = False, required=False)
     description = forms.CharField(label='Description', widget=forms.Textarea())
   
 
@@ -183,6 +185,16 @@ class DealerInvoiceForm(forms.ModelForm):
     received = forms.BooleanField(initial = False, required=False) 
     payment = forms.BooleanField(initial = False, required=False)
     #payment = forms.ModelChoiceField(queryset = DealerPayment.objects.all())
+    description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
+
+
+class InvoiceComponentListForm(forms.ModelForm):
+    invoice = forms.ModelChoiceField(queryset = DealerInvoice.objects.all(), required=False)
+    catalog = forms.ModelChoiceField(queryset = Catalog.objects.all())
+    count = forms.IntegerField(min_value=0, initial = 1)
+    price = forms.FloatField(initial=0)
+    currency = forms.ModelChoiceField(queryset = Currency.objects.all())
+    date = forms.DateTimeField(initial = datetime.date.today, label='Дата', input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
     description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
         
     

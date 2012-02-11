@@ -36,6 +36,11 @@ r join phpbb_profile_fields_data p on u.user_id=p.user_id INTO OUTFILE 'd:/resul
 t.txt' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n' ;
 
 
+mysql> alter table accounting_dealerpayment add  `dealear_invoice_id` integer NOT NULL;
+
+mysql> insert into accounting_dealerpayment (date, bank_id, price, currency_id, description, invoice_number, dealer_invoice_id, letter) select date, bank_id, price, currency_id, description, invoice_number, 164 as dealer_invoice_id, False as letter from dealerpayment;
+
+
 
 Итак, перед нами стоит задача: конвертировать данные, из изначально некорректно заявленной кодировки latin1 в корректную кодировку cp1251. Идем в документацию по языку:
 
