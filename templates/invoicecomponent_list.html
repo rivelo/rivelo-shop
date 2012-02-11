@@ -1,0 +1,63 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<html lang="en">
+<head>
+    <title>Список товару</title>
+    <link rel="stylesheet" type="text/css" href="/media/table.css">
+</head>
+<body>
+    <h1>Список наявного товару</h1>
+
+    <table border="1">
+	<tr>
+    	<th>ID</th>
+    	<th>№ накладної</th>
+    	<th>Товар</th>
+    	<th>Кількість</th>
+    	<th>Ціна</th>
+    	<th>Валюта</th>    	
+    	<th>Дата</th>    	    	
+    	<th>Опис</th>
+    	<th>Дія</th>
+    </tr>
+    
+{% for type in componentlist %}
+<tr>
+	<td>       
+    <a href="">{{type.id}}</a>
+	</td>
+	<td>
+	{{type.invoice}}       
+	</td>
+	<td>       
+	{{type.catalog}}s
+	</td>
+	<td>       
+	{{type.count}}
+	</td>
+	<td>       
+	{{type.price}}
+	</td>
+	<td>       
+	{{type.currency}}
+	</td>
+	<td>       
+	{{type.date}}
+	</td>
+	<td>
+	{{type.description}}
+	</td>
+	<td>
+    <a href="">delete</a>
+    </td>
+</tr>
+{% endfor %}         
+    
+    <table>
+
+<br><br>
+<a href="/">HOME</a>
+<br>
+<a href="/invoice/add/">Add</a>      
+
+</body>
+</html>
