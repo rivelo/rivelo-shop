@@ -56,3 +56,9 @@ ALTER TABLE t1 CHANGE c1 c1 TEXT CHARACTER SET cp1251; (3)
 
 The reason this works is that there is no conversion when you convert to or from BLOB columns.
 
+
+
+
+
+mysql> ALTER TABLE accounting_invoicecomponentlist MODIFY description VARCHAR(25
+5) CHARACTER SET utf8; COLLATE utf8_general_ci NULL;

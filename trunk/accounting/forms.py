@@ -189,15 +189,20 @@ class DealerInvoiceForm(forms.ModelForm):
 
 class InvoiceComponentListForm(forms.ModelForm):
     invoice = forms.ModelChoiceField(queryset = DealerInvoice.objects.all(), required=False)
-    #catalog = forms.ModelChoiceField(queryset = Catalog.objects.all())
-    catalog = forms.ModelChoiceField(queryset = Catalog.objects.filter(manufacturer=36))
+    catalog = forms.ModelChoiceField(queryset = Catalog.objects.none())
+    #catalog = forms.ModelChoiceField(queryset = Catalog.objects.filter(manufacturer=36))
     count = forms.IntegerField(min_value=0, initial = 1)
     price = forms.FloatField(initial=0)
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
     date = forms.DateTimeField(initial = datetime.date.today, label='Дата', input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
-    description = forms.CharField(label='Description', max_length=255, required=False)
-        
-    
+    description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
+
+    def __init__(self, test1, *args, **kwargs):
+        #self.default_username = default_username
+        super(InvoiceComponentListForm, self).__init__(*args, **kwargs)
+        self.fields['catalog'].queryset = Catalog.objects.filter(manufacturer = test1) 
+
+  
 class ContactForm(forms.ModelForm):
     topic = forms.ChoiceField(choices=TOPIC_CHOICES)
     message = forms.CharField(widget=forms.Textarea())
@@ -265,6 +270,16 @@ class ClientCreditsForm(forms.ModelForm):
     class Meta:
         model = ClientCredits
 
+
+class ClientInvoiceForm(forms.ModelForm):
+    client = forms.ModelChoiceField(queryset = Client.objects.all())
+    #catalog = forms.ModelChoiceField(queryset = Catalog.objects.filter(manufacturer=36))
+    catalog = forms.ModelChoiceField(queryset = Catalog.objects.filter())    
+    count = forms.IntegerField(min_value=0, initial = 1)
+    sum = forms.FloatField(initial=0)
+    currency = forms.ModelChoiceField(queryset = Currency.objects.all())
+    date = forms.DateTimeField(initial = datetime.date.today, label='Дата', input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
+    description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
 
 
 class CostTypeForm(forms.ModelForm):

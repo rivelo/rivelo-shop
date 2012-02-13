@@ -1,6 +1,13 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
+<br>
+{% for company in company_list %}
+<a href="/invoice/manufacture/{{company.id}}/add/">{{company.name}}</a>
+{% endfor %}
+<br>
+
+
     <h1>Додати товар</h1>
     <form action="." method="POST">
         <table>
