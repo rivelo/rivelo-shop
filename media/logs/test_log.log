@@ -846,3 +846,21 @@ Key = client - Value = 129
 Key = date - Value = 2012-01-26 23:15:02
 Key = price - Value = 50.0
 Key = description - Value = тест
+DELETE FROM TABLE invoice component list WHERE id = 65 
+Key = id - Value = 65
+Key = invoice - Value = 187
+Key = catalog - Value = 2235
+Key = count - Value = 1
+Key = price - Value = 0.0
+Key = currency - Value = 2
+Key = date - Value = 2012-02-13
+Key = description - Value = 
+DELETE FROM TABLE invoice component list WHERE id = 78 
+Key = id - Value = 78
+Key = invoice - Value = 187
+Key = catalog - Value = 2626
+Key = count - Value = 4
+Key = price - Value = 0.0
+Key = currency - Value = 2
+Key = date - Value = 2012-02-13
+Key = description - Value = 
