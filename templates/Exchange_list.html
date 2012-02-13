@@ -3,35 +3,46 @@
 
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
-<h1>Exchange list</h1>
-
-<table border="1">
+    <h1>Exchange list</h1>
+    
+   <table border="1">
 	<tr>
-		<th>ID</th>
-		<th>Дата</th>
-		<th>Валюта</th>
-		<th>Курс</th>
-		<th>Дія</th>
-	</tr>
+    	<th>ID</th>
+    	<th>Дата</th>
+    	<th>Валюта</th>
+		<th>Курс</th>    	
+    	<th>Дія</th>
+    </tr>    
+    
+    
+    {% for cur in exchange %}
+    <tr>
+    	<td>
+            {{ cur.id }}
+        </td>
+    
+    	<td>
+            {{ cur.date|date:"D d M Y" }}
+        </td>
+
+        <td>
+            {{ cur.currency.name }}
+        </td>
+    	<td>
+            {{ cur.value }}
+        </td>
+        <td>
+            <a href="/exchange/edit/{{ cur.id }}">edit</a>
+            
+            <a href="/exchange/delete/{{ cur.id }}">delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+    <table>
 
 
-	{% for cur in exchange %}
-	<tr>
-		<td>{{ cur.id }}</td>
+<br><br>
+<a href="/">HOME</a>
+<br>
+<a href="/exchange/add/">Add</a>       
 
-		<td>{{ cur.date|date:"D d M Y" }}</td>
-
-		<td>{{ cur.currency.name }}</td>
-		<td>{{ cur.value }}</td>
-		<td><a href="/exchange/edit/{{ cur.id }}">edit</a> <a
-			href="/exchange/delete/{{ cur.id }}">delete</a></td>
-	</tr>
-	{% endfor %}
-	<table>
-
-
-		<br>
-		<br>
-		<a href="/">HOME</a>
-		<br>
-		<a href="/exchange/add/">Add</a>

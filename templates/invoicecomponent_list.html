@@ -5,25 +5,38 @@
     <link rel="stylesheet" type="text/css" href="/media/table.css">
 </head>
 <body>
+<script type="text/javascript">
+setTimeout(function() {
+    document.getElementById('result').innerHTML = (parseFloat(this.value)||0) * (parseFloat(document.getElementById('b').value)||0);
+}, 100);
+</script>
+
     <h1>Список наявного товару</h1>
 
     <table border="1">
 	<tr>
+    	<th>#</th>	
     	<th>ID</th>
     	<th>№ накладної</th>
     	<th>Товар</th>
     	<th>Кількість</th>
     	<th>Ціна</th>
-    	<th>Валюта</th>    	
+    	<th>Валюта</th>
+    	<th>Сума</th>    	
     	<th>Дата</th>    	    	
     	<th>Опис</th>
     	<th>Дія</th>
     </tr>
     
+{% load template_math %}    
+    
 {% for type in componentlist %}
 <tr>
+	<td>
+	{{forloop.counter}}
+	</td>
 	<td>       
-    <a href="">{{type.id}}</a>
+    <a href="/invoice/edit/{{type.id}}">{{type.id}}</a>
 	</td>
 	<td>
 	{{type.invoice}}       
@@ -35,24 +48,28 @@
 	{{type.count}}
 	</td>
 	<td>       
-	{{type.price}}
+	{{type.catalog.price}}
 	</td>
 	<td>       
-	{{type.currency}}
+	{{type.catalog.currency}}
 	</td>
 	<td>       
+	{{type.catalog.price|mul:type.count}}
+	</td>
+	<td> 
 	{{type.date}}
 	</td>
 	<td>
 	{{type.description}}
 	</td>
 	<td>
-    <a href="">delete</a>
+    <a href="/invoice/delete/{{type.id}}">delete</a>
     </td>
 </tr>
 {% endfor %}         
     
     <table>
+
 
 <br><br>
 <a href="/">HOME</a>

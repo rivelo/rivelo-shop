@@ -28,3 +28,14 @@ def summa(value, arg):
     value = 0
     value = float(value) + float(arg)
     return round(value,2)
+
+@register.filter
+def dictsumm(value, arg):
+    v = 0
+    q = arg
+    for t in value:
+        v = v + t['count']
+    
+    #value = float(value) + float(arg)
+    return value
+    #return sum(d.get(arg) for d in value)

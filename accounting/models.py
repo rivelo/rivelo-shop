@@ -202,7 +202,7 @@ class InvoiceComponentList(models.Model):
     price = models.FloatField()
     currency = models.ForeignKey(Currency)
     date = models.DateField(auto_now_add=False)
-    description = models.TextField(null = True)
+    description = models.TextField(blank = True, null = True)
             
     def __unicode__(self):
         return "%s - %s" % (self.invoice, self.catalog) 
@@ -214,13 +214,13 @@ class InvoiceComponentList(models.Model):
 
 # Dealer payment (Ukraine)
 class DealerPayment(models.Model):
-    dealer_invoice = models.ForeignKey(DealerInvoice)
+    #dealer_invoice = models.ForeignKey(DealerInvoice)
     invoice_number = models.CharField(max_length=255, null = True)
     date = models.DateField(auto_now_add=True)
     bank = models.ForeignKey(Bank)
     price = models.FloatField()
     currency = models.ForeignKey(Currency)
-    letter = models.BooleanField(default=False, verbose_name="Лист відправлено?")
+    #letter = models.BooleanField(default=False, verbose_name="Лист відправлено?")
     description = models.TextField(blank = True, null = True)
             
     def __unicode__(self):
@@ -276,6 +276,23 @@ class ClientCredits(models.Model):
 
     class Meta:
         ordering = ["client", "date"]    
+
+
+class ClientInvoice(models.Model):
+    client = models.ForeignKey(Client)
+    catalog = models.ForeignKey(Catalog)
+    count = models.IntegerField()
+    sum = models.FloatField()
+    currency = models.ForeignKey(Currency)
+    date = models.DateField(auto_now_add=False)
+    description = models.TextField(blank = True, null = True)
+            
+    def __unicode__(self):
+        return "%s - %s шт." % (self.catalog, self.count) 
+        #return self.origin_id 
+
+    class Meta:
+        ordering = ["client", "catalog", "date"]    
 
 
 #my costs (Затрати)

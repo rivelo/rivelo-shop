@@ -832,10 +832,11 @@ def dealer_invoice_search_result(request):
 
 
 #-------------- InvoiceComponentList -----------------------
-def invoicecomponent_add(request):
-    a = InvoiceComponentList(date=datetime.date.today(), price=0, count=1, currency=Currency.objects.get(id=2))
+def invoicecomponent_add(request, mid=None):
+    company_list = Manufacturer.objects.all()
+    a = InvoiceComponentList(date=datetime.date.today(), price=0, count=1, currency=Currency.objects.get(id=2), invoice=DealerInvoice.objects.get(id=187))
     if request.method == 'POST':
-        form = InvoiceComponentListForm(request.POST, instance = a)
+        form = InvoiceComponentListForm(request.POST, instance = a, test1=mid)
         if form.is_valid():
             invoice = form.cleaned_data['invoice']
             date = form.cleaned_data['date']
@@ -847,15 +848,32 @@ def invoicecomponent_add(request):
             InvoiceComponentList(date=date, invoice=invoice, catalog=catalog, price=price, currency=currency, count=count, description=description).save()
             return HttpResponseRedirect('/invoice/list/view/')
     else:
-        form = InvoiceComponentListForm(instance = a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'invoicecomponent.html'})
+        form = InvoiceComponentListForm(instance = a, test1=mid)
+    return render_to_response('index.html', {'form': form, 'weblink': 'invoicecomponent.html', 'company_list': company_list})
 
 
 def invoicecomponent_list(request):
-    list = InvoiceComponentList.objects.all()
+    list = InvoiceComponentList.objects.all().order_by('-id')
     #return render_to_response('category_list.html', {'categories': list.values_list()})
     return render_to_response('index.html', {'componentlist': list, 'weblink': 'invoicecomponent_list.html'})
 
+
+def invoicecomponent_del(request, id):
+    obj = InvoiceComponentList.objects.get(id=id)
+    del_logging(obj)
+    obj.delete()
+    return HttpResponseRedirect('/invoice/list/view/')
+
+def invoicecomponent_edit(request, id):
+    a = InvoiceComponentList.objects.get(id=id)
+    if request.method == 'POST':
+        form = InvoiceComponentListForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/invoice/list/view/')
+    else:
+        form = InvoiceComponentListForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'invoicecomponent.html'})
 
 # --------------- Classification ---------
 

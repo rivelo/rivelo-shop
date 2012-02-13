@@ -113,7 +113,10 @@ urlpatterns = patterns('',
 
     #Invoice
     (r'^invoice/add/$', 'catalog.accounting.views.invoicecomponent_add'),
+    (r'^invoice/manufacture/(?P<mid>\d+)/add/$', 'catalog.accounting.views.invoicecomponent_add'),
     (r'^invoice/list/view/$', 'catalog.accounting.views.invoicecomponent_list'),    
+    (r'^invoice/delete/(?P<id>\d+)/$', 'catalog.accounting.views.invoicecomponent_del'),
+    (r'^invoice/edit/(?P<id>\d+)/$', 'catalog.accounting.views.invoicecomponent_edit'),
 
     # Curency operation
     (r'^curency/add/$', 'catalog.accounting.views.curency_add'),
