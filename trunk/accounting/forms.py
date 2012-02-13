@@ -189,7 +189,7 @@ class DealerInvoiceForm(forms.ModelForm):
 
 class InvoiceComponentListForm(forms.ModelForm):
     invoice = forms.ModelChoiceField(queryset = DealerInvoice.objects.all(), required=False)
-    catalog = forms.ModelChoiceField(queryset = Catalog.objects.none())
+    catalog = forms.ModelChoiceField(queryset = Catalog.objects.none(), required=False)
     #catalog = forms.ModelChoiceField(queryset = Catalog.objects.filter(manufacturer=36))
     count = forms.IntegerField(min_value=0, initial = 1)
     price = forms.FloatField(initial=0)
@@ -197,8 +197,9 @@ class InvoiceComponentListForm(forms.ModelForm):
     date = forms.DateTimeField(initial = datetime.date.today, label='Дата', input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
     description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
 
-    def __init__(self, test1, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         #self.default_username = default_username
+        test1 = kwargs.pop('test1', None)
         super(InvoiceComponentListForm, self).__init__(*args, **kwargs)
         self.fields['catalog'].queryset = Catalog.objects.filter(manufacturer = test1) 
 

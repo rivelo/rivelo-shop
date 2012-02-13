@@ -846,7 +846,9 @@ def invoicecomponent_add(request, mid=None):
             currency = form.cleaned_data['currency']
             description = form.cleaned_data['description']
             InvoiceComponentList(date=date, invoice=invoice, catalog=catalog, price=price, currency=currency, count=count, description=description).save()
-            return HttpResponseRedirect('/invoice/list/view/')
+            #return HttpResponseRedirect('/invoice/list/view/')
+            list = InvoiceComponentList.objects.all().order_by('-id')[:10]
+            return render_to_response('index.html', {'componentlist': list, 'addurl': "/invoice/manufacture/"+mid+"/add", 'weblink': 'invoicecomponent_list.html'})
     else:
         form = InvoiceComponentListForm(instance = a, test1=mid)
     return render_to_response('index.html', {'form': form, 'weblink': 'invoicecomponent.html', 'company_list': company_list})
@@ -864,12 +866,26 @@ def invoicecomponent_del(request, id):
     obj.delete()
     return HttpResponseRedirect('/invoice/list/view/')
 
+
 def invoicecomponent_edit(request, id):
     a = InvoiceComponentList.objects.get(id=id)
     if request.method == 'POST':
         form = InvoiceComponentListForm(request.POST, instance=a)
         if form.is_valid():
-            form.save()
+            invoice = form.cleaned_data['invoice']
+            date = form.cleaned_data['date']
+            catalog = form.cleaned_data['catalog']
+            count = form.cleaned_data['count']
+            price = form.cleaned_data['price']
+            currency = form.cleaned_data['currency']
+            description = form.cleaned_data['description']
+            a.date = date
+            a.invoice=invoice
+            a.price=price
+            a.currency=currency
+            a.count=count
+            a.description=description
+            a.save()
             return HttpResponseRedirect('/invoice/list/view/')
     else:
         form = InvoiceComponentListForm(instance=a)
