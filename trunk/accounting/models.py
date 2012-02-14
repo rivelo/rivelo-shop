@@ -244,7 +244,7 @@ class Client(models.Model):
 
     
     def __unicode__(self):
-        return self.name
+        return "%s - [%s]" % (self.name, self.forumname)
 
     class Meta:
         ordering = ["name"]    
@@ -284,6 +284,8 @@ class ClientInvoice(models.Model):
     count = models.IntegerField()
     sum = models.FloatField()
     currency = models.ForeignKey(Currency)
+    sale = models.IntegerField(blank = True, null = True)
+    pay = models.FloatField(blank = True, null = True)    
     date = models.DateField(auto_now_add=False)
     description = models.TextField(blank = True, null = True)
             

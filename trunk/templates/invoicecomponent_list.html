@@ -11,7 +11,15 @@ setTimeout(function() {
 }, 100);
 </script>
 
+{% for company in company_list %}
+<a href="/invoice/manufacture/{{company.id}}/view/">{{company.name}}</a>
+{% endfor %}
+
     <h1>Список наявного товару</h1>
+<a href="{{addurl}}">Add with last company</a>      
+<br>
+<a href="/invoice/add/">Add</a>      
+    
 
     <table border="1">
 	<tr>
