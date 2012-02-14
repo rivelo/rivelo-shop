@@ -5,8 +5,8 @@ from django.shortcuts import render_to_response
 from models import Manufacturer, Country, Type, Currency, Bicycle_Type, Bicycle,  FrameSize, Bicycle_Store, Bicycle_Sale
 from forms import ContactForm, ManufacturerForm, CountryForm, CurencyForm, CategoryForm, BicycleTypeForm, BicycleForm, BicycleFrameSizeForm, BicycleStoreForm, BicycleSaleForm
 
-from models import Catalog, Client, ClientDebts, ClientCredits 
-from forms import CatalogForm, ClientForm, ClientDebtsForm, ClientCreditsForm
+from models import Catalog, Client, ClientDebts, ClientCredits, ClientInvoice 
+from forms import CatalogForm, ClientForm, ClientDebtsForm, ClientCreditsForm, ClientInvoiceForm
 
 from models import Dealer, DealerManager, DealerManager, DealerPayment, DealerInvoice, InvoiceComponentList, Bank, Exchange, PreOrder
 from forms import DealerManagerForm, DealerForm, DealerPaymentForm, DealerInvoiceForm, InvoiceComponentListForm, BankForm, ExchangeForm, PreOrderForm
@@ -854,10 +854,11 @@ def invoicecomponent_add(request, mid=None):
     return render_to_response('index.html', {'form': form, 'weblink': 'invoicecomponent.html', 'company_list': company_list})
 
 
-def invoicecomponent_list(request):
+def invoicecomponent_list(request, id=None):
+    company_list = Manufacturer.objects.all()
     list = InvoiceComponentList.objects.all().order_by('-id')
     #return render_to_response('category_list.html', {'categories': list.values_list()})
-    return render_to_response('index.html', {'componentlist': list, 'weblink': 'invoicecomponent_list.html'})
+    return render_to_response('index.html', {'company_list': company_list, 'componentlist': list, 'weblink': 'invoicecomponent_list.html'})
 
 
 def invoicecomponent_del(request, id):
@@ -1394,6 +1395,33 @@ def clientcredits_delete(request, id):
     del_logging(obj)
     obj.delete()
     return HttpResponseRedirect('/clientcredits/view/')
+
+
+def client_invoice(request, cid=1):
+    a = ClientInvoice()
+    if request.method == 'POST':
+        form = ClientInvoiceForm(request.POST, instance = a)
+        if form.is_valid():
+            client = form.cleaned_data['client']
+            catalog = form.cleaned_data['catalog']
+            count = form.cleaned_data['count']
+            sum = form.cleaned_data['sum']
+            currency = form.cleaned_data['currency']
+            sale = form.cleaned_data['sale']
+            pay = form.cleaned_data['pay']
+            date = form.cleaned_data['date']
+            description = form.cleaned_data['description']
+     
+            #WorkGroup(name=name, description=description).save()
+            return HttpResponseRedirect('/client/invoice/view/')
+    else:
+        form = ClientInvoiceForm(instance = a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'clientinvoice.html'})
+
+
+def client_invoice_view(request):
+    list = ClientInvoice.objects.all().order_by("-id")
+    return render_to_response('index.html', {'clients': list, 'weblink': 'clientinvoice_list.html'})
 
 
 from django.db import connection

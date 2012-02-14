@@ -864,3 +864,12 @@ Key = price - Value = 0.0
 Key = currency - Value = 2
 Key = date - Value = 2012-02-13
 Key = description - Value = 
+DELETE FROM TABLE invoice component list WHERE id = 176 
+Key = id - Value = 176
+Key = invoice - Value = 187
+Key = catalog - Value = 2506
+Key = count - Value = 1
+Key = price - Value = 0.0
+Key = currency - Value = 2
+Key = date - Value = 2012-02-14
+Key = description - Value = 

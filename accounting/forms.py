@@ -275,10 +275,12 @@ class ClientCreditsForm(forms.ModelForm):
 class ClientInvoiceForm(forms.ModelForm):
     client = forms.ModelChoiceField(queryset = Client.objects.all())
     #catalog = forms.ModelChoiceField(queryset = Catalog.objects.filter(manufacturer=36))
-    catalog = forms.ModelChoiceField(queryset = Catalog.objects.filter())    
+    catalog = forms.ModelChoiceField(queryset = Catalog.objects.all())    
     count = forms.IntegerField(min_value=0, initial = 1)
     sum = forms.FloatField(initial=0)
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
+    sale = forms.FloatField(initial=0)
+    pay = forms.IntegerField(min_value=0, initial = 0)
     date = forms.DateTimeField(initial = datetime.date.today, label='Дата', input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
     description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
 
