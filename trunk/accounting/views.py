@@ -832,11 +832,14 @@ def dealer_invoice_search_result(request):
 
 
 #-------------- InvoiceComponentList -----------------------
-def invoicecomponent_add(request, mid=None):
+def invoicecomponent_add(request, mid=None, cid=None):
     company_list = Manufacturer.objects.all()
-    a = InvoiceComponentList(date=datetime.date.today(), price=0, count=1, currency=Currency.objects.get(id=2), invoice=DealerInvoice.objects.get(id=187))
+    if cid<>None:
+        a = InvoiceComponentList(date=datetime.date.today(), price=0, count=1, currency=Currency.objects.get(id=2), invoice=DealerInvoice.objects.get(id=187), catalog=Catalog.objects.get(id=cid))        
+    else:    
+        a = InvoiceComponentList(date=datetime.date.today(), price=0, count=1, currency=Currency.objects.get(id=2), invoice=DealerInvoice.objects.get(id=187))
     if request.method == 'POST':
-        form = InvoiceComponentListForm(request.POST, instance = a, test1=mid)
+        form = InvoiceComponentListForm(request.POST, instance = a, test1=mid, catalog_id=cid)
         if form.is_valid():
             invoice = form.cleaned_data['invoice']
             date = form.cleaned_data['date']
@@ -848,9 +851,9 @@ def invoicecomponent_add(request, mid=None):
             InvoiceComponentList(date=date, invoice=invoice, catalog=catalog, price=price, currency=currency, count=count, description=description).save()
             #return HttpResponseRedirect('/invoice/list/view/')
             list = InvoiceComponentList.objects.all().order_by('-id')[:10]
-            return render_to_response('index.html', {'componentlist': list, 'addurl': "/invoice/manufacture/"+mid+"/add", 'weblink': 'invoicecomponent_list.html'})
+            return render_to_response('index.html', {'componentlist': list, 'addurl': "/invoice/manufacture/"+str(mid)+"/add", 'weblink': 'invoicecomponent_list.html'})
     else:
-        form = InvoiceComponentListForm(instance = a, test1=mid)
+        form = InvoiceComponentListForm(instance = a, test1=mid, catalog_id=cid)
     return render_to_response('index.html', {'form': form, 'weblink': 'invoicecomponent.html', 'company_list': company_list})
 
 

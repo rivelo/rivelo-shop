@@ -24,15 +24,13 @@
     	<th>Назва</th>
     	<th>Виробник</th>
     	<th>Тип</th>
-    	<th>Розмір</th>
     	<th>Вага</th>
-    	<th>Фото</th>
     	<th>Рік виготовлення</th>
     	<th>Дата закінчення розпродажу</th>
     	<th>Колір</th>
     	<th>Ціна</th>
     	<th>Валюта</th>
-    	<th>Ціна зі знижкою</th>
+    	<th>Знижка (%)</th>
     	<th>Країна</th>
     	<th>Опис</th>
     	<th>Дія</th>
@@ -41,7 +39,7 @@
 {% for type in catalog %}
 <tr>
 	<td>       
-	{{type.id}}
+	<a href="/invoice/catalog/{{ type.id }}/add">{{type.id}}</a>
 	</td>
 	<td>       
 	{{type.ids}}
@@ -56,13 +54,7 @@
 	<a href="/catalog/type/{{type.type.id}}/view">{{type.type}}</a>
 	</td>
 	<td>       
-	{{type.size}}
-	</td>
-	<td>       
 	{{type.weight}}
-	</td>	
-	<td>       
-	{{type.photo}}
 	</td>	
 	<td>       
 	{{type.year}}

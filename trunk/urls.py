@@ -112,6 +112,7 @@ urlpatterns = patterns('',
 
     #Invoice
     (r'^invoice/add/$', 'catalog.accounting.views.invoicecomponent_add'),
+    (r'^invoice/catalog/(?P<cid>\d+)/add/$', 'catalog.accounting.views.invoicecomponent_add'),
     (r'^invoice/manufacture/(?P<mid>\d+)/add/$', 'catalog.accounting.views.invoicecomponent_add'),
     (r'^invoice/manufacture/(?P<mid>\d+)/view/$', 'catalog.accounting.views.invoicecomponent_list'),
     (r'^invoice/list/view/$', 'catalog.accounting.views.invoicecomponent_list'),    
