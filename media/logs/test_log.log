@@ -873,3 +873,29 @@ Key = price - Value = 0.0
 Key = currency - Value = 2
 Key = date - Value = 2012-02-14
 Key = description - Value = 
+DELETE FROM TABLE catalog WHERE id = 1848 
+Key = id - Value = 1848
+Key = ids - Value = RD-320gd
+Key = name - Value = Колодки Alligator шоссе картридж, золотые 
+Key = manufacturer - Value = 32
+Key = type - Value = 10
+Key = size - Value = None
+Key = weight - Value = None
+Key = photo - Value = 
+Key = year - Value = 2011
+Key = sale_to - Value = 2011-08-17
+Key = color - Value = чорний
+Key = price - Value = 73.0
+Key = currency - Value = 3
+Key = sale - Value = 0.0
+Key = country - Value = 7
+Key = description - Value = 
+DELETE FROM TABLE invoice component list WHERE id = 280 
+Key = id - Value = 280
+Key = invoice - Value = 187
+Key = catalog - Value = 1883
+Key = count - Value = 10
+Key = price - Value = 0.0
+Key = currency - Value = 2
+Key = date - Value = 2012-02-15
+Key = description - Value = 
