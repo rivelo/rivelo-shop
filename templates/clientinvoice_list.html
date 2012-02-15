@@ -15,55 +15,54 @@ setTimeout(function() {
 <a href="/invoice/manufacture/{{company.id}}/view/">{{company.name}}</a>
 {% endfor %}
 
-    <h1>Список наявного товару</h1>
-<a href="{{addurl}}">Add with last company</a>      
-<br>
-<a href="/invoice/add/">Add</a>      
-    
-
+    <h1>Список проданого товару</h1>
     <table border="1">
 	<tr>
     	<th>#</th>	
     	<th>ID</th>
-    	<th>№ накладної</th>
-    	<th>Товар</th>
+    	<th>Клієнт</th>
+    	<th>Назва компонента</th>
     	<th>Кількість</th>
-    	<th>Ціна</th>
+    	<th>Сума</th>
     	<th>Валюта</th>
-    	<th>Сума</th>    	
-    	<th>Дата</th>    	    	
+    	<th>Знижка</th>    	
+    	<th>Оплата</th>    	    	
+    	<th>Дата</th>
     	<th>Опис</th>
     	<th>Дія</th>
     </tr>
     
 {% load template_math %}    
     
-{% for type in componentlist %}
+{% for type in buycomponents %}
 <tr>
 	<td>
 	{{forloop.counter}}
 	</td>
 	<td>       
-    <a href="/invoice/edit/{{type.id}}">{{type.id}}</a>
+    <a href="{{type.id}}">{{type.id}}</a>
 	</td>
 	<td>
-	{{type.invoice}}       
+	{{type.client}}       
 	</td>
 	<td>       
 	{{type.catalog}}
 	</td>
 	<td>       
-	<a href="/client/invoice/catalog/{{type.catalog.id}}/add">{{type.count}}</a>
+	<a href="">{{type.count}}</a>
 	</td>
 	<td>       
-	{{type.catalog.price}}
+	{{type.sum}}
 	</td>
 	<td>       
-	{{type.catalog.currency}}
+	{{type.currency}}
 	</td>
 	<td>       
-	{{type.catalog.price|mul:type.count}}
+	{{type.sale}}
 	</td>
+	<td>       
+	{{type.pay}}
+	</td>	
 	<td> 
 	{{type.date}}
 	</td>
@@ -71,32 +70,14 @@ setTimeout(function() {
 	{{type.description}}
 	</td>
 	<td>
-    <a href="/invoice/delete/{{type.id}}">delete</a>
+    <a href="/client/invoice/{{type.id}}/delete/">delete</a>
     </td>
 </tr>
 {% endfor %}         
-	<tr>
-    	<th></th>	
-    	<th></th>
-    	<th></th>
-    	<th></th>
-    	<th>Кількість: {{countsum}}</th>
-    	<th></th>
-    	<th></th>
-    	<th>{{allpricesum}} грн.</th>    	
-    	<th></th>    	    	
-    	<th></th>
-    	<th></th>
-    </tr>
     
     <table>
 
-<br><br>
-<a href="/">HOME</a>
 <br>
-<a href="{{addurl}}">Add with last company</a>      
-<br>
-<a href="/invoice/add/">Add</a>      
 
 </body>
 </html>

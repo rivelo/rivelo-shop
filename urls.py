@@ -82,8 +82,7 @@ urlpatterns = patterns('',
     (r'^bicycle/sale/edit/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_sale_edit'),    
     (r'^bicycle/sale/delete/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_sale_del'),
     (r'^bicycle/sale/report/month/$', 'catalog.accounting.views.bicycle_sale_report'),
-    
-    
+        
     # Dealer/Dealer Managers operation
     (r'^dealer/payment/add/$', 'catalog.accounting.views.dealer_payment_add'),
     (r'^dealer/payment/view/$', 'catalog.accounting.views.dealer_payment_list'),
@@ -159,7 +158,9 @@ urlpatterns = patterns('',
     (r'^client/result/$', 'catalog.accounting.views.search_client_id'),
     (r'^client/invoice/view/$', 'catalog.accounting.views.client_invoice_view'),
     (r'^client/(?P<cid>\d+)/invoice/add/$', 'catalog.accounting.views.client_invoice'),
+    (r'^client/invoice/catalog/(?P<cid>\d+)/add/$', 'catalog.accounting.views.client_invoice'),
     (r'^client/invoice/add/$', 'catalog.accounting.views.client_invoice'),
+    (r'^client/invoice/(?P<id>\d+)/delete/$', 'catalog.accounting.views.client_invoice_delete'),
 
     (r'^clientdebts/add/(?P<id>\d+)$', 'catalog.accounting.views.clientdebts_add'),
     (r'^clientdebts/view/$', 'catalog.accounting.views.clientdebts_list'),

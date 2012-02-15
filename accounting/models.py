@@ -114,6 +114,7 @@ class Catalog(models.Model):
     currency = models.ForeignKey(Currency)
     sale = models.FloatField()
     country = models.ForeignKey(Country, null=True)
+    #count = models.IntegerField()
     description = models.CharField(max_length=255)
     
     def __unicode__(self):
@@ -183,12 +184,11 @@ class DealerInvoice(models.Model):
     currency = models.ForeignKey(Currency)
     file = models.CharField(max_length=255)
     received = models.BooleanField(default=False, verbose_name="Товар отримано?")
-    #payment = models.ForeignKey(DealerPayment, blank = True, null = True)
     payment = models.BooleanField(default=False, verbose_name="Оплачено?")
     description = models.TextField(blank = True, null = True)
             
     def __unicode__(self):
-        return "%s - %s" % (self.origin_id, self.company) 
+        return "%s - %s - %s [%s %s]" % (self.origin_id, self.company, self.manager, self.price, self.currency) 
         #return self.origin_id 
 
     class Meta:
@@ -214,13 +214,13 @@ class InvoiceComponentList(models.Model):
 
 # Dealer payment (Ukraine)
 class DealerPayment(models.Model):
-    #dealer_invoice = models.ForeignKey(DealerInvoice)
+    dealer_invoice = models.ForeignKey(DealerInvoice)
     invoice_number = models.CharField(max_length=255, null = True)
     date = models.DateField(auto_now_add=True)
     bank = models.ForeignKey(Bank)
     price = models.FloatField()
     currency = models.ForeignKey(Currency)
-    #letter = models.BooleanField(default=False, verbose_name="Лист відправлено?")
+    letter = models.BooleanField(default=False, verbose_name="Лист відправлено?")
     description = models.TextField(blank = True, null = True)
             
     def __unicode__(self):
@@ -485,7 +485,7 @@ class ShopDailySales(models.Model):
 # Bill table (nakladna)
 class Bill(models.Model):
     #ids = models.CharField("code", unique=True, max_length=50)
-    invoice_id = models.ForeignKey(DealerInvoice)
+    #invoice_id = models.ForeignKey(DealerInvoice)
     date = models.DateTimeField(auto_now_add=True)
     product = models.ForeignKey(Catalog)
     count = models.IntegerField("how many something", default=1)
