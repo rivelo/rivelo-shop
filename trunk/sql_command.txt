@@ -62,3 +62,7 @@ The reason this works is that there is no conversion when you convert to or from
 
 mysql> ALTER TABLE accounting_invoicecomponentlist MODIFY description VARCHAR(25
 5) CHARACTER SET utf8; COLLATE utf8_general_ci NULL;
+
+
+mysql> select  catalog_id, manufacturer_id from accounting_invoicecomponentlist 
+left join accounting_catalog on catalog_id=accounting_catalog.id;

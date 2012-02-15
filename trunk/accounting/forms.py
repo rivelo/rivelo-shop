@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django import forms
 from models import Manufacturer, Country, Type, Bicycle_Type, Bicycle, Currency, FrameSize, Bicycle_Store, Catalog, Size, Bicycle_Sale 
-from models import DealerManager, DealerPayment, DealerInvoice, Dealer, Bank, ShopDailySales, PreOrder
+from models import DealerManager, DealerPayment, DealerInvoice, Dealer, Bank, ShopDailySales, PreOrder, InvoiceComponentList
 from models import Client, ClientDebts, CostType, Costs, ClientCredits, WorkGroup, WorkType, WorkShop, WorkTicket, WorkStatus
 
 import datetime
@@ -163,32 +163,31 @@ class DealerManagerForm(forms.ModelForm):
 
 
 class DealerPaymentForm(forms.ModelForm):
-    dealer_invoice = forms.ModelChoiceField(queryset = DealerInvoice.objects.all())
+    dealer_invoice = forms.ModelChoiceField(queryset = DealerInvoice.objects.filter(payment=False))
     invoice_number = forms.CharField(max_length=255)
     date = forms.DateField(initial = datetime.date.today)
     bank = forms.ModelChoiceField(queryset = Bank.objects.all())
     price = forms.FloatField(initial=0)
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
     letter = forms.BooleanField(initial = False, required=False)
-    description = forms.CharField(label='Description', widget=forms.Textarea())
+    description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
   
 
 class DealerInvoiceForm(forms.ModelForm):
     origin_id = forms.CharField(max_length=255, label='Номер накладної')
     date = forms.DateTimeField(initial = datetime.date.today, label='Дата', input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
     company = forms.ModelChoiceField(queryset = Dealer.objects.all())
-    manager = forms.ModelChoiceField(queryset = DealerManager.objects.all(), required=False)
+    manager = forms.ModelChoiceField(queryset = DealerManager.objects.all())
     price = forms.FloatField(initial=0)
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
     file = forms.CharField(max_length=255)
     received = forms.BooleanField(initial = False, required=False) 
     payment = forms.BooleanField(initial = False, required=False)
-    #payment = forms.ModelChoiceField(queryset = DealerPayment.objects.all())
     description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
 
 
 class InvoiceComponentListForm(forms.ModelForm):
-    invoice = forms.ModelChoiceField(queryset = DealerInvoice.objects.all(), required=False)
+    invoice = forms.ModelChoiceField(queryset = DealerInvoice.objects.filter(id=187))
     catalog = forms.ModelChoiceField(queryset = Catalog.objects.none(), required=False)
     #catalog = forms.ModelChoiceField(queryset = Catalog.objects.filter(manufacturer=36))
     count = forms.IntegerField(min_value=0, initial = 1)
@@ -202,6 +201,30 @@ class InvoiceComponentListForm(forms.ModelForm):
         test1 = kwargs.pop('test1', None)
         super(InvoiceComponentListForm, self).__init__(*args, **kwargs)
         self.fields['catalog'].queryset = Catalog.objects.filter(manufacturer = test1) 
+
+
+class InvoiceComponentForm(forms.ModelForm):
+    invoice = forms.ModelChoiceField(queryset = DealerInvoice.objects.all(), required=False)
+    #catalog = forms.ModelChoiceField(queryset = Catalog.objects.all())
+    #catalog = forms.ModelChoiceField(queryset = Catalog.objects.defer(None))
+    catalog = forms.ChoiceField()
+    count = forms.IntegerField(min_value=0, initial = 1)
+    price = forms.FloatField(initial=0)
+    currency = forms.ModelChoiceField(queryset = Currency.objects.all())
+    date = forms.DateTimeField(initial = datetime.date.today, label='Дата', input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
+    description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(InvoiceComponentForm, self).__init__( *args, **kwargs)
+        instance = kwargs.get('instance')
+        CHOICES = (
+            (item.id, item.name) for item in  Catalog.objects.all()
+         )
+        choices_field = forms.ChoiceField(choices=CHOICES)
+        self.fields['catalog'] = choices_field
+    class Meta:
+        model = InvoiceComponentList
+        fields = ("id", "ids", "name")
 
   
 class ContactForm(forms.ModelForm):
@@ -283,6 +306,13 @@ class ClientInvoiceForm(forms.ModelForm):
     pay = forms.IntegerField(min_value=0, initial = 0)
     date = forms.DateTimeField(initial = datetime.date.today, label='Дата', input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
     description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
+
+    def __init__(self, *args, **kwargs):
+        cid = kwargs.pop('catalog_id', None)
+        super(ClientInvoiceForm, self).__init__(*args, **kwargs)
+        self.fields['catalog'].queryset = Catalog.objects.filter(id = cid)
+         
+
 
 
 class CostTypeForm(forms.ModelForm):
