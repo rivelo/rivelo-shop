@@ -63,7 +63,7 @@ class Currency(models.Model):
     country = models.ForeignKey(Country)
 
     def __unicode__(self):
-        return self.name
+        return "%s (%s)" % (self.name, self.ids_char)
 
     class Meta:
         ordering = ["ids"]    
@@ -483,21 +483,23 @@ class ShopDailySales(models.Model):
 
 
 # Bill table (nakladna)
-class Bill(models.Model):
-    #ids = models.CharField("code", unique=True, max_length=50)
-    #invoice_id = models.ForeignKey(DealerInvoice)
-    date = models.DateTimeField(auto_now_add=True)
-    product = models.ForeignKey(Catalog)
-    count = models.IntegerField("how many something", default=1)
-    price = models.FloatField(blank=True, null=True)
-    currency = models.ForeignKey(Currency)
-    description = models.CharField(max_length=255, blank=True, null=True)
-    
-    def __unicode__(self):
-        return self.name
-
-    class Meta:
-        ordering = ["invoice_id"]    
+#===============================================================================
+# class Bill(models.Model):
+#    ids = models.CharField("code", unique=True, max_length=50)
+#    invoice_id = models.ForeignKey(DealerInvoice)
+#    date = models.DateTimeField(auto_now_add=True)
+#    product = models.ForeignKey(Catalog)
+#    count = models.IntegerField("how many something", default=1)
+#    price = models.FloatField(blank=True, null=True)
+#    currency = models.ForeignKey(Currency)
+#    description = models.CharField(max_length=255, blank=True, null=True)
+#    
+#    def __unicode__(self):
+#        return self.name
+# 
+#    class Meta:
+#        ordering = ["invoice_id"]    
+#===============================================================================
 
 
 # Check table (Check)
