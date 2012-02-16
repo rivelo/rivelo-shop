@@ -40,7 +40,7 @@ setTimeout(function() {
 	{{forloop.counter}}
 	</td>
 	<td>       
-    <a href="{{type.id}}">{{type.id}}</a>
+    <a href="/client/invoice/{{type.id}}/edit">{{type.id}}</a>
 	</td>
 	<td>
 	{{type.client}}       
@@ -74,6 +74,21 @@ setTimeout(function() {
     </td>
 </tr>
 {% endfor %}         
+    
+    	<tr>
+    	<th></th>	
+    	<th></th>
+    	<th></th>
+    	<th>Загальна кількість проданих товарів:</th>
+    	<th>{{countall}}</th>
+    	<th>{{sumall}}</th>
+    	<th>грн.</th>
+    	<th></th>    	
+    	<th></th>    	    	
+    	<th></th>
+    	<th></th>
+    	<th></th>
+    </tr>
     
     <table>
 

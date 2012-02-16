@@ -850,16 +850,21 @@ def invoicecomponent_add(request, mid=None, cid=None):
             description = form.cleaned_data['description']
             InvoiceComponentList(date=date, invoice=invoice, catalog=catalog, price=price, currency=currency, count=count, description=description).save()
             #return HttpResponseRedirect('/invoice/list/view/')
-            list = InvoiceComponentList.objects.all().order_by('-id')[:10]
-            return render_to_response('index.html', {'componentlist': list, 'addurl': "/invoice/manufacture/"+str(mid)+"/add", 'weblink': 'invoicecomponent_list.html'})
+            return HttpResponseRedirect('/invoice/list/10/view/')
+            #list = InvoiceComponentList.objects.all().order_by('-id')[:10]
+            #return render_to_response('index.html', {'componentlist': list, 'addurl': "/invoice/manufacture/"+str(mid)+"/add", 'weblink': 'invoicecomponent_list.html'})
     else:
         form = InvoiceComponentListForm(instance = a, test1=mid, catalog_id=cid)
     return render_to_response('index.html', {'form': form, 'weblink': 'invoicecomponent.html', 'company_list': company_list})
 
 
-def invoicecomponent_list(request, id=None):
+def invoicecomponent_list(request, id=None, limit=0):
     company_list = Manufacturer.objects.all()
-    list = InvoiceComponentList.objects.all().order_by('-id')
+    list = None
+    if limit == 0:
+        list = InvoiceComponentList.objects.all().order_by('-id')
+    else:
+        list = InvoiceComponentList.objects.all().order_by('-id')[:limit]
     psum = 0
     scount = 0
     for item in list:
@@ -877,9 +882,10 @@ def invoicecomponent_del(request, id):
 
 def invoicecomponent_edit(request, id):
     a = InvoiceComponentList.objects.get(id=id)
+    cid = a.catalog.id
     if request.method == 'POST':
         #form = InvoiceComponentListForm(request.POST, instance=a)
-        form = InvoiceComponentForm(request.POST, instance=a)
+        form = InvoiceComponentListForm(request.POST, instance=a, catalog_id=cid)
         if form.is_valid():
             invoice = form.cleaned_data['invoice']
             date = form.cleaned_data['date']
@@ -888,17 +894,10 @@ def invoicecomponent_edit(request, id):
             price = form.cleaned_data['price']
             currency = form.cleaned_data['currency']
             description = form.cleaned_data['description']
-            
-            a.date = date
-            a.invoice=invoice
-            a.price=price
-            a.currency=currency
-            a.count=count
-            a.description=description
-            a.save()
-            return HttpResponseRedirect('/invoice/list/view/')
+            form.save()
+            return HttpResponseRedirect('/invoice/list/10/view/')
     else:
-        form = InvoiceComponentForm(instance=a)
+        form = InvoiceComponentListForm(instance=a, catalog_id=cid)
         #form = InvoiceComponentListForm(instance=a)
     return render_to_response('index.html', {'form': form, 'weblink': 'invoicecomponent.html'})
 
@@ -1148,7 +1147,7 @@ def catalog_type_list(request, id):
 
 def catalog_delete(request, id):
     obj = Catalog.objects.get(id=id)
-    del_logging(obj)
+    #del_logging(obj)
     obj.delete()
     return HttpResponseRedirect('/catalog/search/')
 
@@ -1429,9 +1428,36 @@ def client_invoice(request, cid=None):
     return render_to_response('index.html', {'form': form, 'weblink': 'clientinvoice.html'})
 
 
+def client_invoice_edit(request, id):
+    a = ClientInvoice.objects.get(id=id)
+    cat_id = a.catalog.id
+    if request.method == 'POST':
+        form = ClientInvoiceForm(request.POST, instance = a, catalog_id = cat_id)
+        if form.is_valid():
+            client = form.cleaned_data['client']
+            catalog = form.cleaned_data['catalog']
+            count = form.cleaned_data['count']
+            sum = form.cleaned_data['sum']
+            currency = form.cleaned_data['currency']
+            sale = form.cleaned_data['sale']
+            pay = form.cleaned_data['pay']
+            date = form.cleaned_data['date']
+            description = form.cleaned_data['description']
+            ClientInvoice(id=id, client=client, catalog=catalog, count=count, sum=sum, currency=currency, sale=sale, pay=pay, date=date, description=description).save()
+            return HttpResponseRedirect('/client/invoice/view/')
+    else:
+        form = ClientInvoiceForm(instance = a, catalog_id = cat_id)
+    return render_to_response('index.html', {'form': form, 'weblink': 'clientinvoice.html'})
+
+
 def client_invoice_view(request):
     list = ClientInvoice.objects.all().order_by("-id")
-    return render_to_response('index.html', {'buycomponents': list, 'weblink': 'clientinvoice_list.html'})
+    psum = 0
+    scount = 0
+    for item in list:
+        psum = psum + item.sum
+        scount = scount + item.count
+    return render_to_response('index.html', {'buycomponents': list, 'sumall':psum, 'countall':scount, 'weblink': 'clientinvoice_list.html'})
 
 
 def client_invoice_delete(request, id):

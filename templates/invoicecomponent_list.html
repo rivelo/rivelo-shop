@@ -31,7 +31,8 @@ setTimeout(function() {
     	<th>Ціна</th>
     	<th>Валюта</th>
     	<th>Сума</th>    	
-    	<th>Дата</th>    	    	
+    	<th>Прайс</th>    	    	
+    	<th>Дата</th>
     	<th>Опис</th>
     	<th>Дія</th>
     </tr>
@@ -64,6 +65,9 @@ setTimeout(function() {
 	<td>       
 	{{type.catalog.price|mul:type.count}}
 	</td>
+	<td>       
+	{{type.price}} ({{type.currency.ids_char}})
+	</td>
 	<td> 
 	{{type.date}}
 	</td>
@@ -85,6 +89,7 @@ setTimeout(function() {
     	<th></th>
     	<th>{{allpricesum}} грн.</th>    	
     	<th></th>    	    	
+    	<th></th>
     	<th></th>
     	<th></th>
     </tr>
