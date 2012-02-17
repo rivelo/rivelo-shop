@@ -398,7 +398,28 @@ class Bicycle_Sale(models.Model):
 
     class Meta:
         ordering = ["client", "model"]
+
         
+# Bicycle ORDER for client
+class Bicycle_Order(models.Model):
+    client = models.ForeignKey(Client)
+    model = models.ForeignKey(Bicycle)
+    size = models.CharField(max_length=50)
+    price = models.FloatField()
+    sale = models.IntegerField()
+    prepay = models.FloatField()
+    currency = models.ForeignKey(Currency)
+    date = models.DateField(auto_now_add=True)
+    done = models.BooleanField(default = False) 
+    description = models.TextField(blank=True, null=True)
+    
+    def __unicode__(self):
+        #return self.model
+        return u'%s -> %s' % (self.client ,self.model)
+
+    class Meta:
+        ordering = ["client", "model"]
+
             
 class WorkGroup(models.Model):
     name = models.CharField(max_length=255)

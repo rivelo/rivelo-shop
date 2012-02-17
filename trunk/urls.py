@@ -82,6 +82,9 @@ urlpatterns = patterns('',
     (r'^bicycle/sale/edit/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_sale_edit'),    
     (r'^bicycle/sale/delete/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_sale_del'),
     (r'^bicycle/sale/report/month/$', 'catalog.accounting.views.bicycle_sale_report'),
+
+    (r'^bicycle/order/view/$', 'catalog.accounting.views.bicycle_order_list'),
+    (r'^bicycle/order/add/$', 'catalog.accounting.views.bicycle_order_list'),
         
     # Dealer/Dealer Managers operation
     (r'^dealer/payment/add/$', 'catalog.accounting.views.dealer_payment_add'),
