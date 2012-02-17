@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django import forms
-from models import Manufacturer, Country, Type, Bicycle_Type, Bicycle, Currency, FrameSize, Bicycle_Store, Catalog, Size, Bicycle_Sale 
+from models import Manufacturer, Country, Type, Bicycle_Type, Bicycle, Currency, FrameSize, Bicycle_Store, Catalog, Size, Bicycle_Sale, Bicycle_Order 
 from models import DealerManager, DealerPayment, DealerInvoice, Dealer, Bank, ShopDailySales, PreOrder, InvoiceComponentList
 from models import Client, ClientDebts, CostType, Costs, ClientCredits, WorkGroup, WorkType, WorkShop, WorkTicket, WorkStatus
 
@@ -140,6 +140,22 @@ class BicycleSaleForm(forms.ModelForm):
     
     class Meta:
         model = Bicycle_Sale
+
+
+class BicycleOrderForm(forms.ModelForm):
+    model = forms.ModelChoiceField(queryset = Bicycle.objects.all())
+    client = forms.ModelChoiceField(queryset = Client.objects.all())
+    size = forms.CharField(max_length=50)
+    price = forms.FloatField()
+    sale = forms.IntegerField()
+    prepay = forms.FloatField()
+    currency = forms.ModelChoiceField(queryset = Currency.objects.all())
+    date = forms.DateTimeField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
+    done = forms.BooleanField(required=False) 
+    description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
+    
+    class Meta:
+        model = Bicycle_Order
 
     
 # --------- Dealers ------------

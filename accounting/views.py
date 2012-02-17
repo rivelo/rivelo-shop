@@ -2,8 +2,8 @@
 
 from django.db.models import Q
 from django.shortcuts import render_to_response
-from models import Manufacturer, Country, Type, Currency, Bicycle_Type, Bicycle,  FrameSize, Bicycle_Store, Bicycle_Sale
-from forms import ContactForm, ManufacturerForm, CountryForm, CurencyForm, CategoryForm, BicycleTypeForm, BicycleForm, BicycleFrameSizeForm, BicycleStoreForm, BicycleSaleForm
+from models import Manufacturer, Country, Type, Currency, Bicycle_Type, Bicycle,  FrameSize, Bicycle_Store, Bicycle_Sale, Bicycle_Order
+from forms import ContactForm, ManufacturerForm, CountryForm, CurencyForm, CategoryForm, BicycleTypeForm, BicycleForm, BicycleFrameSizeForm, BicycleStoreForm, BicycleSaleForm, BicycleOrderForm
 
 from models import Catalog, Client, ClientDebts, ClientCredits, ClientInvoice 
 from forms import CatalogForm, ClientForm, ClientDebtsForm, ClientCreditsForm, ClientInvoiceForm
@@ -567,6 +567,34 @@ def bicycle_sale_report(request):
     return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_sale_report.html'})
 
 
+def bicycle_order_add(request):
+    a = Bicycle_Order()
+    if request.method == 'POST':
+        form = BicycleOrderForm(request.POST, instance = a)
+        if form.is_valid():
+            client = form.cleaned_data['client']
+            model = form.cleaned_data['model']
+            size = form.cleaned_data['size']
+            price = form.cleaned_data['price']
+            sale = form.cleaned_data['sale']
+            prepay = form.cleaned_data['prepay']
+            currency = form.cleaned_data['currency']
+            date = form.cleaned_data['date']
+            done = form.cleaned_data['done']
+            description = form.cleaned_data['description']
+            BicycleOrderForm(client=client, model=model, size=size, price=price, sale=sale, prepay=prepay, currency=currency, date=date, done=done, description=description).save()
+            return HttpResponseRedirect('/bicycle/order/view/')
+    else:
+        form = BicycleOrderForm(instance = a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_order.html'})
+    
+
+def bicycle_order_list(request):
+    list = Bicycle_Order.objects.all()
+    return render_to_response('index.html', {'order': list, 'weblink': 'bicycle_order_list.html'})
+    
+    
+
 # --------------------Dealer company ------------------------
 def dealer_add(request):
     a = Dealer()
@@ -849,10 +877,9 @@ def invoicecomponent_add(request, mid=None, cid=None):
             currency = form.cleaned_data['currency']
             description = form.cleaned_data['description']
             InvoiceComponentList(date=date, invoice=invoice, catalog=catalog, price=price, currency=currency, count=count, description=description).save()
-            #return HttpResponseRedirect('/invoice/list/view/')
-            return HttpResponseRedirect('/invoice/list/10/view/')
-            #list = InvoiceComponentList.objects.all().order_by('-id')[:10]
-            #return render_to_response('index.html', {'componentlist': list, 'addurl': "/invoice/manufacture/"+str(mid)+"/add", 'weblink': 'invoicecomponent_list.html'})
+            #return HttpResponseRedirect('/invoice/list/10/view/')
+            list = InvoiceComponentList.objects.all().order_by('-id')[:10]
+            return render_to_response('index.html', {'componentlist': list, 'addurl': "/invoice/manufacture/"+str(mid)+"/add", 'weblink': 'invoicecomponent_list.html'})
     else:
         form = InvoiceComponentListForm(instance = a, test1=mid, catalog_id=cid)
     return render_to_response('index.html', {'form': form, 'weblink': 'invoicecomponent.html', 'company_list': company_list})
@@ -1147,7 +1174,7 @@ def catalog_type_list(request, id):
 
 def catalog_delete(request, id):
     obj = Catalog.objects.get(id=id)
-    #del_logging(obj)
+    del_logging(obj)
     obj.delete()
     return HttpResponseRedirect('/catalog/search/')
 
