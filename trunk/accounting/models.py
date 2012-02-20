@@ -282,9 +282,10 @@ class ClientInvoice(models.Model):
     client = models.ForeignKey(Client)
     catalog = models.ForeignKey(Catalog)
     count = models.IntegerField()
+    price = models.FloatField(blank = True, null = True)
     sum = models.FloatField()
     currency = models.ForeignKey(Currency)
-    sale = models.IntegerField(blank = True, null = True)
+    sale = models.IntegerField(blank = True, null = True) 
     pay = models.FloatField(blank = True, null = True)    
     date = models.DateField(auto_now_add=False)
     description = models.TextField(blank = True, null = True)
@@ -376,7 +377,7 @@ class Bicycle_Store(models.Model):
     
     def __unicode__(self):
         #return self.model
-        return u'%s' % self.model
+        return u'%s [%s]' % (self.model, self.serial_number)
 
     class Meta:
         ordering = ["model"]

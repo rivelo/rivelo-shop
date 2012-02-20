@@ -130,8 +130,8 @@ class BicycleStoreForm(forms.ModelForm):
 
 
 class BicycleSaleForm(forms.ModelForm):
-    model = forms.ModelChoiceField(queryset = Bicycle_Store.objects.all(), required=False)
-    client = forms.ModelChoiceField(queryset = Client.objects.all())
+    model = forms.ModelChoiceField(queryset = Bicycle_Store.objects.filter(count = 1), required=False)
+    client = forms.ModelChoiceField(queryset = Client.objects.all().order_by("-id"))
     price = forms.FloatField()
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
     date = forms.DateTimeField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
@@ -181,7 +181,7 @@ class DealerManagerForm(forms.ModelForm):
 class DealerPaymentForm(forms.ModelForm):
     dealer_invoice = forms.ModelChoiceField(queryset = DealerInvoice.objects.filter(payment=False))
     invoice_number = forms.CharField(max_length=255)
-    date = forms.DateField(initial = datetime.date.today)
+    date = forms.DateField(initial = datetime.date.today, label='Дата', input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
     bank = forms.ModelChoiceField(queryset = Bank.objects.all())
     price = forms.FloatField(initial=0)
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
@@ -203,7 +203,7 @@ class DealerInvoiceForm(forms.ModelForm):
 
 
 class InvoiceComponentListForm(forms.ModelForm):
-    invoice = forms.ModelChoiceField(queryset = DealerInvoice.objects.filter(id=187))
+    invoice = forms.ModelChoiceField(queryset = DealerInvoice.objects.filter(payment=False))
     catalog = forms.ModelChoiceField(queryset = Catalog.objects.none(), required=False)
     #catalog = forms.ModelChoiceField(queryset = Catalog.objects.filter(manufacturer=36))
     count = forms.IntegerField(min_value=0, initial = 1)
@@ -244,7 +244,6 @@ class InvoiceComponentForm(forms.ModelForm):
         self.fields['catalog'] = choices_field
     class Meta:
         model = InvoiceComponentList
-        fields = ("id", "ids", "name")
 
   
 class ContactForm(forms.ModelForm):
@@ -264,7 +263,7 @@ class CatalogForm(forms.ModelForm):
     weight = forms.FloatField(min_value=0, required=False)
     photo = forms.ImageField(required=False)
     color = forms.CharField(max_length=255)
-    year = forms.IntegerField(initial = 2011, min_value = 1900, max_value = 2020)
+    year = forms.IntegerField(initial = 2012, min_value = 1900, max_value = 2020)
     sale = forms.FloatField(initial=0)
     #sale_to = forms.DateField(initial=datetime.date.today)
     sale_to = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
@@ -320,6 +319,7 @@ class ClientInvoiceForm(forms.ModelForm):
     #catalog = forms.ModelChoiceField(queryset = Catalog.objects.filter(manufacturer=36))
     catalog = forms.ModelChoiceField(queryset = Catalog.objects.all())    
     count = forms.IntegerField(min_value=0, initial = 1)
+    price = forms.FloatField(initial=0)
     sum = forms.FloatField(initial=0)
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
     sale = forms.IntegerField(min_value=0, initial = 0)

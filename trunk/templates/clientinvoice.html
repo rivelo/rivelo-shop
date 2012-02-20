@@ -1,6 +1,23 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
+<script type="text/javascript">
+function sum() {
+	sale = 1 - ((parseFloat(document.getElementById('id_sale').value)||0)/100)
+    res = document.getElementById('result').innerHTML = parseFloat(document.getElementById("id_count").value||0) * (parseFloat(document.getElementById('id_price').value)||0) * sale
+    document.getElementById('result').innerHTML = "Сума " + document.getElementById('result').innerHTML + " грн."
+    document.getElementById('id_sum').value = res 
+}
+
+//setTimeout(sum, 100)
+
+setInterval(sum, 100)
+
+</script>
+
+
+
+
     <h1>Продаж товару</h1>
     <form action="." method="POST">
         <table>
@@ -9,6 +26,7 @@
         <p><input type="submit" value="Save"></p>
     </form>
     
+    <h3 id="result" style="color:red; background-color:#CCCCCC"}>Сума грн.</h3>
     
     <br><br>
 <a href="/invoice/list/view/">Список товару в рахунках від постачальників</a>

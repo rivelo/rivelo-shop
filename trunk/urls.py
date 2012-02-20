@@ -118,10 +118,13 @@ urlpatterns = patterns('',
     (r'^invoice/catalog/(?P<cid>\d+)/add/$', 'catalog.accounting.views.invoicecomponent_add'),
     (r'^invoice/manufacture/(?P<mid>\d+)/add/$', 'catalog.accounting.views.invoicecomponent_add'),
     (r'^invoice/manufacture/(?P<mid>\d+)/view/$', 'catalog.accounting.views.invoicecomponent_list'),
-    (r'^invoice/list/(?P<limit>\d+)/view/$', 'catalog.accounting.views.invoicecomponent_list'),    
+    (r'^invoice/list/(?P<limit>\d+)/view/$', 'catalog.accounting.views.invoicecomponent_list'),
     (r'^invoice/list/view/$', 'catalog.accounting.views.invoicecomponent_list'),
+    (r'^invoice/id/(?P<id>\d+)/view/$', 'catalog.accounting.views.invoice_id_list'),
+    (r'^invoice/catalog/(?P<cid>\d+)/view/$', 'catalog.accounting.views.invoice_cat_id_list'),
     (r'^invoice/delete/(?P<id>\d+)/$', 'catalog.accounting.views.invoicecomponent_del'),
     (r'^invoice/edit/(?P<id>\d+)/$', 'catalog.accounting.views.invoicecomponent_edit'),
+    (r'^invoice/report/$', 'catalog.accounting.views.invoice_report'),
 
     # Curency operation
     (r'^curency/add/$', 'catalog.accounting.views.curency_add'),
@@ -145,6 +148,7 @@ urlpatterns = patterns('',
     (r'^catalog/manufacture/(?P<id>\d+)/type/(?P<tid>\d+)/view/$', 'catalog.accounting.views.catalog_manu_type_list'),
     (r'^catalog/manufacture/(?P<id>\d+)/view/(\d+)$', 'catalog.accounting.views.catalog_part_list'),
     (r'^catalog/manufacture/(?P<id>\d+)/view/$', 'catalog.accounting.views.catalog_manufacture_list'),
+    (r'^catalog/manufacture/view/$', 'catalog.accounting.views.catalog_manufacture_list'),
     (r'^catalog/type/(?P<id>\d+)/view/$', 'catalog.accounting.views.catalog_type_list'),    
     (r'^catalog/edit/(?P<id>\d+)$', 'catalog.accounting.views.catalog_edit'),
     (r'^catalog/delete/(?P<id>\d+)$', 'catalog.accounting.views.catalog_delete'),
@@ -255,7 +259,7 @@ urlpatterns = patterns('',
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    (r'^admin/(.*)', admin.site.root),
+    #(r'^admin/(.*)', admin.site.root),
     (r'^$', main_page),
 )
 

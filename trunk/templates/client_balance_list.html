@@ -21,7 +21,11 @@
 
 
 {% for type in clients %}
+{% if type.minus < 0 %}
+<tr  style="background-color:#FCF6CF">
+{% else %}
 <tr>
+{% endif %}
 	<td>{{forloop.counter}}</td>
 	<td>       
 	{{type.id}}
@@ -35,12 +39,11 @@
 	<td>       
 	{{type.sum_deb}}
 	</td>
-	<td align="center">
 	{% with type.minus as total %}
+	<td align="center">
 	{{total}}
-	{% endwith %}
 	</td>
-	
+	{% endwith %}
 </tr>
 {% endfor %}           
     
@@ -49,8 +52,8 @@
 </table>
 
 <br>
-	<h2>Борг = {{sum_debt}} грн</h2>
-	<h2>Оплата = {{sum_cred}} грн</h2>
+	<h2>Заборгованість = {{sum_debt}} грн</h2>
+	<h2>Оплати = {{sum_cred}} грн</h2>
 
 <br>
 <a href="/">Головне меню (HOME)</a>

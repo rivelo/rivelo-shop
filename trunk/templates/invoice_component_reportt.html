@@ -5,15 +5,38 @@
     <link rel="stylesheet" type="text/css" href="/media/table.css">
 </head>
 <body>
+<br>
+
+{% if company_list %}
+<table border="1">
+	<tr>
+    	<th>#</th>	
+    	<th>ID</th>
+    	<th>Сума по накладній</th>
+    	<th>Кількість товару</th>
+    </tr>
 
 {% for company in company_list %}
-<a href="/invoice/manufacture/{{company.id}}/view/">{{company.name}}</a>
+<tr>
+	<td>
+	{{forloop.counter}}
+	</td>
+	<td>
+	<a href="/invoice/id/{{company.invoice}}/view/">{{company.id}} - {{company.origin_id}}</a>
+	</td>
+	<td align="center">
+	{{company.suma}} $
+	</td>	
+	<td align="center">
+	{{company.ccount}}
+	</td>
+</tr>	
 {% endfor %}
+</table>
+{% endif %}
 
-    <h1>Список наявного товару</h1>
-<a href="{{addurl}}">Add with last company</a>      
-<br>
-<a href="/invoice/add/">Add</a>      
+
+    <h1>Список наявного товару по накладній {{dinvoice.origin_id}} ({{dinvoice.company}})</h1>
     
 
     <table border="1">
@@ -34,7 +57,7 @@
     
 {% load template_math %}    
     
-{% for type in componentlist %}
+{% for type in list %}
 <tr>
 	<td>
 	{{forloop.counter}}
@@ -57,10 +80,10 @@
 	<td>       
 	{{type.catalog.currency}}
 	</td>
-	<td align="center">       
+	<td>       
 	{{type.catalog.price|mul:type.count}}
 	</td>
-	<td>       
+	<td align="center">       
 	{{type.price}} ({{type.currency.ids_char}})
 	</td>
 	<td> 
