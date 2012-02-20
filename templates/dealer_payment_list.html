@@ -7,6 +7,7 @@
     <table border="1">
 	<tr>
     	<th>ID</th>
+    	<th>Номер накладної</th>
     	<th>Номери накладних</th>
     	<th>Дата</th>
     	<th>Банк</th>
@@ -21,6 +22,9 @@
 	<td>       
 	{{type.id}}
 	</td>
+	<td>       
+	{{type.dealer_invoice}}
+	</td>	
 	<td>       
 	{{type.invoice_number}}
 	</td>
@@ -53,4 +57,4 @@
 <br>
 <a href="/dealer/payment/add/">Створити нову проплату</a>      
 <br>
-<a href="/dealer/invoice/view/">Список рахунків від постачальників</a>
+<a href="/dealer/invoice/year/2012/notpaid/">Список неоплачених рахунків від постачальників</a>

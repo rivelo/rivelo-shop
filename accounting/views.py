@@ -467,7 +467,7 @@ def bicycle_sale_add(request, id=None):
         serial_number = bike.serial_number
         
     if request.method == 'POST':
-        form = BicycleSaleForm(request.POST)
+        form = BicycleSaleForm(request.POST, initial={'currency': 3})
         if form.is_valid():
             model = form.cleaned_data['model']
             client = form.cleaned_data['client']
@@ -495,7 +495,7 @@ def bicycle_sale_add(request, id=None):
         if bike != None:
             form = BicycleSaleForm(initial={'model': bike.id, 'price': bike.model.price, 'currency': bike.model.currency.id})
         else:
-            form = BicycleSaleForm()
+            form = BicycleSaleForm(initial={'currency': 3})
     
     return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_sale.html', 'serial_number': serial_number})
 
@@ -550,7 +550,7 @@ def dictfetchall(cursor):
     
 
 def bicycle_sale_report(request):
-    query = "SELECT EXTRACT(year FROM date) as year, EXTRACT(month from date) as month, COUNT(*) as bike_count, sum(price) as s_price FROM accounting_bicycle_sale GROUP BY year,month;"
+    query = "SELECT EXTRACT(year FROM date) as year, EXTRACT(month from date) as month, MONTHNAME(date) as month_name, COUNT(*) as bike_count, sum(price) as s_price FROM accounting_bicycle_sale GROUP BY year,month;"
     #sql2 = "SELECT sum(price) FROM accounting_clientdebts WHERE client_id = %s;"
     #user = id;
     list = None
@@ -562,9 +562,13 @@ def bicycle_sale_report(request):
         
     except TypeError:
         res = "Помилка"
+        
+    sum = 0
+    for month in list:
+         sum = sum + month['s_price']
 
     #list = Bicycle_Sale.objects.all().order_by('date')
-    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_sale_report.html'})
+    return render_to_response('index.html', {'bicycles': list, 'all_sum': sum, 'weblink': 'bicycle_sale_report.html'})
 
 
 def bicycle_order_add(request):
@@ -863,7 +867,8 @@ def dealer_invoice_search_result(request):
 def invoicecomponent_add(request, mid=None, cid=None):
     company_list = Manufacturer.objects.all()
     if cid<>None:
-        a = InvoiceComponentList(date=datetime.date.today(), price=0, count=1, currency=Currency.objects.get(id=2), invoice=DealerInvoice.objects.get(id=187), catalog=Catalog.objects.get(id=cid))        
+        #a = InvoiceComponentList(date=datetime.date.today(), price=0, count=1, currency=Currency.objects.get(id=2), invoice=DealerInvoice.objects.get(id=187), catalog=Catalog.objects.get(id=cid))        
+        a = InvoiceComponentList(date=datetime.date.today(), price=0, count=1, currency=Currency.objects.get(id=2), invoice=DealerInvoice.objects.get(id=187), catalog=Catalog.objects.get(id=cid))
     else:    
         a = InvoiceComponentList(date=datetime.date.today(), price=0, count=1, currency=Currency.objects.get(id=2), invoice=DealerInvoice.objects.get(id=187))
     if request.method == 'POST':
@@ -927,6 +932,62 @@ def invoicecomponent_edit(request, id):
         form = InvoiceComponentListForm(instance=a, catalog_id=cid)
         #form = InvoiceComponentListForm(instance=a)
     return render_to_response('index.html', {'form': form, 'weblink': 'invoicecomponent.html'})
+
+
+def invoice_report(request):
+    #list = InvoiceComponentList.objects.all().order_by('-id')[:10]
+    
+    query = '''select accounting_invoicecomponentlist.id, count(*) as ccount, accounting_invoicecomponentlist.invoice_id as invoice, sum(accounting_invoicecomponentlist.price*accounting_invoicecomponentlist.count) as suma, accounting_dealerinvoice.origin_id
+    from accounting_invoicecomponentlist left join accounting_dealerinvoice on accounting_dealerinvoice.id=invoice_id  
+    group by accounting_invoicecomponentlist.invoice_id;'''
+    company_list = None
+    try:
+        cursor = connection.cursor()
+        cursor.execute(query)
+        company_list = dictfetchall(cursor)
+        
+    except TypeError:
+        res = "Помилка"
+    
+    return render_to_response('index.html', {'list': list, 'company_list':company_list, 'weblink': 'invoice_component_reportt.html'})
+
+
+def invoice_id_list(request, id=None, limit=0):
+    query = "select id, count(*) as ccount, invoice_id as invoice, sum(price*count) as suma from accounting_invoicecomponentlist group by invoice_id;"
+    company_list = None
+    try:
+        cursor = connection.cursor()
+        cursor.execute(query)
+        company_list = dictfetchall(cursor)
+        
+    except TypeError:
+        res = "Помилка"
+
+    list = None
+    if limit == 0:
+        list = InvoiceComponentList.objects.filter(invoice=id).order_by('-id')
+    else:
+        list = InvoiceComponentList.objects.filter(invoice=id).order_by('-id')[:limit]
+    psum = 0
+    scount = 0
+    for item in list:
+        psum = psum + (item.catalog.price * item.count)
+        scount = scount + item.count
+    dinvoice = DealerInvoice.objects.get(id=id)    
+    
+    return render_to_response('index.html', {'list': list, 'dinvoice':dinvoice, 'company_list':company_list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoice_component_reportt.html'})
+
+
+def invoice_cat_id_list(request, cid=None, limit=0):
+    list = InvoiceComponentList.objects.filter(catalog=cid).order_by('-id')
+    psum = 0
+    scount = 0
+    for item in list:
+        psum = psum + (item.catalog.price * item.count)
+        scount = scount + item.count
+        
+    return render_to_response('index.html', {'list': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoice_component_reportt.html'})
+
 
 # --------------- Classification ---------
 
@@ -1146,10 +1207,13 @@ def catalog_list(request):
     return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
 
 
-def catalog_manufacture_list(request, id):
+def catalog_manufacture_list(request, id=None):
     company_list = Manufacturer.objects.all()
     #list = Catalog.objects.filter(manufacturer=id)[:10]
-    list = Catalog.objects.filter(manufacturer=id).order_by("-id")
+    if id<>None:
+        list = Catalog.objects.filter(manufacturer=id).order_by("-id")
+    else:
+        list = Catalog.objects.filter(manufacturer=id).order_by("-id")
     #return render_to_response('catalog_list.html', {'catalog': list.values_list()})
     return render_to_response('index.html', {'catalog': list, 'company_list': company_list, 'view': True, 'weblink': 'catalog_list.html'})
 
@@ -1434,7 +1498,7 @@ def clientcredits_delete(request, id):
 
 
 def client_invoice(request, cid=None):
-    a = ClientInvoice(date=datetime.date.today(), sum=Catalog.objects.get(id = cid).price, sale=0, pay=0, count=1, currency=Currency.objects.get(id=3), catalog=Catalog.objects.get(id = cid))
+    a = ClientInvoice(date=datetime.date.today(), price=Catalog.objects.get(id = cid).price, sum=Catalog.objects.get(id = cid).price, sale=0, pay=0, count=1, currency=Currency.objects.get(id=3), catalog=Catalog.objects.get(id = cid))
     if request.method == 'POST':
         form = ClientInvoiceForm(request.POST, instance = a, catalog_id=cid)
         if form.is_valid():

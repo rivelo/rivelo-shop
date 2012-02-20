@@ -9,27 +9,35 @@
 		<th>№</th>
 		<th>Рік</th>
 		<th>Місяць</th>
-		<th>Кількість велосипедів</th>
-		<th>Сума проданих велосипедів</th>
+		<th>Кількість</th>
+		<th>Сума (грн)</th>
 	</tr>
 
 	{% for type in bicycles %}
 	<tr>
-		<td>{{forloop.counter}}</td>
+		<td align="center">{{forloop.counter}}</td>
 		<td><a href="/">{{type.year}}</a></td>
-		<td><a href="/bicycle/sale/year/{{type.year}}/month/{{type.month}}/view/">{{type.month}}</a></td>
-		<td>{{type.bike_count}}</td>
-		<td>{{type.s_price}}</td>
+		<td><a href="/bicycle/sale/year/{{type.year}}/month/{{type.month}}/view/">{{type.month}} - {{type.month_name}}</a></td>
+		<td align="center">{{type.bike_count}}</td>
+		<td align="center">{{type.s_price}}</td>
 	</tr>
 	{% endfor %}
+
+	<tr>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th>Сума</th>
+		<th>{{all_sum}} грн.</th>
+	</tr>
 
 
 </table>
 
 		<br>
-		<a href="/bicycle/sale/report/month/">Звіт продаж по місяцях</a>
-		<br>
 		<a href="/">HOME</a>
 		<br>
-		<a href="/bicycle/sale/add/">Add</a>
+		<a href="/bicycle/sale/add/">Продати велосипед</a>
+		<br>
+		<a href="/bicycle/add/">Додати велосипед до каталогу</a>
 		

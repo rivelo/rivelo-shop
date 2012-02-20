@@ -34,6 +34,7 @@
     	<th>Країна</th>
     	<th>Опис</th>
     	<th>Дія</th>
+    	<th>Наявність</th>
     </tr>
 
 {% for type in catalog %}
@@ -81,8 +82,14 @@
 	{{type.description}}
 	</td>
 	<td>
+	<!--
     <a href="/catalog/delete/{{ type.id }}" onclick="return confirm('Видалити запис?')">delete</a>
+    -->
     </td>
+	<td>       
+	<a href="/invoice/catalog/{{type.id}}/view/">Переглянути наявність</a>
+	</td>
+    
 </tr>
 {% endfor %}   
     

@@ -916,3 +916,43 @@ Key = currency - Value = 3
 Key = sale - Value = 0.0
 Key = country - Value = 7
 Key = description - Value = 
+DELETE FROM TABLE catalog WHERE id = 1129 
+Key = id - Value = 1129
+Key = ids - Value = CAS-06-08 
+Key = name - Value = Кассета инд. 9-k 11-34T SUN RACE M96 
+Key = manufacturer - Value = 24
+Key = type - Value = 101
+Key = size - Value = None
+Key = weight - Value = None
+Key = photo - Value = 
+Key = year - Value = 2011
+Key = sale_to - Value = 2011-06-01
+Key = color - Value = срібний
+Key = price - Value = 136.0
+Key = currency - Value = 3
+Key = sale - Value = 0.0
+Key = country - Value = 7
+Key = description - Value = 
+DELETE FROM TABLE catalog WHERE id = 1156 
+Key = id - Value = 1156
+Key = ids - Value = SHLC-44-03 
+Key = name - Value = Ручки переключения SUN RACE M33 лев+прав инд. 8-k триггер черн 
+Key = manufacturer - Value = 24
+Key = type - Value = 102
+Key = size - Value = None
+Key = weight - Value = None
+Key = photo - Value = 
+Key = year - Value = 2011
+Key = sale_to - Value = 2011-06-02
+Key = color - Value = чорний
+Key = price - Value = 184.0
+Key = currency - Value = 3
+Key = sale - Value = 0.0
+Key = country - Value = 7
+Key = description - Value = 
+DELETE FROM TABLE type WHERE id = 94 
+Key = id - Value = 94
+Key = name - Value = Світло
+Key = description - Value = Мигалки, фонарі
+Key = name_ukr - Value = None
+Key = description_ukr - Value = None
