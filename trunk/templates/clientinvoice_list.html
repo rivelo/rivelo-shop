@@ -23,6 +23,7 @@ setTimeout(function() {
     	<th>Клієнт</th>
     	<th>Назва компонента</th>
     	<th>Кількість</th>
+    	<th>Ціна</th>
     	<th>Сума</th>
     	<th>Валюта</th>
     	<th>Знижка, %</th>    	
@@ -43,7 +44,9 @@ setTimeout(function() {
     <a href="/client/invoice/{{type.id}}/edit">{{type.id}}</a>
 	</td>
 	<td>
+	<a href="/client/result/search/?id={{type.client.id}}">
 	{{type.client}}       
+	</a>
 	</td>
 	<td>       
 	{{type.catalog}}
@@ -51,6 +54,9 @@ setTimeout(function() {
 	<td>       
 	<a href="">{{type.count}}</a>
 	</td>
+	<td>       
+	{{type.price}}
+	</td>	
 	<td>       
 	{{type.sum}}
 	</td>
@@ -81,6 +87,7 @@ setTimeout(function() {
     	<th></th>
     	<th>Загальна кількість проданих товарів:</th>
     	<th>{{countall}}</th>
+    	<th></th>
     	<th>{{sumall}}</th>
     	<th>грн.</th>
     	<th></th>    	

@@ -956,3 +956,27 @@ Key = name - Value = Світло
 Key = description - Value = Мигалки, фонарі
 Key = name_ukr - Value = None
 Key = description_ukr - Value = None
+DELETE FROM TABLE client debts WHERE id = 124 
+Key = id - Value = 124
+Key = client - Value = 2
+Key = date - Value = 2012-01-30 12:51:36
+Key = price - Value = 25.0
+Key = description - Value = test1
+DELETE FROM TABLE client credits WHERE id = 15 
+Key = id - Value = 15
+Key = client - Value = 2
+Key = date - Value = 2011-09-03 23:11:02
+Key = price - Value = 10.0
+Key = description - Value = oo
+DELETE FROM TABLE client credits WHERE id = 16 
+Key = id - Value = 16
+Key = client - Value = 2
+Key = date - Value = 2011-09-03 23:14:44
+Key = price - Value = 15.0
+Key = description - Value = test
+DELETE FROM TABLE client debts WHERE id = 125 
+Key = id - Value = 125
+Key = client - Value = 130
+Key = date - Value = 2012-01-30 13:11:37
+Key = price - Value = 6588.0
+Key = description - Value = Замовлення велосипеду Kellys 9.1
