@@ -62,6 +62,51 @@
 	</tr>
 	
 	</table>
+	
+	<br>
+	<table border=1 width="100%" style="font-size : 12px; font-family : Arial;">
+	<tr bgcolor="grey">
+	<th>Дата</th>
+	<th>Товар</th>
+	<th>Кількість</th>
+	<th>Прайс</th>
+	<th>Сума</th>
+	<th>Валюта</th>
+	</tr>
+	
+	{% for inv in invoice %}
+	<tr>
+	<td>
+	{{inv.date}}
+	</td>
+	<td>
+	{{inv.catalog}}
+	</td>
+	<td>
+	{{inv.count}}
+	</td>
+	<td>
+	{{inv.price}}
+	</td>
+	<td>
+	{{inv.sum}}
+	</td>
+	<td>
+	{{inv.currency}}
+	</td>
+	</tr>
+	{% endfor %}
+	
+	<tr>
+	<th></th>
+	<th></th>
+	<th></th>
+	<th>Загальна сума</th>
+	<th>{{client_invoice_sum}} грн.</th>
+	<th></th>
+	</tr>
+	</table>
+	
 
 	<a href=/client/result/> Повторний пошук </a> 
 

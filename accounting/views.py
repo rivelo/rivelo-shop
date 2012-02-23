@@ -489,8 +489,8 @@ def bicycle_sale_add(request, id=None):
             update_client.save()
             
             ClientDebts(client=client, date=date, price=price, description=""+str(model)).save()
-            
-            return HttpResponseRedirect('/bicycle/sale/view/')
+            redirect = "/client/result/search/?id="+str(client.id)
+            return HttpResponseRedirect(redirect)
     else:
         if bike != None:
             form = BicycleSaleForm(initial={'model': bike.id, 'price': bike.model.price, 'currency': bike.model.currency.id})
@@ -701,6 +701,30 @@ def dealer_payment_add(request):
             currency = form.cleaned_data['currency']
             letter = form.cleaned_data['letter']
             description = form.cleaned_data['description']
+
+            if currency == dealer_invoice.currency:
+                if dealer_invoice.price <= price:
+                     obj = DealerInvoice.objects.get(id=dealer_invoice.id)
+                     obj.payment = True
+                     obj.save()
+            else:
+                if dealer_invoice.currency.id == 3:
+                    exchange_dealer = 1
+                    d = dealer_invoice.price
+                else:
+                    exchange_dealer = Exchange.objects.get(date=datetime.date.today, currency=str(dealer_invoice.currency.id))
+                    d = dealer_invoice.price * float(exchange_dealer.value)
+                if currency.id == 3:
+                    exchange_pay = 1
+                    p = price
+                else:
+                    exchange_pay = Exchange.objects.get(date=datetime.date.today, currency=str(currency.id))
+                    p = price * float(exchange_pay.value)
+                if d <= p:
+                     obj = DealerInvoice.objects.get(id=dealer_invoice.id)
+                     obj.payment = True
+                     obj.save()
+           
             DealerPayment(dealer_invoice=dealer_invoice, invoice_number=invoice_number, date=date, bank=bank, price=price, currency=currency, letter=letter, description=description).save()
             return HttpResponseRedirect('/dealer/payment/view/')
     else:
@@ -909,7 +933,7 @@ def invoicecomponent_del(request, id):
     obj = InvoiceComponentList.objects.get(id=id)
     del_logging(obj)
     obj.delete()
-    return HttpResponseRedirect('/invoice/list/view/')
+    return HttpResponseRedirect('/invoice/list/10/view/')
 
 
 def invoicecomponent_edit(request, id):
@@ -1505,13 +1529,14 @@ def client_invoice(request, cid=None):
             client = form.cleaned_data['client']
             catalog = form.cleaned_data['catalog']
             count = form.cleaned_data['count']
+            price = form.cleaned_data['price']
             sum = form.cleaned_data['sum']
             currency = form.cleaned_data['currency']
             sale = form.cleaned_data['sale']
             pay = form.cleaned_data['pay']
             date = form.cleaned_data['date']
             description = form.cleaned_data['description']
-            ClientInvoice(client=client, catalog=catalog, count=count, sum=sum, currency=currency, sale=sale, pay=pay, date=date, description=description).save()
+            ClientInvoice(client=client, catalog=catalog, count=count, sum=sum, price=price, currency=currency, sale=sale, pay=pay, date=date, description=description).save()
             #WorkGroup(name=name, description=description).save()
             return HttpResponseRedirect('/client/invoice/view/')
     else:
@@ -1528,13 +1553,14 @@ def client_invoice_edit(request, id):
             client = form.cleaned_data['client']
             catalog = form.cleaned_data['catalog']
             count = form.cleaned_data['count']
+            price = form.cleaned_data['price']
             sum = form.cleaned_data['sum']
             currency = form.cleaned_data['currency']
             sale = form.cleaned_data['sale']
             pay = form.cleaned_data['pay']
             date = form.cleaned_data['date']
             description = form.cleaned_data['description']
-            ClientInvoice(id=id, client=client, catalog=catalog, count=count, sum=sum, currency=currency, sale=sale, pay=pay, date=date, description=description).save()
+            ClientInvoice(id=id, client=client, catalog=catalog, count=count, sum=sum, price=price, currency=currency, sale=sale, pay=pay, date=date, description=description).save()
             return HttpResponseRedirect('/client/invoice/view/')
     else:
         form = ClientInvoiceForm(instance = a, catalog_id = cat_id)
@@ -1542,7 +1568,7 @@ def client_invoice_edit(request, id):
 
 
 def client_invoice_view(request):
-    list = ClientInvoice.objects.all().order_by("-id")
+    list = ClientInvoice.objects.all().order_by("-date", "-id")
     psum = 0
     scount = 0
     for item in list:
@@ -1595,12 +1621,17 @@ def client_result(request):
     
     credit_list = ClientCredits.objects.filter(client=user)
     debt_list = ClientDebts.objects.filter(client=user)
+    
+    client_invoice = ClientInvoice.objects.filter(client=user).order_by("-date")
+    client_invoice_sum = 0
+    for a in client_invoice:
+        client_invoice_sum = client_invoice_sum + a.sum
     #list_debt = ClientDebts.objects.filter(client='2').values("client", "price").select_related('client')
     #list_debt = ClientDebts.objects.filter(client='2').select_related('client')
     #list_debt = ClientDebts.objects.filter(client='2').annotate(Sum("price"))
     #return render_to_response('index.html', {'clients': list_credit.values_list(), 'weblink': 'client_result.html'})
     #return render_to_response('index.html', {'clients': list_debt.values_list(), 'weblink': 'client_result.html'})
-    return render_to_response('index.html', {'clients': res, 'weblink': 'client_result.html', 'debt_list': debt_list, 'credit_list': credit_list, 'client_name': client_name})
+    return render_to_response('index.html', {'clients': res, 'invoice': client_invoice, 'client_invoice_sum': client_invoice_sum, 'weblink': 'client_result.html', 'debt_list': debt_list, 'credit_list': credit_list, 'client_name': client_name})
 
 
 # --------------- WorkShop -----------------

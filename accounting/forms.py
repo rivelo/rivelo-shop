@@ -203,7 +203,7 @@ class DealerInvoiceForm(forms.ModelForm):
 
 
 class InvoiceComponentListForm(forms.ModelForm):
-    invoice = forms.ModelChoiceField(queryset = DealerInvoice.objects.filter(payment=False))
+    invoice = forms.ModelChoiceField(queryset = DealerInvoice.objects.filter(received=False))
     catalog = forms.ModelChoiceField(queryset = Catalog.objects.none(), required=False)
     #catalog = forms.ModelChoiceField(queryset = Catalog.objects.filter(manufacturer=36))
     count = forms.IntegerField(min_value=0, initial = 1)
