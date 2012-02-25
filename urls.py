@@ -82,9 +82,9 @@ urlpatterns = patterns('',
     (r'^bicycle/sale/edit/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_sale_edit'),    
     (r'^bicycle/sale/delete/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_sale_del'),
     (r'^bicycle/sale/report/month/$', 'catalog.accounting.views.bicycle_sale_report'),
-
+    # bicycle order by client
     (r'^bicycle/order/view/$', 'catalog.accounting.views.bicycle_order_list'),
-    (r'^bicycle/order/add/$', 'catalog.accounting.views.bicycle_order_list'),
+    (r'^bicycle/order/add/$', 'catalog.accounting.views.bicycle_order_add'),
         
     # Dealer/Dealer Managers operation
     (r'^dealer/payment/add/$', 'catalog.accounting.views.dealer_payment_add'),
@@ -144,6 +144,8 @@ urlpatterns = patterns('',
 
     # Catalog operation
     (r'^catalog/add/$', 'catalog.accounting.views.catalog_add'),
+    (r'^catalog/discount/$', 'catalog.accounting.views.catalog_discount_list'),
+    (r'^catalog/id/(?P<id>\d+)/view/$', 'catalog.accounting.views.catalog_list'),
     (r'^catalog/view/$', 'catalog.accounting.views.catalog_list'),
     (r'^catalog/manufacture/(?P<id>\d+)/type/(?P<tid>\d+)/view/$', 'catalog.accounting.views.catalog_manu_type_list'),
     (r'^catalog/manufacture/(?P<id>\d+)/view/(\d+)$', 'catalog.accounting.views.catalog_part_list'),
