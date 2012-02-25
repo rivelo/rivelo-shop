@@ -2,7 +2,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
-<h1>Список замовлених велосипедів ({{bicycles.count}}) <a href="/bicycle/add/">(Додати замовлення)</a></h1>
+<h1>Список замовлених велосипедів ({{bicycles.count}}) <a href="/bicycle/order/add/">(Додати замовлення)</a></h1>
 <h2>
     За рік: 
 	<a href="/bicycle/order/year/2012/view">2012,</a>
@@ -19,10 +19,11 @@
 		<th>Бренд</th>
 		<th>Рік</th>
 		<th>Колір</th>
-		<th></th>
+		<th>Розмір</th>
 		<th>Фото</th>
 		<th>Вага</th>
 		<th>Ціна</th>
+		<th>Завдаток</th>
 		<th>Валюта</th>
 		<!--    	<th>Опис</th> -->
 		<th>Edit</th>
@@ -33,16 +34,17 @@
 	<tr>
 		<td>{{forloop.counter}}</td>
 		<td><a href="/bicycle-store/add/{{type.id}}">{{type.id}}</a></td>
-		<td><a href="/bicycle/photo/{{type.id}}">{{type.model}}</a></td>
-		<td>{{type.type}}</td>
-		<td>{{type.brand}}</td>
-		<td>{{type.year.year}}</td>
-		<td>{{type.color}}</td>
-		<td>{{type.sizes}}</td>
+		<td><a href="/bicycle/photo/{{type.model.id}}">{{type.model}}</a></td>
+		<td>{{type.model.type}}</td>
+		<td>{{type.model.brand}}</td>
+		<td>{{type.model.year}}</td>
+		<td>{{type.model.color}}</td>
+		<td>{{type.size}}</td>
 		<td><!-- 	<img src="/media/{{type.photo}}" alt="" title=""/>  -->
-		{{type.photo}}</td>
-		<td>{{type.weight}}</td>
+		{{type.model.photo}}</td>
+		<td>{{type.model.weight}}</td>
 		<td>{{type.price}}</td>
+		<td>{{type.prepay}}</td>
 		<td>{{type.currency}}</td>
 		<!-- 	<td>
 	{{type.description}}

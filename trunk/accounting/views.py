@@ -572,7 +572,7 @@ def bicycle_sale_report(request):
 
 
 def bicycle_order_add(request):
-    a = Bicycle_Order()
+    a = Bicycle_Order(prepay=0, sale=0, currency=Currency.objects.get(id=3))
     if request.method == 'POST':
         form = BicycleOrderForm(request.POST, instance = a)
         if form.is_valid():
@@ -586,7 +586,8 @@ def bicycle_order_add(request):
             date = form.cleaned_data['date']
             done = form.cleaned_data['done']
             description = form.cleaned_data['description']
-            BicycleOrderForm(client=client, model=model, size=size, price=price, sale=sale, prepay=prepay, currency=currency, date=date, done=done, description=description).save()
+            Bicycle_Order(client=client, model=model, size=size, price=price, sale=sale, currency=currency, date=date, done=done, description=description, prepay=prepay).save()
+            
             return HttpResponseRedirect('/bicycle/order/view/')
     else:
         form = BicycleOrderForm(instance = a)
@@ -1225,9 +1226,18 @@ def catalog_edit(request, id):
     return render_to_response('index.html', {'form': form, 'myurl':url1, 'weblink': 'catalog.html'})
 
 
-def catalog_list(request):
-    list = Catalog.objects.all()
+def catalog_list(request, id=None):
+    list = None
+    if id==None:
+        list = Catalog.objects.all().order_by("-id")[:10]
+    else:
+        list = Catalog.objects.filter(id=id)
     #return render_to_response('catalog_list.html', {'catalog': list.values_list()})
+    return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
+
+
+def catalog_discount_list(request):
+    list = Catalog.objects.filter(sale__gt=0)[:100]
     return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
 
 
