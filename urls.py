@@ -85,6 +85,7 @@ urlpatterns = patterns('',
     # bicycle order by client
     (r'^bicycle/order/view/$', 'catalog.accounting.views.bicycle_order_list'),
     (r'^bicycle/order/add/$', 'catalog.accounting.views.bicycle_order_add'),
+    (r'^bicycle/order/(?P<id>\d+)/delete/$', 'catalog.accounting.views.bicycle_order_del'),    
         
     # Dealer/Dealer Managers operation
     (r'^dealer/payment/add/$', 'catalog.accounting.views.dealer_payment_add'),
@@ -117,7 +118,9 @@ urlpatterns = patterns('',
     (r'^invoice/add/$', 'catalog.accounting.views.invoicecomponent_add'),
     (r'^invoice/catalog/(?P<cid>\d+)/add/$', 'catalog.accounting.views.invoicecomponent_add'),
     (r'^invoice/manufacture/(?P<mid>\d+)/add/$', 'catalog.accounting.views.invoicecomponent_add'),
-    (r'^invoice/manufacture/(?P<mid>\d+)/view/$', 'catalog.accounting.views.invoicecomponent_list'),
+    (r'^invoice/manufacture/(?P<mid>\d+)/view/$', 'catalog.accounting.views.invoicecomponent_list_by_manufacturer'),
+    (r'^invoice/category/view/$', 'catalog.accounting.views.invoicecomponent_list_by_category'),
+    (r'^invoice/category/(?P<cid>\d+)/view/$', 'catalog.accounting.views.invoicecomponent_list_by_category'),
     (r'^invoice/list/(?P<limit>\d+)/view/$', 'catalog.accounting.views.invoicecomponent_list'),
     (r'^invoice/list/view/$', 'catalog.accounting.views.invoicecomponent_list'),
     (r'^invoice/id/(?P<id>\d+)/view/$', 'catalog.accounting.views.invoice_id_list'),
@@ -125,6 +128,11 @@ urlpatterns = patterns('',
     (r'^invoice/delete/(?P<id>\d+)/$', 'catalog.accounting.views.invoicecomponent_del'),
     (r'^invoice/edit/(?P<id>\d+)/$', 'catalog.accounting.views.invoicecomponent_edit'),
     (r'^invoice/report/$', 'catalog.accounting.views.invoice_report'),
+    (r'^invoice/all/report/$', 'catalog.accounting.views.invoicecomponent_sum'),
+    (r'^invoice/test/$', 'catalog.accounting.views.invoicecomponent_tets'),
+    (r'^invoice/search/$', 'catalog.accounting.views.invoice_search'),
+    (r'^invoice/search/result/$', 'catalog.accounting.views.invoice_search_result'),
+    
 
     # Curency operation
     (r'^curency/add/$', 'catalog.accounting.views.curency_add'),
