@@ -143,7 +143,8 @@ class BicycleSaleForm(forms.ModelForm):
 
 
 class BicycleOrderForm(forms.ModelForm):
-    model = forms.ModelChoiceField(queryset = Bicycle.objects.all())
+    cur_year = datetime.datetime.today().year
+    model = forms.ModelChoiceField(queryset = Bicycle.objects.filter(year__year=cur_year))
     client = forms.ModelChoiceField(queryset = Client.objects.all())
     size = forms.CharField(max_length=50)
     price = forms.FloatField(initial = 0)

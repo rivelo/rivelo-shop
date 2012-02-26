@@ -586,8 +586,8 @@ def bicycle_order_add(request):
             date = form.cleaned_data['date']
             done = form.cleaned_data['done']
             description = form.cleaned_data['description']
-            Bicycle_Order(client=client, model=model, size=size, price=price, sale=sale, currency=currency, date=date, done=done, description=description, prepay=prepay).save()
-            
+            ClientCredits(client=client, date=date, price=prepay, description="Передоплата за "+str(model)).save()
+            Bicycle_Order(client=client, model=model, size=size, price=price, sale=sale, currency=currency, date=date, done=done, description=description, prepay=prepay).save()            
             return HttpResponseRedirect('/bicycle/order/view/')
     else:
         form = BicycleOrderForm(instance = a)
@@ -598,7 +598,12 @@ def bicycle_order_list(request):
     list = Bicycle_Order.objects.all()
     return render_to_response('index.html', {'order': list, 'weblink': 'bicycle_order_list.html'})
     
-    
+
+def bicycle_order_del(request, id):
+    obj = Bicycle_Order.objects.get(id=id)
+    del_logging(obj)
+    obj.delete()
+    return HttpResponseRedirect('/bicycle/order/view/')    
 
 # --------------------Dealer company ------------------------
 def dealer_add(request):
@@ -930,6 +935,62 @@ def invoicecomponent_list(request, id=None, limit=0):
     return render_to_response('index.html', {'company_list': company_list, 'componentlist': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoicecomponent_list.html'})
 
 
+def invoicecomponent_list_by_manufacturer(request, mid=None, limit=0):
+    company_list = Manufacturer.objects.all()
+    list = None
+    if limit == 0:
+        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid)
+    else:
+        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid)[:limit]
+    psum = 0
+    scount = 0
+    for item in list:
+        psum = psum + (item.catalog.price * item.count)
+        scount = scount + item.count
+    return render_to_response('index.html', {'company_list': company_list, 'componentlist': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoicecomponent_list.html'})
+
+
+def invoicecomponent_list_by_category(request, cid=None, limit=0):
+    category_list = Type.objects.filter(name_ukr__isnull=False)
+    list = None
+    if limit == 0:
+        list = InvoiceComponentList.objects.filter(catalog__type__exact=cid)
+    else:
+        list = InvoiceComponentList.objects.filter(catalog__type__exact=cid)[:limit]
+    psum = 0
+    scount = 0
+    for item in list:
+        psum = psum + (item.catalog.price * item.count)
+        scount = scount + item.count
+    cat_name = category_list.get(id=cid)
+    #.name_ukr
+    return render_to_response('index.html', {'category_list': category_list, 'category_name': cat_name, 'componentlist': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoicecomponent_list_by_category.html'})
+
+
+
+def invoicecomponent_tets(request):
+    #list = InvoiceComponentList.objects.filter(catalog__name__contains='спиц')
+    #list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=44)
+    #list = InvoiceComponentList.objects.filter(catalog__type__exact=112)
+    list = InvoiceComponentList.objects.filter(catalog__name__contains='спиц')
+    psum = 0
+    scount = 0
+    for item in list:
+        psum = psum + (item.catalog.price * item.count)
+        scount = scount + item.count
+    return render_to_response('index.html', {'componentlist': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoicecomponent_list.html'})
+
+
+def invoicecomponent_sum(request):
+    list = InvoiceComponentList.objects.all()
+    psum = 0
+    scount = 0
+    for item in list:
+        psum = psum + (item.catalog.price * item.count)
+        scount = scount + item.count
+    return render_to_response('index.html', {'allpricesum':psum, 'countsum': scount, 'weblink': 'invoicecomponent_report.html'})
+
+
 def invoicecomponent_del(request, id):
     obj = InvoiceComponentList.objects.get(id=id)
     del_logging(obj)
@@ -959,6 +1020,31 @@ def invoicecomponent_edit(request, id):
     return render_to_response('index.html', {'form': form, 'weblink': 'invoicecomponent.html'})
 
 
+def invoice_search(request):
+    return render_to_response('index.html', {'weblink': 'invoice_search.html'})
+
+
+def invoice_search_result(request):
+    list = None
+   
+    if 'name' in request.GET and request.GET['name']:
+        name = request.GET['name']
+        #list = Catalog.objects.filter(name__icontains = name).order_by('manufacturer')
+        list = InvoiceComponentList.objects.filter(catalog__name__contains=name)
+    elif  'id' in request.GET and request.GET['id']:
+        id = request.GET['id']
+        list = InvoiceComponentList.objects.filter(catalog__ids__contains=id)
+        #list = Catalog.objects.filter(ids__icontains = id).order_by('manufacturer')
+
+    psum = 0
+    scount = 0
+    for item in list:
+        psum = psum + (item.catalog.price * item.count)
+        scount = scount + item.count
+        
+    return render_to_response('index.html', {'componentlist': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoicecomponent_list.html'})        
+
+
 def invoice_report(request):
     #list = InvoiceComponentList.objects.all().order_by('-id')[:10]
     
@@ -974,7 +1060,7 @@ def invoice_report(request):
     except TypeError:
         res = "Помилка"
     
-    return render_to_response('index.html', {'list': list, 'company_list':company_list, 'weblink': 'invoice_component_reportt.html'})
+    return render_to_response('index.html', {'list': list, 'company_list':company_list, 'weblink': 'invoice_component_report.html'})
 
 
 def invoice_id_list(request, id=None, limit=0):
@@ -1000,7 +1086,7 @@ def invoice_id_list(request, id=None, limit=0):
         scount = scount + item.count
     dinvoice = DealerInvoice.objects.get(id=id)    
     
-    return render_to_response('index.html', {'list': list, 'dinvoice':dinvoice, 'company_list':company_list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoice_component_reportt.html'})
+    return render_to_response('index.html', {'list': list, 'dinvoice':dinvoice, 'company_list':company_list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoice_component_report.html'})
 
 
 def invoice_cat_id_list(request, cid=None, limit=0):
@@ -1011,7 +1097,7 @@ def invoice_cat_id_list(request, cid=None, limit=0):
         psum = psum + (item.catalog.price * item.count)
         scount = scount + item.count
         
-    return render_to_response('index.html', {'list': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoice_component_reportt.html'})
+    return render_to_response('index.html', {'list': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoice_component_report.html'})
 
 
 # --------------- Classification ---------
@@ -1316,8 +1402,10 @@ def client_add(request):
             summ = form.cleaned_data['summ']
             description = form.cleaned_data['description']
  
-            Client(name=name, forumname=forumname, country=country, city=city, email=email, phone=phone, sale=sale, summ=summ, description=description).save()
-            return HttpResponseRedirect('/client/view/')
+            a = Client(name=name, forumname=forumname, country=country, city=city, email=email, phone=phone, sale=sale, summ=summ, description=description)
+            a.save()
+            #return HttpResponseRedirect('/client/view/')
+            return HttpResponseRedirect('/client/result/search/?id=' + str(a.id))
     else:
         form = ClientForm()
     return render_to_response('index.html', {'form': form, 'weblink': 'client.html'})

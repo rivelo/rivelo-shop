@@ -1,0 +1,54 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<html lang="en">
+<head>
+    <title>Список товару</title>
+    <link rel="stylesheet" type="text/css" href="/media/table.css">
+</head>
+<body>
+
+    <h1>Звіт по наявному товару</h1>
+
+    <table border="1">
+	<tr>
+    	<th>#</th>	
+    	<th>ID</th>
+    	<th>№ накладної</th>
+    	<th>Товар</th>
+    	<th align="center">Кількість</th>
+    	<th>Ціна</th>
+    	<th>Валюта</th>
+    	<th>Сума</th>    	
+    	<th>Прайс</th>    	    	
+    	<th>Дата</th>
+    	<th>Опис</th>
+    	<th>Дія</th>
+    </tr>
+    
+{% load template_math %}    
+    
+	<tr>
+    	<th></th>	
+    	<th></th>
+    	<th></th>
+    	<th></th>
+    	<th>Кількість: {{countsum}}</th>
+    	<th></th>
+    	<th></th>
+    	<th>{{allpricesum}} грн.</th>    	
+    	<th></th>    	    	
+    	<th></th>
+    	<th></th>
+    	<th></th>
+    </tr>
+    
+    <table>
+
+<br><br>
+<a href="/">HOME</a>
+<br>
+<a href="{{addurl}}">Add with last company</a>      
+<br>
+<a href="/invoice/add/">Add</a>      
+
+</body>
+</html>

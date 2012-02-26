@@ -15,6 +15,7 @@
 		<th>#</th>
 		<th>ID</th>
 		<th>Назва моделі</th>
+		<th>Клієнт</th>
 		<th>Тип</th>
 		<th>Бренд</th>
 		<th>Рік</th>
@@ -35,6 +36,7 @@
 		<td>{{forloop.counter}}</td>
 		<td><a href="/bicycle-store/add/{{type.id}}">{{type.id}}</a></td>
 		<td><a href="/bicycle/photo/{{type.model.id}}">{{type.model}}</a></td>
+		<td><a href="/client/result/search/?id={{type.client.id}}">{{type.client}}</a></td>
 		<td>{{type.model.type}}</td>
 		<td>{{type.model.brand}}</td>
 		<td>{{type.model.year}}</td>
@@ -52,7 +54,7 @@
  -->
 		<td><a href="/bicycle/edit/{{ type.id }}">edit</a></td>
 
-		<td><a href="/bicycle/delete/{{ type.id }}">delete</a></td>
+		<td><a href="/bicycle/order/{{ type.id }}/delete">delete</a></td>
 	</tr>
 	{% endfor %}
 

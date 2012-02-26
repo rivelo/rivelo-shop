@@ -980,3 +980,79 @@ Key = client - Value = 130
 Key = date - Value = 2012-01-30 13:11:37
 Key = price - Value = 6588.0
 Key = description - Value = Замовлення велосипеду Kellys 9.1
+DELETE FROM TABLE bicycle_ order WHERE id = 3 
+Key = id - Value = 3
+Key = client - Value = 82
+Key = model - Value = 132
+Key = size - Value = 17
+Key = price - Value = 4100.0
+Key = sale - Value = 0
+Key = prepay - Value = 2000.0
+Key = currency - Value = 3
+Key = date - Value = 2012-02-26
+Key = done - Value = False
+Key = description - Value = 
+DELETE FROM TABLE client credits WHERE id = 105 
+Key = id - Value = 105
+Key = client - Value = 82
+Key = date - Value = 2012-01-28 12:51:14
+Key = price - Value = 2000.0
+Key = description - Value = оплата за велосипед Wahoo
+DELETE FROM TABLE client WHERE id = 146 
+Key = id - Value = 146
+Key = name - Value = test007
+Key = forumname - Value = tester007
+Key = country - Value = 5
+Key = city - Value = rivne
+Key = email - Value = 
+Key = phone - Value = 007
+Key = sale - Value = 0
+Key = summ - Value = 0.0
+Key = description - Value = test user
+DELETE FROM TABLE client WHERE id = 145 
+Key = id - Value = 145
+Key = name - Value = test007
+Key = forumname - Value = tester007
+Key = country - Value = 5
+Key = city - Value = rivne
+Key = email - Value = 
+Key = phone - Value = 007
+Key = sale - Value = 0
+Key = summ - Value = 0.0
+Key = description - Value = test user
+DELETE FROM TABLE client credits WHERE id = 67 
+Key = id - Value = 67
+Key = client - Value = 112
+Key = date - Value = 2011-12-10 17:00:53
+Key = price - Value = 400.0
+Key = description - Value = предоплата за вел
+DELETE FROM TABLE client credits WHERE id = 116 
+Key = id - Value = 116
+Key = client - Value = 136
+Key = date - Value = 2012-02-14 12:49:36
+Key = price - Value = 480.0
+Key = description - Value = передоплата
+DELETE FROM TABLE client credits WHERE id = 127 
+Key = id - Value = 127
+Key = client - Value = 33
+Key = date - Value = 2012-02-24 16:07:48
+Key = price - Value = 1000.0
+Key = description - Value = tnt 9.3 залишено задаток 10 відсотків 1000 грн ростовка 19"
+DELETE FROM TABLE client credits WHERE id = 109 
+Key = id - Value = 109
+Key = client - Value = 132
+Key = date - Value = 2012-01-30 15:33:14
+Key = price - Value = 500.0
+Key = description - Value = задаток за велосипед
+DELETE FROM TABLE type WHERE id = 91 
+Key = id - Value = 91
+Key = name - Value = Захист пера
+Key = description - Value = Захист на перо
+Key = name_ukr - Value = None
+Key = description_ukr - Value = None
+DELETE FROM TABLE type WHERE id = 8 
+Key = id - Value = 8
+Key = name - Value = Bottle cage
+Key = description - Value = a holder for a water bottle
+Key = name_ukr - Value = Фляготримач
+Key = description_ukr - Value = Фляготримачі
