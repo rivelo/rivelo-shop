@@ -962,8 +962,12 @@ def invoicecomponent_list_by_category(request, cid=None, limit=0):
     for item in list:
         psum = psum + (item.catalog.price * item.count)
         scount = scount + item.count
-    cat_name = category_list.get(id=cid)
+    if cid == None:
+        cat_name = ""
+    else:
+        cat_name = category_list.get(id=cid)
     #.name_ukr
+    #cat_name = ""
     return render_to_response('index.html', {'category_list': category_list, 'category_name': cat_name, 'componentlist': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoicecomponent_list_by_category.html'})
 
 
