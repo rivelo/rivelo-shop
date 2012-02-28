@@ -23,7 +23,7 @@ ul#hmenu ul {
 	margin: 0;
 	border: 0 none;
 	padding: 0;
-	width: 160px;
+	width: 190px;
 	list-style: none;
 	display: none;
 	position: absolute;
@@ -41,7 +41,7 @@ ul#hmenu ul:after {
 }
 
 ul#hmenu ul li {
-	width: 160px;
+	width: 220px;
 	float: left;
 	display: block !important;
 	display: inline;
