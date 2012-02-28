@@ -181,6 +181,8 @@ urlpatterns = patterns('',
     (r'^client/invoice/catalog/(?P<cid>\d+)/add/$', 'catalog.accounting.views.client_invoice'),
     (r'^client/invoice/add/$', 'catalog.accounting.views.client_invoice'),
     (r'^client/invoice/(?P<id>\d+)/delete/$', 'catalog.accounting.views.client_invoice_delete'),
+    (r'^client/invoice/year/(?P<year>\d+)/month/(?P<month>\d+)/view/$', 'catalog.accounting.views.client_invoice_view'),
+    (r'^client/invoice/year/(?P<year>\d+)/month/(?P<month>\d+)/day/(?P<day>\d+)/view/$', 'catalog.accounting.views.client_invoice_view'),
 
     (r'^clientdebts/add/(?P<id>\d+)$', 'catalog.accounting.views.clientdebts_add'),
     (r'^clientdebts/view/$', 'catalog.accounting.views.clientdebts_list'),

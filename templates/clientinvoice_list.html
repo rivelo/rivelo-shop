@@ -11,9 +11,30 @@ setTimeout(function() {
 }, 100);
 </script>
 
-{% for company in company_list %}
-<a href="/invoice/manufacture/{{company.id}}/view/">{{company.name}}</a>
-{% endfor %}
+<br>
+<h2>
+    За місяць: 
+    <a href="/client/invoice/year/{{sel_year}}/month/1/view">01,</a>
+	<a href="/client/invoice/year/{{sel_year}}/month/2/view">02,</a>
+	<a href="/client/invoice/year/{{sel_year}}/month/3/view">03,</a>
+	<a href="/client/invoice/year/{{sel_year}}/month/4/view">04,</a>
+	<a href="/client/invoice/year/{{sel_year}}/month/5/view">05,</a>
+	<a href="/client/invoice/year/{{sel_year}}/month/6/view">06,</a>
+	<a href="/client/invoice/year/{{sel_year}}/month/7/view">07,</a>
+	<a href="/client/invoice/year/{{sel_year}}/month/8/view">08,</a>
+	<a href="/client/invoice/year/{{sel_year}}/month/9/view">09,</a>
+	<a href="/client/invoice/year/{{sel_year}}/month/10/view">10,</a>
+	<a href="/client/invoice/year/{{sel_year}}/month/11/view">11,</a>
+	<a href="/client/invoice/year/{{sel_year}}/month/12/view">12</a>
+</h2>    
+
+<h2>
+	За день:
+	{% for day in month_days %}		 
+    <a href="/client/invoice/year/{{sel_year}}/month/{{sel_month}}/day/{{day}}/view">{{day}},</a>
+    {% endfor %}
+</h2>    
+
 
     <h1>Список проданого товару</h1>
     <table border="1">

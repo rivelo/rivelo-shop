@@ -22,6 +22,7 @@ from django.http import Http404
 
 from django.conf import settings
 import datetime
+import calendar
 
 now = datetime.datetime.now()
 
@@ -1034,10 +1035,10 @@ def invoice_search_result(request):
     if 'name' in request.GET and request.GET['name']:
         name = request.GET['name']
         #list = Catalog.objects.filter(name__icontains = name).order_by('manufacturer')
-        list = InvoiceComponentList.objects.filter(catalog__name__contains=name)
+        list = InvoiceComponentList.objects.filter(catalog__name__icontains=name)
     elif  'id' in request.GET and request.GET['id']:
         id = request.GET['id']
-        list = InvoiceComponentList.objects.filter(catalog__ids__contains=id)
+        list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id)
         #list = Catalog.objects.filter(ids__icontains = id).order_by('manufacturer')
 
     psum = 0
@@ -1669,14 +1670,22 @@ def client_invoice_edit(request, id):
     return render_to_response('index.html', {'form': form, 'weblink': 'clientinvoice.html'})
 
 
-def client_invoice_view(request):
-    list = ClientInvoice.objects.all().order_by("-date", "-id")
+def client_invoice_view(request, month=None, year=None, day=None):
+    if month == None:
+        month = datetime.datetime.now().month
+    if year == None:
+        year = datetime.datetime.now().year
+    if day == None:
+        list = ClientInvoice.objects.filter(date__year=year, date__month=month).order_by("-date", "-id")
+    else:
+        list = ClientInvoice.objects.filter(date__year=year, date__month=month, date__day=day).order_by("-date", "-id")
     psum = 0
     scount = 0
     for item in list:
         psum = psum + item.sum
         scount = scount + item.count
-    return render_to_response('index.html', {'buycomponents': list, 'sumall':psum, 'countall':scount, 'weblink': 'clientinvoice_list.html'})
+    days = xrange(1, calendar.monthrange(int(year), int(month))[1]+1)
+    return render_to_response('index.html', {'sel_year':year, 'sel_month':month, 'month_days':days, 'buycomponents': list, 'sumall':psum, 'countall':scount, 'weblink': 'clientinvoice_list.html'})
 
 
 def client_invoice_delete(request, id):
