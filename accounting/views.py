@@ -1389,7 +1389,14 @@ def catalog_search_result(request):
         list = Catalog.objects.filter(ids__icontains = id).order_by('manufacturer')
         print_url = "/shop/price/bysearch_id/"+id+"/view/"
     return render_to_response('index.html', {'catalog': list, 'url':print_url, 'weblink': 'catalog_list.html'})
-    
+
+
+def catalog_tresult(request):
+        #list = Catalog.objects.filter(name__icontains = "Камера", type=84).order_by('manufacturer')
+        list = Catalog.objects.filter(name__icontains = "Камера").order_by('manufacturer')
+        list.update(type=51)    
+        return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
+        
 
 
 # ------------- Clients -------------

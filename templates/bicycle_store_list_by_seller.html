@@ -52,7 +52,9 @@
 	{{type.realization}}
 	</td>	
 	{% ifequal type.count 1 %}
-			<td align="center"><a href="/bicycle/sale/add/{{type.id}}">{{type.count}}</a></td>
+			<td align="center">
+			<abbr title="Продати велосипед"><a href="/bicycle/sale/add/{{type.id}}">{{type.count}}</a></abbr>
+			</td>
 		{% else %}
 			<td align="center">{{type.count}}</td>
 		{% endifequal %}

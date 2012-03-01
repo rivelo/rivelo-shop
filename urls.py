@@ -152,6 +152,7 @@ urlpatterns = patterns('',
 
     # Catalog operation
     (r'^catalog/add/$', 'catalog.accounting.views.catalog_add'),
+    #(r'^catalog/change/$', 'catalog.accounting.views.catalog_tresult'),
     (r'^catalog/discount/$', 'catalog.accounting.views.catalog_discount_list'),
     (r'^catalog/id/(?P<id>\d+)/view/$', 'catalog.accounting.views.catalog_list'),
     (r'^catalog/view/$', 'catalog.accounting.views.catalog_list'),

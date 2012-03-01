@@ -16,7 +16,7 @@
 <a href="/invoice/add/">Add</a>      
     
 
-    <table border="1">
+    <table border="1" width="100%">
 	<tr>
     	<th>#</th>	
     	<th>ID</th>
@@ -35,7 +35,14 @@
 {% load template_math %}    
     
 {% for type in componentlist %}
+
+{% ifequal type.catalog.sale 0 %}
 <tr>
+{% else %}
+<tr BGCOLOR="#FF6600">
+{% endifequal %}
+
+
 	<td>
 	{{forloop.counter}}
 	</td>

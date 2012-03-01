@@ -30,7 +30,13 @@
 {% load template_math %}    
     
 {% for type in componentlist %}
+
+{% ifequal type.catalog.sale 0 %}
 <tr>
+{% else %}
+<tr BGCOLOR="#FF6600">
+{% endifequal %}
+
 	<td>
 	{{forloop.counter}}
 	</td>
@@ -44,10 +50,14 @@
 	<a href="/catalog/id/{{type.catalog.id}}/view">{{type.catalog}}</a>
 	</td>
 	<td align="center">       
+	<abbr title="Продати товар"> 
 	<a href="/client/invoice/catalog/{{type.catalog.id}}/add">{{type.count}}</a>
+	</abbr>
 	</td>
-	<td>       
+	<td> 
+	<abbr title="Ціна зі знижкою: {{type.catalog.price|percentage:type.catalog.sale}} грн. | ЗНИЖКА {{type.catalog.sale}}%">      
 	{{type.catalog.price}}
+	</abbr>
 	</td>
 	<td>       
 	{{type.catalog.currency}}
