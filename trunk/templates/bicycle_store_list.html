@@ -43,10 +43,15 @@
 		<td align="center"><!-- 	<img src="/media/{{type.photo}}" alt="" title=""/>  -->
 		{{type.realization}}</td>
 		{% ifequal type.count 1 %}
-			<td align="center"><a href="/bicycle/sale/add/{{type.id}}">{{type.count}}</a></td>
+			<td align="center">
+			<abbr title="Продати велосипед">
+			<a href="/bicycle/sale/add/{{type.id}}">{{type.count}}</a>
+			</abbr>
+			</td>
 		{% else %}
 			<td align="center">{{type.count}}</td>
 		{% endifequal %}
+		
 		<td>{{type.date|date:"D d M Y"}}</td>
 		<td><a href="/bicycle-store/edit/{{ type.id }}">edit</a> <br>
 		<a href="/bicycle-store/delete/{{ type.id }}">delete</a></td>

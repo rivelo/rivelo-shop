@@ -39,3 +39,11 @@ def dictsumm(value, arg):
     #value = float(value) + float(arg)
     return value
     #return sum(d.get(arg) for d in value)
+
+@register.filter(name='percentage')  
+def percentage(sum, percent):  
+    try:  
+        a_percent = (100 - float(percent)) / 100.0
+        return "%.2f" % (float(sum) * a_percent)  
+    except ValueError:  
+        return ''  

@@ -17,7 +17,27 @@
     <a href="/catalog/add/">Додати новий товар</a>   
     <a href="{{url}}">Друкувати цінники</a>
 
-    <table>
+    <table width="100%">
+
+	<col width="1%" valign="top">
+	<col width="5%" valign="top">
+   	<col width="20%" valign="top">    
+   	<col width="5%" valign="top">
+   	<col width="10%" valign="top">
+   	<col width="1%" valign="top">
+   	<col width="1%" valign="top">
+   	<col width="2%" valign="top">
+   	<col width="9%" valign="top">
+   	<col width="2%" valign="top">
+   	<col width="2%" valign="top">
+   	<col width="2%" valign="top">
+   	<col width="2%" valign="top">
+   	<col width="2%" valign="top">
+   	<col width="2%" valign="top">
+   	
+
+
+    
 	<tr>
     	<th>ID</th>
     	<th>Код</th>
@@ -25,7 +45,7 @@
     	<th>Виробник</th>
     	<th>Тип</th>
     	<th>Вага</th>
-    	<th>Рік виготовлення</th>
+    	<th width="2%">Рік виготовлення</th>
     	<th>Дата закінчення розпродажу</th>
     	<th>Колір</th>
     	<th>Ціна</th>
@@ -38,9 +58,14 @@
     </tr>
 
 {% for type in catalog %}
+{% ifequal type.sale 0 %}
 <tr>
+{% else %}
+<tr BGCOLOR="#FF6600">
+{% endifequal %}
+
 	<td>       
-	<a href="/invoice/catalog/{{ type.id }}/add">{{type.id}}</a>
+	<abbr title="Додати товар до накладної"><a href="/invoice/catalog/{{ type.id }}/add">{{type.id}}</a></abbr>
 	</td>
 	<td>       
 	{{type.ids}}
@@ -57,7 +82,7 @@
 	<td>       
 	{{type.weight}}
 	</td>	
-	<td>       
+	<td width="2%">       
 	{{type.year}}
 	</td>
 	<td>       
@@ -99,6 +124,6 @@
 <br><br>
 <a href="/">HOME</a>    
 <br>
-<a href="/catalog/add/">Add</a> 
+<a href="/catalog/add/">Додати новий товар</a> 
 
 
