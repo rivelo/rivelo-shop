@@ -952,7 +952,7 @@ def invoicecomponent_list_by_manufacturer(request, mid=None, limit=0):
 
 
 def invoicecomponent_list_by_category(request, cid=None, limit=0):
-    category_list = Type.objects.filter(name_ukr__isnull=False)
+    category_list = Type.objects.filter(name_ukr__isnull=False).order_by('name_ukr')
     list = None
     if limit == 0:
         list = InvoiceComponentList.objects.filter(catalog__type__exact=cid)
@@ -1678,14 +1678,19 @@ def client_invoice_edit(request, id):
 
 
 def client_invoice_view(request, month=None, year=None, day=None):
-    if month == None:
-        month = datetime.datetime.now().month
     if year == None:
         year = datetime.datetime.now().year
+    if month == None:
+        month = datetime.datetime.now().month
+
     if day == None:
-        list = ClientInvoice.objects.filter(date__year=year, date__month=month).order_by("-date", "-id")
-    else:
+        day = datetime.datetime.now().day
         list = ClientInvoice.objects.filter(date__year=year, date__month=month, date__day=day).order_by("-date", "-id")
+    else:
+        if day == 'all':
+            list = ClientInvoice.objects.filter(date__year=year, date__month=month).order_by("-date", "-id")
+        else:
+            list = ClientInvoice.objects.filter(date__year=year, date__month=month, date__day=day).order_by("-date", "-id")
     psum = 0
     scount = 0
     for item in list:

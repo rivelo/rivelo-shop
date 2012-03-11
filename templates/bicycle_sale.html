@@ -1,13 +1,29 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
+<script type="text/javascript">
+function sum() {
+	sale = 1 - ((parseFloat(document.getElementById('id_sale').value)||0)/100)
+    res = document.getElementById('result').innerHTML = (parseFloat(document.getElementById('id_price').value)||0) * sale
+    document.getElementById('result').innerHTML = "Сума " + document.getElementById('result').innerHTML + " грн."
+    document.getElementById('id_sum').value = res 
+}
+
+//setTimeout(sum, 100)
+
+setInterval(sum, 100)
+
+</script>
 
 <h1>Продаж велосипеду <font color="red">
 ({{serial_number}}) </font></h1>
 <form action="." method="POST" enctype="multipart/form-data">
 <table>
 	{{ form.as_ul }}
+	<label for="id_sale">Знижка:</label>
+	<input type="text" name="price" id="id_sale">
+	<p><input type="submit" value="Save"></p>
 </table>
-<p><input type="submit" value="Save"></p>
+    <h3 id="result" style="color:red; background-color:#CCCCCC"}>Сума грн.</h3>
 </form>
 
 <a href="/bicycle-store/view/">Список велосипедів у магазині</a>
