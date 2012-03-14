@@ -108,6 +108,42 @@
 	</table>
 	
 
+<br>
+	<table border=1 width="100%" style="font-size : 12px; font-family : Arial;">
+	<tr bgcolor="grey">
+	<th>Дата</th>
+	<th>Робота</th>
+	<th>Прайс</th>
+	<th>Валюта</th>
+	</tr>
+	
+	{% for inv in workshop %}
+	<tr>
+	<td>
+	{{inv.date}}
+	</td>
+	<td>
+	{{inv.work_type}}
+	</td>
+	<td>
+	{{inv.price}}
+	</td>
+	<td>
+	{{inv.description}}
+	</td>	
+	</tr>
+	{% endfor %}
+	
+	<tr>
+	<th></th>
+	<th>Загальна сума</th>
+	<th>{{client_workshop_sum}} грн.</th>
+	<th></th>
+	</tr>
+	</table>
+	
+
+
 	<a href=/client/result/> Повторний пошук </a> 
 
 
