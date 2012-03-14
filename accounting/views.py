@@ -529,7 +529,10 @@ def bicycle_sale_del(request, id):
 def bicycle_sale_list(request, year=False, month=False):
     list = None
     if (year==False) & (month==False):
-        list = Bicycle_Sale.objects.all().order_by('date')
+        year = datetime.datetime.now().year
+        month = datetime.datetime.now().month
+        #list = Bicycle_Sale.objects.all().order_by('date')
+        list = Bicycle_Sale.objects.filter(date__year=year, date__month=month).order_by('date')
     else:
         list = Bicycle_Sale.objects.filter(date__year=year, date__month=month).order_by('date')
     price_summ = 0
@@ -1749,12 +1752,18 @@ def client_result(request):
     client_invoice_sum = 0
     for a in client_invoice:
         client_invoice_sum = client_invoice_sum + a.sum
+
+    client_workshop_sum = 0
+    client_workshop = WorkShop.objects.filter(client=user).order_by("-date")
+    for a in client_workshop:
+        client_workshop_sum = client_workshop_sum + a.price
+            
     #list_debt = ClientDebts.objects.filter(client='2').values("client", "price").select_related('client')
     #list_debt = ClientDebts.objects.filter(client='2').select_related('client')
     #list_debt = ClientDebts.objects.filter(client='2').annotate(Sum("price"))
     #return render_to_response('index.html', {'clients': list_credit.values_list(), 'weblink': 'client_result.html'})
     #return render_to_response('index.html', {'clients': list_debt.values_list(), 'weblink': 'client_result.html'})
-    return render_to_response('index.html', {'clients': res, 'invoice': client_invoice, 'client_invoice_sum': client_invoice_sum, 'weblink': 'client_result.html', 'debt_list': debt_list, 'credit_list': credit_list, 'client_name': client_name})
+    return render_to_response('index.html', {'clients': res, 'invoice': client_invoice, 'client_invoice_sum': client_invoice_sum, 'workshop': client_workshop, 'client_workshop_sum': client_workshop_sum, 'weblink': 'client_result.html', 'debt_list': debt_list, 'credit_list': credit_list, 'client_name': client_name})
 
 
 # --------------- WorkShop -----------------
@@ -1978,12 +1987,29 @@ def workshop_edit(request, id):
     return render_to_response('index.html', {'form': form, 'weblink': 'workshop.html'})
 
 
-def workshop_list(request):
-    list = WorkShop.objects.all()
+def workshop_list(request, year=None, month=None, day=None):
+    if year == None:
+        year = datetime.datetime.now().year
+    if month == None:
+        month = datetime.datetime.now().month
+    
+    if day == None:
+        day = datetime.datetime.now().day
+        list = WorkShop.objects.filter(date__year=year, date__month=month, date__day=day).order_by("-date")
+    else:
+        if day == 'all':
+            list = WorkShop.objects.filter(date__year=year, date__month=month).order_by("-date")
+        else:
+            list = WorkShop.objects.filter(date__year=year, date__month=month, date__day=day).order_by("-date")
+
+    
+#    list = WorkShop.objects.filter(date__year=year, date__month=month)
     sum = 0 
     for item in list:
         sum = sum + item.price
-    return render_to_response('index.html', {'workshop': list, 'summ':sum, 'weblink': 'workshop_list.html'})
+        
+    days = xrange(1, calendar.monthrange(int(year), int(month))[1]+1)
+    return render_to_response('index.html', {'workshop': list, 'summ':sum, 'sel_year':year, 'sel_month':month, 'month_days': days, 'weblink': 'workshop_list.html'})
 
 
 def workshop_delete(request, id):
