@@ -296,7 +296,8 @@ class ClientForm(forms.ModelForm):
 
 class ClientDebtsForm(forms.ModelForm):
     client = forms.ModelChoiceField(queryset = Client.objects.all())
-    date = forms.DateTimeField(initial=datetime.date.today)
+#    date = forms.DateTimeField(initial=datetime.date.today)
+    date = forms.DateTimeField(initial = datetime.date.today, label='Дата', input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
     price = forms.FloatField()
     description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255)    
 
@@ -307,7 +308,7 @@ class ClientDebtsForm(forms.ModelForm):
 
 class ClientCreditsForm(forms.ModelForm):
     client = forms.ModelChoiceField(queryset = Client.objects.all())
-    date = forms.DateTimeField(initial=datetime.date.today)
+    date = forms.DateTimeField(initial = datetime.date.today, label='Дата', input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
     price = forms.FloatField()
     description = forms.CharField(label='DescripCred', widget=forms.Textarea(), max_length=255)    
 
