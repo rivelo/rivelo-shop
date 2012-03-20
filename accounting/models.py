@@ -252,7 +252,8 @@ class Client(models.Model):
 
 class ClientDebts(models.Model):
     client = models.ForeignKey(Client)
-    date = models.DateTimeField(auto_now_add=True)
+    #date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField()
     price = models.FloatField()
     description = models.TextField()
 
@@ -266,7 +267,7 @@ class ClientDebts(models.Model):
 
 class ClientCredits(models.Model):
     client = models.ForeignKey(Client)
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField()
     price = models.FloatField()
     description = models.TextField()
 
