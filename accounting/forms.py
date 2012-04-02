@@ -131,7 +131,7 @@ class BicycleStoreForm(forms.ModelForm):
 
 class BicycleSaleForm(forms.ModelForm):
     model = forms.ModelChoiceField(queryset = Bicycle_Store.objects.filter(count = 1), required=False)
-    client = forms.ModelChoiceField(queryset = Client.objects.all().order_by("-id"))
+    client = forms.ModelChoiceField(queryset = Client.objects.all()) #.order_by("-id"))
     price = forms.FloatField()
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
     date = forms.DateTimeField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))

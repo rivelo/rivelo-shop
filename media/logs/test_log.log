@@ -1056,3 +1056,32 @@ Key = name - Value = Bottle cage
 Key = description - Value = a holder for a water bottle
 Key = name_ukr - Value = Фляготримач
 Key = description_ukr - Value = Фляготримачі
+DELETE FROM TABLE client credits WHERE id = 190 
+Key = id - Value = 190
+Key = client - Value = 179
+Key = date - Value = 2012-03-24 00:00:00
+Key = price - Value = 370.0
+Key = description - Value = передоплата велосипеду kellys season
+DELETE FROM TABLE dealer invoice WHERE id = 214 
+Key = id - Value = 214
+Key = origin_id - Value = 216
+Key = date - Value = 2012-03-20
+Key = company - Value = 13
+Key = manager - Value = 19
+Key = price - Value = 253.9
+Key = currency - Value = 2
+Key = file - Value = Ровно Панчук Игорь 20.03.xls
+Key = received - Value = True
+Key = payment - Value = False
+Key = description - Value = quando, prowheel
+DELETE FROM TABLE bicycle_ store WHERE id = 49 
+Key = id - Value = 49
+Key = model - Value = 11
+Key = serial_number - Value = 10062975
+Key = size - Value = 25
+Key = price - Value = 412.0
+Key = currency - Value = 2
+Key = count - Value = 1
+Key = realization - Value = False
+Key = date - Value = 2011-06-27
+Key = description - Value = Кирилюк
