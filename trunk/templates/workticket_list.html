@@ -2,6 +2,24 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
 
+<br>
+<h2>
+    За місяць: 
+    <a href="/workticket/year/{{sel_year}}/month/1/view">01,</a>
+	<a href="/workticket/year/{{sel_year}}/month/2/view">02,</a>
+	<a href="/workticket/year/{{sel_year}}/month/3/view">03,</a>
+	<a href="/workticket/year/{{sel_year}}/month/4/view">04,</a>
+	<a href="/workticket/year/{{sel_year}}/month/5/view">05,</a>
+	<a href="/workticket/year/{{sel_year}}/month/6/view">06,</a>
+	<a href="/workticket/year/{{sel_year}}/month/7/view">07,</a>
+	<a href="/workticket/year/{{sel_year}}/month/8/view">08,</a>
+	<a href="/workticket/year/{{sel_year}}/month/9/view">09,</a>
+	<a href="/workticket/year/{{sel_year}}/month/10/view">10,</a>
+	<a href="/workticket/year/{{sel_year}}/month/11/view">11,</a>
+	<a href="/workticket/year/{{sel_year}}/month/12/view">12,</a>
+	<a href="/workticket/all/view">Всі</a>
+</h2>    
+
 
         <link rel="stylesheet" type="text/css" href="/media/table.css">
 
@@ -16,14 +34,21 @@
     	<th>Статус</th>
     	<th>Опис</th>
     	<th>Дія</th>
-    </tr>  
+    </tr>
+      
 {% for type in workticket %}
+{% ifequal type.status.id 3 %}
 <tr>
+{% else %}
+<tr BGCOLOR="#CCFF99">
+{% endifequal %}
+
 	<td>       
 	{{type.id}}
 	</td>
 	<td>       
-	<a href="/workshop/done/client/{{ type.client.id }}/">
+<!--	<a href="/workshop/done/client/{{ type.client.id }}/"> -->  
+	<a href="/client/result/search/?id={{ type.client.id }}">
 	{{type.client}}
 	</a>
 	</td>
@@ -52,9 +77,8 @@
 
 
 <br><br>
-<a href="/">Головне меню (HOME)</a>
+<a href="/workticket/add/">Створити нову заявку на ремонт</a>
 <br>
-<a href="/workticket/add/">Створити нову заявку на ремонт</a>       
 
 
 

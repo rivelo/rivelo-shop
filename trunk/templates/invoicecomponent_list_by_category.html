@@ -21,7 +21,7 @@
     	<th>Ціна</th>
     	<th>Валюта</th>
     	<th>Сума</th>    	
-    	<th>Прайс</th>    	    	
+<!--     	<th>Прайс</th>    -->    	    	
     	<th>Дата</th>
     	<th>Опис</th>
     	<th>Дія</th>
@@ -44,7 +44,10 @@
     <a href="/invoice/edit/{{type.id}}">{{type.id}}</a>
 	</td>
 	<td>
+	<a href="/invoice/id/{{type.invoice.id}}/view">
 	{{type.invoice}}       
+	</a>
+       
 	</td>
 	<td>
 	<a href="/catalog/id/{{type.catalog.id}}/view">{{type.catalog}}</a>
@@ -65,9 +68,11 @@
 	<td align="center">       
 	{{type.catalog.price|mul:type.count}}
 	</td>
+<!--
 	<td>       
 	{{type.price}} ({{type.currency.ids_char}})
 	</td>
+-->
 	<td> 
 	{{type.date}}
 	</td>
@@ -88,7 +93,7 @@
     	<th></th>
     	<th></th>
     	<th>{{allpricesum}} грн.</th>    	
-    	<th></th>    	    	
+    	    	
     	<th></th>
     	<th></th>
     	<th></th>

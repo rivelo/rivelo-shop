@@ -445,6 +445,28 @@ def bicycle_store_list_by_seller(request, all=False):
     return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list_by_seller.html', 'price_summ': price_summ, 'real_summ': real_summ, 'bike_summ': bike_summ})
 
 
+def bicycle_store_search(request):
+    return render_to_response('index.html', {'weblink': 'frame_search.html'})
+
+
+def bicycle_store_search_result(request, all=False):
+    list = None
+    serial = request.GET['serial_number']
+    if all==True:
+        list = Bicycle_Store.objects.all()
+    else:
+        list = Bicycle_Store.objects.filter(serial_number__icontains=serial)
+    price_summ = 0
+    real_summ = 0
+    bike_summ = 0
+    for item in list:
+        if item.count != 0:
+            price_summ = price_summ + item.price * item.count 
+        real_summ = real_summ + item.realization
+        bike_summ = bike_summ + item.count
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list_by_seller.html', 'price_summ': price_summ, 'real_summ': real_summ, 'bike_summ': bike_summ})
+
+
 def store_report_bysize(request, id):
     list = Bicycle_Store.objects.filter(size=id)
     frame = FrameSize.objects.get(id=id)
@@ -608,6 +630,7 @@ def bicycle_order_del(request, id):
     del_logging(obj)
     obj.delete()
     return HttpResponseRedirect('/bicycle/order/view/')    
+
 
 # --------------------Dealer company ------------------------
 def dealer_add(request):
@@ -1072,7 +1095,11 @@ def invoice_report(request):
 
 
 def invoice_id_list(request, id=None, limit=0):
-    query = "select id, count(*) as ccount, invoice_id as invoice, sum(price*count) as suma from accounting_invoicecomponentlist group by invoice_id;"
+#    query = "select id, count(*) as ccount, invoice_id as invoice, sum(price*count) as suma from accounting_invoicecomponentlist group by invoice_id;"
+    query = '''select accounting_invoicecomponentlist.id, count(*) as ccount, accounting_invoicecomponentlist.invoice_id as invoice, sum(accounting_invoicecomponentlist.price*accounting_invoicecomponentlist.count) as suma, accounting_dealerinvoice.origin_id
+    from accounting_invoicecomponentlist left join accounting_dealerinvoice on accounting_dealerinvoice.id=invoice_id  
+    group by accounting_invoicecomponentlist.invoice_id;'''
+    
     company_list = None
     try:
         cursor = connection.cursor()
@@ -1088,13 +1115,15 @@ def invoice_id_list(request, id=None, limit=0):
     else:
         list = InvoiceComponentList.objects.filter(invoice=id).order_by('-id')[:limit]
     psum = 0
+    optsum = 0
     scount = 0
     for item in list:
         psum = psum + (item.catalog.price * item.count)
+        optsum = optsum + (item.count * item.price)
         scount = scount + item.count
     dinvoice = DealerInvoice.objects.get(id=id)    
     
-    return render_to_response('index.html', {'list': list, 'dinvoice':dinvoice, 'company_list':company_list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoice_component_report.html'})
+    return render_to_response('index.html', {'list': list, 'dinvoice':dinvoice, 'company_list':company_list, 'allpricesum':psum, 'alloptsum':optsum, 'countsum': scount, 'weblink': 'invoice_component_report.html'})
 
 
 def invoice_cat_id_list(request, cid=None, limit=0):
@@ -1709,6 +1738,17 @@ def client_invoice_delete(request, id):
     return HttpResponseRedirect('/client/invoice/view/')
 
 
+def client_search(request):
+    #query = request.GET.get('q', '')
+    return render_to_response('index.html', {'weblink': 'client_search.html'})
+
+
+def client_search_result(request):
+    username = request.GET['name']
+    clients = Client.objects.filter(name__icontains=username)
+    return render_to_response('index.html', {'clients':clients, 'weblink': 'client_list.html'})
+
+
 from django.db import connection
 
 def search_client_id(request):
@@ -1902,9 +1942,13 @@ def workstatus_delete(request, id):
     return HttpResponseRedirect('/workstatus/view/')
 
 
-def workticket_add(request):
+def workticket_add(request, id=None):
+    client = None
+    if id!=None:
+        client = Client.objects.get(id=id)
+    
     if request.method == 'POST':
-        form = WorkTicketForm(request.POST)
+        form = WorkTicketForm(request.POST, initial={'client': client.id, 'status': 1})
         if form.is_valid():
             client = form.cleaned_data['client']
             date = form.cleaned_data['date']
@@ -1914,7 +1958,14 @@ def workticket_add(request):
             WorkTicket(client=client, date=date, end_date=end_date, status=status, description=description).save()
             return HttpResponseRedirect('/workticket/view/')
     else:
-        form = WorkTicketForm()
+        #form = WorkTicketForm()
+
+        if client != None:
+            form = WorkTicketForm(initial={'client': client.id, 'status': 1})
+        else:
+            form = WorkTicketForm(initial={'date': datetime.datetime.today(), 'status': 1, 'end_date': datetime.datetime.now()+datetime.timedelta(3)})
+        
+        
     return render_to_response('index.html', {'form': form, 'weblink': 'workticket.html'})
 
 
@@ -1935,9 +1986,16 @@ def workticket_edit(request, id):
     return render_to_response('index.html', {'form': form, 'weblink': 'workticket.html'})
 
 
-def workticket_list(request):
-    list = WorkTicket.objects.all()
-    return render_to_response('index.html', {'workticket': list, 'weblink': 'workticket_list.html'})
+def workticket_list(request, year=None, month=None, all=False):
+    cur_year = datetime.datetime.now().year
+    if month != None:
+        list = WorkTicket.objects.filter(date__year=cur_year, date__month=month)
+    if (year == None) and (month == None):
+        month = datetime.datetime.now().month
+        list = WorkTicket.objects.filter(date__year=cur_year, date__month=month)
+    if all == True:
+        list = WorkTicket.objects.all()
+    return render_to_response('index.html', {'workticket': list, 'sel_year':cur_year, 'weblink': 'workticket_list.html'})
 
 
 def workticket_delete(request, id):

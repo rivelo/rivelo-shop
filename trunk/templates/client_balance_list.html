@@ -23,7 +23,11 @@
 {% for type in clients %}
 {% if type.minus < 0 %}
 <tr  style="background-color:#FCF6CF">
-{% else %}
+{% endif %}
+{% if type.minus > 0 %}
+<tr  style="background-color:#CCFF99">
+{% endif %}
+{% if type.minus = 0 %}
 <tr>
 {% endif %}
 	<td>{{forloop.counter}}</td>

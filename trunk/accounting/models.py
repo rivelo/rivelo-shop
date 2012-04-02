@@ -227,7 +227,7 @@ class DealerPayment(models.Model):
         return self.name
 
     class Meta:
-        ordering = ["invoice_number", "date"]    
+        ordering = ["date", "invoice_number"]    
 
 
 #Client database
@@ -479,7 +479,7 @@ class WorkStatus(models.Model):
 
 class WorkTicket(models.Model):
     client = models.ForeignKey(Client)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField()
     end_date = models.DateField()
     status = models.ForeignKey(WorkStatus)
     description = models.TextField(blank=True, null=True)
