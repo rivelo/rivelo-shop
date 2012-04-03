@@ -24,6 +24,8 @@ from django.conf import settings
 import datetime
 import calendar
 
+from django.db.models import Sum
+
 now = datetime.datetime.now()
 
 def search(request):
@@ -590,11 +592,13 @@ def bicycle_sale_report(request):
         res = "Помилка"
         
     sum = 0
+    bike_sum = 0
     for month in list:
          sum = sum + month['s_price']
+         bike_sum = bike_sum + month['bike_count']
 
     #list = Bicycle_Sale.objects.all().order_by('date')
-    return render_to_response('index.html', {'bicycles': list, 'all_sum': sum, 'weblink': 'bicycle_sale_report.html'})
+    return render_to_response('index.html', {'bicycles': list, 'all_sum': sum, 'bike_sum': bike_sum, 'weblink': 'bicycle_sale_report.html'})
 
 
 def bicycle_order_add(request):
@@ -1011,14 +1015,15 @@ def invoicecomponent_tets(request):
         scount = scount + item.count
     return render_to_response('index.html', {'componentlist': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoicecomponent_list.html'})
 
+from django.db.models import F
 
 def invoicecomponent_sum(request):
-    list = InvoiceComponentList.objects.all()
-    psum = 0
+    list = InvoiceComponentList.objects.all().aggregate(price_sum=Sum('catalog__price'))
+    psum = list['price_sum']
     scount = 0
-    for item in list:
-        psum = psum + (item.catalog.price * item.count)
-        scount = scount + item.count
+#    for item in list:
+#        psum = psum + (item.catalog.price * item.count)
+#        scount = scount + item.count
     return render_to_response('index.html', {'allpricesum':psum, 'countsum': scount, 'weblink': 'invoicecomponent_report.html'})
 
 
@@ -1055,23 +1060,32 @@ def invoice_search(request):
     return render_to_response('index.html', {'weblink': 'invoice_search.html'})
 
 
+
 def invoice_search_result(request):
     list = None
-   
+    psum = 0
+    scount = 0
+    id_list = []
     if 'name' in request.GET and request.GET['name']:
         name = request.GET['name']
-        #list = Catalog.objects.filter(name__icontains = name).order_by('manufacturer')
-        list = InvoiceComponentList.objects.filter(catalog__name__icontains=name)
+        #list = Catalog.objects.filter(name__icontains = name).order_by('manufacturer') 
+        list = InvoiceComponentList.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
+        for item in list:
+            psum = psum + (item['catalog__price'] * item['sum_catalog'])
+            scount = scount + item['sum_catalog']
+            id_list.append(item['catalog'])
+
+#        list_sale = ClientInvoice.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
+        list_sale = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))        
+        return render_to_response('index.html', {'componentlist': list, 'salelist': list_sale, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
     elif  'id' in request.GET and request.GET['id']:
         id = request.GET['id']
         list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id)
         #list = Catalog.objects.filter(ids__icontains = id).order_by('manufacturer')
 
-    psum = 0
-    scount = 0
-    for item in list:
-        psum = psum + (item.catalog.price * item.count)
-        scount = scount + item.count
+#    for item in list:
+#        psum = psum + (item.catalog.price * item.count)
+#        scount = scount + item.count
         
     return render_to_response('index.html', {'componentlist': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoicecomponent_list.html'})        
 

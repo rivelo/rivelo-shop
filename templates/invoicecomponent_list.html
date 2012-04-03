@@ -36,12 +36,13 @@
     
 {% for type in componentlist %}
 
+<!-- 
 {% ifequal type.catalog.sale 0 %}
 <tr>
 {% else %}
 <tr BGCOLOR="#FF6600">
 {% endifequal %}
-
+ -->
 
 	<td>
 	{{forloop.counter}}
@@ -63,7 +64,9 @@
 	</abbr>       
 	</td>
 	<td>
-	<abbr title="Ціна зі знижкою: {{type.catalog.price|percentage:type.catalog.sale}} грн. | ЗНИЖКА {{type.catalog.sale}}%">      
+<!--	
+	<abbr title="Ціна зі знижкою: {{type.catalog.price|percentage:type.catalog.sale}} грн. | ЗНИЖКА {{type.catalog.sale}}%">
+-->	      
 	{{type.catalog.price}}
 	</abbr>       
 	</td>
@@ -82,6 +85,7 @@
 	</td>
 	<td>
 	{{type.description}}
+	{{type.sum_catalog}}
 	</td>
 	<td>
     <a href="/invoice/delete/{{type.id}}">delete</a>
