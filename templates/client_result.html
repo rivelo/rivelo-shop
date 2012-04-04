@@ -1,6 +1,37 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
+<script language="JavaScript">
+
+function res()
+{
+var p=0;
+var All=document.forms['formSum'];
+for(var i = 0; i < All.elements.length; ++i) {
+	if(All.elements[i].checked){
+	//p+=parseInt(All.elements[i].value);
+	p=p+parseFloat(All.elements[i].value);
+	}
+	document.getElementById('for_pay').innerHTML = p.toFixed(2)+" грн.";
+	document.getElementById('debet').innerHTML = parseFloat(document.getElementById('for_pay').innerHTML)+parseFloat(document.getElementById('workshop_pay').innerHTML);
+}
+}
+    
+function resWorkshop()
+{
+var p=0;
+var All=document.forms['formWorkshopSum'];
+for(var i = 0; i < All.elements.length; ++i) {
+	if(All.elements[i].checked){
+	p+=parseFloat(All.elements[i].value);
+	}
+	document.getElementById('workshop_pay').innerHTML = p.toFixed(2)+" грн.";
+	document.getElementById('debet').innerHTML = parseFloat(document.getElementById('for_pay').innerHTML)+parseFloat(document.getElementById('workshop_pay').innerHTML);
+}
+}
+    
+</script>
+
     <h1>Виписка по клієнту: <a href=/client/edit/{{client_name.id}}> {{client_name.name}} ({{client_name.forumname}}) </a></h1>
 	<br>
 	 <h2 style="color:red;"> Cума:  {{clients}} грн.<h2>
@@ -43,7 +74,7 @@
 	</td>
 	<td><a href=/clientdebts/add/{{client_name.id}}> Додати борг </a>
 	</td>
-	<td>
+	<td id="debet">
 	</td>
 	</tr>
 
@@ -63,6 +94,7 @@
 	
 	</table>
 	
+<form action="/index.xml" method="post" name="formSum">
 	<br>
 	<table border=1 width="100%" style="font-size : 12px; font-family : Arial;">
 	<tr bgcolor="grey">
@@ -72,6 +104,7 @@
 	<th>Прайс</th>
 	<th>Сума</th>
 	<th>Валюта</th>
+	<th>Оплата</th>
 	</tr>
 	
 	{% for inv in invoice %}
@@ -94,6 +127,9 @@
 	<td>
 	{{inv.currency}}
 	</td>
+	<td align="center">
+	<input type="checkbox" id="model{{forloop.counter}}" value="{{inv.sum}}" onclick="res()"/>
+	</td>
 	</tr>
 	{% endfor %}
 	
@@ -103,11 +139,13 @@
 	<th></th>
 	<th>Загальна сума</th>
 	<th>{{client_invoice_sum}} грн.</th>
-	<th></th>
+	<th BGCOLOR="#D5FFB4">До оплати</th>
+	<th id="for_pay" BGCOLOR="#D5FFB4">0</th>
 	</tr>
 	</table>
-	
+</form>	
 
+<form action="/index.xml" method="post" name="formWorkshopSum">
 <br>
 	<table border=1 width="100%" style="font-size : 12px; font-family : Arial;">
 	<tr bgcolor="grey">
@@ -115,6 +153,7 @@
 	<th>Робота</th>
 	<th>Прайс</th>
 	<th>Валюта</th>
+	<th>Оплата</th>
 	</tr>
 	
 	{% for inv in workshop %}
@@ -131,6 +170,9 @@
 	<td>
 	{{inv.description}}
 	</td>	
+	<td align="center">
+	<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{inv.price}}" onclick="resWorkshop()"/>
+	</td>
 	</tr>
 	{% endfor %}
 	
@@ -138,10 +180,11 @@
 	<th></th>
 	<th>Загальна сума</th>
 	<th>{{client_workshop_sum}} грн.</th>
-	<th></th>
+	<th BGCOLOR="#D5FFB4">До оплати</th>
+	<th id="workshop_pay" BGCOLOR="#D5FFB4">0</th>
 	</tr>
 	</table>
-
+</form>
 <a href=/workticket/add/client/{{client_name.id}}/> 
 Створити заявку на ремонт
 </a>

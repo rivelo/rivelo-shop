@@ -12,6 +12,7 @@ setTimeout(function() {
 </script>
 
 <br>
+{% if view %}
 <h2>
     За місяць: 
     <a href="/client/invoice/year/{{sel_year}}/month/1/view">01,</a>
@@ -34,7 +35,7 @@ setTimeout(function() {
     <a href="/client/invoice/year/{{sel_year}}/month/{{sel_month}}/day/{{day}}/view">{{day}},</a>
     {% endfor %}
 </h2>    
-
+{% endif %}
 
     <h1>Список проданого товару</h1>
     <table border="1">
@@ -54,6 +55,7 @@ setTimeout(function() {
     	<th>Дія</th>
     </tr>
     
+   
 {% load template_math %}    
     
 {% for type in buycomponents %}
@@ -72,8 +74,8 @@ setTimeout(function() {
 	<td>       
 	{{type.catalog}}
 	</td>
-	<td>       
-	<a href="">{{type.count}}</a>
+	<td align="center">       
+	{{type.count}}
 	</td>
 	<td>       
 	{{type.price}}
@@ -84,7 +86,7 @@ setTimeout(function() {
 	<td>       
 	{{type.currency}}
 	</td>
-	<td>       
+	<td align="center">       
 	{{type.sale}}
 	</td>
 	<td>       
