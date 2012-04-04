@@ -969,38 +969,90 @@ def invoicecomponent_list(request, id=None, limit=0):
 def invoicecomponent_list_by_manufacturer(request, mid=None, limit=0):
     company_list = Manufacturer.objects.all()
     list = None
-    if limit == 0:
-        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid)
-    else:
-        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid)[:limit]
+    id_list=[]
     psum = 0
+    zsum = 0
     scount = 0
+    zcount = 0
+    
+    if limit == 0:
+        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price').annotate(sum_catalog=Sum('count'))
+    else:
+        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price').annotate(sum_catalog=Sum('count'))[:limit]
+
     for item in list:
-        psum = psum + (item.catalog.price * item.count)
-        scount = scount + item.count
-    return render_to_response('index.html', {'company_list': company_list, 'componentlist': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoicecomponent_list.html'})
+        psum = psum + (item['catalog__price'] * item['sum_catalog'])
+        scount = scount + item['sum_catalog']
+        id_list.append(item['catalog'])
+#        list_sale = ClientInvoice.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
+#        list_sale = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
+    sale_list = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__price').annotate(sum_catalog=Sum('count'))        
+    for element in list:
+        element['c_sale']=0
+        for sale in sale_list:
+            if element['catalog']==sale['catalog']:
+                element['c_sale']=sale['sum_catalog']
+        zsum = zsum + ((element['sum_catalog'] - element['c_sale']) * element['catalog__price'])
+        zcount = zcount + (element['sum_catalog'] - element['c_sale'])
+#        return render_to_response('index.html', {'componentlist': list, 'salelist': list_sale, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
+
+    if mid == None:
+        company_name = ""
+    else:
+        company_name = company_list.get(id=mid)
+
+
+    return render_to_response('index.html', {'company_list': company_list, 'company_name': company_name, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
+
+    
+#===============================================================================
+#    psum = 0
+#    scount = 0
+#    for item in list:
+#        psum = psum + (item.catalog.price * item.count)
+#        scount = scount + item.count
+#    return render_to_response('index.html', {'company_list': company_list, 'componentlist': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoicecomponent_list.html'})
+#===============================================================================
 
 
 def invoicecomponent_list_by_category(request, cid=None, limit=0):
     category_list = Type.objects.filter(name_ukr__isnull=False).order_by('name_ukr')
+
     list = None
-    if limit == 0:
-        list = InvoiceComponentList.objects.filter(catalog__type__exact=cid)
-    else:
-        list = InvoiceComponentList.objects.filter(catalog__type__exact=cid)[:limit]
+    id_list=[]
     psum = 0
+    zsum = 0
     scount = 0
+    zcount = 0
+    
+    if limit == 0:
+        list = InvoiceComponentList.objects.filter(catalog__type__exact=cid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price').annotate(sum_catalog=Sum('count'))
+    else:
+        list = InvoiceComponentList.objects.filter(catalog__type__exact=cid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price').annotate(sum_catalog=Sum('count'))[:limit]
+        
     for item in list:
-        psum = psum + (item.catalog.price * item.count)
-        scount = scount + item.count
+        psum = psum + (item['catalog__price'] * item['sum_catalog'])
+        scount = scount + item['sum_catalog']
+        id_list.append(item['catalog'])
+#        list_sale = ClientInvoice.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
+#        list_sale = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
+    sale_list = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__price').annotate(sum_catalog=Sum('count'))        
+    for element in list:
+        element['c_sale']=0
+        for sale in sale_list:
+            if element['catalog']==sale['catalog']:
+                element['c_sale']=sale['sum_catalog']
+        zsum = zsum + ((element['sum_catalog'] - element['c_sale']) * element['catalog__price'])
+        zcount = zcount + (element['sum_catalog'] - element['c_sale'])
+#        return render_to_response('index.html', {'componentlist': list, 'salelist': list_sale, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
+
     if cid == None:
         cat_name = ""
     else:
         cat_name = category_list.get(id=cid)
-    #.name_ukr
-    #cat_name = ""
-    return render_to_response('index.html', {'category_list': category_list, 'category_name': cat_name, 'componentlist': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoicecomponent_list_by_category.html'})
 
+
+    return render_to_response('index.html', {'category_list': category_list, 'category_name': cat_name, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
 
 
 def invoicecomponent_tets(request):
@@ -1060,34 +1112,41 @@ def invoice_search(request):
     return render_to_response('index.html', {'weblink': 'invoice_search.html'})
 
 
-
 def invoice_search_result(request):
     list = None
     psum = 0
+    zsum = 0
     scount = 0
+    zcount = 0
     id_list = []
     if 'name' in request.GET and request.GET['name']:
         name = request.GET['name']
         #list = Catalog.objects.filter(name__icontains = name).order_by('manufacturer') 
-        list = InvoiceComponentList.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
-        for item in list:
-            psum = psum + (item['catalog__price'] * item['sum_catalog'])
-            scount = scount + item['sum_catalog']
-            id_list.append(item['catalog'])
-
-#        list_sale = ClientInvoice.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
-        list_sale = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))        
-        return render_to_response('index.html', {'componentlist': list, 'salelist': list_sale, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
+        list = InvoiceComponentList.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price').annotate(sum_catalog=Sum('count'))
     elif  'id' in request.GET and request.GET['id']:
         id = request.GET['id']
-        list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id)
+        #list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id)
+        list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price').annotate(sum_catalog=Sum('count'))
         #list = Catalog.objects.filter(ids__icontains = id).order_by('manufacturer')
 
-#    for item in list:
-#        psum = psum + (item.catalog.price * item.count)
-#        scount = scount + item.count
-        
-    return render_to_response('index.html', {'componentlist': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoicecomponent_list.html'})        
+    for item in list:
+        psum = psum + (item['catalog__price'] * item['sum_catalog'])
+        scount = scount + item['sum_catalog']
+        id_list.append(item['catalog'])
+#        list_sale = ClientInvoice.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
+#        list_sale = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
+    sale_list = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__price').annotate(sum_catalog=Sum('count'))        
+    for element in list:
+        element['c_sale']=0
+        for sale in sale_list:
+            if element['catalog']==sale['catalog']:
+                element['c_sale']=sale['sum_catalog']
+        zsum = zsum + ((element['sum_catalog'] - element['c_sale']) * element['catalog__price'])
+        zcount = zcount + (element['sum_catalog'] - element['c_sale'])
+#        return render_to_response('index.html', {'componentlist': list, 'salelist': list_sale, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
+
+    return render_to_response('index.html', {'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
+    #return render_to_response('index.html', {'componentlist': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoicecomponent_list.html'})        
 
 
 def invoice_report(request):
@@ -1723,7 +1782,8 @@ def client_invoice_edit(request, id):
     return render_to_response('index.html', {'form': form, 'weblink': 'clientinvoice.html'})
 
 
-def client_invoice_view(request, month=None, year=None, day=None):
+def client_invoice_view(request, month=None, year=None, day=None, id=None):
+    
     if year == None:
         year = datetime.datetime.now().year
     if month == None:
@@ -1737,13 +1797,25 @@ def client_invoice_view(request, month=None, year=None, day=None):
             list = ClientInvoice.objects.filter(date__year=year, date__month=month).order_by("-date", "-id")
         else:
             list = ClientInvoice.objects.filter(date__year=year, date__month=month, date__day=day).order_by("-date", "-id")
+            
     psum = 0
     scount = 0
     for item in list:
         psum = psum + item.sum
         scount = scount + item.count
     days = xrange(1, calendar.monthrange(int(year), int(month))[1]+1)
-    return render_to_response('index.html', {'sel_year':year, 'sel_month':month, 'month_days':days, 'buycomponents': list, 'sumall':psum, 'countall':scount, 'weblink': 'clientinvoice_list.html'})
+    return render_to_response('index.html', {'sel_year':year, 'sel_month':month, 'month_days':days, 'buycomponents': list, 'sumall':psum, 'countall':scount, 'weblink': 'clientinvoice_list.html', 'view': True})
+
+
+def client_invoice_id(request, id):
+    list = ClientInvoice.objects.filter(catalog__id=id).order_by("-date", "-id")
+    psum = 0
+    scount = 0
+    for item in list:
+        psum = psum + item.sum
+        scount = scount + item.count
+    return render_to_response('index.html', {'buycomponents': list, 'sumall':psum, 'countall':scount, 'weblink': 'clientinvoice_list.html'})
+
 
 
 def client_invoice_delete(request, id):
