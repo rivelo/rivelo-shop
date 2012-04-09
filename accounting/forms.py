@@ -142,6 +142,25 @@ class BicycleSaleForm(forms.ModelForm):
         model = Bicycle_Sale
 
 
+class BicycleSaleEditForm(forms.ModelForm):
+    model = forms.ModelChoiceField(queryset = Bicycle_Store.objects.none(), required=False)
+    client = forms.ModelChoiceField(queryset = Client.objects.all()) #.order_by("-id"))
+    price = forms.FloatField()
+    currency = forms.ModelChoiceField(queryset = Currency.objects.all())
+    date = forms.DateTimeField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
+    service = forms.BooleanField(required=False) 
+    description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
+
+    def __init__(self, *args, **kwargs):
+        bike_id = kwargs.pop('bike_id', None)
+        super(BicycleSaleEditForm, self).__init__(*args, **kwargs)
+        if bike_id<>None:
+            self.fields['model'].queryset = Bicycle_Store.objects.filter(model = bike_id)             
+    
+#    class Meta:
+#        model = Bicycle_Sale
+
+
 class BicycleOrderForm(forms.ModelForm):
     cur_year = datetime.datetime.today().year
     model = forms.ModelChoiceField(queryset = Bicycle.objects.filter(year__year=cur_year))

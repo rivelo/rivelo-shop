@@ -29,7 +29,15 @@
 		<td>{{type.price}}</td>
 		<td>{{type.currency}}</td>
 		<td>{{type.date|date:"D d M Y"}}</td>
-		<td>{{type.service|yesno:"Пройдено,Непройдено,Невідомо"}}</td>
+		
+{% if type.service %}
+<td>{{type.service|yesno:"Пройдено,Непройдено,Невідомо"}}
+{% else %}
+<td BGCOLOR="#CCCC99">
+<a href="/bicycle/sale/service/{{ type.id }}">{{type.service|yesno:"Пройдено,Непройдено,Невідомо"}}</a>
+{% endif %}		
+
+		</td>
 		</td>
 		<td>{{type.description}}</td>
 		<td><a href="/bicycle/sale/delete/{{ type.id }}">delete</a></td>
