@@ -3,7 +3,7 @@
 from django.db.models import Q
 from django.shortcuts import render_to_response
 from models import Manufacturer, Country, Type, Currency, Bicycle_Type, Bicycle,  FrameSize, Bicycle_Store, Bicycle_Sale, Bicycle_Order
-from forms import ContactForm, ManufacturerForm, CountryForm, CurencyForm, CategoryForm, BicycleTypeForm, BicycleForm, BicycleFrameSizeForm, BicycleStoreForm, BicycleSaleForm, BicycleOrderForm
+from forms import ContactForm, ManufacturerForm, CountryForm, CurencyForm, CategoryForm, BicycleTypeForm, BicycleForm, BicycleFrameSizeForm, BicycleStoreForm, BicycleSaleForm, BicycleOrderForm, BicycleSaleEditForm 
 
 from models import Catalog, Client, ClientDebts, ClientCredits, ClientInvoice 
 from forms import CatalogForm, ClientForm, ClientDebtsForm, ClientCreditsForm, ClientInvoiceForm
@@ -469,6 +469,16 @@ def bicycle_store_search_result(request, all=False):
     return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list_by_seller.html', 'price_summ': price_summ, 'real_summ': real_summ, 'bike_summ': bike_summ})
 
 
+def bicycle_store_price(request):
+    list = Bicycle_Store.objects.filter(count=1)
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_shop_price_list.html', 'view':True})
+
+
+def bicycle_store_price_print(request):
+    list = Bicycle_Store.objects.filter(count=1)
+    return render_to_response('bicycle_shop_price_list.html', {'bicycles': list, 'view':False})
+
+
 def store_report_bysize(request, id):
     list = Bicycle_Store.objects.filter(size=id)
     frame = FrameSize.objects.get(id=id)
@@ -522,19 +532,23 @@ def bicycle_sale_add(request, id=None):
         else:
             form = BicycleSaleForm(initial={'currency': 3})
     
-    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_sale.html', 'serial_number': serial_number})
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_sale.html', 'serial_number': serial_number, 'text': 'Продаж велосипеду'})
 
 
 def bicycle_sale_edit(request, id):
     a = Bicycle_Sale.objects.get(pk=id)
+    
     if request.method == 'POST':
-        form = BicycleSaleForm(request.POST, instance=a)
+        form = BicycleSaleEditForm(request.POST, instance=a, bike_id=a.model.model.id)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect('/bicycle/sale/view/')
     else:
-        form = BicycleSaleForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_sale.html', 'text': 'Редагувати проданий велосипед'})
+        form = BicycleSaleEditForm(instance=a, bike_id=a.model.model.id)
+        
+    serial_number = a.model.serial_number
+    #serial_number = "test number"
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_sale.html', 'text': 'Редагувати проданий велосипед', 'serial_number': serial_number})
 
 
 def bicycle_sale_del(request, id):
@@ -550,22 +564,35 @@ def bicycle_sale_del(request, id):
     return HttpResponseRedirect('/bicycle/sale/view/')
 
 
-def bicycle_sale_list(request, year=False, month=False):
+def bicycle_sale_list(request, year=False, month=False, id=None):
     list = None
     if (year==False) & (month==False):
         year = datetime.datetime.now().year
         month = datetime.datetime.now().month
         #list = Bicycle_Sale.objects.all().order_by('date')
-        list = Bicycle_Sale.objects.filter(date__year=year, date__month=month).order_by('date')
+        if (id != None):
+            list = Bicycle_Sale.objects.filter(model=id).order_by('date')
+        else:
+            list = Bicycle_Sale.objects.filter(date__year=year, date__month=month).order_by('date')
     else:
-        list = Bicycle_Sale.objects.filter(date__year=year, date__month=month).order_by('date')
+       list = Bicycle_Sale.objects.filter(date__year=year, date__month=month).order_by('date')
+       
     price_summ = 0
     service_summ = 0
     for item in list:
         price_summ = price_summ + item.price
         if item.service == False:
             service_summ =  service_summ + 1
-    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_sale_list.html', 'price_summ':price_summ, 'service_summ':service_summ})
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_sale_list.html', 'price_summ':price_summ, 'service_summ':service_summ,})
+
+
+def bicycle_sale_service(request, id):
+    list = Bicycle_Sale.objects.get(id=id)
+    list.service = True
+    list.save()
+    list = Bicycle_Sale.objects.filter(id=id)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    #return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_sale_list.html',})
 
 
 def dictfetchall(cursor):
@@ -1350,10 +1377,18 @@ def manufacturer_add(request):
 def manufacturer_edit(request, id):
     a = Manufacturer.objects.get(pk=id)
     if request.method == 'POST':
-        form = ManufacturerForm(request.POST, instance=a)
+        form = ManufacturerForm(request.POST, request.FILES, instance=a)
         if form.is_valid():
+            name = form.cleaned_data['name']
+            description = form.cleaned_data['description']
+            www = form.cleaned_data.get('www')
+            country = form.cleaned_data.get('country')
+            logo = form.cleaned_data.get('logo')
+            upload_path = processUploadedImage(logo, 'manufecturer/') 
+            #a = Manufacturer(name=name, description=description, www=www, logo=upload_path, country=country)
+            #a.save()
             form.save()
-            return HttpResponseRedirect('/bank/view/')
+            return HttpResponseRedirect('/manufacturer/view/')
     else:
         form = ManufacturerForm(instance=a)
     return render_to_response('index.html', {'form': form, 'weblink': 'manufacturer.html', 'text': 'Виробник (редагування)'})
