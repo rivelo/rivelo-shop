@@ -2069,7 +2069,10 @@ def workticket_add(request, id=None):
         client = Client.objects.get(id=id)
     
     if request.method == 'POST':
-        form = WorkTicketForm(request.POST, initial={'client': client.id, 'status': 1})
+        if client!=None:
+            form = WorkTicketForm(request.POST, initial={'client': client.id, 'status': 1})
+        else:
+            form = WorkTicketForm(request.POST, initial={'status': 1})
         if form.is_valid():
             client = form.cleaned_data['client']
             date = form.cleaned_data['date']

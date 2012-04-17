@@ -1119,3 +1119,61 @@ Key = description - Value = Добро пожаловать в мир Трека, в мир велосипедов кото
   Применение новейших технологий во всех линейках велосипедов, научные исследования, использование опыта профессиональных спортсменов, индивидуальный подход к каждой группе потребителей, 5000 профессиональных дилеров во всем мире позволяют выпускать продукцию, удовлетворяющую требованиям любого клиента.
   Профессиональная шоссейная команда «Discovery Channel Pro Cycling Team», возглавляемая легендой велоспорта Лэнсом Армстронгом. За 10 лет своего существования с помощью велосипедов Трек эта команда завоевывала подиумы знаменитых мировых велогонок и стала первой американской командой покорившей Европу и сердце шоссейного велоспорта - Париж. В составе команды было два украинца: Ярослав Попович и Владимир Билека. На Тур де Франс-2005 Ярослав Попович выиграл звание Лучшего молодого гонщика, вошел в историю велоспорта и стал первым украинцем, поднявшимся на подиум в Париже. В 2006-м году Ярослав выиграл 12-й этап Тур де Франс 2006. Команда по горному велосипеду «Trek-Volkswagen Racing Team» использует различные горные велосипеды Трек для побед в мировых и региональных соревнованиях. Гонщик этой команды Крис Итах (Chris Eatough) – 6 лет подряд завоевывал титул Чемпиона мира по 24-хчасовому марафону в категории «Solo» на велосипеде Trek Top Fuel.
   Все велосипеды, которые используют профессиональные спортсмены, произведены серийно. Клиент в любой точке мира сможет приобрести велосипед, на котором были поставлены мировые рекорды.
+DELETE FROM TABLE invoice component list WHERE id = 1797 
+Key = id - Value = 1797
+Key = invoice - Value = 228
+Key = catalog - Value = 316
+Key = count - Value = 1
+Key = price - Value = 7.74
+Key = currency - Value = 2
+Key = date - Value = 2012-04-10
+Key = description - Value = 
+DELETE FROM TABLE type WHERE id = 104 
+Key = id - Value = 104
+Key = name - Value = Mudguard
+Key = description - Value = Protection from dirt
+Key = name_ukr - Value = крила
+Key = description_ukr - Value = захист від бруду
+DELETE FROM TABLE work ticket WHERE id = 25 
+Key = id - Value = 25
+Key = client - Value = 138
+Key = date - Value = 2012-04-13
+Key = end_date - Value = 2012-04-16
+Key = status - Value = 1
+Key = description - Value = test
+DELETE FROM TABLE work ticket WHERE id = 24 
+Key = id - Value = 24
+Key = client - Value = 138
+Key = date - Value = 2012-04-12
+Key = end_date - Value = 2012-04-12
+Key = status - Value = 1
+Key = description - Value = cube
+DELETE FROM TABLE work ticket WHERE id = 27 
+Key = id - Value = 27
+Key = client - Value = 138
+Key = date - Value = 2012-04-13
+Key = end_date - Value = 2012-04-16
+Key = status - Value = 1
+Key = description - Value = тестування
+DELETE FROM TABLE work ticket WHERE id = 26 
+Key = id - Value = 26
+Key = client - Value = 197
+Key = date - Value = 2012-04-13
+Key = end_date - Value = 2012-04-13
+Key = status - Value = 1
+Key = description - Value = тест
+DELETE FROM TABLE invoice component list WHERE id = 135 
+Key = id - Value = 135
+Key = invoice - Value = 187
+Key = catalog - Value = 1184
+Key = count - Value = 1
+Key = price - Value = 0.0
+Key = currency - Value = 2
+Key = date - Value = 2012-02-14
+Key = description - Value = тест
+DELETE FROM TABLE client credits WHERE id = 217 
+Key = id - Value = 217
+Key = client - Value = 154
+Key = date - Value = 2012-04-05 00:00:00
+Key = price - Value = 200.0
+Key = description - Value = за рожки
