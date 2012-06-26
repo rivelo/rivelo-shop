@@ -3,7 +3,7 @@
 from django.db.models import Q
 from django.shortcuts import render_to_response
 from models import Manufacturer, Country, Type, Currency, Bicycle_Type, Bicycle,  FrameSize, Bicycle_Store, Bicycle_Sale, Bicycle_Order
-from forms import ContactForm, ManufacturerForm, CountryForm, CurencyForm, CategoryForm, BicycleTypeForm, BicycleForm, BicycleFrameSizeForm, BicycleStoreForm, BicycleSaleForm, BicycleOrderForm, BicycleSaleEditForm 
+from forms import ContactForm, ManufacturerForm, CountryForm, CurencyForm, CategoryForm, BicycleTypeForm, BicycleForm, BicycleFrameSizeForm, BicycleStoreForm, BicycleSaleForm, BicycleOrderForm, BicycleSaleEditForm, BicycleOrderEditForm 
 
 from models import Catalog, Client, ClientDebts, ClientCredits, ClientInvoice 
 from forms import CatalogForm, ClientForm, ClientDebtsForm, ClientCreditsForm, ClientInvoiceForm
@@ -652,9 +652,25 @@ def bicycle_order_add(request):
     
 
 def bicycle_order_list(request):
-    list = Bicycle_Order.objects.all()
+    list = Bicycle_Order.objects.all().order_by("-date")
     return render_to_response('index.html', {'order': list, 'weblink': 'bicycle_order_list.html'})
     
+
+def bicycle_order_edit(request, id):
+    a = Bicycle_Order.objects.get(pk=id)
+    
+    if request.method == 'POST':
+        #form = BicycleOrderEditForm(request.POST, instance=a, bike_id=a.model.id)
+        form = BicycleOrderEditForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/bicycle/order/view/')
+    else:
+        #form = BicycleOrderEditForm(instance=a, bike_id=a.model.id)
+        form = BicycleOrderEditForm(instance=a)
+   
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_order.html'})
+
 
 def bicycle_order_del(request, id):
     obj = Bicycle_Order.objects.get(id=id)
@@ -662,6 +678,12 @@ def bicycle_order_del(request, id):
     obj.delete()
     return HttpResponseRedirect('/bicycle/order/view/')    
 
+
+def bicycle_order_done(request, id):
+    obj = Bicycle_Order.objects.get(id=id)
+    obj.done = True
+    obj.save()
+    return HttpResponseRedirect('/bicycle/order/view/')
 
 # --------------------Dealer company ------------------------
 def dealer_add(request):

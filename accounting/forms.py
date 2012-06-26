@@ -161,6 +161,27 @@ class BicycleSaleEditForm(forms.ModelForm):
 #        model = Bicycle_Sale
 
 
+class BicycleOrderEditForm(forms.ModelForm):
+    cur_year = datetime.datetime.today().year
+    model = forms.ModelChoiceField(queryset = Bicycle.objects.filter(year__year=cur_year))
+    client = forms.ModelChoiceField(queryset = Client.objects.all())
+    size = forms.CharField(max_length=50)
+    price = forms.FloatField(initial = 0)
+    sale = forms.IntegerField(initial = 0)
+    prepay = forms.FloatField(initial = 0)
+    currency = forms.ModelChoiceField(queryset = Currency.objects.all())
+    date = forms.DateTimeField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
+    done = forms.BooleanField(required=False) 
+    description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
+    
+    def __init__(self, *args, **kwargs):
+        client_id = kwargs.pop('client_id', None)
+        bike_id = kwargs.pop('bike_id', None)
+        super(BicycleOrderEditForm, self).__init__(*args, **kwargs)
+        if bike_id<>None:
+            self.fields['model'].queryset = Bicycle.objects.filter(id = bike_id)             
+
+
 class BicycleOrderForm(forms.ModelForm):
     cur_year = datetime.datetime.today().year
     model = forms.ModelChoiceField(queryset = Bicycle.objects.filter(year__year=cur_year))

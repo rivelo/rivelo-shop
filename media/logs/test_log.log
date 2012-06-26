@@ -1177,3 +1177,69 @@ Key = client - Value = 154
 Key = date - Value = 2012-04-05 00:00:00
 Key = price - Value = 200.0
 Key = description - Value = за рожки
+DELETE FROM TABLE invoice component list WHERE id = 2029 
+Key = id - Value = 2029
+Key = invoice - Value = 187
+Key = catalog - Value = 2674
+Key = count - Value = 4
+Key = price - Value = 377.0
+Key = currency - Value = 3
+Key = date - Value = 2012-04-19
+Key = description - Value = 
+DELETE FROM TABLE invoice component list WHERE id = 2112 
+Key = id - Value = 2112
+Key = invoice - Value = 243
+Key = catalog - Value = 3257
+Key = count - Value = 2
+Key = price - Value = 3.3
+Key = currency - Value = 2
+Key = date - Value = 2012-05-05
+Key = description - Value = 
+DELETE FROM TABLE invoice component list WHERE id = 2376 
+Key = id - Value = 2376
+Key = invoice - Value = 265
+Key = catalog - Value = 3759
+Key = count - Value = 1
+Key = price - Value = 120.58
+Key = currency - Value = 3
+Key = date - Value = 2012-05-15
+Key = description - Value = 
+DELETE FROM TABLE client debts WHERE id = 321 
+Key = id - Value = 321
+Key = client - Value = 87
+Key = date - Value = 2012-05-01 00:00:00
+Key = price - Value = 738.0
+Key = description - Value =    
+DELETE FROM TABLE client credits WHERE id = 374 
+Key = id - Value = 374
+Key = client - Value = 128
+Key = date - Value = 2012-05-17 00:00:00
+Key = price - Value = 0.0
+Key = description - Value = Передоплата за Велосипед Trek. Модель Trek 3900 Disc. 2012 (Чорний)
+DELETE FROM TABLE client debts WHERE id = 385 
+Key = id - Value = 385
+Key = client - Value = 179
+Key = date - Value = 2012-05-15 00:00:00
+Key = price - Value = 3910.0
+Key = description - Value = за велосипед
+DELETE FROM TABLE invoice component list WHERE id = 2498 
+Key = id - Value = 2498
+Key = invoice - Value = 275
+Key = catalog - Value = 3820
+Key = count - Value = 1
+Key = price - Value = 68.36
+Key = currency - Value = 3
+Key = date - Value = 2012-06-02
+Key = description - Value = 
+DELETE FROM TABLE client credits WHERE id = 480 
+Key = id - Value = 480
+Key = client - Value = 106
+Key = date - Value = 2012-06-09 00:00:00
+Key = price - Value = 1.0
+Key = description - Value = внутр діаметр обода 582
+DELETE FROM TABLE client credits WHERE id = 511 
+Key = id - Value = 511
+Key = client - Value = 110
+Key = date - Value = 2012-06-18 00:00:00
+Key = price - Value = 100.0
+Key = description - Value = за гріпси
