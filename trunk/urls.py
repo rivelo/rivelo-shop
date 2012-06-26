@@ -90,7 +90,9 @@ urlpatterns = patterns('',
     (r'^bicycle/sale/service/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_sale_service'),
     # bicycle order by client
     (r'^bicycle/order/view/$', 'catalog.accounting.views.bicycle_order_list'),
+    (r'^bicycle/order/(?P<id>\d+)/done/$', 'catalog.accounting.views.bicycle_order_done'),
     (r'^bicycle/order/add/$', 'catalog.accounting.views.bicycle_order_add'),
+    (r'^bicycle/order/edit/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_order_edit'),
     (r'^bicycle/order/(?P<id>\d+)/delete/$', 'catalog.accounting.views.bicycle_order_del'),    
         
     # Dealer/Dealer Managers operation

@@ -26,20 +26,26 @@
 		<th>Ціна</th>
 		<th>Завдаток</th>
 		<th>Валюта</th>
+		<th>Статус</th>
 		<!--    	<th>Опис</th> -->
 		<th>Edit</th>
 		<th>Дія</th>
 	</tr>
 
 	{% for type in order %}
+		{% if type.done %}
 	<tr>
+	{% else %}
+	<tr BGCOLOR="#94FF70">
+	{% endif %}
+	
 		<td>{{forloop.counter}}</td>
 		<td><a href="/bicycle-store/add/{{type.id}}">{{type.id}}</a></td>
 		<td><a href="/bicycle/photo/{{type.model.id}}">{{type.model}}</a></td>
 		<td><a href="/client/result/search/?id={{type.client.id}}">{{type.client}}</a></td>
 		<td>{{type.model.type}}</td>
 		<td>{{type.model.brand}}</td>
-		<td>{{type.model.year}}</td>
+		<td>{{type.model.year.year}}</td>
 		<td>{{type.model.color}}</td>
 		<td>{{type.size}}</td>
 		<td><!-- 	<img src="/media/{{type.photo}}" alt="" title=""/>  -->
@@ -48,11 +54,13 @@
 		<td>{{type.price}}</td>
 		<td>{{type.prepay}}</td>
 		<td>{{type.currency}}</td>
+		
+		<td><a href="/bicycle/order/{{type.id}}/done">{{type.done}}</td>
 		<!-- 	<td>
 	{{type.description}}
 	</td>
  -->
-		<td><a href="/bicycle/edit/{{ type.id }}">edit</a></td>
+		<td><a href="/bicycle/order/edit/{{ type.id }}">edit</a></td>
 
 		<td><a href="/bicycle/order/{{ type.id }}/delete">delete</a></td>
 	</tr>

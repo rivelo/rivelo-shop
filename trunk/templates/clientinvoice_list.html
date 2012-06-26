@@ -5,11 +5,39 @@
     <link rel="stylesheet" type="text/css" href="/media/table.css">
 </head>
 <body>
+
 <script type="text/javascript">
-setTimeout(function() {
-    document.getElementById('result').innerHTML = (parseFloat(this.value)||0) * (parseFloat(document.getElementById('b').value)||0);
-}, 100);
+
+
+function res()
+{
+var p=0;
+var All=document.forms['formSum'];
+for(var i = 0; i < All.elements.length; ++i) {
+	if(All.elements[i].checked){
+	//p+=parseInt(All.elements[i].value);
+	p=p+parseFloat(All.elements[i].value);
+	}
+	document.getElementById('for_pay').innerHTML = p.toFixed(2)+" грн.";
+	//document.getElementById('debet').innerHTML = parseFloat(document.getElementById('for_pay').innerHTML)+parseFloat(document.getElementById('workshop_pay').innerHTML);
+}
+}
+    
+function resWorkshop()
+{
+var p=0;
+var All=document.forms['formWorkshopSum'];
+for(var i = 0; i < All.elements.length; ++i) {
+	if(All.elements[i].checked){
+	p+=parseFloat(All.elements[i].value);
+	}
+	document.getElementById('workshop_pay').innerHTML = p.toFixed(2)+" грн.";
+	document.getElementById('debet').innerHTML = parseFloat(document.getElementById('for_pay').innerHTML)+parseFloat(document.getElementById('workshop_pay').innerHTML);
+}
+}
+    
 </script>
+
 
 <br>
 {% if view %}
@@ -38,6 +66,9 @@ setTimeout(function() {
 {% endif %}
 
     <h1>Список проданого товару</h1>
+    
+<form action="/index.xml" method="post" name="formSum">   
+
     <table border="1">
 	<tr>
     	<th>#</th>	
@@ -53,6 +84,7 @@ setTimeout(function() {
     	<th>Дата</th>
     	<th>Опис</th>
     	<th>Дія</th>
+    	<th id="for_pay" BGCOLOR="#D5FFB4"></th>
     </tr>
     
    
@@ -101,6 +133,10 @@ setTimeout(function() {
 	<td>
     <a href="/client/invoice/{{type.id}}/delete/">delete</a>
     </td>
+    <td align="center">
+<!-- 	<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{type.sum}}" onclick="resWorkshop()"/>
+ -->	<input type="checkbox" id="model{{forloop.counter}}" value="{{type.sum}}" onclick="res()"/>
+	</td>
 </tr>
 {% endfor %}         
     
@@ -118,10 +154,11 @@ setTimeout(function() {
     	<th></th>
     	<th></th>
     	<th></th>
+    	<th></th>
     </tr>
     
     <table>
-
+</form>
 <br>
 
 </body>

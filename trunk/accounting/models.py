@@ -420,7 +420,7 @@ class Bicycle_Order(models.Model):
         return u'%s -> %s' % (self.client ,self.model)
 
     class Meta:
-        ordering = ["client", "model"]
+        ordering = ["-date", "client", "model"]
 
             
 class WorkGroup(models.Model):
