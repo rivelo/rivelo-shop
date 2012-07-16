@@ -131,7 +131,7 @@ for(var i = 0; i < All.elements.length; ++i) {
 	{{type.description}}
 	</td>
 	<td>
-    <a href="/client/invoice/{{type.id}}/delete/">delete</a>
+    <a href="/client/invoice/{{type.id}}/delete/" onclick="return confirm('Видалити запис?')">delete</a>
     </td>
     <td align="center">
 <!-- 	<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{type.sum}}" onclick="resWorkshop()"/>

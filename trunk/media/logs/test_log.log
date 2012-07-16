@@ -1243,3 +1243,38 @@ Key = client - Value = 110
 Key = date - Value = 2012-06-18 00:00:00
 Key = price - Value = 100.0
 Key = description - Value = за гріпси
+DELETE FROM TABLE invoice component list WHERE id = 2830 
+Key = id - Value = 2830
+Key = invoice - Value = 295
+Key = catalog - Value = 3857
+Key = count - Value = 1
+Key = price - Value = 10.28
+Key = currency - Value = 2
+Key = date - Value = 2012-06-26
+Key = description - Value = 
+DELETE FROM TABLE bicycle_ store WHERE id = 196 
+Key = id - Value = 196
+Key = model - Value = 169
+Key = serial_number - Value = -
+Key = size - Value = 21
+Key = price - Value = 0.0
+Key = currency - Value = 2
+Key = count - Value = 1
+Key = realization - Value = False
+Key = date - Value = 2012-07-02
+Key = description - Value = 
+DELETE FROM TABLE invoice component list WHERE id = 2904 
+Key = id - Value = 2904
+Key = invoice - Value = 308
+Key = catalog - Value = 3483
+Key = count - Value = 1
+Key = price - Value = 24.64
+Key = currency - Value = 2
+Key = date - Value = 2012-07-02
+Key = description - Value = 
+DELETE FROM TABLE client debts WHERE id = 637 
+Key = id - Value = 637
+Key = client - Value = 333
+Key = date - Value = 2012-07-10 00:00:00
+Key = price - Value = 4800.0
+Key = description - Value = за велосипед 
