@@ -32,6 +32,8 @@ for(var i = 0; i < All.elements.length; ++i) {
     
 </script>
 
+<body onLoad="res()">
+
     <h1>Виписка по клієнту: <a href=/client/edit/{{client_name.id}}> {{client_name.name}} ({{client_name.forumname}}) </a></h1>
 	<br>
 	 <h2 style="color:red;"> Cума:  {{clients}} грн.<h2>
@@ -94,7 +96,7 @@ for(var i = 0; i < All.elements.length; ++i) {
 	
 	</table>
 	
-<form action="/index.xml" method="post" name="formSum">
+<form action="/payform/" method="post" name="formSum">
 	<br>
 	<table border=1 width="100%" style="font-size : 12px; font-family : Arial;">
 	<tr bgcolor="grey">
@@ -103,6 +105,7 @@ for(var i = 0; i < All.elements.length; ++i) {
 	<th>Кількість</th>
 	<th>Прайс</th>
 	<th>Сума</th>
+	<th>Оплата</th>
 	<th>Валюта</th>
 	<th>Оплата</th>
 	</tr>
@@ -124,12 +127,28 @@ for(var i = 0; i < All.elements.length; ++i) {
 	<td>
 	{{inv.sum}}
 	</td>
+	
+{% ifequal inv.sum inv.pay %}
+<td>
+	{{inv.pay}}
+	</td>	
 	<td>
 	{{inv.currency}}
 	</td>
 	<td align="center">
-	<input type="checkbox" id="model{{forloop.counter}}" value="{{inv.sum}}" onclick="res()"/>
+	<input type="checkbox" id="model{{forloop.counter}}" value="{{inv.sum}}" onclick="res()" name="checkbox_{{ inv.id }}"/>
 	</td>
+{% else %}
+	<td BGCOLOR="#FF6600">
+	{{inv.pay}}
+	</td>	
+	<td>
+	{{inv.currency}}
+	</td>
+	<td align="center">
+	<input type="checkbox" id="model{{forloop.counter}}" value="{{inv.sum}}" onclick="res()" checked name="checkbox_{{ inv.id }}"/>
+	</td>
+{% endifequal %}
 	</tr>
 	{% endfor %}
 	
@@ -139,6 +158,7 @@ for(var i = 0; i < All.elements.length; ++i) {
 	<th></th>
 	<th>Загальна сума</th>
 	<th>{{client_invoice_sum}} грн.</th>
+	<th><p><input type="submit" value="Оплата"></p></th>
 	<th BGCOLOR="#D5FFB4">До оплати</th>
 	<th id="for_pay" BGCOLOR="#D5FFB4">0</th>
 	</tr>

@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<head>
+    <title>PayForm</title>
+</head>
+
+    <h1>{{client}}</h1>
+    <h2>До оплати: {{summ}} грн.</h2>
+    
+<form action="/client/payform/" method="POST">
+        <p>Оплата: <input type="text" name="pay" id="pay" width="20" value="{{summ}}"></p>
+        <p><input type="submit" value="Save"></p>
+        
+	<table border=1 width="65%" style="font-size : 12px; font-family : Arial;">
+	<tr bgcolor="grey">
+	<th>Дата</th>
+	<th>Товар</th>
+	<th>Кількість</th>
+	<th>Прайс</th>
+	<th>Сума</th>
+	<th>Валюта</th>
+	<th></th>
+	</tr>
+	
+	{% for inv in invoice %}
+	<tr>
+	<td>
+	{{inv.date}}
+	</td>
+	<td>
+	{{inv.catalog}}
+	</td>
+	<td>
+	{{inv.count}}
+	</td>
+	<td>
+	{{inv.price}}
+	</td>
+	<td>
+	{{inv.sum}}
+	</td>
+	<td>
+	{{inv.currency}}
+	</td>
+	<td>
+	<input type="checkbox" id="model{{forloop.counter}}" value="{{inv.sum}}" checked name="checkbox_{{ inv.id }}"/>
+	</td>
+	</tr>
+	{% endfor %}          
+    </table>    
+</form>
+	
+	
+
+
+
+
+

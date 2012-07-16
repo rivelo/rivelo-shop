@@ -3,6 +3,8 @@ from catalog.views import current_datetime, main_page
 from catalog.test import current_datetime as curdate
 from django.views.generic.simple import direct_to_template
 from django.conf import settings
+#from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+#from django.conf.urls.static import static
 
 import os
 dirname = os.path.dirname(globals()["__file__"])
@@ -88,6 +90,9 @@ urlpatterns = patterns('',
     (r'^bicycle/sale/delete/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_sale_del'),
     (r'^bicycle/sale/report/month/$', 'catalog.accounting.views.bicycle_sale_report'),
     (r'^bicycle/sale/service/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_sale_service'),
+    (r'^bicycle/sale/(?P<id>\d+)/check/$', 'catalog.accounting.views.bicycle_sale_check'),
+    (r'^bicycle/sale/(?P<id>\d+)/check/print/$', 'catalog.accounting.views.bicycle_sale_check_print'),
+    
     # bicycle order by client
     (r'^bicycle/order/view/$', 'catalog.accounting.views.bicycle_order_list'),
     (r'^bicycle/order/(?P<id>\d+)/done/$', 'catalog.accounting.views.bicycle_order_done'),
@@ -196,6 +201,7 @@ urlpatterns = patterns('',
     (r'^client/invoice/(?P<id>\d+)/delete/$', 'catalog.accounting.views.client_invoice_delete'),
     (r'^client/invoice/year/(?P<year>\d+)/month/(?P<month>\d+)/view/$', 'catalog.accounting.views.client_invoice_view', {'day': "all"}),
     (r'^client/invoice/year/(?P<year>\d+)/month/(?P<month>\d+)/day/(?P<day>\d+)/view/$', 'catalog.accounting.views.client_invoice_view'),
+    (r'^client/invoice/report/$', 'catalog.accounting.views.client_invoice_sale_report'),
 
     (r'^clientdebts/add/(?P<id>\d+)$', 'catalog.accounting.views.clientdebts_add'),
     (r'^clientdebts/view/$', 'catalog.accounting.views.clientdebts_list'),
@@ -249,8 +255,8 @@ urlpatterns = patterns('',
     (r'^shop/sale/day/(?P<id>\d+)/delete/$', 'catalog.accounting.views.shopdailysales_delete'),
     (r'^shop/price/lastadded/(?P<id>\d+)/view/$', 'catalog.accounting.views.shop_price_lastadd'),    
     (r'^shop/price/lastadded/(?P<id>\d+)/print/$', 'catalog.accounting.views.shop_price_lastadd_print'),
-    (r'^shop/price/company/(?P<id>\d+)/view/$', 'catalog.accounting.views.shop_price'),
-    (r'^shop/price/company/(?P<id>\d+)/print/$', 'catalog.accounting.views.shop_price_print'),
+    (r'^shop/price/company/(?P<mid>\d+)/view/$', 'catalog.accounting.views.shop_price'), #work
+    (r'^shop/price/company/(?P<mid>\d+)/print/$', 'catalog.accounting.views.shop_price', {'pprint': True}), #work
     (r'^shop/price/bysearch_id/(?P<id>.*)/view/$', 'catalog.accounting.views.shop_price_bysearch_id'),
     (r'^shop/price/bysearch_id/(?P<id>.*)/print/$', 'catalog.accounting.views.shop_price_bysearch_id_print'),
     (r'^shop/price/bysearch_name/(?P<id>.*)/view/$', 'catalog.accounting.views.shop_price_bysearch_name'),
@@ -273,9 +279,13 @@ urlpatterns = patterns('',
     (r'^preorder/edit/(?P<id>\d+)/$', 'catalog.accounting.views.preorder_edit'),
     (r'^preorder/delete/(?P<id>\d+)/$', 'catalog.accounting.views.preorder_delete'),
 
-
+    (r'^payform/$', 'catalog.accounting.views.payform'),
+    (r'^client/payform/$', 'catalog.accounting.views.client_payform'),
     # Example:
     # (r'^catalog/', include('catalog.foo.urls')),
+    (r'^sendmail/$', 'catalog.accounting.views.sendemail'),
+    (r'^xhr_test/$','catalog.accounting.views.xhr_test'),
+    (r'^asearch/$', 'catalog.accounting.views.ajax_search'),
 
     (r'^media/(?P<path>.*)', 'django.views.static.serve',
      # static files
@@ -300,3 +310,12 @@ if settings.DEBUG:
         (r'^debuginfo$', 'catalog.views.debug'),
     )
 
+#===============================================================================
+# if settings.DEBUG:
+#    urlpatterns += patterns('django.contrib.staticfiles.views',
+#        url(r'^static/(?P<path>.*)$', 'serve'),
+#    )
+#    
+# urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# urlpatterns += staticfiles_urlpatterns()
+#===============================================================================

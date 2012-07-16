@@ -40,7 +40,8 @@
 		</td>
 		</td>
 		<td>{{type.description}}</td>
-		<td><a href="/bicycle/sale/delete/{{ type.id }}">delete</a></td>
+		<td><a href="/bicycle/sale/{{ type.id }}/check">check</a>
+		<a href="/bicycle/sale/delete/{{ type.id }}" onclick="return confirm('Видалити запис?')">delete</a></td>
 	</tr>
 	{% endfor %}
 
