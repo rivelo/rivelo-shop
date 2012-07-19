@@ -1,10 +1,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <html lang="en">
+<link type="text/css" rel="stylesheet" href="/media/paginator.css">
 <head>
-    <title>Список товару</title>
+    <title>Список проданого товару</title>
     <link rel="stylesheet" type="text/css" href="/media/table.css">
 </head>
-<body>
+<body onLoad="res()">
 
 <script type="text/javascript">
 
@@ -67,7 +68,7 @@ for(var i = 0; i < All.elements.length; ++i) {
 
     <h1>Список проданого товару</h1>
     
-<form action="/index.xml" method="post" name="formSum">   
+<form action="/payform/" method="post" name="formSum">   
 
     <table border="1">
 	<tr>
@@ -84,14 +85,19 @@ for(var i = 0; i < All.elements.length; ++i) {
     	<th>Дата</th>
     	<th>Опис</th>
     	<th>Дія</th>
-    	<th id="for_pay" BGCOLOR="#D5FFB4"></th>
+    	<th><input type="submit" value="Оплата"><div id="for_pay" style="COLOR: red" BGCOLOR="#D5FFB4"></div></th>
     </tr>
     
    
 {% load template_math %}    
     
-{% for type in buycomponents %}
+{% for type in buycomponents.object_list %}
+{% ifequal type.sum type.pay %}
 <tr>
+{% else %}
+<tr BGCOLOR="#F2AE6B">
+{% endifequal %}
+
 	<td>
 	{{forloop.counter}}
 	</td>
@@ -135,11 +141,18 @@ for(var i = 0; i < All.elements.length; ++i) {
     </td>
     <td align="center">
 <!-- 	<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{type.sum}}" onclick="resWorkshop()"/>
- -->	<input type="checkbox" id="model{{forloop.counter}}" value="{{type.sum}}" onclick="res()"/>
+ -->	
+ 
+{% ifequal type.sum type.pay %}
+<input type="checkbox" id="model{{forloop.counter}}" value="{{type.sum}}" onclick="res()" name="checkbox_{{ type.id }}"/>
+{% else %}
+<input type="checkbox" id="model{{forloop.counter}}" value="{{type.sum}}" onclick="res()" checked name="checkbox_{{ type.id }}"/>
+{% endifequal %}
+
 	</td>
 </tr>
 {% endfor %}         
-    
+
     	<tr>
     	<th></th>	
     	<th></th>
@@ -159,6 +172,42 @@ for(var i = 0; i < All.elements.length; ++i) {
     
     <table>
 </form>
+
+<div class="pagination">
+  <ul>
+  	{% if buycomponents.has_previous %}
+        <li class="prev">
+            <a href="?page={{ buycomponents.previous_page_number }}">&larr; Previous</a>
+        </li>
+    {% else %}
+    <li class="prev disabled">
+            <a href="?page={{ buycomponents.previous_page_number }}">&larr; Previous</a>
+    </li>
+    {% endif %}
+    
+<!--     <li class="disabled"><a href="">Page {{ buycomponents.number }} of {{ buycomponents.paginator.num_pages }}.</a></li>
+ -->
+    {% for i in buycomponents.paginator.page_range %}
+    {% ifequal i  buycomponents.number%}
+    <li class="disabled"><a href="">{{ i }}.</a></li>
+    {% else %}
+    <li class="active"><a href="?page={{ i }}">{{ i }}.</a></li>
+    {% endifequal %}
+    {% endfor %}   
+    
+    {% if buycomponents.has_next %}
+        <li class="next">
+            <a href="?page={{ buycomponents.next_page_number }}">Next &rarr;</a>
+        </li>
+    {% else %}
+    <li class="next disabled">
+            <a href="?page={{ buycomponents.previous_page_number }}">&larr; Previous</a>
+     </li>    
+    {% endif %}
+  </ul>
+</div>
+
+
 <br>
 
 </body>

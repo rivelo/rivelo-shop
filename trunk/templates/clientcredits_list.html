@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <html lang="en">
+<link type="text/css" rel="stylesheet" href="/media/paginator.css">
 <head>
     <title>Список кредитів</title>
     <link rel="stylesheet" type="text/css" href="/media/table.css">
@@ -8,7 +9,7 @@
 <body>
     <h1>Список Клієнтських Проплат</h1>
 	
-    <table border="1">
+    <table border="1" width="100%">
     <tr>
     	<th>№</th>    
     	<th>ID</th>
@@ -19,7 +20,7 @@
     	<th>Дія</th>
     </tr>    
     
-{% for type in clients %}
+{% for type in clients.object_list %}
 <tr>
 	<td>       
 	{{forloop.counter}}
@@ -40,13 +41,46 @@
 	{{type.description}}
 	</td>	
 	<td>
-    <a href="/clientcredits/delete/{{ type.id }}">delete</a>
+    <a href="/clientcredits/delete/{{ type.id }}" onclick="return confirm('Видалити запис?')">delete</a>
     </td>
 </tr>
 {% endfor %}           
     
     </table>
 
+<div class="pagination">
+  <ul>
+  	{% if clients.has_previous %}
+        <li class="prev">
+            <a href="?page={{ clients.previous_page_number }}">&larr; Previous</a>
+        </li>
+    {% else %}
+    <li class="prev disabled">
+            <a href="?page={{ clients.previous_page_number }}">&larr; Previous</a>
+    </li>
+    {% endif %}
+    
+<!--     <li class="disabled"><a href="">Page {{ clients.number }} of {{ clients.paginator.num_pages }}.</a></li>
+ -->
+    {% for i in clients.paginator.page_range %}
+    {% ifequal i  clients.number%}
+    <li class="disabled"><a href="">{{ i }}.</a></li>
+    {% else %}
+    <li class="active"><a href="?page={{ i }}">{{ i }}.</a></li>
+    {% endifequal %}
+    {% endfor %}   
+    
+    {% if clients.has_next %}
+        <li class="next">
+            <a href="?page={{ clients.next_page_number }}">Next &rarr;</a>
+        </li>
+    {% else %}
+    <li class="next disabled">
+            <a href="?page={{ clients.previous_page_number }}">&larr; Previous</a>
+     </li>    
+    {% endif %}
+  </ul>
+</div>
 
 <br><br>
 <a href="/">Головне меню (HOME)</a>

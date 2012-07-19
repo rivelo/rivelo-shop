@@ -29,6 +29,8 @@ from django.db.models import Sum
 from django.core.mail import send_mail
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+import pytils_ua
+
 now = datetime.datetime.now()
 
 def search(request):
@@ -598,7 +600,6 @@ def bicycle_sale_service(request, id):
     #return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_sale_list.html',})
 
 
-import pytils_ua
 def bicycle_sale_check(request, id=None):
     list = Bicycle_Sale.objects.get(id=id)
     text = pytils_ua.numeral.in_words(int(list.price))
@@ -1791,10 +1792,25 @@ def clientdebts_edit(request, id):
     return render_to_response('index.html', {'form': form, 'weblink': 'client.html'})
 
 
+#BORG
 def clientdebts_list(request):
     #list = ClientDebts.objects.select_related().all()
     list = ClientDebts.objects.all().order_by("-id")
-    return render_to_response('index.html', {'clients': list, 'weblink': 'clientdebts_list.html'})
+    
+    paginator = Paginator(list, 50)
+    page = request.GET.get('page')
+    if page == None:
+        page = 1
+    try:
+        debts = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        debts = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        debts = paginator.page(paginator.num_pages)
+    
+    return render_to_response('index.html', {'clients': debts, 'weblink': 'clientdebts_list.html'})
 
 
 def clientdebts_delete(request, id):
@@ -1830,7 +1846,21 @@ def clientcredits_add(request, id=None):
 
 def clientcredits_list(request):
     list = ClientCredits.objects.all().order_by("-id")
-    return render_to_response('index.html', {'clients': list, 'weblink': 'clientcredits_list.html'})
+    
+    paginator = Paginator(list, 50)
+    page = request.GET.get('page')
+    if page == None:
+        page = 1
+    try:
+        credits = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        credits = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        credits = paginator.page(paginator.num_pages)
+    
+    return render_to_response('index.html', {'clients': credits, 'weblink': 'clientcredits_list.html'})
 
 def clientcredits_edit(request, id):
     a = ClientCredits.objects.get(pk=id)
@@ -1919,7 +1949,21 @@ def client_invoice_view(request, month=None, year=None, day=None, id=None):
         psum = psum + item.sum
         scount = scount + item.count
     days = xrange(1, calendar.monthrange(int(year), int(month))[1]+1)
-    return render_to_response('index.html', {'sel_year':year, 'sel_month':month, 'month_days':days, 'buycomponents': list, 'sumall':psum, 'countall':scount, 'weblink': 'clientinvoice_list.html', 'view': True})
+    
+    paginator = Paginator(list, 15)
+    page = request.GET.get('page')
+    if page == None:
+        page = 1
+    try:
+        cinvoices = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        cinvoices = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        cinvoices = paginator.page(paginator.num_pages)
+            
+    return render_to_response('index.html', {'sel_year':year, 'sel_month':month, 'month_days':days, 'buycomponents': cinvoices, 'sumall':psum, 'countall':scount, 'weblink': 'clientinvoice_list.html', 'view': True})
 
 
 def client_invoice_id(request, id):
@@ -2664,6 +2708,8 @@ def payform(request):
     desc = ""
     sum = 0
     for inv in ci:
+        if client!=inv.client:
+            return render_to_response('index.html', {'weblink': 'error_manyclients.html'})
         client = inv.client
         #inv.pay = inv.sum
         desc = desc + inv.catalog.name + "; "
@@ -2689,7 +2735,6 @@ def client_payform(request):
     desc = ""
     sum = 0
     for inv in ci:
-        client = inv.client
         inv.pay = inv.sum
         desc = desc + inv.catalog.name + "; "
         sum = sum + inv.sum
@@ -2702,6 +2747,8 @@ def client_payform(request):
         
     cdeb = ClientDebts(client=client, date=datetime.datetime.now(), price=sum, description=desc)
     cdeb.save()
+    if client.id == 138:
+        return HttpResponseRedirect('/client/invoice/view/')
     url = '/client/result/search/?id=' + str(client.id)
     return HttpResponseRedirect(url)
 
