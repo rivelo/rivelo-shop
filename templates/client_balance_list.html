@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="/media/table.css">
 </head>
 
+{% load template_math %}  
 
     <h1>Баланс по клієнтам</h1>
     <table border="1">
@@ -56,9 +57,12 @@
 </table>
 
 <br>
+<!-- 
 	<h2>Заборгованість = {{sum_debt}} грн</h2>
 	<h2>Оплати = {{sum_cred}} грн</h2>
-
+-->
+	<h2>Різниця (оплати-борги) = {{sum_cred|sub:sum_debt}} грн</h2>
+ 
 <br>
 <a href="/">Головне меню (HOME)</a>
 <br>

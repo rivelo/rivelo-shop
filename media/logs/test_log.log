@@ -1278,3 +1278,21 @@ Key = client - Value = 333
 Key = date - Value = 2012-07-10 00:00:00
 Key = price - Value = 4800.0
 Key = description - Value = за велосипед 
+DELETE FROM TABLE client debts WHERE id = 662 
+Key = id - Value = 662
+Key = client - Value = 2
+Key = date - Value = 2012-07-16 20:09:33
+Key = price - Value = 1134.9
+Key = description - Value = Кассета CS-5600 12-27 10-зв, (Shimano 105); Цепь KMC X10 116 звеньев, 10 звёзд ; Мигалка задняя Pulsar красная; Кошелек Wallet чорний; Спица Inox Plus (нержавейка) 2/266/ 1шт; Swiss+Tech Utili-Key 6-in-1 ; Ключ сьем. д/тре. Suntour 4-х лапковый ICE TOOLZ 09F3 ; Крюк д/крепежа вело ICE TOOLZ P655 с уголком ; Slim Fit Buff MINNA; 
+DELETE FROM TABLE client credits WHERE id = 612 
+Key = id - Value = 612
+Key = client - Value = 2
+Key = date - Value = 2012-07-16 20:09:32
+Key = price - Value = 1000.0
+Key = description - Value = Кассета CS-5600 12-27 10-зв, (Shimano 105); Цепь KMC X10 116 звеньев, 10 звёзд ; Мигалка задняя Pulsar красная; Кошелек Wallet чорний; Спица Inox Plus (нержавейка) 2/266/ 1шт; Swiss+Tech Utili-Key 6-in-1 ; Ключ сьем. д/тре. Suntour 4-х лапковый ICE TOOLZ 09F3 ; Крюк д/крепежа вело ICE TOOLZ P655 с уголком ; Slim Fit Buff MINNA; 
+DELETE FROM TABLE client credits WHERE id = 616 
+Key = id - Value = 616
+Key = client - Value = 376
+Key = date - Value = 2012-07-17 17:37:14
+Key = price - Value = 190.0
+Key = description - Value = Подседельный штырь KLS Master 27,2mm / 4000mm сероватый ; 
