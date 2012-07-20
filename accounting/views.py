@@ -1836,7 +1836,13 @@ def clientcredits_add(request, id=None):
             
     else:
         if id != None:
-            form = ClientCreditsForm(initial={'client': id, 'date': now, })
+            cred = ClientCredits.objects.filter(client=id).aggregate(Sum('price'))
+            deb = ClientDebts.objects.filter(client=id).aggregate(Sum('price'))
+            #values('price').annotate(sum_deb=Sum('price'))
+            borg = deb['price__sum'] - cred['price__sum']
+            if borg <= 0:
+                borg = 0
+            form = ClientCreditsForm(initial={'client': id, 'date': now, 'price': borg, 'description': "Закриття боргу "})
         else:
             form = ClientCreditsForm()
         #form = ClientCreditsForm()
@@ -1973,7 +1979,21 @@ def client_invoice_id(request, id):
     for item in list:
         psum = psum + item.sum
         scount = scount + item.count
-    return render_to_response('index.html', {'buycomponents': list, 'sumall':psum, 'countall':scount, 'weblink': 'clientinvoice_list.html'})
+    
+    paginator = Paginator(list, 15)
+    page = request.GET.get('page')
+    if page == None:
+        page = 1
+    try:
+        cinvoices = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        cinvoices = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        cinvoices = paginator.page(paginator.num_pages)
+    
+    return render_to_response('index.html', {'buycomponents': cinvoices, 'sumall':psum, 'countall':scount, 'weblink': 'clientinvoice_list.html'})
 
 
 def client_invoice_sale_report(request):
@@ -2742,8 +2762,9 @@ def client_payform(request):
     
     if 'pay' in request.POST and request.POST['pay']:
         pay = request.POST['pay']
-        ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=pay, description=desc)
-        ccred.save()
+        if int(request.POST['pay']) != 0:
+            ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=pay, description=desc)
+            ccred.save()
         
     cdeb = ClientDebts(client=client, date=datetime.datetime.now(), price=sum, description=desc)
     cdeb.save()
