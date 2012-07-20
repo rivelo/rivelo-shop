@@ -12,6 +12,13 @@ TOPIC_CHOICES = (
     ('suggestion', 'Suggestion'),
 )
 
+class JQuerySelect(forms.Select):
+    class Media:
+        css = {
+            'all': ('/media/autocomplete.css',)
+        }
+        js = ('/media/jquery.select-autocomplete.js', '/media/jquery-1.3.1.min.js' , '/media/jquery.autocomplete.pack.js')
+
 class SelectFromModel(forms.Field):
     widget = forms.Select()
     def __init__(self, objects, *args, **kwargs):
@@ -357,7 +364,7 @@ class ClientCreditsForm(forms.ModelForm):
 
 
 class ClientInvoiceForm(forms.ModelForm):
-    client = forms.ModelChoiceField(queryset = Client.objects.all())
+    client = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete'}), queryset = Client.objects.all(), empty_label="")
     #catalog = forms.ModelChoiceField(queryset = Catalog.objects.filter(manufacturer=36))
     catalog = forms.ModelChoiceField(queryset = Catalog.objects.all())    
     count = forms.IntegerField(min_value=0, initial = 1)
@@ -418,9 +425,9 @@ class WorkTypeForm(forms.ModelForm):
     
 
 class WorkShopForm(forms.ModelForm):
-    client = forms.ModelChoiceField(queryset = Client.objects.all())
+    client = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete'}), queryset = Client.objects.all(), empty_label="")
     date = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'), required=False)
-    work_type = forms.ModelChoiceField(queryset = WorkType.objects.all())
+    work_type = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete', 'width':'340px'}), queryset = WorkType.objects.all())
     price = forms.FloatField(initial=0)
     description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255, required=False)
     

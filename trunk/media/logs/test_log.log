@@ -1296,3 +1296,87 @@ Key = client - Value = 376
 Key = date - Value = 2012-07-17 17:37:14
 Key = price - Value = 190.0
 Key = description - Value = Подседельный штырь KLS Master 27,2mm / 4000mm сероватый ; 
+DELETE FROM TABLE client credits WHERE id = 650 
+Key = id - Value = 650
+Key = client - Value = 2
+Key = date - Value = 2012-07-20 00:50:55
+Key = price - Value = 0.0
+Key = description - Value = AR PANTS MEN - L; 
+DELETE FROM TABLE client credits WHERE id = 651 
+Key = id - Value = 651
+Key = client - Value = 2
+Key = date - Value = 2012-07-20 00:53:24
+Key = price - Value = 0.0
+Key = description - Value = AR PANTS MEN - L; 
+DELETE FROM TABLE client credits WHERE id = 652 
+Key = id - Value = 652
+Key = client - Value = 2
+Key = date - Value = 2012-07-20 00:56:02
+Key = price - Value = 0.0
+Key = description - Value = AR PANTS MEN - L; 
+DELETE FROM TABLE client credits WHERE id = 654 
+Key = id - Value = 654
+Key = client - Value = 2
+Key = date - Value = 2012-07-20 01:05:04
+Key = price - Value = 0.0
+Key = description - Value = AR PANTS MEN - L; 
+DELETE FROM TABLE client debts WHERE id = 688 
+Key = id - Value = 688
+Key = client - Value = 2
+Key = date - Value = 2012-07-20 00:53:24
+Key = price - Value = 322.15
+Key = description - Value = AR PANTS MEN - L; 
+DELETE FROM TABLE client credits WHERE id = 655 
+Key = id - Value = 655
+Key = client - Value = 2
+Key = date - Value = 2012-07-20 01:08:13
+Key = price - Value = 0.0
+Key = description - Value = AR PANTS MEN - L; 
+DELETE FROM TABLE client credits WHERE id = 653 
+Key = id - Value = 653
+Key = client - Value = 2
+Key = date - Value = 2012-07-20 01:03:49
+Key = price - Value = 0.0
+Key = description - Value = AR PANTS MEN - L; 
+DELETE FROM TABLE catalog WHERE id = 4065 
+Key = id - Value = 4065
+Key = ids - Value = CLO-89-02
+Key = name - Value = Утеплитель на руки In Motion NC-1455 черн M
+Key = manufacturer - Value = 71
+Key = type - Value = 89
+Key = size - Value = None
+Key = weight - Value = None
+Key = photo - Value = 
+Key = year - Value = 2012
+Key = sale_to - Value = 2012-07-20
+Key = color - Value = Чорний
+Key = price - Value = 137.0
+Key = currency - Value = 3
+Key = sale - Value = 0.0
+Key = country - Value = 7
+Key = description - Value = 
+DELETE FROM TABLE client WHERE id = 382 
+Key = id - Value = 382
+Key = name - Value = Вовчик Віталій Михайлович
+Key = forumname - Value = 
+Key = country - Value = 1
+Key = city - Value = Сарни
+Key = email - Value = 
+Key = phone - Value = 050 375 16 77
+Key = sale - Value = 0
+Key = summ - Value = 0.0
+Key = description - Value = 
+DELETE FROM TABLE work shop WHERE id = 310 
+Key = id - Value = 310
+Key = client - Value = 2
+Key = date - Value = 2012-07-20 17:54:13
+Key = work_type - Value = 576
+Key = price - Value = 10.0
+Key = description - Value = 
+DELETE FROM TABLE work shop WHERE id = 311 
+Key = id - Value = 311
+Key = client - Value = 2
+Key = date - Value = 2012-07-20 18:11:46
+Key = work_type - Value = 657
+Key = price - Value = 0.0
+Key = description - Value = 
