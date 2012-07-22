@@ -1,0 +1,25 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<h1>Оборот коштів за місяць {{date_month}} року</h1>
+
+	<table border=1>
+	<tr><th>Дата</th>
+	<th>Оплати</th>
+	<th>Заборгованісті</th>
+	
+{% for cred in Ccred %}
+	<tr>
+	<td>
+	<a href="/shop/year/{{cred.year}}/month/{{cred.month}}/day/{{cred.day}}/view/"> {{cred.year}}/{{cred.month}}/{{cred.day}} </a>
+	</td>
+	<td>
+	{{cred.suma}}
+	</td>
+	<td>
+	{{cred.deb}}
+	</td>
+	{% endfor %}
+	</tr>
+	
+	</table>
+	

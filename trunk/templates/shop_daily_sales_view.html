@@ -1,0 +1,70 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<h1>Оборот коштів на {{date}} року</h1>
+
+	<table border=1>
+	<tr>
+	<th>Клієнт</th>
+	<th>Сума (грн.)</th>
+	<th>Опис</th>
+	</tr>
+
+<h2>Оплати</h2>	
+{% for cred in Ccred %}
+	<tr>
+	<td>
+	{{cred.client}}
+	</td>
+	<td>
+	{{cred.price}}
+	</td>
+	<td>
+	{{cred.description}}
+	</td>
+{% endfor %}
+	</tr>
+	<tr>
+	<td>
+	Сума
+	</td>
+	<td>
+	{{c_sum}}
+	</td>
+	<td>
+	</td>
+	</tr>	
+	</table>
+	
+	<table border=1>
+	<tr>
+	<th>Клієнт</th>
+	<th>Сума (грн.)</th>
+	<th>Опис</th>
+	</tr>
+
+<h2>Продажі</h2>	
+{% for deb in Cdeb %}
+	<tr>
+	<td>
+	{{deb.client}}
+	</td>
+	<td>
+	{{deb.price}}
+	</td>
+	<td>
+	{{deb.description}}
+	</td>
+{% endfor %}
+	</tr>
+	<tr>
+	<td>
+	Сума
+	</td>
+	<td>
+	{{d_sum}}
+	</td>
+	<td>
+	</td>
+	</tr>	
+	</table>	
+	

@@ -1380,3 +1380,9 @@ Key = date - Value = 2012-07-20 18:11:46
 Key = work_type - Value = 657
 Key = price - Value = 0.0
 Key = description - Value = 
+DELETE FROM TABLE client credits WHERE id = 703 
+Key = id - Value = 703
+Key = client - Value = 12
+Key = date - Value = 2012-07-22 15:02:30
+Key = price - Value = 322.15
+Key = description - Value = Велокомпьютер Kellys KCC-09; Мигалка задняя RHL-02, красный ; Крыло пер+зад 26-28" SKS Beavertail XL; 
