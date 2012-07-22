@@ -259,7 +259,7 @@ class ClientDebts(models.Model):
 
     
     def __unicode__(self):
-        return self.name
+        return self.date
 
     class Meta:
         ordering = ["client", "date"]    

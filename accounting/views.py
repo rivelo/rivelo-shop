@@ -24,7 +24,7 @@ from django.conf import settings
 import datetime
 import calendar
 
-from django.db.models import Sum
+from django.db.models import Sum, Count
 
 from django.core.mail import send_mail
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -648,6 +648,13 @@ def bicycle_sale_report(request):
     return render_to_response('index.html', {'bicycles': list, 'all_sum': sum, 'bike_sum': bike_sum, 'weblink': 'bicycle_sale_report.html'})
 
 
+def bicycle_sale_report_by_brand(request):
+    #list = Bicycle_Order.objects.annotate(bcount=Count("model")) 
+    list = Bicycle_Sale.objects.annotate(bcount=Count("model__model__model")).order_by("model__model__brand")
+#    objects.filter(date__year=now.year, date__month=now.month).extra(select={'year': "EXTRACT(year FROM date)", 'month': "EXTRACT(month from date)", 'day': "EXTRACT(day from date)"}).values('year', 'month', 'day').annotate(suma=Sum("price")).order_by()    
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_sale_report_bybrand.html'})    
+
+
 def bicycle_order_add(request):
     a = Bicycle_Order(prepay=0, sale=0, currency=Currency.objects.get(id=3))
     if request.method == 'POST':
@@ -1116,7 +1123,7 @@ def invoicecomponent_list_by_category(request, cid=None, limit=0):
     zcount = 0
     
     if limit == 0:
-        list = InvoiceComponentList.objects.filter(catalog__type__exact=cid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale').annotate(sum_catalog=Sum('count'))
+        list = InvoiceComponentList.objects.filter(catalog__type__exact=cid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale').annotate(sum_catalog=Sum('count')).order_by('catalog__manufacturer__name')
     else:
         list = InvoiceComponentList.objects.filter(catalog__type__exact=cid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale').annotate(sum_catalog=Sum('count'))[:limit]
         
@@ -1839,6 +1846,10 @@ def clientcredits_add(request, id=None):
             cred = ClientCredits.objects.filter(client=id).aggregate(Sum('price'))
             deb = ClientDebts.objects.filter(client=id).aggregate(Sum('price'))
             #values('price').annotate(sum_deb=Sum('price'))
+            if cred['price__sum'] == None:
+                cred['price__sum'] = 0
+            if deb['price__sum'] == None:
+                deb['price__sum'] = 0
             borg = deb['price__sum'] - cred['price__sum']
             if borg <= 0:
                 borg = 0
@@ -2399,6 +2410,38 @@ def shopdailysales_add(request):
     return render_to_response('index.html', {'form': form, 'weblink': 'shop_daily_sales.html'})
 
 
+def shopmonthlysales_view(request):
+#    deb = ClientDebts.objects.values('date__year').annotate(suma=Sum("price"))
+    deb = ClientDebts.objects.filter(date__year=now.year, date__month=now.month).extra(select={'year': "EXTRACT(year FROM date)", 'month': "EXTRACT(month from date)", 'day': "EXTRACT(day from date)"}).values('year', 'month', 'day').annotate(suma=Sum("price")).order_by()
+    cred = ClientCredits.objects.filter(date__year=now.year, date__month=now.month).extra(select={'year': "EXTRACT(year FROM date)", 'month': "EXTRACT(month from date)", 'day': "EXTRACT(day from date)"}).values('year', 'month', 'day').annotate(suma=Sum("price")).order_by()
+    
+    for element in cred:
+        element['cred']=0
+        for deb_element in deb:
+            if (deb_element['year']==element['year']) and (deb_element['month']==element['month']) and (deb_element['day']==element['day']):
+                element['deb']=deb_element['suma']
+                #element['balance']=element['sum_catalog'] - element['c_sale']
+            
+    strdate = pytils_ua.dt.ru_strftime(u"%d %B %Y", now, inflected=True)
+    date_month = pytils_ua.dt.ru_strftime(u"%B %Y", now, inflected=True)
+    return render_to_response('index.html', {'Cdeb': deb, 'Ccred':cred, 'date': strdate, 'date_month': date_month, 'weblink': 'shop_monthly_sales_view.html'})
+
+
+def shopdailysales_view(request, year, month, day):
+#    deb = ClientDebts.objects.values('date__year').annotate(suma=Sum("price"))
+    deb = ClientDebts.objects.filter(date__year=year, date__month=month, date__day=day).order_by()
+    cred = ClientCredits.objects.filter(date__year=year, date__month=month, date__day=day).order_by()
+
+    deb_sum = 0
+    cred_sum = 0
+    for c in cred:
+        cred_sum = cred_sum + c.price
+    for d in deb:    
+        deb_sum = deb_sum + d.price
+    strdate = pytils_ua.dt.ru_strftime(u"%d %B %Y", now, inflected=True)
+    return render_to_response('index.html', {'Cdeb': deb, 'Ccred':cred, 'date': strdate, 'd_sum': deb_sum, 'c_sum': cred_sum, 'weblink': 'shop_daily_sales_view.html'})
+
+
 def shopdailysales_edit(request, id):
     a = ShopDailySales.objects.get(pk=id)
     if request.method == 'POST':
@@ -2411,7 +2454,7 @@ def shopdailysales_edit(request, id):
             return HttpResponseRedirect('/shop/sale/view/')
     else:
         form = ShopDailySalesForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'shop_daily_sales.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'shop_monthly_sales.html'})
 
 
 def shopdailysales_list(request, month=now.month):
@@ -2762,7 +2805,7 @@ def client_payform(request):
     
     if 'pay' in request.POST and request.POST['pay']:
         pay = request.POST['pay']
-        if int(request.POST['pay']) != 0:
+        if float(request.POST['pay']) != 0:
             ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=pay, description=desc)
             ccred.save()
         
