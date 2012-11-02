@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.conf.urls.defaults import *
 from catalog.views import current_datetime, main_page
 from catalog.test import current_datetime as curdate
@@ -109,6 +110,8 @@ urlpatterns = patterns('',
 
     (r'^dealer/invoice/add/$', 'catalog.accounting.views.dealer_invoice_add'),
     (r'^dealer/invoice/view/$', 'catalog.accounting.views.dealer_invoice_list_month'),
+    (r'^dealer/invoice/company/(?P<id>\d+)/view/$', 'catalog.accounting.views.dealer_invoice_list'),
+    (r'^dealer/invoice/company/(?P<id>\d+)/(?P<pay>paid|notpaid|sending)/$', 'catalog.accounting.views.dealer_invoice_list'),    
     (r'^dealer/invoice/year/(?P<year>\d+)/(?P<pay>paid|notpaid|sending)/$', 'catalog.accounting.views.dealer_invoice_list_month'),
     (r'^dealer/invoice/year/(?P<year>\d+)/month/(?P<month>\d+)/view/$', 'catalog.accounting.views.dealer_invoice_list_month'),
     #(r'^dealer/invoice/month/(?P<month>\d+)/view/$', 'catalog.accounting.views.dealer_invoice_list_month'),
@@ -134,18 +137,19 @@ urlpatterns = patterns('',
     (r'^invoice/catalog/(?P<cid>\d+)/add/$', 'catalog.accounting.views.invoicecomponent_add'),
     (r'^invoice/manufacture/(?P<mid>\d+)/add/$', 'catalog.accounting.views.invoicecomponent_add'),
     (r'^invoice/manufacture/(?P<mid>\d+)/view/$', 'catalog.accounting.views.invoicecomponent_list_by_manufacturer'),
+    (r'^invoice/manufacture/(?P<mid>\d+)/availability/view/$', 'catalog.accounting.views.invoicecomponent_list_by_manufacturer', {'availability': 1}),
+    (r'^invoice/manufacture/(?P<mid>\d+)/availability/view/html/$', 'catalog.accounting.views.invoicecomponent_manufacturer_html'),    
     (r'^invoice/manufacture/view/$', 'catalog.accounting.views.invoicecomponent_list_by_manufacturer'),
     (r'^invoice/category/view/$', 'catalog.accounting.views.invoicecomponent_list_by_category'),
     (r'^invoice/category/(?P<cid>\d+)/view/$', 'catalog.accounting.views.invoicecomponent_list_by_category'),
     (r'^invoice/list/(?P<limit>\d+)/view/$', 'catalog.accounting.views.invoicecomponent_list'),
     (r'^invoice/list/view/$', 'catalog.accounting.views.invoicecomponent_list'),
     (r'^invoice/id/(?P<id>\d+)/view/$', 'catalog.accounting.views.invoice_id_list'),
-    (r'^invoice/catalog/(?P<cid>\d+)/view/$', 'catalog.accounting.views.invoice_cat_id_list'),
+    (r'^invoice/catalog/(?P<cid>\d+)/view/$', 'catalog.accounting.views.invoice_cat_id_list'), # �������� � ��������� ������ � ��������
     (r'^invoice/delete/(?P<id>\d+)/$', 'catalog.accounting.views.invoicecomponent_del'),
     (r'^invoice/edit/(?P<id>\d+)/$', 'catalog.accounting.views.invoicecomponent_edit'),
     (r'^invoice/report/$', 'catalog.accounting.views.invoice_report'),
     (r'^invoice/all/report/$', 'catalog.accounting.views.invoicecomponent_sum'),
-    (r'^invoice/test/$', 'catalog.accounting.views.invoicecomponent_tets'),
     (r'^invoice/search/$', 'catalog.accounting.views.invoice_search'),
     (r'^invoice/search/result/$', 'catalog.accounting.views.invoice_search_result'),
     

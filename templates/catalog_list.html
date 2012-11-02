@@ -54,6 +54,7 @@
     	<th>Країна</th>
     	<th>Опис</th>
     	<th>Дія</th>
+    	<th>Кількість</th>
     	<th>Наявність</th>
     </tr>
 
@@ -110,6 +111,9 @@
 	<!--
     <a href="/catalog/delete/{{ type.id }}" onclick="return confirm('Видалити запис?')">delete</a>
     -->
+    </td>
+    <td>
+    {{type.count}}
     </td>
 	<td>       
 	<a href="/invoice/catalog/{{type.id}}/view/">Переглянути наявність</a>

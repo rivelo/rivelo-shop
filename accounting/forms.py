@@ -317,6 +317,8 @@ class CatalogForm(forms.ModelForm):
     sale_to = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
     price = forms.FloatField(min_value=0)
     currency = forms.ModelChoiceField(initial = 3, queryset = Currency.objects.all())
+    count = forms.IntegerField(initial=0)
+    length = forms.FloatField(initial=0)
     country = forms.ModelChoiceField(queryset = Country.objects.all())    
     description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255, required=False)    
 

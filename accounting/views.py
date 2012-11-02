@@ -604,7 +604,7 @@ def bicycle_sale_check(request, id=None):
     list = Bicycle_Sale.objects.get(id=id)
     text = pytils_ua.numeral.in_words(int(list.price))
     month = pytils_ua.dt.ru_strftime(u"%d %B %Y", list.date, inflected=True)
-    return render_to_response('index.html', {'bicycle': list, 'month':month, 'str_number':text, 'weblink': 'bicycle_sale_check.html',})
+    return render_to_response('index.html', {'bicycle': list, 'month':month, 'str_number':text, 'weblink': 'bicycle_sale_check.html', 'print':'True'})
 
 
 def bicycle_sale_check_print(request, id=None):
@@ -813,7 +813,7 @@ def dealer_payment_add(request):
             price = form.cleaned_data['price']
             currency = form.cleaned_data['currency']
             letter = form.cleaned_data['letter']
-            description = form.cleaned_data['description']
+            desc = form.cleaned_data['description']
 
             if currency == dealer_invoice.currency:
                 if dealer_invoice.price <= price:
@@ -836,9 +836,9 @@ def dealer_payment_add(request):
                 if d <= p:
                      obj = DealerInvoice.objects.get(id=dealer_invoice.id)
                      obj.payment = True
-                     obj.save()
+                     #obj.save()
            
-            DealerPayment(dealer_invoice=dealer_invoice, invoice_number=invoice_number, date=date, bank=bank, price=price, currency=currency, letter=letter, description=description).save()
+            DealerPayment(dealer_invoice=dealer_invoice, invoice_number=invoice_number, date=date, bank=bank, price=price, currency=currency, letter=letter, description=desc).save()
             return HttpResponseRedirect('/dealer/payment/view/')
     else:
         form = DealerPaymentForm(instance = a)
@@ -901,16 +901,33 @@ def dealer_invoice_del(request, id):
     obj.delete()
     return HttpResponseRedirect('/dealer/invoice/view/')
  
+
  
-def dealer_invoice_list(request):
-    list = DealerInvoice.objects.all()
+def dealer_invoice_list(request, id=False, pay='all'):
+    if id == False:
+        list = DealerInvoice.objects.all()
+    else:
+        list = DealerInvoice.objects.filter(company=id)
+        if pay == 'paid':
+            list = DealerInvoice.objects.filter(company=id, payment=True)
+        if pay == 'notpaid':
+            list = DealerInvoice.objects.filter(company=id, payment=False)
+        if pay == 'sending':
+            list = DealerInvoice.objects.filter(company=id, received=False)
+        if pay == 'all':
+            list = DealerInvoice.objects.filter(company=id)   
+
+    now = datetime.datetime.now()
+    year=now.year
+            
     exchange = Exchange.objects.filter(date=datetime.date.today)
     try:
         exchange_d = Exchange.objects.get(date=datetime.date.today, currency=2)
         exchange_e = Exchange.objects.get(date=datetime.date.today, currency=4)
         summ = 0
         summ_debt = 0
-        for e in DealerInvoice.objects.all():
+        for e in list: 
+        #DealerInvoice.objects.all():
             if e.currency.id == 2:
                 summ = summ + (float(e.price) * float(exchange_d.value))
                 if e.payment != True:
@@ -932,8 +949,8 @@ def dealer_invoice_list(request):
          
         exchange_d = 0
         exchange_e = 0
-    
-    return render_to_response('index.html', {'dealer_invoice': list, 'exchange': exchange, 'exchange_d': exchange_d, 'exchange_e': exchange_e, 'summ': summ, 'summ_debt': summ_debt, 'weblink': 'dealer_invoice_list.html'})
+        
+    return render_to_response('index.html', {'dealer_invoice': list, 'sel_company': id, 'sel_year': year, 'exchange': exchange, 'exchange_d': exchange_d, 'exchange_e': exchange_e, 'summ': summ, 'summ_debt': summ_debt, 'weblink': 'dealer_invoice_list.html'})
 
 
 def dealer_invoice_list_month(request, year=False, month=False, pay='all'):
@@ -1062,7 +1079,7 @@ def invoicecomponent_list(request, mid=None, limit=0):
     return render_to_response('index.html', {'company_list': company_list, 'componentlist': new_list, 'zsum':zsum, 'zcount':zcount, 'weblink': 'invoicecomponent_list.html'})
 
 
-def invoicecomponent_list_by_manufacturer(request, mid=None, limit=0):
+def invoicecomponent_list_by_manufacturer(request, mid=None, availability=False):
     company_list = Manufacturer.objects.all()
     list = None
     id_list=[]
@@ -1071,10 +1088,10 @@ def invoicecomponent_list_by_manufacturer(request, mid=None, limit=0):
     scount = 0
     zcount = 0
     
-    if limit == 0:
-        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
+    if availability == False:
+        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
     else:
-        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale').annotate(sum_catalog=Sum('count'))[:limit]
+        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid, catalog__count__gt=0).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
 
     for item in list:
         psum = psum + (item['catalog__price'] * item['sum_catalog'])
@@ -1092,6 +1109,11 @@ def invoicecomponent_list_by_manufacturer(request, mid=None, limit=0):
                 element['balance']=element['sum_catalog'] - element['c_sale']
         zsum = zsum + ((element['sum_catalog'] - element['c_sale']) * element['catalog__price'])
         zcount = zcount + (element['sum_catalog'] - element['c_sale'])
+        upd = Catalog.objects.get(pk = element['catalog'])
+        upd.count = element['balance'] 
+        upd.save()
+        
+        
 #        return render_to_response('index.html', {'componentlist': list, 'salelist': list_sale, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
 
     if mid == None:
@@ -1099,7 +1121,7 @@ def invoicecomponent_list_by_manufacturer(request, mid=None, limit=0):
     else:
         company_name = company_list.get(id=mid)
 
-    return render_to_response('index.html', {'company_list': company_list, 'company_name': company_name, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
+    return render_to_response('index.html', {'company_list': company_list, 'company_name': company_name, 'company_id':mid, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
 
     
 #===============================================================================
@@ -1154,17 +1176,19 @@ def invoicecomponent_list_by_category(request, cid=None, limit=0):
     return render_to_response('index.html', {'category_list': category_list, 'category_name': cat_name, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
 
 
-def invoicecomponent_tets(request):
-    #list = InvoiceComponentList.objects.filter(catalog__name__contains='спиц')
-    #list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=44)
-    #list = InvoiceComponentList.objects.filter(catalog__type__exact=112)
-    list = InvoiceComponentList.objects.filter(catalog__name__contains='спиц')
-    psum = 0
-    scount = 0
-    for item in list:
-        psum = psum + (item.catalog.price * item.count)
-        scount = scount + item.count
-    return render_to_response('index.html', {'componentlist': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoicecomponent_list.html'})
+def invoicecomponent_manufacturer_html(request, mid):
+    list = Catalog.objects.filter(manufacturer__id=mid, count__gt=0)
+    zcount = 0
+    for elem in list:
+        zcount = zcount + elem.count
+    
+    if mid == None:
+        company_name = ""
+    else:
+        company_name = Manufacturer.objects.get(id=mid)
+        
+    return render_to_response('index.html', {'componentlist': list, 'company_name': company_name, 'zcount': zcount, 'weblink': 'component_list_by_manufacturer_html.html'})
+
 
 from django.db.models import F
 
@@ -1899,7 +1923,8 @@ def clientcredits_delete(request, id):
 
 
 def client_invoice(request, cid=None):
-    a = ClientInvoice(date=datetime.date.today(), price=Catalog.objects.get(id = cid).price, sum=Catalog.objects.get(id = cid).price, sale=int(Catalog.objects.get(id = cid).sale), pay=0, count=1, currency=Currency.objects.get(id=3), catalog=Catalog.objects.get(id = cid))
+    cat = Catalog.objects.get(id = cid)
+    a = ClientInvoice(date=datetime.date.today(), price=cat.price, sum=Catalog.objects.get(id = cid).price, sale=int(Catalog.objects.get(id = cid).sale), pay=0, count=1, currency=Currency.objects.get(id=3), catalog=Catalog.objects.get(id = cid))
     if request.method == 'POST':
         form = ClientInvoiceForm(request.POST, instance = a, catalog_id=cid)
         if form.is_valid():
@@ -1914,6 +1939,8 @@ def client_invoice(request, cid=None):
             date = form.cleaned_data['date']
             description = form.cleaned_data['description']
             ClientInvoice(client=client, catalog=catalog, count=count, sum=sum, price=price, currency=currency, sale=sale, pay=pay, date=date, description=description).save()
+            cat.count = cat.count - count
+            cat.save()
             #WorkGroup(name=name, description=description).save()
             return HttpResponseRedirect('/client/invoice/view/')
     else:
@@ -2035,6 +2062,9 @@ def client_invoice_sale_report(request):
 def client_invoice_delete(request, id):
     obj = ClientInvoice.objects.get(id=id)
     obj.delete()
+    cat = Catalog.objects.get(id = obj.catalog.id)
+    cat.count = cat.count + obj.count
+    cat.save()
     return HttpResponseRedirect('/client/invoice/view/')
 
 
@@ -2625,7 +2655,7 @@ def cost_edit(request, id):
 
 
 def cost_list(request):
-    list = Costs.objects.all()
+    list = Costs.objects.all().order_by("-date")
     sum = 0
     for item in list:
         sum = sum + item.price

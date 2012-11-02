@@ -114,7 +114,8 @@ class Catalog(models.Model):
     currency = models.ForeignKey(Currency)
     sale = models.FloatField()
     country = models.ForeignKey(Country, null=True)
-    #count = models.IntegerField()
+    count = models.IntegerField()
+    length = models.FloatField(blank=True, null=True)
     description = models.CharField(max_length=255)
     
     def __unicode__(self):
