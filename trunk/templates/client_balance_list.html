@@ -28,9 +28,9 @@
 {% if type.minus > 0 %}
 <tr  style="background-color:#CCFF99">
 {% endif %}
-{% if type.minus = 0 %}
+{% ifequal type.minus 0 %}
 <tr>
-{% endif %}
+{% endifequal %}
 	<td>{{forloop.counter}}</td>
 	<td>       
 	{{type.id}}

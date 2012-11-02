@@ -64,7 +64,8 @@
 {% else %}
 		<abbr title="Продати товар"> 
 		<a href="/client/invoice/catalog/{{type.catalog}}/add">
-		{{type.sum_catalog|sub:type.c_sale|floatformat}} = {{type.balance}}
+		{{type.sum_catalog|sub:type.c_sale|floatformat}}
+		{% comment %} = {{type.balance}} {% endcomment %}
 		</a>
 		</abbr>
 {% endifequal %}

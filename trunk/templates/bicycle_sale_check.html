@@ -4,7 +4,7 @@
 
 <style type="text/css">
    #checktable {
-    width:80%; 
+    width:100%; 
     padding: 0px;
     border-collapse: collapse;
     CELLSPACING:0;
@@ -31,15 +31,15 @@
 <p>Продавець: ПП. Панчук Ігор Олексійович (ІПН 3084020932)</p>
 <p> Покупець: <a href="/client/{{bicycle.client.id}}">{{bicycle.client.name}}</a></p>
 </td>
-<td id="tdchecklogo">
-<a href="/"><img src="/media/images/site_logo_small.gif" alt="" title=""/></a>
+<td id="tdchecklogo" ALIGN="right">
+<a href="/"><img src="/media/images/site_logo_small.gif" alt="" title="" ></a>
 </td>
 </tr>
 </table>
 
 
 
-<table border="1" width="80%">
+<table border="1" width="100%">
 	<tr>
 		<th>№</th>
 		<th>Назва товару</th>
@@ -80,4 +80,7 @@
 
 </p>
 
+{% if print %}
 <a href="/bicycle/sale/{{bicycle.id}}/check/print">Версія для друку</a>
+{% endif %}
+

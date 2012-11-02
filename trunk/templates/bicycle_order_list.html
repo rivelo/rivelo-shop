@@ -40,7 +40,7 @@
 	{% endif %}
 	
 		<td>{{forloop.counter}}</td>
-		<td><a href="/bicycle-store/add/{{type.id}}">{{type.id}}</a></td>
+		<td><a href="/bicycle-store/add/{{type.model.id}}">{{type.id}}</a></td>
 		<td><a href="/bicycle/photo/{{type.model.id}}">{{type.model}}</a></td>
 		<td><a href="/client/result/search/?id={{type.client.id}}">{{type.client}}</a></td>
 		<td>{{type.model.type}}</td>

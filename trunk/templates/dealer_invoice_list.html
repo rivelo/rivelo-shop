@@ -4,6 +4,40 @@
 
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
+<body onLoad="res()">
+
+<script type="text/javascript">
+
+function res()
+{
+var p=0;
+var All=document.forms['formSum'];
+for(var i = 0; i < All.elements.length; ++i) {
+	if(All.elements[i].checked){
+	//p+=parseInt(All.elements[i].value);
+	p=p+parseFloat(All.elements[i].value);
+	}
+	document.getElementById('for_pay').innerHTML = p.toFixed(2)+" грн.";
+	//document.getElementById('debet').innerHTML = parseFloat(document.getElementById('for_pay').innerHTML)+parseFloat(document.getElementById('workshop_pay').innerHTML);
+}
+}
+    
+function resWorkshop()
+{
+var p=0;
+var All=document.forms['formWorkshopSum'];
+for(var i = 0; i < All.elements.length; ++i) {
+	if(All.elements[i].checked){
+	p+=parseFloat(All.elements[i].value);
+	}
+	document.getElementById('workshop_pay').innerHTML = p.toFixed(2)+" грн.";
+	document.getElementById('debet').innerHTML = parseFloat(document.getElementById('for_pay').innerHTML)+parseFloat(document.getElementById('workshop_pay').innerHTML);
+}
+}
+    
+</script>
+
+
     <h1>Рахунки за {{sel_month}} місяць {{sel_year}} року <a href="/dealer/invoice/add/">(Додати)</a> </h1>
 
 Курс валют на сьогодні:
@@ -43,9 +77,15 @@
     За рік: 
     <a href="/dealer/invoice/year/2011/month/{{sel_month}}/view">2011,</a>
 	<a href="/dealer/invoice/year/2012/month/{{sel_month}}/view">2012,</a>
+{% if sel_year %}	
 	<a href="/dealer/invoice/year/{{sel_year}}/notpaid">Не оплачені,</a>
 	<a href="/dealer/invoice/year/{{sel_year}}/paid">Оплачені,</a>
 	<a href="/dealer/invoice/year/{{sel_year}}/sending">В дорозі</a>
+{% else %}
+	<a href="/dealer/invoice/company/{{sel_company}}/notpaid">Не оплачені,</a>
+	<a href="/dealer/invoice/company/{{sel_company}}/paid">Оплачені,</a>
+	<a href="/dealer/invoice/company/{{sel_company}}/sending">В дорозі</a>
+{% endif %}	
 	</h2>    
 <h2>
     За місяць: 
@@ -64,6 +104,7 @@
 	</h2>    
 <br>    
 
+<form action="/payform/" method="post" name="formSum"> 
     <table border="1">
 	<tr>
     	<th>ID</th>
@@ -78,6 +119,7 @@
 		<th>Отримано</th>
 		<th>Оплата</th>
     	<th>Опис</th>
+    	<th></th>
     	<th>Дія</th>
     </tr>    
     
@@ -109,7 +151,9 @@
 	{{type.date|date:"D d M Y"}}
 	</td>
 	<td>       
+	<a href="/dealer/invoice/company/{{type.company.id}}/view/">
 	{{type.company.name}}
+	</a>
 	</td>
 	<td>       
 	{{type.manager.name}}
@@ -148,6 +192,13 @@
 	{{type.description}}
 	</td>
 	<td>
+{% if type.payment %}
+<input type="checkbox" id="model{{forloop.counter}}" value="{{type.price}}" onclick="res()" name="checkbox_{{ type.id }}"/>
+{% else %}
+<input type="checkbox" id="model{{forloop.counter}}" value="{{type.price}}" onclick="res()" checked name="checkbox_{{ type.id }}"/>
+{% endif %}
+	</td>
+	<td>
     <a href="/dealer/invoice/delete/{{ type.id }}" onclick="return confirm('Видалити накладну?')">delete</a>
     </td>
 </tr>
@@ -165,12 +216,13 @@
 		<th>{{summ}}</th>	
 		<th>Борг</th>
 		<th>{{summ_debt}}</th>
+    	<th><input type="submit" value="Оплата"><div id="for_pay" style="COLOR: red" BGCOLOR="#D5FFB4"></div></th>
     	<th></th>
     	<th></th>
     </tr>    
-    
+   
     </table>
-
+</form>
 <br>    
 
 

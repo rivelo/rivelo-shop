@@ -1386,3 +1386,101 @@ Key = client - Value = 12
 Key = date - Value = 2012-07-22 15:02:30
 Key = price - Value = 322.15
 Key = description - Value = Велокомпьютер Kellys KCC-09; Мигалка задняя RHL-02, красный ; Крыло пер+зад 26-28" SKS Beavertail XL; 
+DELETE FROM TABLE client credits WHERE id = 970 
+Key = id - Value = 970
+Key = client - Value = 12
+Key = date - Value = 2012-08-01 00:00:00
+Key = price - Value = 55.0
+Key = description - Value = Закриття боргу 
+DELETE FROM TABLE invoice component list WHERE id = 955 
+Key = id - Value = 955
+Key = invoice - Value = 197
+Key = catalog - Value = 2806
+Key = count - Value = 2
+Key = price - Value = 93.3
+Key = currency - Value = 3
+Key = date - Value = 2012-02-27
+Key = description - Value = 
+DELETE FROM TABLE invoice component list WHERE id = 601 
+Key = id - Value = 601
+Key = invoice - Value = 187
+Key = catalog - Value = 647
+Key = count - Value = 1
+Key = price - Value = 0.0
+Key = currency - Value = 2
+Key = date - Value = 2012-02-21
+Key = description - Value = 
+DELETE FROM TABLE invoice component list WHERE id = 3579 
+Key = id - Value = 3579
+Key = invoice - Value = 359
+Key = catalog - Value = 2264
+Key = count - Value = 5
+Key = price - Value = 2.0
+Key = currency - Value = 2
+Key = date - Value = 2012-08-27
+Key = description - Value = 
+DELETE FROM TABLE invoice component list WHERE id = 3492 
+Key = id - Value = 3492
+Key = invoice - Value = 345
+Key = catalog - Value = 3847
+Key = count - Value = 5
+Key = price - Value = 2.9
+Key = currency - Value = 2
+Key = date - Value = 2012-08-18
+Key = description - Value = 
+DELETE FROM TABLE invoice component list WHERE id = 908 
+Key = id - Value = 908
+Key = invoice - Value = 187
+Key = catalog - Value = 2811
+Key = count - Value = 2
+Key = price - Value = 0.0
+Key = currency - Value = 2
+Key = date - Value = 2012-02-25
+Key = description - Value = 
+DELETE FROM TABLE dealer payment WHERE id = 65 
+Key = id - Value = 65
+Key = dealer_invoice - Value = 216
+Key = invoice_number - Value = 1162
+Key = date - Value = 2012-09-05
+Key = bank - Value = 3
+Key = price - Value = 0.0
+Key = currency - Value = 2
+Key = letter - Value = True
+Key = description - Value = Аня:
+1318 - 377.32    Долар США (USD)
+3401 - 242.99    Долар США (USD)
+3881 - 760.18    Долар США (USD)
+4043 - 150.09    Долар США (USD)
+4168 - 14,91     Долар США (USD)
+Сума 1545,49$
+DELETE FROM TABLE dealer payment WHERE id = 64 
+Key = id - Value = 64
+Key = dealer_invoice - Value = 334
+Key = invoice_number - Value = 3881
+Key = date - Value = 2012-09-05
+Key = bank - Value = 3
+Key = price - Value = 7000.0
+Key = currency - Value = 2
+Key = letter - Value = True
+Key = description - Value = 3881 - 760.18    Долар США (USD)
+DELETE FROM TABLE client debts WHERE id = 1712 
+Key = id - Value = 1712
+Key = client - Value = 459
+Key = date - Value = 2012-09-06 00:00:00
+Key = price - Value = 3699.0
+Key = description - Value = Велосипед Trek. Модель Trek 3900. 2012 (Чорний) [WTU305C0476H]
+DELETE FROM TABLE bicycle_ sale WHERE id = 197 
+Key = id - Value = 197
+Key = model - Value = 90
+Key = client - Value = 459
+Key = price - Value = 3699.0
+Key = currency - Value = 3
+Key = date - Value = 2012-09-06
+Key = service - Value = False
+Key = description - Value = знижка 10%
+DELETE FROM TABLE client credits WHERE id = 2148 
+Key = id - Value = 2148
+Key = client - Value = 378
+Key = date - Value = 2012-10-28 22:30:37
+Key = price - Value = 339.0
+Key = description - Value = Детское сиденье BASELI крепление на багажник, бежевый, Special Edition; 

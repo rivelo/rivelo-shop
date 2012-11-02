@@ -66,3 +66,8 @@ mysql> ALTER TABLE accounting_invoicecomponentlist MODIFY description VARCHAR(25
 
 mysql> select  catalog_id, manufacturer_id from accounting_invoicecomponentlist 
 left join accounting_catalog on catalog_id=accounting_catalog.id;
+
+### change catalog table ###
+alter table `accounting_catalog` add `count` integer NOT NULL;
+alter table `accounting_catalog` add `length` double precision;
+

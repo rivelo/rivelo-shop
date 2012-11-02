@@ -15,6 +15,11 @@
 {% endfor %}
 
     <h1>Список наявного товару ({{company_name}}{{category_name}})</h1>
+{%if company_id %}
+    <a href="/invoice/manufacture/{{company_id}}/view/"> Всі </a>,  
+    <a href="/invoice/manufacture/{{company_id}}/availability/view/"> Наявний </a>,
+    <a href="/invoice/manufacture/{{company_id}}/availability/view/html/"> Наявність HTML </a>
+{% endif %}    
 
     <table border="1" width="100%">
 	<tr>
@@ -59,7 +64,7 @@
 	</td>
 	<td align="center">
 	<a href="/invoice/catalog/{{type.catalog}}/view/">
-	{{type.sum_catalog}}
+	{{type.sum_catalog}} {% comment %} --- {{type.catalog__count}}  {% endcomment %}
 	</a>
 	</td>
 	<td align="center">
