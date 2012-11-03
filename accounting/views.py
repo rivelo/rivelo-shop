@@ -1036,6 +1036,9 @@ def invoicecomponent_add(request, mid=None, cid=None):
             currency = form.cleaned_data['currency']
             description = form.cleaned_data['description']
             InvoiceComponentList(date=date, invoice=invoice, catalog=catalog, price=price, currency=currency, count=count, description=description).save()
+            cat = Catalog.objects.get(id = cid)
+            cat.count = cat.count + count
+            cat.save()
             #return HttpResponseRedirect('/invoice/list/10/view/')
             #list = InvoiceComponentList.objects.all().values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale').order_by('-id')[:10]
             #return render_to_response('index.html', {'componentlist': list, 'addurl': "/invoice/manufacture/"+str(mid)+"/add", 'weblink': 'invoicecomponent_list.html'})
@@ -1053,9 +1056,11 @@ def invoicecomponent_list(request, mid=None, limit=0):
     zcount = 0
     
     if limit == 0:
-        list = InvoiceComponentList.objects.all().values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale').annotate(sum_catalog=Sum('count'))
+        list = InvoiceComponentList.objects.all().values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count').annotate(sum_catalog=Sum('count')).order_by("catalog__type")        
     else:
-        list = InvoiceComponentList.objects.all().values('id', 'catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale').annotate(sum_catalog=Sum('count')).order_by('-id')[:limit]
+        list = InvoiceComponentList.objects.filter(catalog__count__gt=0).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count').annotate(sum_catalog=Sum('count')).order_by("catalog__type")        
+#        list = InvoiceComponentList.objects.filter(catalog__count__lt=0).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count').annotate(sum_catalog=Sum('count')).order_by("-id")
+#        list = InvoiceComponentList.objects.all().values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count').annotate(sum_catalog=Sum('count')).order_by("-id")
 
     for item in list:
         id_list.append(item['catalog'])
@@ -1075,6 +1080,12 @@ def invoicecomponent_list(request, mid=None, limit=0):
             new_list.append(element)
             zsum = zsum + (element['balance'] * element['catalog__price'])
             zcount = zcount + element['balance']
+
+# update count field in catalog table            
+        #upd = Catalog.objects.get(pk = element['catalog'])
+        #upd.count = element['balance'] 
+        #upd.save()
+
         
     return render_to_response('index.html', {'company_list': company_list, 'componentlist': new_list, 'zsum':zsum, 'zcount':zcount, 'weblink': 'invoicecomponent_list.html'})
 
@@ -1109,11 +1120,6 @@ def invoicecomponent_list_by_manufacturer(request, mid=None, availability=False)
                 element['balance']=element['sum_catalog'] - element['c_sale']
         zsum = zsum + ((element['sum_catalog'] - element['c_sale']) * element['catalog__price'])
         zcount = zcount + (element['sum_catalog'] - element['c_sale'])
-        upd = Catalog.objects.get(pk = element['catalog'])
-        upd.count = element['balance'] 
-        upd.save()
-        
-        
 #        return render_to_response('index.html', {'componentlist': list, 'salelist': list_sale, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
 
     if mid == None:
@@ -1206,6 +1212,9 @@ def invoicecomponent_del(request, id):
     obj = InvoiceComponentList.objects.get(id=id)
     del_logging(obj)
     obj.delete()
+    cat = Catalog.objects.get(id = obj.catalog.id)
+    cat.count = cat.count + obj.catalog.count
+    cat.save()
     return HttpResponseRedirect('/invoice/list/10/view/')
 
 
@@ -1224,6 +1233,9 @@ def invoicecomponent_edit(request, id):
             currency = form.cleaned_data['currency']
             description = form.cleaned_data['description']
             form.save()
+            cat = Catalog.objects.get(id = cid)
+            cat.count = cat.count + count
+            cat.save()
             return HttpResponseRedirect('/invoice/list/10/view/')
     else:
         form = InvoiceComponentListForm(instance=a, catalog_id=cid)
