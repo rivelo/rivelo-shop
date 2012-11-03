@@ -1484,3 +1484,30 @@ Key = client - Value = 378
 Key = date - Value = 2012-10-28 22:30:37
 Key = price - Value = 339.0
 Key = description - Value = ƒетское сиденье BASELI крепление на багажник, бежевый, Special Edition; 
+DELETE FROM TABLE invoice component list WHERE id = 4058 
+Key = id - Value = 4058
+Key = invoice - Value = 236
+Key = catalog - Value = 1857
+Key = count - Value = 2
+Key = price - Value = 0.0
+Key = currency - Value = 2
+Key = date - Value = 2012-11-02
+Key = description - Value = 
+DELETE FROM TABLE invoice component list WHERE id = 4059 
+Key = id - Value = 4059
+Key = invoice - Value = 236
+Key = catalog - Value = 1857
+Key = count - Value = 2
+Key = price - Value = 0.0
+Key = currency - Value = 2
+Key = date - Value = 2012-11-02
+Key = description - Value = 
+DELETE FROM TABLE invoice component list WHERE id = 4060 
+Key = id - Value = 4060
+Key = invoice - Value = 236
+Key = catalog - Value = 1857
+Key = count - Value = 2
+Key = price - Value = 0.0
+Key = currency - Value = 2
+Key = date - Value = 2012-11-02
+Key = description - Value = 
