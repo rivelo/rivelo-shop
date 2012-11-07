@@ -2,10 +2,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
-<h1>Список велосипедів у магазині <br>
-</h1>
+<h1>Список велосипедів у магазині</h1>
+<h2>{{text}}</h2>
+
 <a href="/bicycle-store/all/view/">Всі</a>
 <a href="/bicycle-store/now/view/">Наявні</a>
+<br>
+<b>Розмір рами:</b>
+{% for size in sizes %}
+<a href="/bicycle/store/report/bysize/{{size.id}}/">{{size.name}}</a>
+{% endfor %}
 
 <table border="1">
 	<tr>

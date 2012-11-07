@@ -354,6 +354,7 @@ class Bicycle(models.Model):
     #PositiveIntegerField()
     price = models.FloatField()
     currency = models.ForeignKey(Currency)
+    sale = models.FloatField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
 
     def __unicode__(self):
@@ -563,3 +564,21 @@ class PreOrder(models.Model):
 
     class Meta:
         ordering = ["company", "manager", "date"]    
+
+
+class Discount(models.Model):
+    name = models.CharField(max_length=255)
+    manufacture_id = models.IntegerField()
+    type_id = models.IntegerField() 
+    date_start = models.DateField(auto_now_add=True)
+    date_end = models.DateField(auto_now_add=False)
+    sale = models.FloatField()
+    received = models.BooleanField(default=False, verbose_name="Товар отримано?")
+    description = models.TextField(blank = True, null = True)
+            
+    def __unicode__(self):
+        return self.file 
+
+    class Meta:
+        ordering = ["name", "sale", "date_end"]    
+
