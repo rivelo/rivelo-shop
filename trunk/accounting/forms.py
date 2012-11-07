@@ -114,6 +114,7 @@ class BicycleForm(forms.ModelForm):
     price = forms.FloatField()
     #currency = SelectFromModel(objects=Currency.objects.all())
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
+    sale = forms.FloatField(initial=0, required=False)
     description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)    
 
     class Meta:
@@ -312,13 +313,13 @@ class CatalogForm(forms.ModelForm):
     photo = forms.ImageField(required=False)
     color = forms.CharField(max_length=255)
     year = forms.IntegerField(initial = 2012, min_value = 1900, max_value = 2020)
-    sale = forms.FloatField(initial=0)
+    sale = forms.FloatField(initial=0, required=False)
     #sale_to = forms.DateField(initial=datetime.date.today)
     sale_to = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
     price = forms.FloatField(min_value=0)
     currency = forms.ModelChoiceField(initial = 3, queryset = Currency.objects.all())
-    count = forms.IntegerField(initial=0)
-    length = forms.FloatField(initial=0)
+    count = forms.IntegerField(initial=0, required=False)
+    length = forms.FloatField(initial=0, required=False)
     country = forms.ModelChoiceField(queryset = Country.objects.all())    
     description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255, required=False)    
 

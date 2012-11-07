@@ -71,3 +71,5 @@ left join accounting_catalog on catalog_id=accounting_catalog.id;
 alter table `accounting_catalog` add `count` integer NOT NULL;
 alter table `accounting_catalog` add `length` double precision;
 
+alter table `accounting_bicycle` add `sale` double precision;
+update accounting_bicycle set sale=0;

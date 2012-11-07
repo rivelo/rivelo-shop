@@ -2,10 +2,25 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
-    <h1>Список велосипедів у магазині <br>{{text}}</h1>
+<h1>Список велосипедів у магазині <br>{{text}}</h1>
 <a href="/bicycle-store/all/view/seller/">Всі</a>
 <a href="/bicycle-store/view/seller/">Наявні</a>
+<b> Рік: </b>
+<a href="/bicycle-store/view/seller/year/2012/">2012</a>
+<a href="/bicycle-store/view/seller/year/2013/">2013</a>
 
+<br>
+<b>Розмір рами:</b>
+{% for size in sizes %}
+<a href="/bicycle-store/view/seller/bysize/{{size.id}}/">{{size.name}}</a>
+{% endfor %}
+
+<b>Виробники:</b>
+{% for comp in b_company %}
+<a href="/bicycle-store/view/seller/bycompany/{{comp.model__brand}}/">{{comp.model__brand__name}}[{{comp.num_company}}]</a>
+{% endfor %}
+
+{% load template_math %}   
 
 <table border="1">
     <tr>
@@ -15,8 +30,10 @@
     	<th>Номер рами</th>
     	<th>Розмір рами</th>
     	<th>Ціна</th>
-    <!-- <th>Опис</th> -->
-    	<th>Реалізація</th>
+    	<th>Знижка</th>
+    	<th>Нова ціна</th>
+    <!-- <th>Опис</th> 
+    	<th>Реалізація</th> -->
 		<th>Кількість</th> 
 		<th>Дата</th>
     	<th>Дія</th>
@@ -47,15 +64,24 @@
 	<td>
 	{{type.model.price}}       
 	</td>
+	<td align="center">
+	{{type.model.sale|floatformat:"0"}}%       
+	</td>
+	<td align="center">
+	{{type.model.sale|div:-100|sub:-1|mul:type.model.price|floatformat:"0"}} грн.       
+	</td>
+
+
 	
 <!-- <td>       
 	{{type.description}}
 	</td>
  -->	
-	<td align="center">
-<!-- 	<img src="/media/{{type.photo}}" alt="" title=""/>  -->       
+<!--	<td align="center">
+ 	<img src="/media/{{type.photo}}" alt="" title=""/>         
 	{{type.realization}}
 	</td>	
+	-->
 	{% ifequal type.count 1 %}
 			<td align="center">
 			<abbr title="Продати велосипед"><a href="/bicycle/sale/add/{{type.id}}">{{type.count}}</a></abbr>
@@ -82,7 +108,9 @@
     	<th></th>
     	<th></th>
     	<th>{{price_summ}}</th>
-    	<th>{{real_summ}}</th>
+<!--     	<th>{{real_summ}}</th>   -->
+<th></th>
+<th></th>
 		<th>{{bike_summ}}</th> 
 		<th></th>
     	<th></th>

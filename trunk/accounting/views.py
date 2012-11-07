@@ -337,14 +337,20 @@ def bicycle_del(request, id):
     return HttpResponseRedirect('/bicycle/view/')
 
 
-def bicycle_list(request, year=None):
+def bicycle_list(request, year=None, brand=None, percent=None):
     #yyy = None
     if year == None:
         now = datetime.datetime.now()
         year = now.year
-    list = Bicycle.objects.filter(year__year=year)
+    if brand == None:
+        list = Bicycle.objects.filter(year__year=year)
+    else:
+        list = Bicycle.objects.filter(year__year=year, brand=brand)
+        if percent!=None:
+            Bicycle.objects.filter(year__year=year, brand=brand).update(sale=percent)
+    bike_company = Bicycle.objects.filter(year__year=year).values('brand', 'brand__name').annotate(num_company=Count('model'))
     #return render_to_response('bicycle_list.html', {'bicycles': list.values_list()})
-    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_list.html'})
+    return render_to_response('index.html', {'bicycles': list, 'year': year, 'b_company': bike_company, 'sale': percent, 'weblink': 'bicycle_list.html'})
 
 
 def bicycle_all_list(request):
@@ -435,12 +441,26 @@ def bicycle_store_list(request, all=False):
     return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list.html', 'price_summ': price_summ, 'real_summ': real_summ, 'bike_summ': bike_summ})
 
 
-def bicycle_store_list_by_seller(request, all=False):
+def bicycle_store_list_by_seller(request, all=False, size='all', year='all', brand='all'):
     list = None
     if all==True:
-        list = Bicycle_Store.objects.all()
+        if brand == 'all':
+            list = Bicycle_Store.objects.all()
+        else:
+            list = Bicycle_Store.objects.filter(count=1, model__brand=brand)
     else:
-        list = Bicycle_Store.objects.filter(count=1)
+        if size == 'all':
+            if year == 'all':
+                list = Bicycle_Store.objects.filter(count=1)
+            else:
+                list = Bicycle_Store.objects.filter(count=1, model__year__year=year)
+        else:
+            if year == 'all':
+                list = Bicycle_Store.objects.filter(count=1, size=size)
+            else:
+                list = Bicycle_Store.objects.filter(count=1, model__year__year=year, size=size)
+            #list = Bicycle_Store.objects.filter(count=1, size=size)
+        
     price_summ = 0
     real_summ = 0
     bike_summ = 0
@@ -449,7 +469,9 @@ def bicycle_store_list_by_seller(request, all=False):
             price_summ = price_summ + item.price * item.count 
         real_summ = real_summ + item.realization
         bike_summ = bike_summ + item.count
-    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list_by_seller.html', 'price_summ': price_summ, 'real_summ': real_summ, 'bike_summ': bike_summ})
+    frames = FrameSize.objects.all()
+    bike_company = Bicycle_Store.objects.filter(count=1).values('model__brand', 'model__brand__name').annotate(num_company=Count('count'))
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list_by_seller.html', 'price_summ': price_summ, 'real_summ': real_summ, 'bike_summ': bike_summ, 'sizes': frames, 'b_company': bike_company})
 
 
 def bicycle_store_search(request):
@@ -485,10 +507,11 @@ def bicycle_store_price_print(request):
 
 
 def store_report_bysize(request, id):
-    list = Bicycle_Store.objects.filter(size=id)
+    list = Bicycle_Store.objects.filter(size = id, count = 1)
     frame = FrameSize.objects.get(id=id)
     frame_str = u"Розмір рами " + frame.name
-    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list.html', 'text': frame_str})
+    frames = FrameSize.objects.all()
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list.html', 'text': frame_str, 'sizes': frames})
 
     
 def store_report_bytype(request, id):
@@ -1537,11 +1560,13 @@ def catalog_add(request):
             color = form.cleaned_data['color']
             country = form.cleaned_data['country']
             price = form.cleaned_data['price']
+            count = form.cleaned_data['count']
+            length = form.cleaned_data['length']
             currency = form.cleaned_data['currency']
             description = form.cleaned_data['description']
             if photo != None:               
                 upload_path = processUploadedImage(photo, 'catalog/') 
-            Catalog(ids=ids, name=name, manufacturer=manufacturer, type=type, size=size, weight=weight, year=year, sale=sale, sale_to=sale_to, color=color, description=description, photo=upload_path, country=country, price=price, currency=currency).save()
+            Catalog(ids=ids, name=name, manufacturer=manufacturer, type=type, size=size, weight=weight, year=year, sale=sale, sale_to=sale_to, color=color, description=description, photo=upload_path, country=country, price=price, currency=currency, count=count, length=length).save()
             #return HttpResponseRedirect('/catalog/view/')
             return HttpResponseRedirect('/catalog/manufacture/' + str(manufacturer.id) + '/view/5')
     else:
@@ -2575,7 +2600,7 @@ def shop_price_lastadd(request, id):
     
 def shop_price_lastadd_print(request, id):
     list = Catalog.objects.all().order_by("-id")[:id]
-    return render_to_response('price_list.html', {'catalog': list})    
+    return render_to_response('price_list.html', {'catalog': list})     
 
 
 def shop_price_bysearch_id(request, id):
