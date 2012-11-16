@@ -15,6 +15,7 @@
 
 <table border="1">
 	<tr>
+		<th>#</th>
 		<th>ID</th>
 		<th>Велосипед</th>
 		<th>Номер рами</th>
@@ -34,7 +35,7 @@
 {% else %}
 <tr BGCOLOR="#CCCC99">
 {% endifequal %}
-
+		<td>{{forloop.counter}}</td>
 		<td><a href="/">{{type.id}}</a></td>
 		<td><a href="/bicycle/photo/{{type.model.id}}">{{type.model}}</a>
 		</td>
@@ -66,6 +67,7 @@
 
 
 	<tr>
+		<th></th>
 		<th></th>
 		<th></th>
 		<th></th>

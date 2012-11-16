@@ -118,6 +118,39 @@
    
 <table>
 
+{% if html %}
+<p>
+    [table]
+	[tr]
+    	[td]Назва[/td]
+    	[td]Розмір рами[/td]
+    	[td]Ціна[/td]
+    	[td]Знижка[/td]
+    	[td]Ціна зі знижкою[/td]
+    [/tr]
+    {% for bike in bicycles %}
+    [tr]
+	[td]
+    {{bike.model}}
+    [/td]
+	[td]
+    {{bike.size}}
+    [/td]
+	[td]
+    {{bike.model.price}}
+    [/td]
+	[td]
+    {{bike.model.sale|floatformat:"0"}}% 
+    [/td]
+	[td]
+    {{bike.model.sale|div:-100|sub:-1|mul:bike.model.price|floatformat:"0"}} грн.  
+    [/td]
+    [/tr]
+    {% endfor %}
+    [/table]    
+    </p>
+{% endif %}
+
 <br><br>
 <a href="/bicycle/store/report/sum/">Сумарна вартість велосипедів у магазині</a>
 <br>

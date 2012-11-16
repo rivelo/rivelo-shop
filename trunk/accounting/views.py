@@ -2,6 +2,9 @@
 
 from django.db.models import Q
 from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.core.urlresolvers import resolve
+
 from models import Manufacturer, Country, Type, Currency, Bicycle_Type, Bicycle,  FrameSize, Bicycle_Store, Bicycle_Sale, Bicycle_Order
 from forms import ContactForm, ManufacturerForm, CountryForm, CurencyForm, CategoryForm, BicycleTypeForm, BicycleForm, BicycleFrameSizeForm, BicycleStoreForm, BicycleSaleForm, BicycleOrderForm, BicycleSaleEditForm, BicycleOrderEditForm 
 
@@ -14,8 +17,9 @@ from forms import DealerManagerForm, DealerForm, DealerPaymentForm, DealerInvoic
 from models import WorkGroup, WorkType, WorkShop, WorkStatus, WorkTicket, CostType, Costs, ShopDailySales
 from forms import WorkGroupForm, WorkTypeForm, WorkShopForm, WorkStatusForm, WorkTicketForm, CostTypeForm, CostsForm, ShopDailySalesForm
   
-from django.http import HttpResponseRedirect, HttpRequest
+from django.http import HttpResponseRedirect, HttpRequest, HttpResponseNotFound
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import auth
 
 from django.http import HttpResponse 
 from django.http import Http404  
@@ -33,6 +37,20 @@ import pytils_ua
 
 now = datetime.datetime.now()
 
+
+def custom_proc(request):
+# "A context processor that provides 'app', 'user' and 'ip_address'."
+    return {
+        'app': 'Rivelo catalog',
+        'user': request.user,
+        'ip_address': request.META['REMOTE_ADDR']
+    }
+
+    
+def auth_group(user, group):
+    return True if user.groups.filter(name=group) else False
+
+
 def search(request):
     query = request.GET.get('q', '')
     if query:
@@ -48,19 +66,6 @@ def search(request):
     })
 
 
-#def contact(request):
-#    form = ContactForm()
-#    return render_to_response('contact.html', {'form': form})
-
-
-#def contact(request):
-#    if request.method == 'POST':
-#        form = ContactForm(request.POST)
-#    else:
-#        form = ContactForm()
-#    return render_to_response('contact.html', {'form': form})
-
-
 def del_logging(obj):
     file_name = 'test_log'
     log_path = settings.MEDIA_ROOT + 'logs/' + file_name + '.log'
@@ -68,7 +73,7 @@ def del_logging(obj):
     #for s in obj:
     #    result = result + ' | ' + s 
     #log_file.write("DELETE FROM TABLE " + table_name + " WHERE id = " + obj.name + "\n")
-    log_file.write("DELETE FROM TABLE %s WHERE id = %s \n" % (obj._meta.verbose_name, obj.id) )
+    log_file.write("%s >>> DELETE FROM TABLE %s WHERE id = %s \n" % (str(datetime.datetime.now()), obj._meta.verbose_name, obj.id) )
     #obj._meta.object_name
     #obj._meta.verbose_name
     #obj.__class__.__name__
@@ -86,22 +91,11 @@ def del_logging(obj):
     log_file.close()
 
 
-def contact(request):
-    if request.method == 'POST':
-        form = ContactForm(request.POST)
-        if form.is_valid():
-            topic = form.cleaned_data['topic']
-            message = form.cleaned_data['message']
-            sender = form.cleaned_data.get('sender', 'noreply@example.com')
-            return HttpResponseRedirect('/contact/thanks/')
-    else:
-        form = ContactForm()
-    return render_to_response('contact.html', {'form': form})
-
 # ------------ Country -----------------
 
 def country_add(request):
     a = Country()
+    current_url = request.get_full_path()
     if request.method == 'POST':
         form = CountryForm(request.POST, instance=a)
         if form.is_valid():
@@ -110,10 +104,12 @@ def country_add(request):
             return HttpResponseRedirect('/country/view/')
     else:
         form = CountryForm(instance = a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'country.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'country.html', 'next': current_url}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
-def country_delete(request, id):
+def country_del(request, id):
+    if auth_group(request.user, 'admin')==False:
+        return HttpResponseRedirect('/country/view/')
     obj = Country.objects.get(id=id)
     del_logging(obj)
     obj.delete() 
@@ -122,6 +118,7 @@ def country_delete(request, id):
 
 def country_edit(request, id):
     a = Country.objects.get(pk=id)
+    current_url = request.get_full_path()
     if request.method == 'POST':
         form = CountryForm(request.POST, instance=a)
         if form.is_valid():
@@ -129,21 +126,14 @@ def country_edit(request, id):
             return HttpResponseRedirect('/country/view/')
     else:
         form = CountryForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'country.html'})
-
-
-def country_del(request, id):
-    obj = Country.objects.get(id=id)
-    obj.delete()
-    return HttpResponseRedirect('/country/view/')
-    #list = Country.objects.all()
-    #return render_to_response('country_list.html', {'countries': list})
+    return render_to_response('index.html', {'form': form, 'weblink': 'country.html', 'next': current_url}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def country_list(request):
+    current_url = request.get_full_path()
     list = Country.objects.all()
     #return render_to_response('country_list.html', {'countries': list})
-    return render_to_response('index.html', {'countries': list, 'weblink': 'country_list.html'})
+    return render_to_response('index.html', {'countries': list, 'weblink': 'country_list.html', 'next': current_url}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 # ----------------- Bank --------------------
@@ -159,7 +149,7 @@ def bank_add(request):
     else:
         form = BankForm(instance=a)
     #return render_to_response('bank.html', {'form': form})
-    return render_to_response('index.html', {'form': form, 'weblink': 'bank.html', 'text': 'Додати новий банк'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'bank.html', 'text': 'Додати новий банк'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bank_edit(request, id):
@@ -171,10 +161,12 @@ def bank_edit(request, id):
             return HttpResponseRedirect('/bank/view/')
     else:
         form = BankForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'bank.html', 'text': 'Редагувати банк'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'bank.html', 'text': 'Редагувати банк'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bank_del(request, id):
+    if auth_group(request.user, 'admin')==False:
+        return HttpResponseRedirect('/bank/view/')
     obj = Bank.objects.get(id=id)
     del_logging(obj)
     obj.delete()
@@ -184,7 +176,7 @@ def bank_del(request, id):
 def bank_list(request):
     list = Bank.objects.all()
     #return render_to_response('bank_list.html', {'banks': list})
-    return render_to_response('index.html', {'banks': list, 'weblink': 'bank_list.html'})
+    return render_to_response('index.html', {'banks': list, 'weblink': 'bank_list.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 # ----------- Bicycle --------------
@@ -201,7 +193,7 @@ def bicycle_type_add(request):
     else:
         form = BicycleTypeForm(instance=a)
     #return render_to_response('bicycle_type.html', {'form': form})
-    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_type.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_type.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_type_edit(request, id):
@@ -213,10 +205,12 @@ def bicycle_type_edit(request, id):
             return HttpResponseRedirect('/bicycle-type/view/')
     else:
         form = BicycleTypeForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_type.html', 'text': 'Редагувати тип'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_type.html', 'text': 'Редагувати тип'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_type_del(request, id):
+    if auth_group(request.user, 'admin') == False:
+        return HttpResponseRedirect('/bicycle-type/view/')
     obj = Bicycle_Type.objects.get(id=id)
     del_logging(obj)
     obj.delete()
@@ -225,8 +219,7 @@ def bicycle_type_del(request, id):
 
 def bicycle_type_list(request):
     list = Bicycle_Type.objects.all()
-    #return render_to_response('bicycle_type_list.html', {'types': list.values()})
-    return render_to_response('index.html', {'types': list.values(), 'weblink': 'bicycle_type_list.html'})
+    return render_to_response('index.html', {'types': list.values(), 'weblink': 'bicycle_type_list.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_framesize_add(request):
@@ -241,8 +234,7 @@ def bicycle_framesize_add(request):
             return HttpResponseRedirect('/bicycle-framesize/view/')
     else:
         form = BicycleFrameSizeForm(instance=a)
-    #return render_to_response('bicycle_framesize.html', {'form': form})
-    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_framesize.html', 'text': 'Розмір рами (редагування)'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_framesize.html', 'text': 'Створення нового розміру рами'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_framesize_edit(request, id):
@@ -254,10 +246,12 @@ def bicycle_framesize_edit(request, id):
             return HttpResponseRedirect('/bicycle-framesize/view/')
     else:
         form = BicycleFrameSizeForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_framesize.html', 'text': 'Розмір рами (редагування)'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_framesize.html', 'text': 'Розмір рами (редагування)'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_framesize_del(request, id):
+    if auth_group(request.user, 'admin') == False:
+        return HttpResponseRedirect('/bicycle-framesize/view/')
     obj = FrameSize.objects.get(id=id)
     del_logging(obj)
     obj.delete()
@@ -267,7 +261,7 @@ def bicycle_framesize_del(request, id):
 def bicycle_framesize_list(request):
     list = FrameSize.objects.all()
     #return render_to_response('bicycle_framesize_list.html', {'framesizes': list.values_list()})
-    return render_to_response('index.html', {'framesizes': list, 'weblink': 'bicycle_framesize_list.html'})
+    return render_to_response('index.html', {'framesizes': list, 'weblink': 'bicycle_framesize_list.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def processUploadedImage(file, dir=''): 
@@ -287,6 +281,9 @@ def processUploadedImage(file, dir=''):
 
 
 def bicycle_add(request):
+    if (auth_group(request.user, 'seller') or auth_group(request.user, 'admin')) == False:
+        return HttpResponseRedirect('/bicycle/view/')
+    
     a = Bicycle(year=datetime.date.today())
     if request.method == 'POST':
         form = BicycleForm(request.POST, request.FILES, instance=a)
@@ -313,12 +310,13 @@ def bicycle_add(request):
         form = BicycleForm(instance=a)
 
     #return render_to_response('bicycle.html', {'form': form})
-    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle.html', 'text': 'Велосипед з каталогу (створення)'})
-    #context = {'form': form, }
-    #return direct_to_template(request, 'bicycle.html', extra_context=context)
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle.html', 'text': 'Велосипед з каталогу (створення)'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_edit(request, id):
+    if (auth_group(request.user, 'seller') or auth_group(request.user, 'admin')) == False:
+        return HttpResponseRedirect('/bicycle/view/')
+    
     a = Bicycle.objects.get(pk=id)
     if request.method == 'POST':
         form = BicycleForm(request.POST, instance=a)
@@ -327,10 +325,12 @@ def bicycle_edit(request, id):
             return HttpResponseRedirect('/bicycle/view/')
     else:
         form = BicycleForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle.html', 'text': 'Велосипед з каталогу (редагування)'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle.html', 'text': 'Велосипед з каталогу (редагування)'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_del(request, id):
+    if auth_group(request.user, 'admin') == False:
+        return HttpResponseRedirect('/bicycle/view/')
     obj = Bicycle.objects.get(id=id)
     del_logging(obj)
     obj.delete()
@@ -350,7 +350,7 @@ def bicycle_list(request, year=None, brand=None, percent=None):
             Bicycle.objects.filter(year__year=year, brand=brand).update(sale=percent)
     bike_company = Bicycle.objects.filter(year__year=year).values('brand', 'brand__name').annotate(num_company=Count('model'))
     #return render_to_response('bicycle_list.html', {'bicycles': list.values_list()})
-    return render_to_response('index.html', {'bicycles': list, 'year': year, 'b_company': bike_company, 'sale': percent, 'weblink': 'bicycle_list.html'})
+    return render_to_response('index.html', {'bicycles': list, 'year': year, 'b_company': bike_company, 'sale': percent, 'weblink': 'bicycle_list.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_all_list(request):
@@ -441,7 +441,7 @@ def bicycle_store_list(request, all=False):
     return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list.html', 'price_summ': price_summ, 'real_summ': real_summ, 'bike_summ': bike_summ})
 
 
-def bicycle_store_list_by_seller(request, all=False, size='all', year='all', brand='all'):
+def bicycle_store_list_by_seller(request, all=False, size='all', year='all', brand='all', html=False):
     list = None
     if all==True:
         if brand == 'all':
@@ -471,7 +471,7 @@ def bicycle_store_list_by_seller(request, all=False, size='all', year='all', bra
         bike_summ = bike_summ + item.count
     frames = FrameSize.objects.all()
     bike_company = Bicycle_Store.objects.filter(count=1).values('model__brand', 'model__brand__name').annotate(num_company=Count('count'))
-    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list_by_seller.html', 'price_summ': price_summ, 'real_summ': real_summ, 'bike_summ': bike_summ, 'sizes': frames, 'b_company': bike_company})
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list_by_seller.html', 'price_summ': price_summ, 'real_summ': real_summ, 'bike_summ': bike_summ, 'sizes': frames, 'b_company': bike_company, 'html': html})
 
 
 def bicycle_store_search(request):
@@ -516,10 +516,12 @@ def store_report_bysize(request, id):
     
 def store_report_bytype(request, id):
     #list = Bicycle.objects.filter(type=id)
-    list = Bicycle_Store.objects.filter(model__type__exact=id)
-    frame = Bicycle_Type.objects.get(id=id)
-    text = u"Тип велосипеду: " + frame.type
-    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list.html', 'text': text})
+    list = Bicycle_Store.objects.filter(model__type__exact=id, count__gt=0)
+    #frame = Bicycle_Type.objects.get(id=id)
+    type = list[0].model.type.type
+    #text = u"Тип велосипеду: " + frame.type
+    text = u"Тип велосипеду: " + type
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list_by_seller.html', 'text': text})
 
 
 def bicycle_sale_add(request, id=None):
@@ -1081,7 +1083,10 @@ def invoicecomponent_list(request, mid=None, limit=0):
     if limit == 0:
         list = InvoiceComponentList.objects.all().values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count').annotate(sum_catalog=Sum('count')).order_by("catalog__type")        
     else:
-        list = InvoiceComponentList.objects.filter(catalog__count__gt=0).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count').annotate(sum_catalog=Sum('count')).order_by("catalog__type")        
+        list = InvoiceComponentList.objects.filter(catalog__count__gt=0).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
+        list = list[:limit]
+        #list = list.order_by("catalog__manufacturer__name")
+        #list = list.filter(catalog=90)                
 #        list = InvoiceComponentList.objects.filter(catalog__count__lt=0).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count').annotate(sum_catalog=Sum('count')).order_by("-id")
 #        list = InvoiceComponentList.objects.all().values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count').annotate(sum_catalog=Sum('count')).order_by("-id")
 
@@ -1111,7 +1116,7 @@ def invoicecomponent_list(request, mid=None, limit=0):
 
         
     return render_to_response('index.html', {'company_list': company_list, 'componentlist': new_list, 'zsum':zsum, 'zcount':zcount, 'weblink': 'invoicecomponent_list.html'})
-
+ 
 
 def invoicecomponent_list_by_manufacturer(request, mid=None, availability=False):
     company_list = Manufacturer.objects.all()
@@ -1150,7 +1155,7 @@ def invoicecomponent_list_by_manufacturer(request, mid=None, availability=False)
     else:
         company_name = company_list.get(id=mid)
 
-    return render_to_response('index.html', {'company_list': company_list, 'company_name': company_name, 'company_id':mid, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
+    return render_to_response('index.html', {'company_list': company_list, 'company_name': company_name, 'company_id':mid, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
     
 #===============================================================================
@@ -1202,7 +1207,7 @@ def invoicecomponent_list_by_category(request, cid=None, limit=0):
         cat_name = category_list.get(id=cid)
 
 
-    return render_to_response('index.html', {'category_list': category_list, 'category_name': cat_name, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
+    return render_to_response('index.html', {'category_list': category_list, 'category_name': cat_name, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def invoicecomponent_manufacturer_html(request, mid):
@@ -2098,6 +2103,7 @@ def client_invoice_sale_report(request):
 
 def client_invoice_delete(request, id):
     obj = ClientInvoice.objects.get(id=id)
+    del_logging(obj)
     obj.delete()
     cat = Catalog.objects.get(id = obj.catalog.id)
     cat.count = cat.count + obj.count
@@ -2477,21 +2483,27 @@ def shopdailysales_add(request):
     return render_to_response('index.html', {'form': form, 'weblink': 'shop_daily_sales.html'})
 
 
-def shopmonthlysales_view(request):
-#    deb = ClientDebts.objects.values('date__year').annotate(suma=Sum("price"))
-    deb = ClientDebts.objects.filter(date__year=now.year, date__month=now.month).extra(select={'year': "EXTRACT(year FROM date)", 'month': "EXTRACT(month from date)", 'day': "EXTRACT(day from date)"}).values('year', 'month', 'day').annotate(suma=Sum("price")).order_by()
-    cred = ClientCredits.objects.filter(date__year=now.year, date__month=now.month).extra(select={'year': "EXTRACT(year FROM date)", 'month': "EXTRACT(month from date)", 'day': "EXTRACT(day from date)"}).values('year', 'month', 'day').annotate(suma=Sum("price")).order_by()
+def shopmonthlysales_view(request, year=now.year, month=now.month):
+    if auth_group(request.user, 'admin') == False:
+        return HttpResponseRedirect("/.")
+    deb = ClientDebts.objects.filter(date__year=year, date__month=month).extra(select={'year': "EXTRACT(year FROM date)", 'month': "EXTRACT(month from date)", 'day': "EXTRACT(day from date)"}).values('year', 'month', 'day').annotate(suma=Sum("price")).order_by()
+    cred = ClientCredits.objects.filter(date__year=year, date__month=month).extra(select={'year': "EXTRACT(year FROM date)", 'month': "EXTRACT(month from date)", 'day': "EXTRACT(day from date)"}).values('year', 'month', 'day').annotate(suma=Sum("price")).order_by()
+    sum_cred = 0
+    sum_deb = 0
     
     for element in cred:
         element['cred']=0
+        sum_cred = sum_cred + element['suma']
         for deb_element in deb:
             if (deb_element['year']==element['year']) and (deb_element['month']==element['month']) and (deb_element['day']==element['day']):
                 element['deb']=deb_element['suma']
+                sum_deb = sum_deb + deb_element['suma']
                 #element['balance']=element['sum_catalog'] - element['c_sale']
             
     strdate = pytils_ua.dt.ru_strftime(u"%d %B %Y", now, inflected=True)
     date_month = pytils_ua.dt.ru_strftime(u"%B %Y", now, inflected=True)
-    return render_to_response('index.html', {'Cdeb': deb, 'Ccred':cred, 'date': strdate, 'date_month': date_month, 'weblink': 'shop_monthly_sales_view.html'})
+
+    return render_to_response('index.html', {'sum_cred': sum_cred, 'sum_deb': sum_deb, 'Cdeb': deb, 'Ccred':cred, 'date': strdate, 'date_month': date_month, 'l_month': xrange(1,13), 'weblink': 'shop_monthly_sales_view.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def shopdailysales_view(request, year, month, day):
@@ -2918,7 +2930,9 @@ def ajax_search(request):
          
 
 def sendemail(request):
-    send_mail('Rivelo shop', 'Here is the new message with you check.', 'rivelo@ymail.com', ['igor.panchuk@gmail.com'], fail_silently=False)    
+#    send_mail('Rivelo shop', 'Here is the new message with you check.', 'rivelo@ymail.com', ['igor.panchuk@gmail.com'], fail_silently=False)
+    send_mail('subj - Test rivelo check', 'Here is the new message with you check.', 'rivelo@ymail.com', ['igor.panchuk@gmail.com'],)
+    #send_mail('subj - Test rivelo check', ‘message’, ‘from@mail.ru’, ‘rivelo@ymail.com’)        
     return render_to_response('index.html')
 
 
@@ -2928,3 +2942,41 @@ def xhr_test(request):
     else:
         message = "Hello"
     return HttpResponse(message, mimetype="text/plain")
+
+
+from django.contrib import auth 
+
+def login(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    next = request.POST['next']
+    user = auth.authenticate(username=username, password=password)
+    if user is not None and user.is_active:
+        # Правильный пароль и пользователь "активен"
+        auth.login(request, user)
+        # Перенаправление на "правильную" страницу
+        if next:
+            return HttpResponseRedirect(next)
+        else:
+            return HttpResponseRedirect("/.")            
+    else:
+        # Отображение страницы с ошибкой
+        if next:
+            return HttpResponseRedirect(next)
+        else:
+            return HttpResponseRedirect("/.")            
+
+
+def logout(request):
+    auth.logout(request)
+    next_page = request.POST['next_page']
+    # Перенаправление на страницу.
+    if next_page:
+        return HttpResponseRedirect(next_page)
+    else:
+        return HttpResponseRedirect("/.")
+
+
+#    current_url = request.META.get('HTTP_REFERER')
+#    stroka = "<h1>Acces denied</h1> <a href=" +  current_url + ">Prev Page</a>"
+#    return HttpResponseNotFound(stroka)
