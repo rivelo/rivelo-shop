@@ -38,6 +38,7 @@
 			<li><a href="/catalog/search/id/">Пошук по ID</a></li>
 			<li><a href="/category/view/">Класифікатор</a></li>
 		</ul>
+{% if user.is_authenticated %}			
 	</li>
 		<li><a href="#">Постачальники</a>
 		<ul>
@@ -48,6 +49,7 @@
 			<li><a href="/dealer/invoice/search/">Пошук накладної</a></li>
 		</ul>
 	</li>	
+{%endif%}
 		<li><a href="#">Магазин</a>
 		<ul>
 			<li><a href="/shop/sale/day/add/">Торгівельна виручка</a></li>
@@ -74,7 +76,7 @@
 			<li><a href="/manyforms/test1/">Тестовий формсет 3</a></li>
 			
 		</ul>
-		
+{% if user.is_authenticated %}		
 	</li>	
 		<li><a href="#">Власні затрати</a>
 		<ul>
@@ -82,6 +84,20 @@
 			<li><a href="/cost/view/">Затрати</a></li>
 		</ul>
 	</li>
+{%endif%}	
+
+{# {% if request.user.is_superuser %} #}
+{% if perms.accounting.add_preorder %}
+</li>	
+	<li><a href="#">Report's</a>
+		<ul>
+			<li><a href="/shop/sale/month/view/">Оборот коштів за місяць</a></li>
+		</ul>
+	</li>
+{%endif%}	
+</li>	
+
+
 	<li><a href="#">Довідники</a>
 		<ul>
 			<li><a href="/country/view/">Країни</a></li>

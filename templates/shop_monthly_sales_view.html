@@ -2,11 +2,20 @@
 
 <h1>Оборот коштів за місяць {{date_month}} року</h1>
 
+{# range(12)#}
+
+<b>Місяць:</b>
+{% for month in l_month %}
+<a href="/shop/sale/month/{{month}}/view">{{month}}</a>, 
+{% endfor %}
+
+
 	<table border=1>
-	<tr><th>Дата</th>
+	<tr>
+	<th>Дата</th>
 	<th>Оплати</th>
 	<th>Заборгованісті</th>
-	
+	</tr>
 {% for cred in Ccred %}
 	<tr>
 	<td>
@@ -18,8 +27,12 @@
 	<td>
 	{{cred.deb}}
 	</td>
-	{% endfor %}
+{% endfor %}
 	</tr>
-	
+	<tr>
+	<th>Сума</th>
+	<th>{{sum_cred}}</th>
+	<th>{{sum_deb}}</th>
+	</tr>
 	</table>
 	

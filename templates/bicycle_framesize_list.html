@@ -2,7 +2,7 @@
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
 
-<h1>Розміри рам</h1>
+<h1>Розміри рам <a href="/bicycle-framesize/add/">(Додати)</a></h1>
 
 <table>
 	<tr>
@@ -23,16 +23,11 @@
 		<td>{{type.inch}}</td>
 		<td><a href="/bicycle/store/report/bysize/{{ type.id }}/">Наявні
 		велосипеди</a></td>
-		<td><a href="/manufacturer/delete/{{ type.id }}">delete</a></td>
+		<td><a href="/bicycle/framesize/delete/{{ type.id }}" onclick="return confirm('Видалити запис - {{type.name}}?')">delete</a></td>
 	</tr>
 	{% endfor %}
 
 	<table>
 
-		<br>
-		<br>
-		<a href="/">Головна сторінка (HOME)</a>
-		<br>
-		<a href="/bicycle-framesize/add/">Додати новий розмір (Add)</a>
-		<br>
-		<a href="/bicycle-store/add/">Додати велосипед до магазину(Add)</a>
+	<br>
+	<a href="/bicycle-framesize/add/">Додати новий розмір</a>

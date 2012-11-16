@@ -1,11 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
 <html lang="en">
 <head>
-{% include "top.html" %}
     <title>Add Country</title>
 </head>
-<body>
-    <h1>Country</h1>
+<body onload="document.getElementById('id_name').focus()">
+    <h1>Додати країну до списку (Add Country)</h1>
     <form action="" method="POST">
         <table>
             {{ form.as_ul }}

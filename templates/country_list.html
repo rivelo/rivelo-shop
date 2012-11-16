@@ -2,22 +2,24 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <html lang="en">
 <head>
-{% include "top.html" %}
     <title>Country</title>
     <link rel="stylesheet" type="text/css" href="/media/table.css">
 </head>
 <body>
-    <h1>Список країн</h1>
+    <h1>Список країн виробників <a href="/country/add/">(Додати)</a></h1>
 
     <table>
     <tr>
+    	<th>#</th>
     	<th>Назва</th>
     	<th>Дія</th>
     	<th>Дія</th>
     </tr>
     {% for country in countries %}
     <tr>
-
+		<td>
+		{{ forloop.counter }}
+		</td>
         <td>
             {{ country }}
         </td>
@@ -26,15 +28,13 @@
         	<a href="/country/edit/{{ country.id }}">edit</a>
         </td>
         <td>
-            <a href="/country/delete/{{ country.id }}">delete</a>
+            <a href="/country/delete/{{ country.id }}" onclick="return confirm('Видалити запис - {{country.name}}?')">delete</a>
         </td>
     </tr>
     {% endfor %}
     <table>
 
 <br><br>
-<a href="/">HOME</a>
-<br>
 <a href="/country/add/">Add</a>        
 
 </body>

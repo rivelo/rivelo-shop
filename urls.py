@@ -4,6 +4,7 @@ from catalog.views import current_datetime, main_page
 from catalog.test import current_datetime as curdate
 from django.views.generic.simple import direct_to_template
 from django.conf import settings
+from django.contrib.auth.views import login, logout
 #from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 #from django.conf.urls.static import static
 
@@ -18,8 +19,6 @@ admin.autodiscover()
 urlpatterns = patterns('',
     (r'^search/$', 'catalog.accounting.views.search'), 
     (r'^contact/thanks/$', direct_to_template, {'template': 'thanks.html'}),
-    (r'^contact/$', 'catalog.accounting.views.contact'),
-
 
     (r'^manyforms/(?P<author_id>\d+)$', 'catalog.accounting.views.manage_works'),
     (r'^manyforms/test/$', 'catalog.accounting.views.formset_test'),
@@ -37,8 +36,7 @@ urlpatterns = patterns('',
     (r'^country/add/$', 'catalog.accounting.views.country_add'),
     (r'^country/view/$', 'catalog.accounting.views.country_list'),
     (r'^country/edit/(?P<id>\d+)/$', 'catalog.accounting.views.country_edit'),    
-    (r'^country/delete/(?P<id>\d+)/$', 'catalog.accounting.views.country_delete'),
-    #(r'^country/delete/(?P<id>\d)/$', 'catalog.accounting.views.dealer2_del'),
+    (r'^country/delete/(?P<id>\d+)/$', 'catalog.accounting.views.country_del'),
 
     # Bank operation
     (r'^bank/add/$', 'catalog.accounting.views.bank_add'),
@@ -80,6 +78,7 @@ urlpatterns = patterns('',
     (r'^bicycle-store/view/seller/bysize/(?P<size>\d+)/year/(?P<year>\d+)/$', 'catalog.accounting.views.bicycle_store_list_by_seller'),
     (r'^bicycle-store/view/seller/year/(?P<year>\d+)/$', 'catalog.accounting.views.bicycle_store_list_by_seller'),
     (r'^bicycle-store/view/seller/bycompany/(?P<brand>\d+)/$', 'catalog.accounting.views.bicycle_store_list_by_seller', {'all': True}),        
+    (r'^bicycle-store/view/seller/bycompany/(?P<brand>\d+)/html/$', 'catalog.accounting.views.bicycle_store_list_by_seller', {'all': True, 'html': True}),
     (r'^bicycle-store/now/view/$', 'catalog.accounting.views.bicycle_store_list'),
     (r'^bicycle-store/all/view/$', 'catalog.accounting.views.bicycle_store_list',{'all': True}),
     (r'^bicycle-store/view/$', 'catalog.accounting.views.bicycle_store_list'),
@@ -261,6 +260,7 @@ urlpatterns = patterns('',
     (r'^workshop/delete/(?P<id>\d+)/$', 'catalog.accounting.views.workshop_delete'),    
 
     (r'^shop/sale/day/add/$', 'catalog.accounting.views.shopdailysales_add'),
+    (r'^shop/sale/month/(?P<month>\d+)/view/$', 'catalog.accounting.views.shopmonthlysales_view'),    
     (r'^shop/sale/month/view/$', 'catalog.accounting.views.shopmonthlysales_view'),
     (r'^shop/year/(?P<year>\d+)/month/(?P<month>\d+)/day/(?P<day>\d+)/view/$', 'catalog.accounting.views.shopdailysales_view'),    
     (r'^shop/sale/day/edit/(?P<id>\d+)/$', 'catalog.accounting.views.shopdailysales_edit'),
@@ -308,21 +308,33 @@ urlpatterns = patterns('',
     
     (r'^images/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     
-
+    (r'^accounts/login/$',  'catalog.accounting.views.login'),
+    (r'^accounts/logout/$', 'catalog.accounting.views.logout'),
+    
+    
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:
-    # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    (r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    (r'^admin/', include(admin.site.urls)),
+    #(r'^admin/', include('admin.site.urls')),
+
+    (r'^$', main_page),
 
     # Uncomment the next line to enable the admin:
     #(r'^admin/(.*)', admin.site.root),
-    (r'^$', main_page),
+    
 )
 
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns 
+urlpatterns += staticfiles_urlpatterns()
 
-if settings.DEBUG:
-    urlpatterns += patterns('',
-        (r'^debuginfo$', 'catalog.views.debug'),
-    )
+#===============================================================================
+# 
+# if settings.DEBUG:
+#    urlpatterns += patterns('',
+#        (r'^debuginfo$', 'catalog.views.debug'),
+#    )
+#===============================================================================
 
 #===============================================================================
 # if settings.DEBUG:

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
-from catalog.accounting.models import Type, Size, Exchange, Manufacturer, Catalog, Country, Dealer, Currency, Bicycle_Type
+from catalog.accounting.models import Type, Size, Exchange, Manufacturer, Catalog, Country, Dealer, Currency
 
 
 
@@ -69,14 +69,6 @@ class CurrencyAdmin(admin.ModelAdmin):
     search_fields = ('ids', 'name',)
     
 admin.site.register(Currency, CurrencyAdmin)
-    
-
-class Bicycle_TypeAdmin(admin.ModelAdmin):
-    list_display = ('type', 'description')
-    ordering = ('-type',)
-    search_fields = ('type',)
-
-admin.site.register(Bicycle_Type, Bicycle_TypeAdmin)    
 
 
 

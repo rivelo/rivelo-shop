@@ -1,3 +1,6 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
 <style type="text/css">
    #mainmenutable {
     width:100%; 
@@ -8,6 +11,48 @@
    text-align:right;
    border-color:white;
    }
+
+   p {
+    font-family: 'Times New Roman', Times, serif; /* Шрифт с засечками */
+    font-style: italic; /* Курсивное начертание */
+    font-size: 16px;
+   }
+   
+input:focus{
+  outline:none;
+  border-color:rgba(255,25,33,.75);
+  border-radius:3px;
+  -moz-border-radius:3px;
+  -webkit-border-radius:3px;
+}
+
+input{
+  border:1px solid #aaa;
+  border-radius:3px;
+  -moz-border-radius:3px;
+  -webkit-border-radius:3px;
+  transition:border linear .2s,box-shadow linear .2s;
+  -moz-transition:border linear .2s,-moz-box-shadow linear .2s;
+  -webkit-transition:border linear .2s,-webkit-box-shadow linear .2s;
+}
+
+	submit {
+    width: 100px;
+    color: #fff;
+    text-transform: uppercase;
+    text-shadow: #000 1px 1px;
+    border-top: 1px solid #ad64e0;
+    margin-top: 10px;
+    font-style: bold;
+	}	   
+
+   label {
+    font-family: 'Times New Roman', Times, serif; /* Шрифт с засечками */
+    font-style: bold;
+    font-size: 14px;
+    color: black;
+   }
+	   
 </style>
 
 <table id="mainmenutable"><tr>
@@ -16,6 +61,30 @@
 </td>
 <td id="tdlogo">
 <a href="/"><img src="/media/images/riban.gif" alt="" title=""/></a>
+
+{% load i18n %}
+
+
+{% if user.is_authenticated %}
+  <form method="post" action="/accounts/logout/">
+        {% csrf_token %}
+        <label>User name: {{user.username|upper}}</label>
+        <input type="submit" name="logout" value="{% trans "Logout" %}" class="ptserif"/>
+        <input type="hidden" name="next_page" value="{{ next|escape }}" />
+    </form>
+{% else %}
+  <form action="/accounts/login/" method="post">
+    <label for="username">User name:</label>
+    <input type="text" name="username" value="" id="username">
+    <label for="password">Password:</label>
+    <input type="password" name="password" value="" id="password">
+
+    <input type="submit" value="login" />
+    <input type="hidden" name="next" value="{{ next|escape }}" />
+  </form>
+{% endif %}
+
+
 </td>
 </tr>
 </table>
