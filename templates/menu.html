@@ -76,7 +76,7 @@
 			<li><a href="/manyforms/test1/">Тестовий формсет 3</a></li>
 			
 		</ul>
-{% if user.is_authenticated %}		
+{% if perms.accounting.add_preorder %}		
 	</li>	
 		<li><a href="#">Власні затрати</a>
 		<ul>
@@ -84,10 +84,9 @@
 			<li><a href="/cost/view/">Затрати</a></li>
 		</ul>
 	</li>
-{%endif%}	
 
 {# {% if request.user.is_superuser %} #}
-{% if perms.accounting.add_preorder %}
+
 </li>	
 	<li><a href="#">Report's</a>
 		<ul>
@@ -97,7 +96,7 @@
 {%endif%}	
 </li>	
 
-
+{% if user.is_authenticated %}		
 	<li><a href="#">Довідники</a>
 		<ul>
 			<li><a href="/country/view/">Країни</a></li>
@@ -107,5 +106,5 @@
 			<li><a href="/manufacturer/view/">Виробники</a></li>
 		</ul>
 	</li>
-	
+{%endif%}	
 </ul>

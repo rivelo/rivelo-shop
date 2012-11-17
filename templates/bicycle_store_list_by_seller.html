@@ -93,9 +93,11 @@
 	{{type.date|date:"D d M Y"}}
 	</td>
 	<td>
+{% if user.is_authenticated %}
     <a href="/bicycle-store/edit/{{ type.id }}">edit</a>
     <br>	
     <a href="/bicycle-store/delete/{{ type.id }}">delete</a>
+{% endif %}
     </td>
 </tr>
 {% endfor %}       

@@ -24,8 +24,10 @@
         {{ type.description }}
         </td>
         	<td><a href="/bicycle/store/report/bytype/{{ type.id }}/">Наявні велосипеди</a></td>
-        <td>	
+        <td>
+	{% if user.is_authenticated %}	        	
             <a href="/bicycle-type/delete/{{ type.id }}" onclick="return confirm('Видалити запис - {{type.type}}?')">delete</a>
+    {% endif %}
         </td>
     </tr>
     {% endfor %}

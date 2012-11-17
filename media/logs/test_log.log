@@ -93,3 +93,44 @@ Key = name - Value = Belgium
 2012-11-15 23:46:27.406000 >>> DELETE FROM TABLE country WHERE id = 2 
 Key = id - Value = 2
 Key = name - Value = Canada
+2012-11-17 01:33:02.796000 >>> DELETE FROM TABLE bicycle_ store WHERE id = 99 
+Key = id - Value = 99
+Key = model - Value = 124
+Key = serial_number - Value = MM13318
+Key = size - Value = 22
+Key = price - Value = 708.0
+Key = currency - Value = 2
+Key = count - Value = 1
+Key = realization - Value = False
+Key = date - Value = 2012-02-22
+Key = description - Value = 
+2012-11-17 11:53:10.562000 >>> DELETE FROM TABLE client credits WHERE id = 607 
+Key = id - Value = 607
+Key = client - Value = 2
+Key = date - Value = 2012-07-16 17:04:45
+Key = price - Value = 89.05
+Key = description - Value = Swiss+Tech Micro-Plus EX 9-in-1 ; 
+2012-11-17 11:56:45.125000 >>> DELETE FROM TABLE client credits WHERE id = 656 
+Key = id - Value = 656
+Key = client - Value = 2
+Key = date - Value = 2012-07-20 00:00:00
+Key = price - Value = 322.15
+Key = description - Value = Закриття боргу 
+2012-11-17 11:57:19.671000 >>> DELETE FROM TABLE client credits WHERE id = 2177 
+Key = id - Value = 2177
+Key = client - Value = 2
+Key = date - Value = 2012-11-01 15:42:28
+Key = price - Value = 47.0
+Key = description - Value = Крюк д/крепежа вело ICE TOOLZ P655 с уголком ; 
+2012-11-17 11:57:51.265000 >>> DELETE FROM TABLE client credits WHERE id = 1384 
+Key = id - Value = 1384
+Key = client - Value = 2
+Key = date - Value = 2012-08-27 17:24:51
+Key = price - Value = 7.0
+Key = description - Value = Спица Sapim Laser 14G 291, с нип. Brass 14G 12 polyax (уп. 50 шт); 
+2012-11-17 11:58:43.890000 >>> DELETE FROM TABLE client credits WHERE id = 2146 
+Key = id - Value = 2146
+Key = client - Value = 2
+Key = date - Value = 2012-10-27 18:57:22
+Key = price - Value = 12.0
+Key = description - Value =     Велоаптечка VK (9 латок, клей, наждак) ; 

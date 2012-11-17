@@ -62,7 +62,11 @@ for(var i = 0; i < All.elements.length; ++i) {
 	{{credit.date|date}}
 	</td>
 	<td>
-	{{credit.description}}
+	{{credit.description}} 
+{#	{% if perms.accounting.delete_clientcredits %} #}
+	{% if perms.accounting.delete_preorder %}
+	<a href="/clientcredits/delete/{{ credit.id }}" onclick="return confirm('Видалити запис?')">delete</a>
+	{% endif %}
 	</td>
 	<td>
 	{{credit.price}}

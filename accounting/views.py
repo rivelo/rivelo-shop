@@ -51,6 +51,10 @@ def auth_group(user, group):
     return True if user.groups.filter(name=group) else False
 
 
+def current_url(request):
+    return request.get_full_path()
+
+
 def search(request):
     query = request.GET.get('q', '')
     if query:
@@ -149,7 +153,7 @@ def bank_add(request):
     else:
         form = BankForm(instance=a)
     #return render_to_response('bank.html', {'form': form})
-    return render_to_response('index.html', {'form': form, 'weblink': 'bank.html', 'text': 'Додати новий банк'}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'form': form, 'weblink': 'bank.html', 'text': 'Додати новий банк', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bank_edit(request, id):
@@ -161,7 +165,7 @@ def bank_edit(request, id):
             return HttpResponseRedirect('/bank/view/')
     else:
         form = BankForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'bank.html', 'text': 'Редагувати банк'}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'form': form, 'weblink': 'bank.html', 'text': 'Редагувати банк', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bank_del(request, id):
@@ -176,7 +180,7 @@ def bank_del(request, id):
 def bank_list(request):
     list = Bank.objects.all()
     #return render_to_response('bank_list.html', {'banks': list})
-    return render_to_response('index.html', {'banks': list, 'weblink': 'bank_list.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'banks': list, 'weblink': 'bank_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 # ----------- Bicycle --------------
@@ -193,7 +197,7 @@ def bicycle_type_add(request):
     else:
         form = BicycleTypeForm(instance=a)
     #return render_to_response('bicycle_type.html', {'form': form})
-    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_type.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_type.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_type_edit(request, id):
@@ -205,7 +209,7 @@ def bicycle_type_edit(request, id):
             return HttpResponseRedirect('/bicycle-type/view/')
     else:
         form = BicycleTypeForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_type.html', 'text': 'Редагувати тип'}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_type.html', 'text': 'Редагувати тип', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_type_del(request, id):
@@ -219,7 +223,7 @@ def bicycle_type_del(request, id):
 
 def bicycle_type_list(request):
     list = Bicycle_Type.objects.all()
-    return render_to_response('index.html', {'types': list.values(), 'weblink': 'bicycle_type_list.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'types': list.values(), 'weblink': 'bicycle_type_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_framesize_add(request):
@@ -418,6 +422,9 @@ def bicycle_store_edit(request, id):
 
 
 def bicycle_store_del(request, id):
+    if request.user.has_perm('accounting.delete_bicycle_store') == False:
+        return HttpResponseRedirect('/.')
+    #    return HttpResponseRedirect('/bicycle-store/view/seller/')
     obj = Bicycle_Store.objects.get(id=id)
     del_logging(obj)
     obj.delete()
@@ -515,13 +522,16 @@ def store_report_bysize(request, id):
 
     
 def store_report_bytype(request, id):
-    #list = Bicycle.objects.filter(type=id)
     list = Bicycle_Store.objects.filter(model__type__exact=id, count__gt=0)
-    #frame = Bicycle_Type.objects.get(id=id)
+    if bool(list) == False:
+        type = Bicycle_Type.objects.get(id = id)
+        s = "Велосипедів <b>" + str(type.type) + "</b> типу в наявності не має"
+        return HttpResponse(s) 
     type = list[0].model.type.type
-    #text = u"Тип велосипеду: " + frame.type
     text = u"Тип велосипеду: " + type
-    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list_by_seller.html', 'text': text})
+    if auth_group(request.user, 'admin'):
+        return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list.html', 'text': text, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list_by_seller.html', 'text': text, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_sale_add(request, id=None):
@@ -1958,6 +1968,8 @@ def clientcredits_edit(request, id):
 
 
 def clientcredits_delete(request, id):
+    if auth_group(request.user, "admin") == False:
+        return HttpResponseRedirect('/.')
     obj = ClientCredits.objects.get(id=id)
     del_logging(obj)
     obj.delete()
@@ -2191,7 +2203,7 @@ def client_result(request):
     #list_debt = ClientDebts.objects.filter(client='2').annotate(Sum("price"))
     #return render_to_response('index.html', {'clients': list_credit.values_list(), 'weblink': 'client_result.html'})
     #return render_to_response('index.html', {'clients': list_debt.values_list(), 'weblink': 'client_result.html'})
-    return render_to_response('index.html', {'clients': res, 'invoice': client_invoice, 'client_invoice_sum': client_invoice_sum, 'workshop': client_workshop, 'client_workshop_sum': client_workshop_sum, 'weblink': 'client_result.html', 'debt_list': debt_list, 'credit_list': credit_list, 'client_name': client_name})
+    return render_to_response('index.html', {'clients': res, 'invoice': client_invoice, 'client_invoice_sum': client_invoice_sum, 'workshop': client_workshop, 'client_workshop_sum': client_workshop_sum, 'weblink': 'client_result.html', 'debt_list': debt_list, 'credit_list': credit_list, 'client_name': client_name, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 # --------------- WorkShop -----------------
