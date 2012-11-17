@@ -134,3 +134,87 @@ Key = client - Value = 2
 Key = date - Value = 2012-10-27 18:57:22
 Key = price - Value = 12.0
 Key = description - Value =     Велоаптечка VK (9 латок, клей, наждак) ; 
+2012-11-17 15:05:40.536337 >>> DELETE FROM TABLE client credits WHERE id = 656 
+Key = id - Value = 656
+Key = client - Value = 2
+Key = date - Value = 2012-07-20 00:00:00
+Key = price - Value = 322.15
+Key = description - Value = Закриття боргу 
+2012-11-17 15:10:57.130401 >>> DELETE FROM TABLE client credits WHERE id = 607 
+Key = id - Value = 607
+Key = client - Value = 2
+Key = date - Value = 2012-07-16 17:04:45
+Key = price - Value = 89.05
+Key = description - Value = Swiss+Tech Micro-Plus EX 9-in-1 ; 
+2012-11-17 15:11:32.289416 >>> DELETE FROM TABLE client credits WHERE id = 607 
+Key = id - Value = 607
+Key = client - Value = 2
+Key = date - Value = 2012-07-16 17:04:45
+Key = price - Value = 89.05
+Key = description - Value = Swiss+Tech Micro-Plus EX 9-in-1 ; 
+2012-11-17 15:12:43.094866 >>> DELETE FROM TABLE client credits WHERE id = 2257 
+Key = id - Value = 2257
+Key = client - Value = 2
+Key = date - Value = 2012-11-10 19:19:23
+Key = price - Value = 19.0
+Key = description - Value = Защита JAGWIRE на рубашки CHA054 3G - рубашки 4-5мм White (1 шт) ; 
+2012-11-17 15:25:33.292662 >>> DELETE FROM TABLE client credits WHERE id = 2177 
+Key = id - Value = 2177
+Key = client - Value = 2
+Key = date - Value = 2012-11-01 15:42:28
+Key = price - Value = 47.0
+Key = description - Value = Крюк д/крепежа вело ICE TOOLZ P655 с уголком ; 
+2012-11-17 15:30:53.023089 >>> DELETE FROM TABLE client credits WHERE id = 2146 
+Key = id - Value = 2146
+Key = client - Value = 2
+Key = date - Value = 2012-10-27 18:57:22
+Key = price - Value = 12.0
+Key = description - Value =     Велоаптечка VK (9 латок, клей, наждак) ; 
+2012-11-17 15:37:18.178509 >>> DELETE FROM TABLE client credits WHERE id = 2146 
+Key = id - Value = 2146
+Key = client - Value = 2
+Key = date - Value = 2012-10-27 18:57:22
+Key = price - Value = 12.0
+Key = description - Value =     Велоаптечка VK (9 латок, клей, наждак) ; 
+2012-11-17 15:40:50.385650 >>> DELETE FROM TABLE client credits WHERE id = 2146 
+Key = id - Value = 2146
+Key = client - Value = 2
+Key = date - Value = 2012-10-27 18:57:22
+Key = price - Value = 12.0
+Key = description - Value =     Велоаптечка VK (9 латок, клей, наждак) ; 
+2012-11-17 15:41:14.738293 >>> DELETE FROM TABLE client credits WHERE id = 1384 
+Key = id - Value = 1384
+Key = client - Value = 2
+Key = date - Value = 2012-08-27 17:24:51
+Key = price - Value = 7.0
+Key = description - Value = Спица Sapim Laser 14G 291, с нип. Brass 14G 12 polyax (уп. 50 шт); 
+2012-11-17 15:42:12.122377 >>> DELETE FROM TABLE client credits WHERE id = 2146 
+Key = id - Value = 2146
+Key = client - Value = 2
+Key = date - Value = 2012-10-27 18:57:22
+Key = price - Value = 12.0
+Key = description - Value =     Велоаптечка VK (9 латок, клей, наждак) ; 
+2012-11-17 15:42:45.004956 >>> DELETE FROM TABLE client credits WHERE id = 1384 
+Key = id - Value = 1384
+Key = client - Value = 2
+Key = date - Value = 2012-08-27 17:24:51
+Key = price - Value = 7.0
+Key = description - Value = Спица Sapim Laser 14G 291, с нип. Brass 14G 12 polyax (уп. 50 шт); 
+2012-11-17 16:24:00.273418 >>> DELETE FROM TABLE client debts WHERE id = 1518 
+Key = id - Value = 1518
+Key = client - Value = 2
+Key = date - Value = 2012-08-27 23:43:47
+Key = price - Value = 694.5
+Key = description - Value = Тормоз BR-M975 XTR PostMount, гидр диск передн, калипер; 
+2012-11-17 16:25:05.242278 >>> DELETE FROM TABLE client invoice WHERE id = 5065 
+Key = id - Value = 5065
+Key = client - Value = 2
+Key = catalog - Value = 4235
+Key = count - Value = 1
+Key = price - Value = 926.0
+Key = sum - Value = 694.5
+Key = currency - Value = 3
+Key = sale - Value = 25
+Key = pay - Value = 694.5
+Key = date - Value = 2012-08-27
+Key = description - Value = 
