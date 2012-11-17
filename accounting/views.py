@@ -95,6 +95,22 @@ def del_logging(obj):
     log_file.close()
 
 
+from urlparse import urlsplit
+
+def prev_url(request):
+    #referer = request.META.get('HTTP_REFERER', None)
+    referer = request.META['HTTP_REFERER']
+    if referer is None:
+        pass
+         # do something here
+    try:
+        #redirect_to = urlsplit(referer, 'http', False)[2]
+        redirect_to = refer
+    except IndexError:
+        pass
+         # do another thing here
+    return redirect_to
+
 # ------------ Country -----------------
 
 def country_add(request):
@@ -1897,10 +1913,12 @@ def clientdebts_list(request):
 
 
 def clientdebts_delete(request, id):
+    if auth_group(request.user, "admin") == False:
+        return HttpResponseRedirect('/.')
     obj = ClientDebts.objects.get(id=id)
     del_logging(obj)
     obj.delete()
-    return HttpResponseRedirect('/clientdebts/view/')
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 
 def clientcredits_add(request, id=None):
@@ -1973,7 +1991,9 @@ def clientcredits_delete(request, id):
     obj = ClientCredits.objects.get(id=id)
     del_logging(obj)
     obj.delete()
-    return HttpResponseRedirect('/clientcredits/view/')
+    #return HttpResponseRedirect('/clientcredits/view/')
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+    #return HttpResponse('<script language="JavaScript">history.back();</script>')
 
 
 def client_invoice(request, cid=None):
@@ -2125,7 +2145,7 @@ def client_invoice_delete(request, id):
 
 def client_search(request):
     #query = request.GET.get('q', '')
-    return render_to_response('index.html', {'weblink': 'client_search.html'})
+    return render_to_response('index.html', {'weblink': 'client_search.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 from django.db.models import Q
@@ -2151,9 +2171,10 @@ def client_search_result(request):
 
 from django.db import connection
 
-def search_client_id(request):
-    #query = request.GET.get('q', '')
-    return render_to_response('index.html', {'weblink': 'client_id_search.html'})
+#---Delete
+#def search_client_id(request):
+#    #query = request.GET.get('q', '')
+#    return render_to_response('index.html', {'weblink': 'client_id_search.html'})
 
 
 def client_result(request):
