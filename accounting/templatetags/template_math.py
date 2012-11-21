@@ -13,14 +13,16 @@ import re
 def mul(value, arg):
     return round(float(value) * float(arg), 2)
 
-@register.filter
+@register.filter(name='div')
 def div(value, arg):
-    '''Деление'''
+    if arg == 0:
+        return 0
+#    '''Деление'''
     return round(float(value) / float(arg), 2)
 
 @register.filter
 def sub(value, arg):
-    '''Вычитание'''
+#    '''Вычитание'''
     return round(float(value) - float(arg), 2)
 
 @register.filter
@@ -47,3 +49,14 @@ def percentage(sum, percent):
         return "%.2f" % (float(sum) * a_percent)  
     except ValueError:  
         return ''  
+
+@register.filter(name='dotPart')  
+def dotPart(sum, arg):  
+    try:  
+        e = arg 
+        a_percent = (sum - int(sum)) * 100.0
+        #return "%.2f" % (a_percent)  
+        return round(a_percent)
+    except ValueError:  
+        return ''  
+
