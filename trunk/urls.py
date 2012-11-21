@@ -150,7 +150,7 @@ urlpatterns = patterns('',
     (r'^invoice/list/(?P<limit>\d+)/view/$', 'catalog.accounting.views.invoicecomponent_list'),
     (r'^invoice/list/view/$', 'catalog.accounting.views.invoicecomponent_list'),
     (r'^invoice/id/(?P<id>\d+)/view/$', 'catalog.accounting.views.invoice_id_list'),
-    (r'^invoice/catalog/(?P<cid>\d+)/view/$', 'catalog.accounting.views.invoice_cat_id_list'), # �������� � ��������� ������ � ��������
+    (r'^invoice/catalog/(?P<cid>\d+)/view/$', 'catalog.accounting.views.invoice_cat_id_list'), # наявний товар
     (r'^invoice/delete/(?P<id>\d+)/$', 'catalog.accounting.views.invoicecomponent_del'),
     (r'^invoice/edit/(?P<id>\d+)/$', 'catalog.accounting.views.invoicecomponent_edit'),
     (r'^invoice/report/$', 'catalog.accounting.views.invoice_report'),

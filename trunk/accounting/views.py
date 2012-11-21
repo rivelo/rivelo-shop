@@ -494,11 +494,11 @@ def bicycle_store_list_by_seller(request, all=False, size='all', year='all', bra
         bike_summ = bike_summ + item.count
     frames = FrameSize.objects.all()
     bike_company = Bicycle_Store.objects.filter(count=1).values('model__brand', 'model__brand__name').annotate(num_company=Count('count'))
-    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list_by_seller.html', 'price_summ': price_summ, 'real_summ': real_summ, 'bike_summ': bike_summ, 'sizes': frames, 'b_company': bike_company, 'html': html})
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list_by_seller.html', 'price_summ': price_summ, 'real_summ': real_summ, 'bike_summ': bike_summ, 'sizes': frames, 'b_company': bike_company, 'html': html, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_store_search(request):
-    return render_to_response('index.html', {'weblink': 'frame_search.html'})
+    return render_to_response('index.html', {'weblink': 'frame_search.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_store_search_result(request, all=False):
@@ -516,7 +516,7 @@ def bicycle_store_search_result(request, all=False):
             price_summ = price_summ + item.price * item.count 
         real_summ = real_summ + item.realization
         bike_summ = bike_summ + item.count
-    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list_by_seller.html', 'price_summ': price_summ, 'real_summ': real_summ, 'bike_summ': bike_summ})
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list_by_seller.html', 'price_summ': price_summ, 'real_summ': real_summ, 'bike_summ': bike_summ, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_store_price(request):
@@ -655,7 +655,7 @@ def bicycle_sale_check(request, id=None):
     list = Bicycle_Sale.objects.get(id=id)
     text = pytils_ua.numeral.in_words(int(list.price))
     month = pytils_ua.dt.ru_strftime(u"%d %B %Y", list.date, inflected=True)
-    return render_to_response('index.html', {'bicycle': list, 'month':month, 'str_number':text, 'weblink': 'bicycle_sale_check.html', 'print':'True'})
+    return render_to_response('index.html', {'bicycle': list, 'month':month, 'str_number':text, 'weblink': 'bicycle_sale_check.html', 'print':'True', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_sale_check_print(request, id=None):
@@ -1399,7 +1399,7 @@ def invoice_cat_id_list(request, cid=None, limit=0):
         psum = psum + (item.catalog.price * item.count)
         scount = scount + item.count
         
-    return render_to_response('index.html', {'list': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoice_component_report.html'})
+    return render_to_response('index.html', {'list': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoice_component_report.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 # --------------- Classification ---------
@@ -2081,7 +2081,7 @@ def client_invoice_view(request, month=None, year=None, day=None, id=None):
         # If page is out of range (e.g. 9999), deliver last page of results.
         cinvoices = paginator.page(paginator.num_pages)
             
-    return render_to_response('index.html', {'sel_year':year, 'sel_month':month, 'month_days':days, 'buycomponents': cinvoices, 'sumall':psum, 'countall':scount, 'weblink': 'clientinvoice_list.html', 'view': True})
+    return render_to_response('index.html', {'sel_year':year, 'sel_month':month, 'month_days':days, 'buycomponents': cinvoices, 'sumall':psum, 'countall':scount, 'weblink': 'clientinvoice_list.html', 'view': True, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def client_invoice_id(request, id):
@@ -2176,7 +2176,7 @@ from django.db import connection
 #    #query = request.GET.get('q', '')
 #    return render_to_response('index.html', {'weblink': 'client_id_search.html'})
 
-
+#----- Виписка клієнта -----
 def client_result(request):
     
     user = request.GET['id'] 
@@ -2875,6 +2875,8 @@ def preorder_edit(request, id):
 
 def payform(request):
     checkbox_list = [x for x in request.POST if x.startswith('checkbox_')]
+    if bool(checkbox_list) == False:
+        return render_to_response('index.html', {'weblink': 'error_manyclients.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
     list_id = []
     for id in checkbox_list:
         list_id.append( int(id.replace('checkbox_', '')) )
@@ -2884,20 +2886,19 @@ def payform(request):
     sum = 0
     for inv in ci:
         if client!=inv.client:
-            return render_to_response('index.html', {'weblink': 'error_manyclients.html'})
+            return render_to_response('index.html', {'weblink': 'error_manyclients.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
         client = inv.client
         #inv.pay = inv.sum
         desc = desc + inv.catalog.name + "; "
         sum = sum + inv.sum
-        #inv.save() 
-    
-        
-    #cdeb = ClientDebts(client=client, date=datetime.datetime.now(), price=sum, description=desc)
-    #cdeb.save()
+    #-------- показ і відправка чеку на електронку ------
+    if 'send_check' in request.POST:
+        text = pytils_ua.numeral.in_words(int(sum))
+        month = pytils_ua.dt.ru_strftime(u"%d %B %Y", ci[0].date, inflected=True)
+        return render_to_response('index.html', {'check_invoice': ci, 'month':month, 'sum': sum, 'client': client, 'str_number':text, 'weblink': 'client_invoice_sale_check.html', 'print':'True', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+     
     url = '/client/result/search/?id=' + str(client.id)
-    #.values('catalog', 'catalog__price', 'catalog__name', 'sum', 'client')
-    return render_to_response('index.html', {'checkbox': list_id, 'invoice': ci, 'summ': sum, 'client': client, 'weblink': 'payform.html'})
-    #return HttpResponseRedirect(url)
+    return render_to_response('index.html', {'checkbox': list_id, 'invoice': ci, 'summ': sum, 'client': client, 'weblink': 'payform.html', 'next': url}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def client_payform(request):

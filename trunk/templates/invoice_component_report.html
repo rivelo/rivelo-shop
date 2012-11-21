@@ -48,8 +48,10 @@
     	<th align="center">Кількість</th>
     	<th>Ціна</th>
     	<th>Валюта</th>
-    	<th>Сума</th>    	
+    	<th>Сума</th>
+{% if perms.accounting.add_preorder %}    	
     	<th>Прайс</th>    	    	
+{% endif %}
     	<th>Дата</th>
     	<th>Опис</th>
     	<th>Дія</th>
@@ -80,12 +82,14 @@
 	<td>       
 	{{type.catalog.currency}}
 	</td>
-	<td>       
+	<td align="center">       
 	{{type.catalog.price|mul:type.count}}
 	</td>
+{% if perms.accounting.add_preorder %}
 	<td align="center">       
 	{{type.price}} ({{type.currency.ids_char}})
 	</td>
+{% endif %}
 	<td> 
 	{{type.date}}
 	</td>
@@ -105,8 +109,10 @@
     	<th>Кількість: {{countsum}}</th>
     	<th></th>
     	<th></th>
-    	<th>{{allpricesum}} грн.</th>    	
+    	<th>{{allpricesum}} грн.</th>
+{% if perms.accounting.add_preorder %}
     	<th>{{alloptsum}}</th>
+{% endif %}
     	<th></th>    	
     	<th></th>
     	<th></th>

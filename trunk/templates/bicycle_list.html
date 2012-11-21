@@ -55,7 +55,10 @@
 		<td>{{type.price}}</td>
 		<td>{{type.currency}}</td>
 		<td align="center">{{type.sale|floatformat:"0"}}%</td>
-		<td align="center">{{type.sale|div:-100|sub:-1|mul:type.price|floatformat:"0"}} грн.</td>
+		<td align="center">{{type.sale|div:-100|sub:-1|mul:type.price|floatformat:"0"}} грн.</td>  
+{#		<td align="center">{{ type.sale }} грн.</td> #} 
+{#		<td align="center">{% widthratio type.sale 1 1 %} грн.</td> #} 
+{#		http://slacy.com/blog/2010/07/using-djangos-widthratio-template-tag-for-multiplication-division/ #} 
 		<!-- 	<td>
 	{{type.description}}
 	</td>
