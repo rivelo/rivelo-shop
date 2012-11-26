@@ -2452,6 +2452,7 @@ def workshop_add(request, id_work=None, id_client=None):
             price = form.cleaned_data['price']
             description = form.cleaned_data['description']
             pay = form.cleaned_data['pay']
+            user = form.cleaned_data['user']            
             if request.user.is_authenticated():
                 user = request.user
             
