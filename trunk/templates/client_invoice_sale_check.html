@@ -23,7 +23,13 @@
 <table id="checktable">
 <tr>
 <td style="text-align:center; border: 2px solid white;" colspan="2">
+
+{% if is_workshop %}
+<h1>Акт виконаних робіт №000{{check_invoice.id}}</h1>
+{% else %}
 <h1>Товарний чек №000{{check_invoice.id}}</h1>
+{% endif %}
+
 <h2>від {{month}} року</h2>
 </td>
 </tr>
@@ -40,7 +46,32 @@
 </table>
 
 
+{% if is_workshop %}
+<table border="1" width="100%">
+	<tr>
+		<th>№</th>
+		<th>Роботи</th>
+		<th>Ціна (грн.)</th>
+		<th>Сума (грн.)</th>
+	</tr>
+{% for item in check_invoice %}
+	<tr>
+		<td>{{forloop.counter}}</td>
+		<td><a href="/worktype/view/group/{{item.work_type.work_group.id}}">{{item.work_type.name}}</a></td>
+		<td>{{item.price}}</td>
+		<td>{{item.price}}</td>
+	</tr>
+{% endfor %}
+	<tr>
+		<th></th>
+		<th>ВСЬОГО:</th>
+		<th></th>
+		<th>{{sum}} грн.</th>
+	</tr>
 
+</table>
+
+{% else %}
 <table border="1" width="100%">
 	<tr>
 		<th>№</th>
@@ -73,7 +104,7 @@
 	</tr>
 
 </table>
-
+{% endif %}
 <p>
 Всього на суму: {{str_number}} гривень {{ sum|dotPart:"2"|floatformat }} копійок
 </p>

@@ -319,6 +319,7 @@ def bicycle_add(request):
             price = form.cleaned_data['price']
             currency = form.cleaned_data['currency']
             description = form.cleaned_data['description']
+            sale = form.cleaned_data['sale']
             #processUploadedImage(request.FILES['photo']) 
             #photo = photo,
             upload_path = processUploadedImage(photo) 
@@ -370,19 +371,13 @@ def bicycle_list(request, year=None, brand=None, percent=None):
             Bicycle.objects.filter(year__year=year, brand=brand).update(sale=percent)
     bike_company = Bicycle.objects.filter(year__year=year).values('brand', 'brand__name').annotate(num_company=Count('model'))
     #return render_to_response('bicycle_list.html', {'bicycles': list.values_list()})
-    return render_to_response('index.html', {'bicycles': list, 'year': year, 'b_company': bike_company, 'sale': percent, 'weblink': 'bicycle_list.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
-
-
-def bicycle_all_list(request):
-    list = Bicycle.objects.all()
-    #return render_to_response('bicycle_list.html', {'bicycles': list.values_list()})
-    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_list.html'})
+    return render_to_response('index.html', {'bicycles': list, 'year': year, 'b_company': bike_company, 'sale': percent, 'weblink': 'bicycle_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_photo(request, id):
     obj = Bicycle.objects.get(id=id)
     #return render_to_response('bicycle_list.html', {'bicycles': list.values_list()})
-    return render_to_response('index.html', {'bicycle': obj, 'weblink': 'bicycle_photo.html'})
+    return render_to_response('index.html', {'bicycle': obj, 'weblink': 'bicycle_photo.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_store_add(request, id=None):
@@ -410,7 +405,7 @@ def bicycle_store_add(request, id=None):
         else:
             form = BicycleStoreForm()
     #return render_to_response('bicycle_store.html', {'form': form})
-    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_store.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_store.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_store_edit(request, id):
@@ -521,7 +516,7 @@ def bicycle_store_search_result(request, all=False):
 
 def bicycle_store_price(request):
     list = Bicycle_Store.objects.filter(count=1)
-    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_shop_price_list.html', 'view':True})
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_shop_price_list.html', 'view':True, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_store_price_print(request):
@@ -534,7 +529,7 @@ def store_report_bysize(request, id):
     frame = FrameSize.objects.get(id=id)
     frame_str = u"Розмір рами " + frame.name
     frames = FrameSize.objects.all()
-    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list.html', 'text': frame_str, 'sizes': frames})
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list.html', 'text': frame_str, 'sizes': frames, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
     
 def store_report_bytype(request, id):
@@ -588,7 +583,7 @@ def bicycle_sale_add(request, id=None):
         else:
             form = BicycleSaleForm(initial={'currency': 3})
     
-    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_sale.html', 'serial_number': serial_number, 'text': 'Продаж велосипеду'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_sale.html', 'serial_number': serial_number, 'text': 'Продаж велосипеду', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_sale_edit(request, id):
@@ -604,7 +599,7 @@ def bicycle_sale_edit(request, id):
         
     serial_number = a.model.serial_number
     #serial_number = "test number"
-    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_sale.html', 'text': 'Редагувати проданий велосипед', 'serial_number': serial_number})
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_sale.html', 'text': 'Редагувати проданий велосипед', 'serial_number': serial_number, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_sale_del(request, id):
@@ -639,7 +634,7 @@ def bicycle_sale_list(request, year=False, month=False, id=None):
         price_summ = price_summ + item.price
         if item.service == False:
             service_summ =  service_summ + 1
-    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_sale_list.html', 'price_summ':price_summ, 'service_summ':service_summ,})
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_sale_list.html', 'price_summ':price_summ, 'service_summ':service_summ, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_sale_service(request, id):
@@ -923,7 +918,7 @@ def dealer_invoice_add(request):
             received = form.cleaned_data['received']
             payment = form.cleaned_data['payment']
             description = form.cleaned_data['description']
-            DealerInvoice(origin_id=origin_id, date=date, company=company, manager=manager, price=price, currency=currency, file=file, received=received, description=description).save()
+            DealerInvoice(origin_id=origin_id, date=date, company=company, manager=manager, price=price, currency=currency, file=file, received=received, description=description, payment=payment).save()
             return HttpResponseRedirect('/dealer/invoice/view/')
     else:
         form = DealerInvoiceForm(instance = a)
@@ -1096,7 +1091,7 @@ def invoicecomponent_add(request, mid=None, cid=None):
             return HttpResponseRedirect('/invoice/list/10/view/')
     else:
         form = InvoiceComponentListForm(instance = a, test1=mid, catalog_id=cid)
-    return render_to_response('index.html', {'form': form, 'weblink': 'invoicecomponent.html', 'company_list': company_list})
+    return render_to_response('index.html', {'form': form, 'weblink': 'invoicecomponent.html', 'company_list': company_list, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def invoicecomponent_list(request, mid=None, limit=0):
@@ -1141,7 +1136,7 @@ def invoicecomponent_list(request, mid=None, limit=0):
         #upd.save()
 
         
-    return render_to_response('index.html', {'company_list': company_list, 'componentlist': new_list, 'zsum':zsum, 'zcount':zcount, 'weblink': 'invoicecomponent_list.html'})
+    return render_to_response('index.html', {'company_list': company_list, 'componentlist': new_list, 'zsum':zsum, 'zcount':zcount, 'weblink': 'invoicecomponent_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
  
 
 def invoicecomponent_list_by_manufacturer(request, mid=None, availability=False):
@@ -1181,17 +1176,7 @@ def invoicecomponent_list_by_manufacturer(request, mid=None, availability=False)
     else:
         company_name = company_list.get(id=mid)
 
-    return render_to_response('index.html', {'company_list': company_list, 'company_name': company_name, 'company_id':mid, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
-
-    
-#===============================================================================
-#    psum = 0
-#    scount = 0
-#    for item in list:
-#        psum = psum + (item.catalog.price * item.count)
-#        scount = scount + item.count
-#    return render_to_response('index.html', {'company_list': company_list, 'componentlist': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoicecomponent_list.html'})
-#===============================================================================
+    return render_to_response('index.html', {'company_list': company_list, 'company_name': company_name, 'company_id':mid, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def invoicecomponent_list_by_category(request, cid=None, limit=0):
@@ -1233,7 +1218,7 @@ def invoicecomponent_list_by_category(request, cid=None, limit=0):
         cat_name = category_list.get(id=cid)
 
 
-    return render_to_response('index.html', {'category_list': category_list, 'category_name': cat_name, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'category_list': category_list, 'category_name': cat_name, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def invoicecomponent_manufacturer_html(request, mid):
@@ -1253,13 +1238,34 @@ def invoicecomponent_manufacturer_html(request, mid):
 from django.db.models import F
 
 def invoicecomponent_sum(request):
-    list = InvoiceComponentList.objects.all().aggregate(price_sum=Sum('catalog__price'))
-    psum = list['price_sum']
+    if auth_group(request.user, 'admin') == False:
+        return HttpResponseRedirect("/.")
+#    list = InvoiceComponentList.objects.all().aggregate(price_sum=Sum('catalog__price'))
+    list = Catalog.objects.filter(count__gt=0).values('id', 'name', 'count', 'price')
+    #.annotate(sum_catalog=Sum('count'))
+    #aggregate(price_sum=Sum('count'))
+    psum = 0
     scount = 0
-#    for item in list:
-#        psum = psum + (item.catalog.price * item.count)
-#        scount = scount + item.count
-    return render_to_response('index.html', {'allpricesum':psum, 'countsum': scount, 'weblink': 'invoicecomponent_report.html'})
+    counter = 0
+    for item in list:
+        scount = scount + item['count']
+        psum = psum + (item['price'] * item['count'])
+        counter = counter + 1
+    paginator = Paginator(list, 50)
+    page = request.GET.get('page')
+    if page == None:
+        page = 1
+    try:
+        catalog = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        catalog = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        catalog = paginator.page(paginator.num_pages)
+        
+        
+    return render_to_response('index.html', {'allpricesum':psum, 'countsum': scount, 'counter': counter, 'catalog': catalog, 'weblink': 'invoicecomponent_report.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def invoicecomponent_del(request, id):
@@ -1294,11 +1300,11 @@ def invoicecomponent_edit(request, id):
     else:
         form = InvoiceComponentListForm(instance=a, catalog_id=cid)
         #form = InvoiceComponentListForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'invoicecomponent.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'invoicecomponent.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def invoice_search(request):
-    return render_to_response('index.html', {'weblink': 'invoice_search.html'})
+    return render_to_response('index.html', {'weblink': 'invoice_search.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def invoice_search_result(request):
@@ -1334,7 +1340,7 @@ def invoice_search_result(request):
         zcount = zcount + (element['sum_catalog'] - element['c_sale'])
 #        return render_to_response('index.html', {'componentlist': list, 'salelist': list_sale, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
 
-    return render_to_response('index.html', {'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
+    return render_to_response('index.html', {'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
     #return render_to_response('index.html', {'componentlist': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoicecomponent_list.html'})        
 
 
@@ -1353,7 +1359,7 @@ def invoice_report(request):
     except TypeError:
         res = "Помилка"
     
-    return render_to_response('index.html', {'list': list, 'company_list':company_list, 'weblink': 'invoice_component_report.html'})
+    return render_to_response('index.html', {'list': list, 'company_list':company_list, 'weblink': 'invoice_component_report.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def invoice_id_list(request, id=None, limit=0):
@@ -1388,7 +1394,7 @@ def invoice_id_list(request, id=None, limit=0):
     dinvoice = DealerInvoice.objects.get(id=id)    
     
     #return render_to_response('index.html', {'list': list, 'dinvoice':dinvoice, 'company_list':company_list, 'allpricesum':psum, 'alloptsum':optsum, 'countsum': scount, 'weblink': 'invoice_component_report.html'})
-    return render_to_response('index.html', {'list': list, 'dinvoice':dinvoice, 'allpricesum':psum, 'alloptsum':optsum, 'countsum': scount, 'weblink': 'invoice_component_report.html'})
+    return render_to_response('index.html', {'list': list, 'dinvoice':dinvoice, 'allpricesum':psum, 'alloptsum':optsum, 'countsum': scount, 'weblink': 'invoice_component_report.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def invoice_cat_id_list(request, cid=None, limit=0):
@@ -1407,7 +1413,7 @@ def invoice_cat_id_list(request, cid=None, limit=0):
 def category_list(request):
     list = Type.objects.all()
     #return render_to_response('category_list.html', {'categories': list.values_list()})
-    return render_to_response('index.html', {'categories': list, 'weblink': 'category_list.html'})
+    return render_to_response('index.html', {'categories': list, 'weblink': 'category_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 def category_add(request):
     a = Type()
@@ -1458,13 +1464,13 @@ def curency_add(request):
     else:
         form = CurencyForm(instance = a)
     #return render_to_response('curency.html', {'form': form})
-    return render_to_response('index.html', {'form': form, 'weblink': 'curency.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'curency.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def curency_list(request):
     list = Currency.objects.all()
     #return render_to_response('curency_list.html', {'currency': list.values()})
-    return render_to_response('index.html', {'currency': list, 'weblink': 'curency_list.html'})
+    return render_to_response('index.html', {'currency': list, 'weblink': 'curency_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def curency_del(request, id):
@@ -1494,7 +1500,7 @@ def exchange_list(request):
     curdate = datetime.datetime.now()
     list = Exchange.objects.filter(date__month=curdate.month)
     #return render_to_response('exchange_list.html', {'exchange': list.values()})
-    return render_to_response('index.html', {'exchange': list, 'weblink': 'exchange_list.html'})
+    return render_to_response('index.html', {'exchange': list, 'weblink': 'exchange_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def exchange_edit(request, id):
@@ -1506,7 +1512,7 @@ def exchange_edit(request, id):
             return HttpResponseRedirect('/exchange/view/')
     else:
         form = ExchangeForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'exchange.html', 'text': 'Обмін валют (редагування)'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'exchange.html', 'text': 'Обмін валют (редагування)', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def exchange_del(request, id):
@@ -2042,7 +2048,7 @@ def client_invoice_edit(request, id):
             return HttpResponseRedirect('/client/invoice/view/')
     else:
         form = ClientInvoiceForm(instance = a, catalog_id = cat_id)
-    return render_to_response('index.html', {'form': form, 'weblink': 'clientinvoice.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'clientinvoice.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def client_invoice_view(request, month=None, year=None, day=None, id=None):
@@ -2224,7 +2230,7 @@ def client_result(request):
     #list_debt = ClientDebts.objects.filter(client='2').annotate(Sum("price"))
     #return render_to_response('index.html', {'clients': list_credit.values_list(), 'weblink': 'client_result.html'})
     #return render_to_response('index.html', {'clients': list_debt.values_list(), 'weblink': 'client_result.html'})
-    return render_to_response('index.html', {'clients': res, 'invoice': client_invoice, 'client_invoice_sum': client_invoice_sum, 'workshop': client_workshop, 'client_workshop_sum': client_workshop_sum, 'weblink': 'client_result.html', 'debt_list': debt_list, 'credit_list': credit_list, 'client_name': client_name, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'weblink': 'client_result.html', 'clients': res, 'invoice': client_invoice, 'client_invoice_sum': client_invoice_sum, 'workshop': client_workshop, 'client_workshop_sum': client_workshop_sum, 'debt_list': debt_list, 'credit_list': credit_list, 'client_name': client_name, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 # --------------- WorkShop -----------------
@@ -2429,11 +2435,14 @@ def workticket_delete(request, id):
     return HttpResponseRedirect('/workticket/view/')
 
 
-def workshop_add(request, id=None):
+def workshop_add(request, id_work=None, id_client=None):
     work = None
-    if id != None:
-        work = WorkType.objects.get(id=id)
-        
+    wclient = None
+    if id_work != None:
+        work = WorkType.objects.get(id=id_work)
+    if id_client!=None:
+        wclient = Client.objects.get(id=id_client)
+    
     if request.method == 'POST':
         form = WorkShopForm(request.POST)
         if form.is_valid():
@@ -2442,14 +2451,21 @@ def workshop_add(request, id=None):
             work_type = form.cleaned_data['work_type']
             price = form.cleaned_data['price']
             description = form.cleaned_data['description']
-            WorkShop(client=client, date=date, work_type=work_type, price=price, description=description).save()
+            pay = form.cleaned_data['pay']
+            if request.user.is_authenticated():
+                user = request.user
+            
+            WorkShop(client=client, date=date, work_type=work_type, price=price, description=description, user=user, pay=pay).save()
             return HttpResponseRedirect('/workshop/view/')
     else:
         if work != None:
             form = WorkShopForm(initial={'work_type': work.id, 'price': work.price})
+        if wclient != None:
+            form = WorkShopForm(initial={'client': wclient.id})
         else:        
             form = WorkShopForm()
-    return render_to_response('index.html', {'form': form, 'weblink': 'workshop.html'})
+        
+    return render_to_response('index.html', {'form': form, 'weblink': 'workshop.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def workshop_edit(request, id):
@@ -2462,11 +2478,14 @@ def workshop_edit(request, id):
             work_type = form.cleaned_data['work_type']
             price = form.cleaned_data['price']
             description = form.cleaned_data['description']
-            WorkShop(id=id, client=client, date=date, work_type=work_type, price=price, description=description).save()
+            pay = form.cleaned_data['pay']
+            if request.user.is_authenticated():
+                user = request.user
+            WorkShop(id=id, client=client, date=date, work_type=work_type, price=price, description=description, pay = pay, user=user).save()
             return HttpResponseRedirect('/workshop/view/')
     else:
         form = WorkShopForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'workshop.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'workshop.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def workshop_list(request, year=None, month=None, day=None):
@@ -2483,7 +2502,6 @@ def workshop_list(request, year=None, month=None, day=None):
             list = WorkShop.objects.filter(date__year=year, date__month=month).order_by("-date")
         else:
             list = WorkShop.objects.filter(date__year=year, date__month=month, date__day=day).order_by("-date")
-
     
 #    list = WorkShop.objects.filter(date__year=year, date__month=month)
     sum = 0 
@@ -2491,7 +2509,7 @@ def workshop_list(request, year=None, month=None, day=None):
         sum = sum + item.price
         
     days = xrange(1, calendar.monthrange(int(year), int(month))[1]+1)
-    return render_to_response('index.html', {'workshop': list, 'summ':sum, 'sel_year':year, 'sel_month':month, 'month_days': days, 'weblink': 'workshop_list.html'})
+    return render_to_response('index.html', {'workshop': list, 'summ':sum, 'sel_year':year, 'sel_month':month, 'sel_day':day, 'month_days': days, 'weblink': 'workshop_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def workshop_delete(request, id):
@@ -2899,6 +2917,44 @@ def payform(request):
      
     url = '/client/result/search/?id=' + str(client.id)
     return render_to_response('index.html', {'checkbox': list_id, 'invoice': ci, 'summ': sum, 'client': client, 'weblink': 'payform.html', 'next': url}, context_instance=RequestContext(request, processors=[custom_proc]))
+
+
+def workshop_payform(request):
+    checkbox_list = [x for x in request.POST if x.startswith('checkbox_')]
+    if bool(checkbox_list) == False:
+        return render_to_response('index.html', {'weblink': 'error_manyclients.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    list_id = []
+    for id in checkbox_list:
+        list_id.append( int(id.replace('checkbox_', '')) )
+    wk = WorkShop.objects.filter(id__in=list_id)
+    client = wk[0].client
+    desc = u"Роботи: "
+    sum = 0
+    for inv in wk:
+        if client!=inv.client:
+            return render_to_response('index.html', {'weblink': 'error_manyclients.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+        client = inv.client
+        #inv.pay = inv.sum
+        desc = desc + inv.work_type.name + "; "
+        sum = sum + inv.price
+    #-------- показ і відправка чеку на електронку ------
+    if 'send_check' in request.POST:
+        text = pytils_ua.numeral.in_words(int(sum))
+        month = pytils_ua.dt.ru_strftime(u"%d %B %Y", wk[0].date, inflected=True)
+        #return render_to_response('index.html', {'check_invoice': ci, 'month':month, 'sum': sum, 'client': client, 'str_number':text, 'weblink': 'client_invoice_sale_check.html', 'print':'True', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+        return render_to_response('index.html', {'weblink': 'client_invoice_sale_check.html', 'check_invoice': wk, 'month':month, 'sum': sum, 'client': client, 'str_number':text, 'print':'True', 'is_workshop': 'True', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))        
+#        return HttpResponse("Workshop FORM <br>" + str(sum) + "грн" + "<br>" + request.POST)
+    
+    #------- додавання даних про розрахунок -----
+    ccred = ClientDebts(client=client, date=datetime.datetime.now(), price=sum, description=desc)
+    ccred.save()
+    for item in wk:
+        item.pay = True
+        item.save()
+         
+    url = '/client/result/search/?id=' + str(client.id)
+    return HttpResponseRedirect(url)
+    #return render_to_response('index.html', {'checkbox': list_id, 'invoice': wk, 'summ': sum, 'client': client, 'weblink': 'payform.html', 'next': url}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def client_payform(request):
