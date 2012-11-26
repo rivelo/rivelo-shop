@@ -25,7 +25,7 @@ for(var i = 0; i < All.elements.length; ++i) {
 	if(All.elements[i].checked){
 	p+=parseFloat(All.elements[i].value);
 	}
-	document.getElementById('workshop_pay').innerHTML = p.toFixed(2)+" грн.";
+	document.getElementById('workshop_pay').innerHTML = "До оплати: <br>" + p.toFixed(2)+" грн.";
 	document.getElementById('debet').innerHTML = parseFloat(document.getElementById('for_pay').innerHTML)+parseFloat(document.getElementById('workshop_pay').innerHTML);
 }
 }
@@ -172,14 +172,14 @@ for(var i = 0; i < All.elements.length; ++i) {
 	</table>
 </form>	
 
-<form action="/index.xml" method="post" name="formWorkshopSum">
+<form action="/payform/workshop/" method="post" name="formWorkshopSum" >
 <br>
 	<table border=1 width="100%" style="font-size : 12px; font-family : Arial;">
 	<tr bgcolor="grey">
 	<th>Дата</th>
 	<th>Робота</th>
 	<th>Прайс</th>
-	<th>Валюта</th>
+	<th>Опис</th>
 	<th>Оплата</th>
 	</tr>
 	
@@ -191,14 +191,21 @@ for(var i = 0; i < All.elements.length; ++i) {
 	<td>
 	{{inv.work_type}}
 	</td>
+{% if inv.pay %}	
 	<td>
 	{{inv.price}}
 	</td>
+{% else %}
+	<td BGCOLOR="#FF6600">
+	{{inv.price}}
+	</td>
+
+{% endif %}
 	<td>
 	{{inv.description}}
 	</td>	
 	<td align="center">
-	<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{inv.price}}" onclick="resWorkshop()"/>
+	<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{inv.price}}" onclick="resWorkshop()" name="checkbox_{{ inv.id }}"/>
 	</td>
 	</tr>
 	{% endfor %}
@@ -207,7 +214,10 @@ for(var i = 0; i < All.elements.length; ++i) {
 	<th></th>
 	<th>Загальна сума</th>
 	<th>{{client_workshop_sum}} грн.</th>
-	<th BGCOLOR="#D5FFB4">До оплати</th>
+	<th BGCOLOR="#D5FFB4">
+	<p><input type="submit" value="Оплата" name="pay" onClick="return confirm('Провести операцію?')"></p>
+	<input type="submit" value="E-mail" name="send_check">	
+	</th>
 	<th id="workshop_pay" BGCOLOR="#D5FFB4">0</th>
 	</tr>
 	</table>
@@ -215,12 +225,14 @@ for(var i = 0; i < All.elements.length; ++i) {
 <a href=/workticket/add/client/{{client_name.id}}/> 
 Створити заявку на ремонт
 </a>
+<br>
+<a href=/workshop/add/client/{{client_name.id}}/> 
+Додати роботу
+</a>
 <br>	
-
-	<br>
-	<a href=/client/search/> Пошук клієнта </a>
-	<br>
-	<a href=/client/result/> Повторний пошук по ID </a>  
+<br>
+<a href=/client/search/> Пошук клієнта </a>
+ 
 
 
 

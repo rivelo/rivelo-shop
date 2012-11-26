@@ -4,6 +4,22 @@
 
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
+<script language="JavaScript">
+
+function resWorkshop()
+{
+var p=0;
+var All=document.forms['formWorkshopSum'];
+for(var i = 0; i < All.elements.length; ++i) {
+	if(All.elements[i].checked){
+	p+=parseFloat(All.elements[i].value);
+	}
+	document.getElementById('workshop_pay').innerHTML = "До оплати: <br>" + p.toFixed(2)+" грн.";
+}
+}
+    
+</script>
+
 <br>
 <h2>
     За місяць: 
@@ -30,9 +46,11 @@
 
 
 
-    <h1>Рахунки на виконані роботи <a href="/workshop/add/">(Додати)</a></h1>
+    <h1>Рахунки на виконані роботи ({{sel_day}}/{{sel_month}}/{{sel_year}}) <a href="/workshop/add/">(Додати)</a></h1>
 
 	
+<form action="/payform/workshop/" method="post" name="formWorkshopSum">
+<br> 
     <table border="1">
     <tr>
     	<th>ID</th>
@@ -42,12 +60,19 @@
     	<th>Ціна (грн.)</th>
     	<th>Опис</th>
     	<th>Дія</th>
+    	<th></th>
     </tr>
  
 {% for type in workshop %}
-<tr>
+{% if type.pay %}	
+<tr>	
+{% else %}
+<tr BGCOLOR="#F2AE6B">
+{% endif %}
 	<td>       
+	<abbr title="Створено користувачем {{type.user.username}}">
 	{{type.id}}
+	</abbr>
 	</td>
 	<td>       
 	<a href="/client/result/search/?id={{type.client.id}}">
@@ -68,7 +93,12 @@
 	</td>
 	<td>
 	<a href="/workshop/edit/{{ type.id }}">edit</a>
+	{% if perms.accounting.delete_workshop %}	
     <a href="/workshop/delete/{{ type.id }}">delete</a>
+    {% endif %}
+    </td>
+    <td>
+   	<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{type.price}}" onclick="resWorkshop()" name="checkbox_{{ type.id }}"/>
     </td>
 </tr>
 {% endfor %}   
@@ -79,18 +109,18 @@
     	<th></th>
     	<th>Сума</th>
     	<th>{{summ}} грн.</th>
-    	<th></th>
-    	<th></th>
+    	<th>
+    	<input type="submit" value="E-mail" name="send_check" id="send_check" onClick="return confirm('Створити і надіслати листа?')">
+    	</th>
+    	<th>	
+    	<p><input type="submit" value="Оплата" name="pay" onClick="return confirm('Провести операцію?')"></p>
+		
+		</th>
+    	<th id="workshop_pay"></th>
 </tr> 
 
 </table>
-
-
-<br><br>
-<a href="/">Головне меню (HOME)</a>
 <br>
-<a href="/workshop/add/">Створити новий рахунок на виконані роботи</a>       
 
-
-
+</form>
 

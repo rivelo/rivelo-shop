@@ -3,7 +3,7 @@
 from django.db import models
 from django.forms import ModelForm
 from django.contrib import admin
-
+from django.contrib.auth.models import User
 
 # Type = Component category 
 class Type(models.Model):
@@ -457,6 +457,8 @@ class WorkShop(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     work_type = models.ForeignKey(WorkType)
     price = models.FloatField()
+    pay = models.BooleanField(default = False, verbose_name="Оплачено?")
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
     description = models.TextField(blank=True, null=True)
 
     
@@ -464,7 +466,7 @@ class WorkShop(models.Model):
         return self.description
 
     class Meta:
-        ordering = ["date"]
+        ordering = ["date", "client"]
 
 
 class WorkStatus(models.Model):

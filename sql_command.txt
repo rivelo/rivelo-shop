@@ -73,3 +73,6 @@ alter table `accounting_catalog` add `length` double precision;
 
 alter table `accounting_bicycle` add `sale` double precision;
 update accounting_bicycle set sale=0;
+
+alter table `accounting_workshop` add `pay` bool NOT NULL;
+alter table `accounting_workshop` add `user_id` integer; 

@@ -224,3 +224,30 @@ Key = client - Value = 2
 Key = date - Value = 2012-07-16 17:04:45
 Key = price - Value = 89.05
 Key = description - Value = Swiss+Tech Micro-Plus EX 9-in-1 ; 
+2012-11-26 00:56:18.515000 >>> DELETE FROM TABLE client debts WHERE id = 2574 
+Key = id - Value = 2574
+Key = client - Value = 2
+Key = date - Value = 2012-11-26 00:55:34
+Key = price - Value = 50.0
+Key = description - Value = Роботи: Ремонт механічних гальм; Заміна півня; 
+2012-11-26 01:35:46.093000 >>> DELETE FROM TABLE client debts WHERE id = 2582 
+Key = id - Value = 2582
+Key = client - Value = 31
+Key = date - Value = 2012-11-26 01:30:17
+Key = price - Value = 20.0
+Key = description - Value = Роботи: Профілактика та підготовка велосипедів до сезону; 
+2012-11-26 01:35:52.406000 >>> DELETE FROM TABLE client debts WHERE id = 2587 
+Key = id - Value = 2587
+Key = client - Value = 31
+Key = date - Value = 2012-11-26 01:34:56
+Key = price - Value = 130.0
+Key = description - Value = Роботи: Складання колеса; Складання колеса; Перебирання задньої конусної втулки; 
+2012-11-26 11:06:57.578000 >>> DELETE FROM TABLE bicycle_ sale WHERE id = 215 
+Key = id - Value = 215
+Key = model - Value = 90
+Key = client - Value = 378
+Key = price - Value = 3904.0
+Key = currency - Value = 3
+Key = date - Value = 2012-11-26
+Key = service - Value = False
+Key = description - Value = 5% знижка
