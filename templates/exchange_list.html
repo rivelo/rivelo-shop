@@ -3,7 +3,7 @@
 
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
-    <h1>Exchange list</h1>
+    <h1>Курс валют / Exchange rate <a href="/exchange/add/">(Додати)</a></h1>
     
    <table border="1">
 	<tr>
@@ -32,17 +32,17 @@
             {{ cur.value }}
         </td>
         <td>
+{% if user.is_authenticated %}        
             <a href="/exchange/edit/{{ cur.id }}">edit</a>
             
             <a href="/exchange/delete/{{ cur.id }}">delete</a>
+{% endif %}
         </td>
     </tr>
     {% endfor %}
     <table>
 
 
-<br><br>
-<a href="/">HOME</a>
 <br>
 <a href="/exchange/add/">Add</a>       
 
