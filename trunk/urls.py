@@ -250,7 +250,7 @@ urlpatterns = patterns('',
     (r'^workticket/year/(?P<year>\d+)/month/(?P<month>\d+)/view/$', 'catalog.accounting.views.workticket_list'),
     (r'^workticket/all/view/$', 'catalog.accounting.views.workticket_list', {'all': True}),
 
-    (r'^workshop/add/(?P<id_work>\d+)/$', 'catalog.accounting.views.workshop_add'),
+    (r'^workshop/add/(?P<id>\d+)/$', 'catalog.accounting.views.workshop_add'),
     (r'^workshop/add/client/(?P<id_client>\d+)/$', 'catalog.accounting.views.workshop_add'),
     (r'^workshop/add/$', 'catalog.accounting.views.workshop_add'),
     (r'^workshop/edit/(?P<id>\d+)/$', 'catalog.accounting.views.workshop_edit'),

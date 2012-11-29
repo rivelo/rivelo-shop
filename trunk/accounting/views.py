@@ -922,7 +922,7 @@ def dealer_invoice_add(request):
             return HttpResponseRedirect('/dealer/invoice/view/')
     else:
         form = DealerInvoiceForm(instance = a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'dealer_invoice.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'dealer_invoice.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def dealer_invoice_edit(request, id):
@@ -938,7 +938,7 @@ def dealer_invoice_edit(request, id):
             return HttpResponseRedirect('/dealer/invoice/year/'+str(yyy)+'/month/'+str(mmm)+'/view/')
     else:
         form = DealerInvoiceForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'dealer_invoice.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'dealer_invoice.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
  
 def dealer_invoice_del(request, id):
@@ -996,7 +996,7 @@ def dealer_invoice_list(request, id=False, pay='all'):
         exchange_d = 0
         exchange_e = 0
         
-    return render_to_response('index.html', {'dealer_invoice': list, 'sel_company': id, 'sel_year': year, 'exchange': exchange, 'exchange_d': exchange_d, 'exchange_e': exchange_e, 'summ': summ, 'summ_debt': summ_debt, 'weblink': 'dealer_invoice_list.html'})
+    return render_to_response('index.html', {'dealer_invoice': list, 'sel_company': id, 'sel_year': year, 'exchange': exchange, 'exchange_d': exchange_d, 'exchange_e': exchange_e, 'summ': summ, 'summ_debt': summ_debt, 'weblink': 'dealer_invoice_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def dealer_invoice_list_month(request, year=False, month=False, pay='all'):
@@ -1046,7 +1046,7 @@ def dealer_invoice_list_month(request, year=False, month=False, pay='all'):
         exchange_d = 0
         exchange_e = 0
     
-    return render_to_response('index.html', {'dealer_invoice': list, 'exchange': exchange, 'exchange_d': exchange_d, 'exchange_e': exchange_e, 'summ': summ, 'summ_debt': summ_debt, 'sel_month':month, 'sel_year':year, 'weblink': 'dealer_invoice_list.html'})
+    return render_to_response('index.html', {'dealer_invoice': list, 'exchange': exchange, 'exchange_d': exchange_d, 'exchange_e': exchange_e, 'summ': summ, 'summ_debt': summ_debt, 'sel_month':month, 'sel_year':year, 'weblink': 'dealer_invoice_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def dealer_invoice_search(request):
@@ -1060,7 +1060,7 @@ def dealer_invoice_search_result(request):
         num = request.GET['number']
         list = DealerInvoice.objects.filter(origin_id__icontains = num)
     #list1 = DealerInvoice.objects.all()
-    return render_to_response('index.html', {'invoice_list': list, 'weblink': 'dealer_invoice_list_search.html'})
+    return render_to_response('index.html', {'invoice_list': list, 'weblink': 'dealer_invoice_list_search.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 #-------------- InvoiceComponentList -----------------------
@@ -1176,7 +1176,7 @@ def invoicecomponent_list_by_manufacturer(request, mid=None, availability=False)
     else:
         company_name = company_list.get(id=mid)
 
-    return render_to_response('index.html', {'company_list': company_list, 'company_name': company_name, 'company_id':mid, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'company_list': company_list, 'weblink': 'invoicecomponent_list_test.html',  'company_name': company_name, 'company_id':mid, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def invoicecomponent_list_by_category(request, cid=None, limit=0):
@@ -1474,6 +1474,8 @@ def curency_list(request):
 
 
 def curency_del(request, id):
+    if auth_group(request.user, 'admin')==False:
+        return HttpResponseRedirect('/curency/view/')    
     obj = Currency.objects.get(id=id)
     del_logging(obj)
     obj.delete()
@@ -1488,12 +1490,16 @@ def exchange_add(request):
             date = form.cleaned_data['date']
             currency = form.cleaned_data['currency']
             value = form.cleaned_data['value']
-            Exchange(date=date, currency=currency, value=value).save()
-            return HttpResponseRedirect('/exchange/view/')
+            try:
+                de = Exchange.objects.get(date = date, currency = currency.id)
+                return HttpResponse("Такий курс вже існує, відредагуйте існуючий курс")
+            except Exchange.DoesNotExist:
+                Exchange(date=date, currency=currency, value=value).save()
+                return HttpResponseRedirect('/exchange/view/')
     else:
         form = ExchangeForm(instance = a)
     #return render_to_response('exchange.html', {'form': form})
-    return render_to_response('index.html', {'form': form, 'weblink': 'exchange.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'exchange.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def exchange_list(request):
@@ -1516,6 +1522,8 @@ def exchange_edit(request, id):
 
 
 def exchange_del(request, id):
+    if auth_group(request.user, 'admin')==False:
+        return HttpResponseRedirect('/exchange/view/')        
     obj = Exchange.objects.get(id=id)
     del_logging(obj)
     obj.delete()
@@ -1542,7 +1550,7 @@ def manufacturer_add(request):
     else:
         form = ManufacturerForm(instance=a)
     #return render_to_response('manufacturer.html', {'form': form})
-    return render_to_response('index.html', {'form': form, 'weblink': 'manufacturer.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'manufacturer.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def manufacturer_edit(request, id):
@@ -1562,13 +1570,13 @@ def manufacturer_edit(request, id):
             return HttpResponseRedirect('/manufacturer/view/')
     else:
         form = ManufacturerForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'manufacturer.html', 'text': 'Виробник (редагування)'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'manufacturer.html', 'text': 'Виробник (редагування)', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def manufaturer_list(request):
     list = Manufacturer.objects.all()
     #return render_to_response('manufacturer_list.html', {'manufactures': list.values_list()})
-    return render_to_response('index.html', {'manufactures': list, 'weblink': 'manufacturer_list.html'})
+    return render_to_response('index.html', {'manufactures': list, 'weblink': 'manufacturer_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def manufacturer_delete(request, id):
@@ -1816,7 +1824,7 @@ def client_balance_list(request):
             list.remove(key1)
             
     #list = Bicycle_Sale.objects.all().order_by('date')
-    return render_to_response('index.html', {'clients': list, 'sum_debt':s_debt, 'sum_cred':s_cred, 'weblink': 'client_balance_list.html'})
+    return render_to_response('index.html', {'clients': list, 'sum_debt':s_debt, 'sum_cred':s_cred, 'weblink': 'client_balance_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
             
 
 def client_list(request):
@@ -1834,10 +1842,12 @@ def client_list(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         contacts = paginator.page(paginator.num_pages)
     
-    return render_to_response('index.html', {'clients': contacts, 'weblink': 'client_list.html'})
+    return render_to_response('index.html', {'clients': contacts, 'weblink': 'client_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def client_delete(request, id):
+    if auth_group(request.user, 'admin')==False:
+        return HttpResponseRedirect('/client/view/')
     obj = Client.objects.get(id=id)
     del_logging(obj)
     obj.delete()
@@ -2435,11 +2445,11 @@ def workticket_delete(request, id):
     return HttpResponseRedirect('/workticket/view/')
 
 
-def workshop_add(request, id_work=None, id_client=None):
+def workshop_add(request, id=None, id_client=None):
     work = None
     wclient = None
-    if id_work != None:
-        work = WorkType.objects.get(id=id_work)
+    if id != None:
+        work = WorkType.objects.get(id=id)
     if id_client!=None:
         wclient = Client.objects.get(id=id_client)
     
@@ -2461,7 +2471,7 @@ def workshop_add(request, id_work=None, id_client=None):
     else:
         if work != None:
             form = WorkShopForm(initial={'work_type': work.id, 'price': work.price})
-        if wclient != None:
+        elif wclient != None:
             form = WorkShopForm(initial={'client': wclient.id})
         else:        
             form = WorkShopForm()

@@ -430,7 +430,7 @@ class WorkTypeForm(forms.ModelForm):
 class WorkShopForm(forms.ModelForm):
     client = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete'}), queryset = Client.objects.all(), empty_label="")
     date = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'), required=False)
-    work_type = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete', 'width':'340px'}), queryset = WorkType.objects.all(), empty_label="")
+    work_type = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete', 'width':'340px'}), queryset = WorkType.objects.all())
     price = forms.FloatField(initial=0)
     pay = forms.BooleanField(initial=False, required=False)
     description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255, required=False)

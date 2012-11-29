@@ -251,3 +251,9 @@ Key = currency - Value = 3
 Key = date - Value = 2012-11-26
 Key = service - Value = False
 Key = description - Value = 5% знижка
+2012-11-29 00:41:33.187000 >>> DELETE FROM TABLE client credits WHERE id = 2049 
+Key = id - Value = 2049
+Key = client - Value = 2
+Key = date - Value = 2012-10-17 20:47:18
+Key = price - Value = 13.6
+Key = description - Value = Спица Sapim Leader 14G 288, с нип. Brass 14G 12 polyax (уп. 100 шт); 

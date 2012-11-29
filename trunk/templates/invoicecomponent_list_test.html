@@ -25,6 +25,12 @@
 	<tr>
     	<th ROWSPAN="2">#</th>	
     	<th ROWSPAN="2">ID</th>
+
+{% if perms.accounting.delete_invoicecomponentlist %}
+	<th ROWSPAN="2">
+	</th>
+{% endif %}
+
     	<th ROWSPAN="2">Найменування товару</th>
     	<th align="center" COLSPAN="3" width="80px">Кількість</th>
     	
@@ -59,6 +65,11 @@
 	<td>       
 		<a href="/catalog/id/{{type.catalog}}/view">{{type.catalog}}</a>
 	</td>
+{% if perms.accounting.delete_invoicecomponentlist %}	
+	<td>
+		<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{type.price}}" name="checkbox_{{ type.id }}"/>
+	</td>
+{% endif %}
 	<td>
 	[{{type.catalog__ids}}] - ({{type.catalog__manufacturer__name}}) {{type.catalog__name}}
 	</td>
@@ -105,6 +116,9 @@
 	<tr>
     	<th></th>	
     	<th></th>
+{% if perms.accounting.delete_invoicecomponentlist %}    	
+    	<th></th>
+{% endif %}    	
     	<th></th>
     	<th>{{countsum}}</th>
     	<th></th>
