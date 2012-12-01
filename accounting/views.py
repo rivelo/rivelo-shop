@@ -2997,6 +2997,33 @@ def client_payform(request):
     return HttpResponseRedirect(url)
 
 
+def catalog_saleform(request):
+    checkbox_list = [x for x in request.POST if x.startswith('checkbox_')]
+    list_id = []
+    for id in checkbox_list:
+        list_id.append( int(id.replace('checkbox_', '')) )
+    catalog = Catalog.objects.filter(id__in=list_id)
+    
+    if 'sale' in request.POST and request.POST['sale']:
+        sale = request.POST['sale']
+        if float(request.POST['sale']) <= 0:
+            sale = 0
+        for c in catalog:
+            c.sale = sale
+            c.save()
+             
+#===============================================================================
+#    if 'pay' in request.POST and request.POST['pay']:
+#        pay = request.POST['pay']
+#        if float(request.POST['pay']) != 0:
+#            ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=pay, description=desc)
+#            ccred.save()
+#===============================================================================
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+#    return HttpResponse("You pressed button SALE" + str(list_id))
+    
+
+
 def ajax_search1(request):
     if request.method == 'GET':  
         GET = request.GET  
