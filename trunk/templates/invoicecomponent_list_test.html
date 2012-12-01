@@ -1,4 +1,23 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<script language="JavaScript">
+
+function res()
+{
+var p=0;
+var All=document.forms['formSum'];
+for(var i = 0; i < All.elements.length; ++i) {
+	if(All.elements[i].checked){
+	p=p+parseFloat(All.elements[i].value);
+	var t = i + 1
+	document.getElementById("ch_"+t).innerHTML = parseFloat(All.elements[i].value) * (1 - parseFloat(document.getElementById("sale").value) / 100) + 'грн.';
+	}
+	document.getElementById('for_pay').innerHTML = p.toFixed(2)+" грн.";
+}
+}
+
+</script>
+
 <html lang="en">
 <head>
     <title>Список товару</title>
@@ -21,6 +40,7 @@
     <a href="/invoice/manufacture/{{company_id}}/availability/view/html/"> Наявність HTML </a>
 {% endif %}    
 
+<form action="/catalog/saleform/" method="post" name="formSum">
     <table border="1" width="100%">
 	<tr>
     	<th ROWSPAN="2">#</th>	
@@ -67,7 +87,9 @@
 	</td>
 {% if perms.accounting.delete_invoicecomponentlist %}	
 	<td>
-		<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{type.price}}" name="checkbox_{{ type.id }}"/>
+{#		<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{type.sum_catalog|sub:type.c_sale|mul:type.catalog__price|floatformat}}" name="checkbox_{{ type.catalog }}"/ onclick="res()">  #}
+		<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{type.catalog__price|floatformat}}" name="checkbox_{{ type.catalog }}"/ onclick="res()">		
+		<p id="ch_{{forloop.counter}}"></p>
 	</td>
 {% endif %}
 	<td>
@@ -117,7 +139,9 @@
     	<th></th>	
     	<th></th>
 {% if perms.accounting.delete_invoicecomponentlist %}    	
-    	<th></th>
+    	<th> <p id="for_pay" BGCOLOR="#D5FFB4"></p>
+    	<p>Знижка:<br> <input type="text" name="sale" id="sale" width="5px" value="0"></p>
+    	<input type="submit" value="Знижка" name="pay"></th>
 {% endif %}    	
     	<th></th>
     	<th>{{countsum}}</th>
@@ -129,7 +153,7 @@
     </tr>
     
 </table>
-    
+</form>
     
 
 
