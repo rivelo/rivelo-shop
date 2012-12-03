@@ -1857,7 +1857,7 @@ def client_delete(request, id):
 def client_data(request, id):
     obj = Client.objects.get(id=id)
     #return render_to_response('bicycle_list.html', {'bicycles': list.values_list()})
-    return render_to_response('index.html', {'client': obj, 'weblink': 'client_data.html'})
+    return render_to_response('index.html', {'client': obj, 'weblink': 'client_data.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def clientdebts_add(request, id=None):
@@ -1868,7 +1868,9 @@ def clientdebts_add(request, id=None):
             date = form.cleaned_data['date']
             price = form.cleaned_data['price']
             description = form.cleaned_data['description']
-            ClientDebts(client=client, date=date, price=price, description=description).save()
+            if request.user.is_authenticated():
+                user = request.user
+            ClientDebts(client=client, date=date, price=price, description=description, user=user).save()
             
             update_client = Client.objects.get(id=client.id)
             update_client.summ = update_client.summ + price 
@@ -1884,7 +1886,7 @@ def clientdebts_add(request, id=None):
         else:
             form = ClientDebtsForm()
     #return render_to_response('clientdebts.html', {'form': form})
-    return render_to_response('index.html', {'form': form, 'weblink': 'clientdebts.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'clientdebts.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def clientdebts_edit(request, id):
@@ -1904,7 +1906,7 @@ def clientdebts_edit(request, id):
             return HttpResponseRedirect('/clientdebts/view/')
     else:
         form = ClientDebtsForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'client.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'client.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 #BORG
@@ -1925,7 +1927,7 @@ def clientdebts_list(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         debts = paginator.page(paginator.num_pages)
     
-    return render_to_response('index.html', {'clients': debts, 'weblink': 'clientdebts_list.html'})
+    return render_to_response('index.html', {'clients': debts, 'weblink': 'clientdebts_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def clientdebts_delete(request, id):
@@ -1937,6 +1939,13 @@ def clientdebts_delete(request, id):
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 
+def clientdebts_delete_all(request, client_id):
+    if auth_group(request.user, "admin") == False:
+        return HttpResponseRedirect('/.')
+    obj = ClientDebts.objects.filter(client=client_id).delete()
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+
+
 def clientcredits_add(request, id=None):
     if request.method == 'POST':
         form = ClientCreditsForm(request.POST)
@@ -1945,7 +1954,10 @@ def clientcredits_add(request, id=None):
             date = form.cleaned_data['date']
             price = form.cleaned_data['price']
             description = form.cleaned_data['description']
-            ClientCredits(client=client, date=date, price=price, description=description).save()
+            user = None             
+            if request.user.is_authenticated():
+                user = request.user
+            ClientCredits(client=client, date=date, price=price, description=description, user=user).save()
             if id != None:
                 return HttpResponseRedirect('/client/result/search/?id='+str(id))
             else:
@@ -1968,7 +1980,7 @@ def clientcredits_add(request, id=None):
             form = ClientCreditsForm()
         #form = ClientCreditsForm()
     #return render_to_response('clientcredits.html', {'form': form})
-    return render_to_response('index.html', {'form': form, 'weblink': 'clientcredits.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'clientcredits.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def clientcredits_list(request):
@@ -1987,7 +1999,7 @@ def clientcredits_list(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         credits = paginator.page(paginator.num_pages)
     
-    return render_to_response('index.html', {'clients': credits, 'weblink': 'clientcredits_list.html'})
+    return render_to_response('index.html', {'clients': credits, 'weblink': 'clientcredits_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 def clientcredits_edit(request, id):
     a = ClientCredits.objects.get(pk=id)
@@ -1998,12 +2010,12 @@ def clientcredits_edit(request, id):
             return HttpResponseRedirect('/clientcredits/view/')
     else:
         form = ClientCreditsForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'clientcredits.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'clientcredits.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def clientcredits_delete(request, id):
     if auth_group(request.user, "admin") == False:
-        return HttpResponseRedirect('/.')
+        return HttpResponseRedirect('/')
     obj = ClientCredits.objects.get(id=id)
     del_logging(obj)
     obj.delete()
@@ -2011,10 +2023,16 @@ def clientcredits_delete(request, id):
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
     #return HttpResponse('<script language="JavaScript">history.back();</script>')
 
+def clientcredits_delete_all(request, client_id):
+    if auth_group(request.user, "admin") == False:
+        return HttpResponseRedirect('/')
+    obj = ClientCredits.objects.filter(client=client_id).delete()
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+
 
 def client_invoice(request, cid=None):
     cat = Catalog.objects.get(id = cid)
-    a = ClientInvoice(date=datetime.date.today(), price=cat.price, sum=Catalog.objects.get(id = cid).price, sale=int(Catalog.objects.get(id = cid).sale), pay=0, count=1, currency=Currency.objects.get(id=3), catalog=Catalog.objects.get(id = cid))
+    a = ClientInvoice(date=datetime.datetime.today(), price=cat.price, sum=Catalog.objects.get(id = cid).price, sale=int(Catalog.objects.get(id = cid).sale), pay=0, count=1, currency=Currency.objects.get(id=3), catalog=Catalog.objects.get(id = cid))
     if request.method == 'POST':
         form = ClientInvoiceForm(request.POST, instance = a, catalog_id=cid)
         if form.is_valid():
@@ -2027,15 +2045,18 @@ def client_invoice(request, cid=None):
             sale = form.cleaned_data['sale']
             pay = form.cleaned_data['pay']
             date = form.cleaned_data['date']
+            user = None #form.cleaned_data['user_id']            
+            if request.user.is_authenticated():
+                user = request.user
             description = form.cleaned_data['description']
-            ClientInvoice(client=client, catalog=catalog, count=count, sum=sum, price=price, currency=currency, sale=sale, pay=pay, date=date, description=description).save()
+            ClientInvoice(client=client, catalog=catalog, count=count, sum=sum, price=price, currency=currency, sale=sale, pay=pay, date=date, description=description, user=user).save()
             cat.count = cat.count - count
             cat.save()
             #WorkGroup(name=name, description=description).save()
             return HttpResponseRedirect('/client/invoice/view/')
     else:
         form = ClientInvoiceForm(instance = a, catalog_id=cid)
-    return render_to_response('index.html', {'form': form, 'weblink': 'clientinvoice.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'clientinvoice.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def client_invoice_edit(request, id):
@@ -2957,7 +2978,10 @@ def workshop_payform(request):
 #        return HttpResponse("Workshop FORM <br>" + str(sum) + "грн" + "<br>" + request.POST)
     
     #------- додавання даних про розрахунок -----
-    ccred = ClientDebts(client=client, date=datetime.datetime.now(), price=sum, description=desc)
+    user = None            
+    if request.user.is_authenticated():
+        user = request.user
+    ccred = ClientDebts(client=client, date=datetime.datetime.now(), price=sum, description=desc, user=user)
     ccred.save()
     for item in wk:
         item.pay = True
@@ -2971,6 +2995,10 @@ def workshop_payform(request):
 def client_payform(request):
     checkbox_list = [x for x in request.POST if x.startswith('checkbox_')]
     list_id = []
+    user = None            
+    if request.user.is_authenticated():
+        user = request.user
+
     for id in checkbox_list:
         list_id.append( int(id.replace('checkbox_', '')) )
     ci = ClientInvoice.objects.filter(id__in=list_id)
@@ -2986,10 +3014,10 @@ def client_payform(request):
     if 'pay' in request.POST and request.POST['pay']:
         pay = request.POST['pay']
         if float(request.POST['pay']) != 0:
-            ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=pay, description=desc)
+            ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=pay, description=desc, user=user)
             ccred.save()
         
-    cdeb = ClientDebts(client=client, date=datetime.datetime.now(), price=sum, description=desc)
+    cdeb = ClientDebts(client=client, date=datetime.datetime.now(), price=sum, description=desc, user=user)
     cdeb.save()
     if client.id == 138:
         return HttpResponseRedirect('/client/invoice/view/')

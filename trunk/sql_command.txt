@@ -76,3 +76,13 @@ update accounting_bicycle set sale=0;
 
 alter table `accounting_workshop` add `pay` bool NOT NULL;
 alter table `accounting_workshop` add `user_id` integer; 
+
+
+alter table `accounting_clientinvoice` change date date datetime;
+alter table `accounting_clientinvoice` add `user_id` integer;
+alter table accounting_clientcredits add `user_id` integer;
+alter table accounting_clientdebts add `user_id` integer;
+alter table accounting_bicycle_sale add `user_id` integer;
+alter table accounting_bicycle_order add `user_id` integer;
+alter table accounting_clientcredits change date date datetime;
+alter table accounting_clientdebts change date date datetime;

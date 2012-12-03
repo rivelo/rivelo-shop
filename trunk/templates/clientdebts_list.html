@@ -24,8 +24,10 @@
     
     {% for type in clients.object_list %}
 <tr>
-	<td>       
+	<td>
+	<abbr title="Створено користувачем {{type.user.username}}">       
 	{{forloop.counter}}
+	</abbr>
 	</td>
 	<td>       
 	<a href="/clientdebts/edit/{{ type.id }}">{{type.id}}</a> 
@@ -34,7 +36,11 @@
 	<a href="/client/result/search/?id={{type.client.id}}">{{type.client}}</a>       
 	</td>
 	<td>       
+	{% if perms.accounting.delete_clientdebts %}
+	{{type.date|date:'d-m-Y H:i' }}
+	{% else %}
 	{{type.date|date}}
+	{% endif %}
 	</td>
 	<td>       
 	{{type.price}}
@@ -43,7 +49,9 @@
 	{{type.description}}
 	</td>	
 	<td>
+	{% if perms.accounting.delete_clientdebts %}
     <a href="/clientdebts/delete/{{ type.id }}" onclick="return confirm('Видалити запис?')">delete</a>
+    {% endif %}
     </td>
 </tr>
 {% endfor %}           
