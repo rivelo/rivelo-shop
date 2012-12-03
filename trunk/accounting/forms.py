@@ -110,11 +110,11 @@ class BicycleForm(forms.ModelForm):
     #sizes = forms.MultipleChoiceField()
     sizes = forms.CharField(required=False)
     photo = forms.ImageField()
-    weight = forms.FloatField(min_value=0)
-    price = forms.FloatField()
+    weight = forms.FloatField(min_value=0, initial=0)
+    price = forms.FloatField(initial=0)
     #currency = SelectFromModel(objects=Currency.objects.all())
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
-    sale = forms.FloatField(initial=0, required=False)
+    sale = forms.FloatField(min_value=0, initial=0, required=False)
     description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)    
 
     class Meta:
