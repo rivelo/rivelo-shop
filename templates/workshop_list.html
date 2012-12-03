@@ -20,6 +20,8 @@ for(var i = 0; i < All.elements.length; ++i) {
     
 </script>
 
+<body onLoad="resWorkshop()">
+
 <br>
 <h2>
     За місяць: 
@@ -98,7 +100,11 @@ for(var i = 0; i < All.elements.length; ++i) {
     {% endif %}
     </td>
     <td>
+{% if type.pay %}    
    	<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{type.price}}" onclick="resWorkshop()" name="checkbox_{{ type.id }}"/>
+{% else %}
+   	<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{type.price}}" onclick="resWorkshop()" checked name="checkbox_{{ type.id }}"/>
+{% endif %}
     </td>
 </tr>
 {% endfor %}   

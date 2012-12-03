@@ -25,14 +25,14 @@ for(var i = 0; i < All.elements.length; ++i) {
 	if(All.elements[i].checked){
 	p+=parseFloat(All.elements[i].value);
 	}
-	document.getElementById('workshop_pay').innerHTML = "До оплати: <br>" + p.toFixed(2)+" грн.";
+	document.getElementById('workshop_pay').innerHTML = p.toFixed(2)+" грн.";
 	document.getElementById('debet').innerHTML = parseFloat(document.getElementById('for_pay').innerHTML)+parseFloat(document.getElementById('workshop_pay').innerHTML);
 }
 }
-    
+
 </script>
 
-<body onLoad="res()">
+<body onLoad="res(); resWorkshop()">
 
     <h1>Виписка по клієнту: <a href=/client/edit/{{client_name.id}}> {{client_name.name}} ({{client_name.forumname}}) </a></h1>
 	<br>
@@ -49,7 +49,11 @@ for(var i = 0; i < All.elements.length; ++i) {
 	<td>
 	Проплати клієнта
 	</td>
-	<td><a href=/clientcredits/add/{{client_name.id}}> Створити нову проплату </a> 
+	<td><a href="/clientcredits/add/{{client_name.id}}">Створити нову проплату</a>  
+	{% if perms.accounting.delete_clientcredits %}
+	 /-----/ <a href="/clientcredits/{{client_name.id}}/delete/all">(Видалити всі проплати)</a> 
+	{% endif %}	
+	 
 	</td>
 	<td>
 	</td>
@@ -59,11 +63,14 @@ for(var i = 0; i < All.elements.length; ++i) {
 	{% for credit in credit_list %}
 	<tr>
 	<td>
+		<abbr title="{{credit.date|time:"H:i"}} - [{{credit.user.username}}]">
 	{{credit.date|date}}
+	</abbr>
 	</td>
 	<td>
 	{{credit.description}} 
-	{% if perms.accounting.delete_clientcredits %} 
+	{% if perms.accounting.delete_clientcredits %}
+	<a href="/clientcredits/edit/{{ credit.id }}">edit</a>	 
 	<a href="/clientcredits/delete/{{ credit.id }}" onclick="return confirm('Видалити запис?')">delete</a>
 	{% endif %}
 	</td>
@@ -78,6 +85,9 @@ for(var i = 0; i < All.elements.length; ++i) {
 	Борги
 	</td>
 	<td><a href=/clientdebts/add/{{client_name.id}}> Додати борг </a>
+	{% if perms.accounting.delete_clientcredits %}
+	 /-----/ <a href="/clientdebts/{{client_name.id}}/delete/all">(Видалити всі борги)</a> 
+	{% endif %}	
 	</td>
 	<td id="debet">
 	</td>
@@ -86,11 +96,14 @@ for(var i = 0; i < All.elements.length; ++i) {
 	{% for debt in debt_list %}
 	<tr>
 	<td>
+	<abbr title="{{debt.date|time:"H:i"}} - [{{debt.user.username}}]">
 	{{debt.date|date}}
+	</abbr>
 	</td>
 	<td>
 	{{debt.description}}
 	{% if perms.accounting.delete_preorder %}
+    <a href="/clientdebts/edit/{{ debt.id }}" >edit</a>	
     <a href="/clientdebts/delete/{{ debt.id }}" onclick="return confirm('Видалити запис?')">delete</a>	
 	{% endif %}
 	</td>
@@ -195,18 +208,23 @@ for(var i = 0; i < All.elements.length; ++i) {
 	<td>
 	{{inv.price}}
 	</td>
-{% else %}
-	<td BGCOLOR="#FF6600">
-	{{inv.price}}
-	</td>
-
-{% endif %}
 	<td>
 	{{inv.description}}
 	</td>	
 	<td align="center">
 	<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{inv.price}}" onclick="resWorkshop()" name="checkbox_{{ inv.id }}"/>
+	</td>	
+{% else %}
+	<td BGCOLOR="#FF6600">
+	{{inv.price}}
 	</td>
+	<td>
+	{{inv.description}}
+	</td>	
+	<td align="center">
+	<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{inv.price}}" onclick="resWorkshop()" checked name="checkbox_{{ inv.id }}"/>
+	</td>
+{% endif %}
 	</tr>
 	{% endfor %}
 	
@@ -218,7 +236,7 @@ for(var i = 0; i < All.elements.length; ++i) {
 	<p><input type="submit" value="Оплата" name="pay" onClick="return confirm('Провести операцію?')"></p>
 	<input type="submit" value="E-mail" name="send_check">	
 	</th>
-	<th id="workshop_pay" BGCOLOR="#D5FFB4">0</th>
+	<th><p>До оплати:</p><p id="workshop_pay" BGCOLOR="#D5FFB4">0<p></th>
 	</tr>
 	</table>
 </form>

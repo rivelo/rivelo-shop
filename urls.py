@@ -210,7 +210,7 @@ urlpatterns = patterns('',
     (r'^client/invoice/catalog/(?P<id>\d+)/view/$', 'catalog.accounting.views.client_invoice_id'),
     (r'^client/invoice/add/$', 'catalog.accounting.views.client_invoice'),
     (r'^client/invoice/(?P<id>\d+)/delete/$', 'catalog.accounting.views.client_invoice_delete'),
-    (r'^client/invoice/year/(?P<year>\d+)/month/(?P<month>\d+)/view/$', 'catalog.accounting.views.client_invoice_view', {'day': "all"}),
+    (r'^client/invoice/year/(?P<year>\d+)/month/(?P<month>\d+)/view/$', 'catalog.accounting.views.client_invoice_view', {'day':"all"}),
     (r'^client/invoice/year/(?P<year>\d+)/month/(?P<month>\d+)/day/(?P<day>\d+)/view/$', 'catalog.accounting.views.client_invoice_view'),
     (r'^client/invoice/report/$', 'catalog.accounting.views.client_invoice_sale_report'),
 
@@ -218,11 +218,13 @@ urlpatterns = patterns('',
     (r'^clientdebts/view/$', 'catalog.accounting.views.clientdebts_list'),
     (r'^clientdebts/edit/(?P<id>\d+)$', 'catalog.accounting.views.clientdebts_edit'),
     (r'^clientdebts/delete/(?P<id>\d+)$', 'catalog.accounting.views.clientdebts_delete'),
+    (r'^clientdebts/(?P<client_id>\d+)/delete/all/$', 'catalog.accounting.views.clientdebts_delete_all'),
 
     (r'^clientcredits/add/(?P<id>\d+)$', 'catalog.accounting.views.clientcredits_add'),
     (r'^clientcredits/view/$', 'catalog.accounting.views.clientcredits_list'),
     (r'^clientcredits/edit/(?P<id>\d+)$', 'catalog.accounting.views.clientcredits_edit'),    
     (r'^clientcredits/delete/(?P<id>\d+)$', 'catalog.accounting.views.clientcredits_delete'),
+    (r'^clientcredits/(?P<client_id>\d+)/delete/all/$', 'catalog.accounting.views.clientcredits_delete_all'),
 
     # WorkShop 
     #operation by GROUP

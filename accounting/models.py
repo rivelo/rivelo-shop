@@ -257,6 +257,7 @@ class ClientDebts(models.Model):
     date = models.DateTimeField()
     price = models.FloatField()
     description = models.TextField()
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)    
 
     
     def __unicode__(self):
@@ -271,6 +272,7 @@ class ClientCredits(models.Model):
     date = models.DateTimeField()
     price = models.FloatField()
     description = models.TextField()
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
 
     
     def __unicode__(self):
@@ -289,8 +291,10 @@ class ClientInvoice(models.Model):
     currency = models.ForeignKey(Currency)
     sale = models.IntegerField(blank = True, null = True) 
     pay = models.FloatField(blank = True, null = True)    
-    date = models.DateField(auto_now_add=False)
+#    date = models.DateField(auto_now_add=False)
+    date = models.DateTimeField(auto_now_add = False)    
     description = models.TextField(blank = True, null = True)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)    
             
     def __unicode__(self):
         return "%s - %s шт." % (self.catalog, self.count) 
@@ -395,6 +399,7 @@ class Bicycle_Sale(models.Model):
     date = models.DateField(auto_now_add=True)
     service = models.BooleanField(default = True) 
     description = models.TextField(blank=True, null=True)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)    
     
     def __unicode__(self):
         #return self.model
@@ -416,6 +421,7 @@ class Bicycle_Order(models.Model):
     date = models.DateField(auto_now_add=True)
     done = models.BooleanField(default = False) 
     description = models.TextField(blank=True, null=True)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)    
     
     def __unicode__(self):
         #return self.model

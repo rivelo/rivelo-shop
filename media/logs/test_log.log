@@ -257,3 +257,16 @@ Key = client - Value = 2
 Key = date - Value = 2012-10-17 20:47:18
 Key = price - Value = 13.6
 Key = description - Value = Спица Sapim Leader 14G 288, с нип. Brass 14G 12 polyax (уп. 100 шт); 
+2012-12-02 20:50:43.937000 >>> DELETE FROM TABLE client invoice WHERE id = 6692 
+Key = id - Value = 6692
+Key = client - Value = 2
+Key = catalog - Value = 1204
+Key = count - Value = 1
+Key = price - Value = 134.0
+Key = sum - Value = 134.0
+Key = currency - Value = 3
+Key = sale - Value = 0
+Key = pay - Value = 0.0
+Key = date - Value = 2012-12-02 17:50:44
+Key = description - Value = 
+Key = user - Value = None
