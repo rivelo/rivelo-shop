@@ -303,10 +303,11 @@ def processUploadedImage(file, dir=''):
 def bicycle_add(request):
     if (auth_group(request.user, 'seller') or auth_group(request.user, 'admin')) == False:
         return HttpResponseRedirect('/bicycle/view/')
-    
-    a = Bicycle(year=datetime.date.today())
+#    a = Bicycle(year=datetime.date.today())
+    a = Bicycle()    
     if request.method == 'POST':
-        form = BicycleForm(request.POST, request.FILES, instance=a)
+#        form = BicycleForm(request.POST, request.FILES, instance=a)
+        form = BicycleForm(request.POST, request.FILES)        
         if form.is_valid():
             #bicycle = form.save()
             model = form.cleaned_data['model']
@@ -324,11 +325,12 @@ def bicycle_add(request):
             #photo = photo,
             upload_path = processUploadedImage(photo) 
             #handle_uploaded_file(photo)
-            Bicycle(model = model, type=type, brand = brand, color = color, photo=upload_path, weight = weight, price = price, currency = currency, description=description, year=year).save()
+            Bicycle(model = model, type=type, brand = brand, color = color, photo=upload_path, weight = weight, price = price, currency = currency, description=description, year=year, sale=sale).save()
             return HttpResponseRedirect('/bicycle/view/')
             #return HttpResponseRedirect(bicycle.get_absolute_url())
     else:
-        form = BicycleForm(instance=a)
+#        form = BicycleForm(instance=a)
+        form = BicycleForm()        
 
     #return render_to_response('bicycle.html', {'form': form})
     return render_to_response('index.html', {'form': form, 'weblink': 'bicycle.html', 'text': 'Велосипед з каталогу (створення)'}, context_instance=RequestContext(request, processors=[custom_proc]))
@@ -2061,7 +2063,9 @@ def client_invoice(request, cid=None):
 
 def client_invoice_edit(request, id):
     a = ClientInvoice.objects.get(id=id)
+    old_count = a.count
     cat_id = a.catalog.id
+    cat = Catalog.objects.get(id = cat_id)
     if request.method == 'POST':
         form = ClientInvoiceForm(request.POST, instance = a, catalog_id = cat_id)
         if form.is_valid():
@@ -2075,7 +2079,12 @@ def client_invoice_edit(request, id):
             pay = form.cleaned_data['pay']
             date = form.cleaned_data['date']
             description = form.cleaned_data['description']
-            ClientInvoice(id=id, client=client, catalog=catalog, count=count, sum=sum, price=price, currency=currency, sale=sale, pay=pay, date=date, description=description).save()
+            cat.count = cat.count - (old_count - count)
+            cat.save()
+            user = a.user
+            if request.user.is_authenticated():
+                user = request.user
+            ClientInvoice(id=id, client=client, catalog=catalog, count=count, sum=sum, price=price, currency=currency, sale=sale, pay=pay, date=date, description=description, user=user).save()
             return HttpResponseRedirect('/client/invoice/view/')
     else:
         form = ClientInvoiceForm(instance = a, catalog_id = cat_id)
@@ -2190,6 +2199,8 @@ def client_search_result(request):
     username = request.GET['name']
     #clients = Client.objects.filter(name__icontains=username)
     clients = Client.objects.filter(Q(name__icontains=username) | Q(forumname__icontains=username))
+    if clients.count() == 1:
+        return HttpResponseRedirect("/client/result/search/?id=" + str(clients[0].id))
     paginator = Paginator(clients, 25)
     page = request.GET.get('page')
     if page == None:
@@ -2203,7 +2214,7 @@ def client_search_result(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         contacts = paginator.page(paginator.num_pages)
     
-    return render_to_response('index.html', {'clients':contacts, 'weblink': 'client_list.html'})
+    return render_to_response('index.html', {'clients':contacts, 'weblink': 'client_list.html', 'c_count': clients.count(), 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 from django.db import connection
@@ -2731,12 +2742,12 @@ def costtype_add(request):
             return HttpResponseRedirect('/cost/type/view/')
     else:
         form = CostTypeForm()
-    return render_to_response('index.html', {'form': form, 'weblink': 'costtype.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'costtype.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def costtype_list(request):
     list = CostType.objects.all()
-    return render_to_response('index.html', {'costtypes': list, 'weblink': 'costtype_list.html'})
+    return render_to_response('index.html', {'costtypes': list, 'weblink': 'costtype_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def costtype_delete(request, id):
@@ -2765,7 +2776,7 @@ def cost_add(request, id = None):
             form = CostsForm(initial={'cost_type': cost.id})
         else:        
             form = CostsForm()
-    return render_to_response('index.html', {'form': form, 'weblink': 'cost.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'cost.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def cost_edit(request, id):
@@ -2783,7 +2794,7 @@ def cost_edit(request, id):
             return HttpResponseRedirect('/cost/view/')
     else:
         form = CostsForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'cost.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'cost.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def cost_list(request):
@@ -2791,10 +2802,26 @@ def cost_list(request):
     sum = 0
     for item in list:
         sum = sum + item.price
-    return render_to_response('index.html', {'costs': list, 'summ': sum, 'weblink': 'cost_list.html'})
+        
+    paginator = Paginator(list, 25)
+    page = request.GET.get('page')
+    if page == None:
+        page = 1
+    try:
+        pcost = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        pcost = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        pcost = paginator.page(paginator.num_pages)
+
+    return render_to_response('index.html', {'costs': pcost, 'summ': sum, 'weblink': 'cost_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def cost_delete(request, id):
+    if auth_group(request.user, 'admin')==False:
+        return HttpResponseRedirect('/cost/view/')
     obj = Costs.objects.get(id=id)
     del_logging(obj)
     obj.delete()
@@ -2895,16 +2922,20 @@ def preorder_add(request):
             return HttpResponseRedirect('/preorder/view/')
     else:
         form = PreOrderForm(instance = a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'preorder.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'preorder.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def preorder_list(request):
+    if auth_group(request.user, 'admin')==False:
+        return HttpResponseRedirect('/')
     list = PreOrder.objects.all()
     #return render_to_response('dealer_list.html', {'dealers': list.values_list()})
-    return render_to_response('index.html', {'preorder1': list, 'weblink': 'preorder_list.html'})
+    return render_to_response('index.html', {'preorder1': list, 'weblink': 'preorder_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def preorder_delete(request, id):
+    if auth_group(request.user, 'admin')==False:
+        return HttpResponseRedirect('/preorder/view/')
     obj = PreOrder.objects.get(id=id)
     del_logging(obj)
     obj.delete()

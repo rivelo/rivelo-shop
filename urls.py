@@ -290,7 +290,6 @@ urlpatterns = patterns('',
     (r'^cost/delete/(?P<id>\d+)/$', 'catalog.accounting.views.cost_delete'),    
     (r'^cost/edit/(?P<id>\d+)/$', 'catalog.accounting.views.cost_edit'),
 
-
     (r'^preorder/add/$', 'catalog.accounting.views.preorder_add'),
     (r'^preorder/view/$', 'catalog.accounting.views.preorder_list'),
     (r'^preorder/edit/(?P<id>\d+)/$', 'catalog.accounting.views.preorder_edit'),

@@ -358,7 +358,7 @@ class Bicycle(models.Model):
     #PositiveIntegerField()
     price = models.FloatField()
     currency = models.ForeignKey(Currency)
-    sale = models.FloatField(blank=True, null=True)
+    sale = models.FloatField(default = 0, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
 
     def __unicode__(self):
