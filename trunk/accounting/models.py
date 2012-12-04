@@ -590,3 +590,20 @@ class Discount(models.Model):
     class Meta:
         ordering = ["name", "sale", "date_end"]    
 
+
+class Rent():
+    catalog = models.ForeignKey(Catalog)    
+    client = models.ForeignKey(Client)
+    date_start = models.DateTimeField(auto_now_add=True)
+    date_end = models.DateField(auto_now_add=False)
+    count = models.IntegerField(default = 1)
+    status = models.BooleanField(default=False, verbose_name="Прокат?")
+    user = models.ForeignKey(User)
+    description = models.TextField(blank = True, null = True)
+            
+    def __unicode__(self):
+        return self.file 
+
+    class Meta:
+        ordering = ["catalog", "date_start", "date_end"]    
+    
