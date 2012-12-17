@@ -2,7 +2,7 @@
 from django import forms
 from models import Manufacturer, Country, Type, Bicycle_Type, Bicycle, Currency, FrameSize, Bicycle_Store, Catalog, Size, Bicycle_Sale, Bicycle_Order 
 from models import DealerManager, DealerPayment, DealerInvoice, Dealer, Bank, ShopDailySales, PreOrder, InvoiceComponentList
-from models import Client, ClientDebts, CostType, Costs, ClientCredits, WorkGroup, WorkType, WorkShop, WorkTicket, WorkStatus
+from models import Client, ClientDebts, CostType, Costs, ClientCredits, WorkGroup, WorkType, WorkShop, WorkTicket, WorkStatus, Rent, ClientInvoice
 
 import datetime
 
@@ -488,4 +488,19 @@ class PreOrderForm(forms.ModelForm):
 
     class Meta:
         model = PreOrder
+
+
+class RentForm(forms.ModelForm):
+    catalog = forms.ModelChoiceField(queryset = Catalog.objects.filter(id__in = ClientInvoice.objects.filter(client__id=516).values('catalog__id')))
+    client = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete'}), queryset = Client.objects.all(), empty_label="")    
+    date_start = forms.DateTimeField(initial = datetime.datetime.today(), label='Дата початку')
+    date_end = forms.DateTimeField(initial = datetime.date.today() + datetime.timedelta(days=3), label='Закінчення прокату')
+    count = forms.IntegerField(initial=1)
+    deposit = forms.FloatField(initial=0)
+    status = forms.BooleanField(initial = False, required=False)
+    description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
+
+    class Meta:
+        model = Rent
+
 

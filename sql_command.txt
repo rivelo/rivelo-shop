@@ -86,3 +86,4 @@ alter table accounting_bicycle_sale add `user_id` integer;
 alter table accounting_bicycle_order add `user_id` integer;
 alter table accounting_clientcredits change date date datetime;
 alter table accounting_clientdebts change date date datetime;
+

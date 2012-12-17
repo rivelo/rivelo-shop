@@ -242,7 +242,7 @@ class Client(models.Model):
     sale = models.IntegerField("how many percent for sale", default=0)
     summ = models.FloatField()
     description = models.TextField()
-
+    #birthday = models.DateField()
     
     def __unicode__(self):
         return "%s - [%s]" % (self.name, self.forumname)
@@ -294,6 +294,26 @@ class ClientInvoice(models.Model):
 #    date = models.DateField(auto_now_add=False)
     date = models.DateTimeField(auto_now_add = False)    
     description = models.TextField(blank = True, null = True)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)    
+            
+    def __unicode__(self):
+        return "%s - %s шт." % (self.catalog, self.count) 
+        #return self.origin_id 
+
+    class Meta:
+        ordering = ["client", "catalog", "date"]    
+
+
+class ClientOrder(models.Model):
+    client = models.ForeignKey(Client)
+    catalog = models.ForeignKey(Catalog, blank=True, null=True)
+    description = models.TextField(blank = True, null = True)    
+    count = models.IntegerField()
+    price = models.FloatField(blank = True, null = True)
+    sum = models.FloatField()
+    currency = models.ForeignKey(Currency)
+    pay = models.FloatField(default = 0, blank = True, null = True)    
+    date = models.DateTimeField(auto_now_add = False)    
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)    
             
     def __unicode__(self):
@@ -581,7 +601,7 @@ class Discount(models.Model):
     date_start = models.DateField(auto_now_add=True)
     date_end = models.DateField(auto_now_add=False)
     sale = models.FloatField()
-    received = models.BooleanField(default=False, verbose_name="Товар отримано?")
+    #received = models.BooleanField(default=False, verbose_name="Товар отримано?")
     description = models.TextField(blank = True, null = True)
             
     def __unicode__(self):
@@ -591,14 +611,15 @@ class Discount(models.Model):
         ordering = ["name", "sale", "date_end"]    
 
 
-class Rent():
+class Rent(models.Model):
     catalog = models.ForeignKey(Catalog)    
     client = models.ForeignKey(Client)
     date_start = models.DateTimeField(auto_now_add=True)
     date_end = models.DateField(auto_now_add=False)
     count = models.IntegerField(default = 1)
+    deposit = models.FloatField(default = 0, blank = True, null = True)
     status = models.BooleanField(default=False, verbose_name="Прокат?")
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
     description = models.TextField(blank = True, null = True)
             
     def __unicode__(self):

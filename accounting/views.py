@@ -14,8 +14,8 @@ from forms import CatalogForm, ClientForm, ClientDebtsForm, ClientCreditsForm, C
 from models import Dealer, DealerManager, DealerManager, DealerPayment, DealerInvoice, InvoiceComponentList, Bank, Exchange, PreOrder
 from forms import DealerManagerForm, DealerForm, DealerPaymentForm, DealerInvoiceForm, InvoiceComponentListForm, BankForm, ExchangeForm, PreOrderForm, InvoiceComponentForm
 
-from models import WorkGroup, WorkType, WorkShop, WorkStatus, WorkTicket, CostType, Costs, ShopDailySales
-from forms import WorkGroupForm, WorkTypeForm, WorkShopForm, WorkStatusForm, WorkTicketForm, CostTypeForm, CostsForm, ShopDailySalesForm
+from models import WorkGroup, WorkType, WorkShop, WorkStatus, WorkTicket, CostType, Costs, ShopDailySales, Rent
+from forms import WorkGroupForm, WorkTypeForm, WorkShopForm, WorkStatusForm, WorkTicketForm, CostTypeForm, CostsForm, ShopDailySalesForm, RentForm
   
 from django.http import HttpResponseRedirect, HttpRequest, HttpResponseNotFound
 from django.core.exceptions import ObjectDoesNotExist
@@ -3017,6 +3017,9 @@ def workshop_payform(request):
     for item in wk:
         item.pay = True
         item.save()
+
+    if client.id == 138:
+        return HttpResponseRedirect('/workshop/view/')
          
     url = '/client/result/search/?id=' + str(client.id)
     return HttpResponseRedirect(url)
@@ -3080,7 +3083,69 @@ def catalog_saleform(request):
 #===============================================================================
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 #    return HttpResponse("You pressed button SALE" + str(list_id))
+
+
+def rent_add(request):
+    #a = Rent()
+    if request.method == 'POST':
+        #form = RentForm(request.POST, instance = a)
+        form = RentForm(request.POST)
+        if form.is_valid():
+            catalog = form.cleaned_data['catalog']
+            client = form.cleaned_data['client']
+            date_start = form.cleaned_data['date_start']
+            date_end = form.cleaned_data['date_end']
+            count = form.cleaned_data['count']
+            deposit = form.cleaned_data['deposit']
+            status = form.cleaned_data['status']
+            description = form.cleaned_data['description']
+            user = form.cleaned_data['user']            
+            if request.user.is_authenticated():
+                user = request.user
+
+            Rent(catalog=catalog, client=client, date_start=date_start, date_end=date_end, count=count, deposit=deposit, status=status, description=description, user=user).save()
+            return HttpResponseRedirect('/rent/view/')
+    else:
+        #form = RentForm(instance = a)
+        form = RentForm()
+    return render_to_response('index.html', {'form': form, 'weblink': 'rent.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
     
+
+def rent_edit(request, id):
+    if request.is_ajax():
+        if request.method == 'GET':  
+            GET = request.GET  
+            if GET.has_key('id'):
+                q = request.GET.get( 'id' )
+                r = Rent.objects.get(id = id)
+                r.status = not r.status
+                r.save()
+                search = Rent.objects.filter(id = id).values_list('status', flat=True)    
+                return HttpResponse(simplejson.dumps(list(search)))
+    
+    a = Rent.objects.get(pk=id)
+    if request.method == 'POST':
+        form = RentForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/rent/view/')
+    else:
+        form = RentForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'rent.html'})
+
+
+def rent_list(request):
+    list = Rent.objects.all()    
+    return render_to_response('index.html', {'rent': list, 'weblink': 'rent_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))    
+
+
+def rent_delete(request, id):
+    if auth_group(request.user, 'admin')==False:
+        return HttpResponseRedirect('/preorder/view/')
+    obj = Rent.objects.get(id=id)
+    del_logging(obj)
+    obj.delete()
+    return HttpResponseRedirect('/rent/view/')
 
 
 def ajax_search1(request):
@@ -3111,24 +3176,14 @@ def ajax_search(request):
                 #    results.append(i)
     else:
         message = "Error"
-     
     return HttpResponse(simplejson.dumps(list(search)))
-
-         
+       
 
 def sendemail(request):
 #    send_mail('Rivelo shop', 'Here is the new message with you check.', 'rivelo@ymail.com', ['igor.panchuk@gmail.com'], fail_silently=False)
     send_mail('subj - Test rivelo check', 'Here is the new message with you check.', 'rivelo@ymail.com', ['igor.panchuk@gmail.com'],)
     #send_mail('subj - Test rivelo check', ‘message’, ‘from@mail.ru’, ‘rivelo@ymail.com’)        
     return render_to_response('index.html')
-
-
-def xhr_test(request):
-    if request.is_ajax():
-        message = "Hello AJAX"
-    else:
-        message = "Hello"
-    return HttpResponse(message, mimetype="text/plain")
 
 
 from django.contrib import auth 
@@ -3164,6 +3219,42 @@ def logout(request):
         return HttpResponseRedirect("/.")
 
 
-#    current_url = request.META.get('HTTP_REFERER')
-#    stroka = "<h1>Acces denied</h1> <a href=" +  current_url + ">Prev Page</a>"
-#    return HttpResponseNotFound(stroka)
+from django.views.decorators.csrf import csrf_protect
+
+def insertstory(request):
+    if 'TextStory' in request.POST and request.POST['TextStory']:
+        TheStory = request.POST['TextStory']
+    #return render_to_response('news_list.html')
+    search = Client.objects.filter(forumname__icontains = TheStory).values_list('name', flat=True)    
+    return HttpResponse(simplejson.dumps(list(search)))
+
+
+def xhr_test(request):
+    if request.is_ajax():
+        price = 56 #Catalog.objects.get(id=448).value("price")
+        message = "Hello AJAX; Price = " + str(price)
+    else:
+        message = "Hello"
+    return HttpResponse(message, mimetype="text/plain")
+
+from django.core import serializers
+
+def ajax_test(request):
+    search = None
+    message = ""
+    if request.is_ajax():
+        if request.method == 'GET':  
+            GET = request.GET  
+            if GET.has_key('id'):
+                q = request.GET.get( 'id' )
+                message = "It's AJAX!!!"
+    else:
+        message = "Error"
+    #search = Catalog.objects.filter(id=q).values_list('price', flat=True)
+    search = Catalog.objects.filter(id=q).values('price', 'sale', 'name')
+    
+    #return HttpResponse(simplejson.dumps(response), mimetype="application/json")#    return HttpResponse(simplejson.dumps(list(search)), mimetype='application/json')
+    return HttpResponse(simplejson.dumps(list(search)), mimetype="application/json")
+    #return HttpResponse(serialized_queryset, mimetype='application/json')
+#    return HttpResponse(message, mimetype="text/plain")
+
