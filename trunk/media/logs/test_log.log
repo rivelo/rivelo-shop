@@ -270,3 +270,25 @@ Key = pay - Value = 0.0
 Key = date - Value = 2012-12-02 17:50:44
 Key = description - Value = 
 Key = user - Value = None
+2012-12-13 01:25:33.296000 >>> DELETE FROM TABLE rent WHERE id = 1 
+Key = id - Value = 1
+Key = catalog - Value = 448
+Key = client - Value = 2
+Key = date_start - Value = 2012-12-13 01:12:51
+Key = date_end - Value = 2012-12-15
+Key = count - Value = 1
+Key = deposit - Value = 100.0
+Key = status - Value = False
+Key = user - Value = 4
+Key = description - Value = 
+2012-12-17 11:37:30.609000 >>> DELETE FROM TABLE rent WHERE id = 1 
+Key = id - Value = 1
+Key = catalog - Value = 457
+Key = client - Value = 2
+Key = date_start - Value = 2012-12-17 11:33:20
+Key = date_end - Value = 2012-12-20
+Key = count - Value = 1
+Key = deposit - Value = 360.0
+Key = status - Value = True
+Key = user - Value = 4
+Key = description - Value = +200 grn

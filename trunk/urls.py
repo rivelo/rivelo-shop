@@ -295,6 +295,12 @@ urlpatterns = patterns('',
     (r'^preorder/edit/(?P<id>\d+)/$', 'catalog.accounting.views.preorder_edit'),
     (r'^preorder/delete/(?P<id>\d+)/$', 'catalog.accounting.views.preorder_delete'),
 
+    (r'^rent/add/$', 'catalog.accounting.views.rent_add'),
+    (r'^rent/edit/(?P<id>\d+)/$', 'catalog.accounting.views.rent_edit'),
+    (r'^rent/delete/(?P<id>\d+)/$', 'catalog.accounting.views.rent_delete'),    
+    (r'^rent/view/$', 'catalog.accounting.views.rent_list'),
+    
+
     (r'^payform/workshop/$', 'catalog.accounting.views.workshop_payform'),
     (r'^payform/$', 'catalog.accounting.views.payform'),
     (r'^catalog/saleform/$', 'catalog.accounting.views.catalog_saleform'),    
@@ -302,7 +308,6 @@ urlpatterns = patterns('',
     # Example:
     # (r'^catalog/', include('catalog.foo.urls')),
     (r'^sendmail/$', 'catalog.accounting.views.sendemail'),
-    (r'^xhr_test/$','catalog.accounting.views.xhr_test'),
     (r'^asearch/$', 'catalog.accounting.views.ajax_search'),
 
     (r'^media/(?P<path>.*)', 'django.views.static.serve',
@@ -315,6 +320,9 @@ urlpatterns = patterns('',
     (r'^accounts/login/$',  'catalog.accounting.views.login'),
     (r'^accounts/logout/$', 'catalog.accounting.views.logout'),
     
+    (r'^insertstory/$', 'catalog.accounting.views.insertstory'),
+    (r'^ajax/test/$', 'catalog.accounting.views.ajax_test'),
+    (r'^xhr_test/$','catalog.accounting.views.xhr_test'),    
     
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:
