@@ -332,12 +332,13 @@ class CatalogForm(forms.ModelForm):
 class ClientForm(forms.ModelForm):
     name = forms.CharField(max_length=255)
     forumname = forms.CharField(max_length=255, required=False)    
-    country = forms.ModelChoiceField(queryset = Country.objects.all())
+    country = forms.ModelChoiceField(queryset = Country.objects.all(), initial=1)
     city = forms.CharField(max_length=255)
     email = forms.EmailField(required=False)
     phone = forms.CharField(max_length=255, required=False)
     sale = forms.IntegerField(required=False, initial=0)
     summ = forms.FloatField(initial=0)
+    birthday = forms.DateField(label='Дата народженя', input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'), required=False)
     description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255, required=False)    
 
     class Meta:

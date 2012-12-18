@@ -33,6 +33,8 @@ from django.db.models import Sum, Count
 from django.core.mail import send_mail
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+from django.utils import simplejson
+
 import pytils_ua
 
 now = datetime.datetime.now()
@@ -1693,11 +1695,11 @@ def catalog_delete(request, id):
 
 def catalog_search(request):
     #query = request.GET.get('q', '')
-    return render_to_response('index.html', {'weblink': 'catalog_search.html'})
+    return render_to_response('index.html', {'weblink': 'catalog_search.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def catalog_search_id(request):
-    return render_to_response('index.html', {'weblink': 'catalog_search_id.html'})
+    return render_to_response('index.html', {'weblink': 'catalog_search_id.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def catalog_search_result(request):
@@ -1711,15 +1713,7 @@ def catalog_search_result(request):
         id = request.GET['id']
         list = Catalog.objects.filter(ids__icontains = id).order_by('manufacturer')
         print_url = "/shop/price/bysearch_id/"+id+"/view/"
-    return render_to_response('index.html', {'catalog': list, 'url':print_url, 'weblink': 'catalog_list.html'})
-
-
-def catalog_tresult(request):
-        #list = Catalog.objects.filter(name__icontains = "Камера", type=84).order_by('manufacturer')
-        list = Catalog.objects.filter(name__icontains = "Камера").order_by('manufacturer')
-        list.update(type=51)    
-        return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
-        
+    return render_to_response('index.html', {'catalog': list, 'url':print_url, 'weblink': 'catalog_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 # ------------- Clients -------------
@@ -1743,7 +1737,7 @@ def client_add(request):
             return HttpResponseRedirect('/client/result/search/?id=' + str(a.id))
     else:
         form = ClientForm()
-    return render_to_response('index.html', {'form': form, 'weblink': 'client.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'client.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def client_edit(request, id):
@@ -1763,7 +1757,7 @@ def client_edit(request, id):
             return HttpResponseRedirect('/client/view/')
     else:
         form = ClientForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'client.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'client.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def client_balance_list(request):
@@ -2194,8 +2188,16 @@ def client_search(request):
     return render_to_response('index.html', {'weblink': 'client_search.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
-from django.db.models import Q
 def client_search_result(request):
+    if request.is_ajax():
+        if request.method == 'GET':  
+            GET = request.GET  
+            if GET.has_key('name'):
+                q = request.GET.get('name')
+                c = Client.objects.filter(Q(name__icontains = q) | Q(forumname__icontains = q)).values('id','name', 'forumname')
+#                res = Client.objects.filter(Q(name__icontains = q)).values_list('name', flat=True)
+                return HttpResponse(simplejson.dumps(list(c)))
+    
     username = request.GET['name']
     #clients = Client.objects.filter(name__icontains=username)
     clients = Client.objects.filter(Q(name__icontains=username) | Q(forumname__icontains=username))
@@ -3161,7 +3163,6 @@ def ajax_search1(request):
             return HttpResponse(matches, mimetype="text/plain")
 
 
-from django.utils import simplejson 
 def ajax_search(request):
     results = []
     search = None

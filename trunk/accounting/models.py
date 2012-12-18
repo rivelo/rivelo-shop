@@ -241,7 +241,8 @@ class Client(models.Model):
     phone = models.CharField(max_length=100)
     sale = models.IntegerField("how many percent for sale", default=0)
     summ = models.FloatField()
-    description = models.TextField()
+    birthday = models.DateField(auto_now_add=False, blank = True, null = True)
+    description = models.TextField(blank = True, null = True)
     #birthday = models.DateField()
     
     def __unicode__(self):
