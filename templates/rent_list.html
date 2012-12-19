@@ -2,8 +2,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <link rel="stylesheet" type="text/css" href="/media/table.css">
-<!-- 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
- -->	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+<!--
+ 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+ 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+-->
+ <script type="text/javascript" src="/media/jquery-1.7.2.min.js"></script>
 	    
 
 	<script type="text/javascript">
@@ -37,7 +40,7 @@ $('span.jQtooltip').each(function() {
 })
 
 
-            function true_false(obj){
+function true_false(obj){
             var rent_id = $(obj).attr('id'); 
             var res = new Array();
             res = rent_id.split('_');
@@ -50,7 +53,13 @@ $('span.jQtooltip').each(function() {
                 success:function(msg){
                     //alert("Все отлично ушло на сервер - " + msg);
 //                    $('#status_2').text(obj);
-                    obj.innerHTML = msg;
+//                    obj.innerHTML = msg;
+                    $(obj).html(''+ msg[0].status.toString().toUpperCase());
+                    if (msg[0].status){
+                    $(obj).closest("tr").attr('class', 'tr_true')
+                    } else {
+                    $(obj).closest("tr").attr('class', 'tr_false')
+                    }
                     //$('#ttt').text(""+msg);
                     //$('#id_deposit').val(""+msg);
                 },
@@ -58,7 +67,7 @@ $('span.jQtooltip').each(function() {
                     alert("При отправке возникли проблемы");
                 }
             });
-            }      
+}      
 
 	</script>    
     
@@ -83,7 +92,11 @@ $('span.jQtooltip').each(function() {
     </tr>
     
 {% for type in rent %}
-<tr>
+{% if type.status %}
+<tr class="tr_true">
+{% else %}
+<tr class="tr_false">
+{% endif %}
 	<td onclick="window.open('/rent/edit/{{type.id}}','Карточка',' width=800,height=800,top=0')">
 	{{forloop.counter}}
 	</td>
@@ -96,9 +109,11 @@ $('span.jQtooltip').each(function() {
 	</a>
 	</td>
 	<td>
-	<a href="/client/{{ type.client.id }}" title="Операції клієнта - {{type.client}}" >
+	<span class="jQtooltip" title="Телефон: {{type.client.phone}}"> 
+	<a href="/client/{{ type.client.id }}"> 
 	{{type.client}}
 	</a>
+	</span>
 	</td>
 	<td align="center">       
 	{{type.date_start|date:'d-m-Y' }}
@@ -113,7 +128,7 @@ $('span.jQtooltip').each(function() {
 	{{type.deposit}} грн.
 	</td>	
 	<td align="center">       
-	<span class="jQtooltip" title="Повернення" id="status_{{type.id}}" onclick="true_false(this)">{{type.status}}</span>
+	<span title="Змінити статус" id="status_{{type.id}}" onclick="true_false(this)" >{{type.status}}</span>
 	</td>	
 	<td align="center">       
 	{{type.user}}

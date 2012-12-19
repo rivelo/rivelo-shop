@@ -59,3 +59,13 @@ a:hover {text-decoration: none}
 	-moz-border-radius: 2px;
 	border-radius: 2px;
 }
+
+.tr_true {
+background-color: #fff;
+}
+
+.tr_false {
+background-color: #fbf4aa;
+/* font-weight: bold; */
+}
+

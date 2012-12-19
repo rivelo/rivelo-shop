@@ -292,3 +292,10 @@ Key = deposit - Value = 360.0
 Key = status - Value = True
 Key = user - Value = 4
 Key = description - Value = +200 grn
+2012-12-19 00:05:05.562000 >>> DELETE FROM TABLE client credits WHERE id = 394 
+Key = id - Value = 394
+Key = client - Value = 254
+Key = date - Value = 2012-05-22 00:00:00
+Key = price - Value = 153.0
+Key = description - Value =   
+Key = user - Value = None

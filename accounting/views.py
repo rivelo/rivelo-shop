@@ -1625,6 +1625,22 @@ def catalog_add(request):
 
 
 def catalog_edit(request, id):
+    if request.is_ajax():
+        if request.method == 'POST':  
+            POST = request.POST  
+            if POST.has_key('id'):
+                id = request.POST.get('id')
+                p = request.POST.get('price')
+                obj = Catalog.objects.get(id = id)
+                obj.price = p
+                obj.save() 
+#                c = Catalog.objects.filter(id = id).values('price', 'id')
+                c = Catalog.objects.filter(id = id).values_list('price', flat=True)
+
+                return HttpResponse(c)
+              #  return HttpResponse(simplejson.dumps(list(c)))
+    
+    
     a = Catalog.objects.get(pk=id)
     url1=request.META['HTTP_REFERER']
     if request.method == 'POST':
@@ -3122,7 +3138,8 @@ def rent_edit(request, id):
                 r = Rent.objects.get(id = id)
                 r.status = not r.status
                 r.save()
-                search = Rent.objects.filter(id = id).values_list('status', flat=True)    
+                #search = Rent.objects.filter(id = id).values_list('status', flat=True)    
+                search = Rent.objects.filter(id = id).values('status')
                 return HttpResponse(simplejson.dumps(list(search)))
     
     a = Rent.objects.get(pk=id)
