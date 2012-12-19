@@ -13,10 +13,7 @@ function chk_client(){
         dataType: "json",
         success:function(msg){
     	    //alert("Все отлично ушло на сервер - " + msg);
-            //obj.innerHTML = msg;
             $('.test_client').empty();
-            //$('#result').empty();
-            //$('#chk_link').empty();
             $('#id_name').after('  <span class="test_client" style="padding-left:10px; color:red;"><a href="javascript:void(0)" id="chk_link" onclick="chk_client()">Check name</a></span>');            
             $('#chk_link').after('<span id="result"> - </span>');
             for (var i = 0, length = msg.length; i < length; i++) {

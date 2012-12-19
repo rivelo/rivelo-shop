@@ -2,6 +2,39 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
+<script type="text/javascript" src="/media/jquery-1.7.2.min.js"></script>
+<script src="/media/jquery.jeditable.mini.js" type="text/javascript" charset="utf-8"></script>
+
+<script>
+
+$(document).ready(function() {
+     $('.edit').editable('/catalog/edit/149', {
+     	 id   : 'id',
+         name : 'price',
+         //submitdata: { _method: "GET", id: 149 , price : 100},
+         
+     //    submitdata: {id: $(this).attr('id_price')},
+         submitdata : function() {
+      	 	return {id : $(this).attr('id_price')};
+    	 },
+         indicator : 'Saving...',
+         tooltip   : 'Click to edit...',
+         callback : function(value, settings) {
+         $(this).html(value);
+     }
+     });
+     $('.edit_area').editable('http://www.example.com/save.php', { 
+         type      : 'textarea',
+         cancel    : 'Cancel',
+         submit    : 'OK',
+         indicator : 'Saving',
+         tooltip   : 'Click to edit...'
+     });
+ });
+
+</script>
+
+
 {% if view %}
 
 <br>
@@ -39,7 +72,7 @@
 
     
 	<tr>
-    	<th>ID</th>
+    	<th id="id_col">ID</th>
     	<th>Код</th>
     	<th>Назва</th>
     	<th>Виробник</th>
@@ -92,13 +125,13 @@
 	<td>       
 	{{type.color}}
 	</td>
-	<td>       
+	<td class="edit" id_price="{{type.id}}">       
 	{{type.price}}
 	</td>
 	<td>       
 	{{type.currency}}
 	</td>	
-	<td>       
+	<td class="edit_area">       
 	{{type.sale}}
 	</td>
 	<td>       
@@ -125,9 +158,5 @@
     
     <table>
 
-<br><br>
-<a href="/">HOME</a>    
 <br>
-<a href="/catalog/add/">Додати новий товар</a> 
-
 
