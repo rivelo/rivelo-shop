@@ -3,7 +3,7 @@
 
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
-    <h1>Список валют</h1>
+    <h1>Список валют <a href="/curency/add/">(Додати)</a></h1>
 
     <table>
     
@@ -36,9 +36,11 @@
         </td>
     
         <td>
+        {% if user.is_authenticated %}
             <a href="/curency/edit/{{ type.id }}">edit</a>
             <br>
             <a href="/curency/delete/{{ type.id }}">delete</a>
+        {% endif %}
         </td>
     </tr>
     {% endfor %}    
@@ -47,8 +49,5 @@
     </table>
 
 
-<br><br>
-<a href="/">HOME</a>
-<br>
-<a href="/curency/add/">Add</a>       
+<br>       
 

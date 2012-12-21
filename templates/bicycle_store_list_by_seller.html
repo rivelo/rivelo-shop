@@ -22,13 +22,18 @@
 
 {% load template_math %}   
 
+<form action="/bicycle/store/price/print/" method="post" name="formBPrice">
+
 <table border="1">
     <tr>
     	<th>#</th>
     	<th>ID</th>
-    	<th>Велосипед</th>
-    	<th>Номер рами</th>
+    	<th style="text-align: left"> Велосипед</th>
+    	<th >Номер рами</th>
     	<th>Розмір рами</th>
+{% if perms.accounting.add_preorder %}
+    	<th>Оптова ціна</th>
+{% endif %}    	
     	<th>Ціна</th>
     	<th>Знижка</th>
     	<th>Нова ціна</th>
@@ -37,6 +42,7 @@
 		<th>Кількість</th> 
 		<th>Дата</th>
     	<th>Дія</th>
+    	<th></th>
     </tr>    
     
 {% for type in bicycles %}
@@ -61,8 +67,13 @@
 	<td>       
 	{{type.size}}
 	</td>
+{% if perms.accounting.add_preorder %}	
+	<td align="center">
+	{{type.price}}$	
+	</td>
+{% endif %}	
 	<td>
-	{{type.model.price}}       
+    {{type.model.price}}   
 	</td>
 	<td align="center">
 	{{type.model.sale|floatformat:"0"}}%       
@@ -70,9 +81,6 @@
 	<td align="center">
 	{{type.model.sale|div:-100|sub:-1|mul:type.model.price|floatformat:"0"}} грн.       
 	</td>
-
-
-	
 <!-- <td>       
 	{{type.description}}
 	</td>
@@ -93,12 +101,15 @@
 	{{type.date|date:"D d M Y"}}
 	</td>
 	<td>
-{% if user.is_authenticated %}
-    <a href="/bicycle-store/edit/{{ type.id }}">edit</a>
-    <br>	
+{% if perms.accounting.add_preorder %}	
+    <a href="/bicycle-store/edit/{{ type.id }}">edit</a> 
+    
     <a href="/bicycle-store/delete/{{ type.id }}">delete</a>
 {% endif %}
     </td>
+	<td align="center">
+	<input type="checkbox" id="bikeid_{{type.model.id}}" value="{{type.model.id}}" name="checkbox_{{ type.model.id }}"/ onclick="">	
+	</td>    
 </tr>
 {% endfor %}       
 
@@ -109,13 +120,18 @@
     	<th></th>
     	<th></th>
     	<th></th>
-    	<th>{{price_summ}}</th>
-<!--     	<th>{{real_summ}}</th>   -->
-<th></th>
-<th></th>
-		<th>{{bike_summ}}</th> 
+{% if perms.accounting.add_preorder %}    	    	
+    	<th align="center">
+    	{{price_summ}} $
+    	</th>    	
+{% endif %}
+    	<th></th>
+		<th></th>
+		<th></th>
+		<th align="center">{{bike_summ}}</th> 
 		<th></th>
     	<th></th>
+    	<th><input type="submit" value="Цінники" name="BPrice"></th>    	
     </tr>        
    
 <table>

@@ -13,7 +13,6 @@
     	<th>#</th>
     	<th>Назва</th>
     	<th>Дія</th>
-    	<th>Дія</th>
     </tr>
     {% for country in countries %}
     <tr>
@@ -25,10 +24,10 @@
         </td>
     
         <td>
+{% if user.is_authenticated %}        
         	<a href="/country/edit/{{ country.id }}">edit</a>
-        </td>
-        <td>
             <a href="/country/delete/{{ country.id }}" onclick="return confirm('Видалити запис - {{country.name}}?')">delete</a>
+{% endif %}
         </td>
     </tr>
     {% endfor %}
