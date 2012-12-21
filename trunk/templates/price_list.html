@@ -20,10 +20,6 @@
 {% for type in catalog %}
 
 
-
-{% ifequal type.balance 0 %}
-
-{% else %}
 <td>
 <table>
 <tr>
@@ -34,6 +30,7 @@
 	<td>
 	<FONT COLOR=black FACE="Geneva, Arial" SIZE=1>	       
 	{{type.catalog__ids}}
+	{{type.ids}}
 	</FONT>
 	</td>
 </tr>
@@ -43,7 +40,7 @@
 <b>	Назва </FONT></b>
 	</td>
 	<td width = 190>       
-	<a href="/catalog/edit/{{ type.id }}">{{type.catalog__name}}</a>
+	<a href="/catalog/edit/{{ type.id }}">{{type.name}}</a>
 	</td>
 </tr>
 	
@@ -52,7 +49,7 @@
 <b>	Виробник </b>
 	</td>	
 	<td>       
-	{{type.catalog__manufacturer__name}}
+	{{type.manufacturer}}
 	</td>
 </tr>
 <!--
@@ -71,7 +68,7 @@
 <b>	Країна виробник </b>
 	</td>
 	<td>
-	{{type.catalog__country__name}}
+	{{type.country}}
 	</td>	
 </tr>
 <tr>
@@ -79,13 +76,12 @@
 <b>	Ціна </b>
 	</td>
 	<td>       
-<b>	{{type.catalog__price}} грн. </b>
+<b>	{{type.price}} грн. </b>
 	</td>
 </tr>       
 
 </table>
 </td>
-{% endifequal %}
 
 
 

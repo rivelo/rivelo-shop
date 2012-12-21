@@ -445,7 +445,7 @@ def bicycle_store_del(request, id):
     obj.delete()
     return HttpResponseRedirect('/bicycle-store/view/seller/')
 
-
+#стара функція, можна видалити
 def bicycle_store_list(request, all=False):
     list = None
     if all==True:
@@ -482,7 +482,6 @@ def bicycle_store_list_by_seller(request, all=False, size='all', year='all', bra
             else:
                 list = Bicycle_Store.objects.filter(count=1, model__year__year=year, size=size)
             #list = Bicycle_Store.objects.filter(count=1, size=size)
-        
     price_summ = 0
     real_summ = 0
     bike_summ = 0
@@ -518,8 +517,17 @@ def bicycle_store_search_result(request, all=False):
     return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list_by_seller.html', 'price_summ': price_summ, 'real_summ': real_summ, 'bike_summ': bike_summ, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
-def bicycle_store_price(request):
-    list = Bicycle_Store.objects.filter(count=1)
+def bicycle_store_price(request, pprint=False):
+    if request.method == 'POST':    
+        checkbox_list = [x for x in request.POST if x.startswith('checkbox_')]
+        list_id = []
+        for id in checkbox_list:
+            list_id.append( int(id.replace('checkbox_', '')) )
+        list = Bicycle_Store.objects.filter(model__id__in = list_id)
+    else: 
+        list = Bicycle_Store.objects.filter(count=1)
+    if pprint:
+        return render_to_response('bicycle_shop_price_list.html', {'bicycles': list, 'view':False})    
     return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_shop_price_list.html', 'view':True, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
@@ -675,6 +683,8 @@ def dictfetchall(cursor):
     
 
 def bicycle_sale_report(request):
+    if auth_group(request.user, 'admin') == False:
+        return HttpResponseRedirect('/')
     query = "SELECT EXTRACT(year FROM date) as year, EXTRACT(month from date) as month, MONTHNAME(date) as month_name, COUNT(*) as bike_count, sum(price) as s_price FROM accounting_bicycle_sale GROUP BY year,month;"
     #sql2 = "SELECT sum(price) FROM accounting_clientdebts WHERE client_id = %s;"
     #user = id;
@@ -695,7 +705,7 @@ def bicycle_sale_report(request):
          bike_sum = bike_sum + month['bike_count']
 
     #list = Bicycle_Sale.objects.all().order_by('date')
-    return render_to_response('index.html', {'bicycles': list, 'all_sum': sum, 'bike_sum': bike_sum, 'weblink': 'bicycle_sale_report.html'})
+    return render_to_response('index.html', {'bicycles': list, 'all_sum': sum, 'bike_sum': bike_sum, 'weblink': 'bicycle_sale_report.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_sale_report_by_brand(request):
@@ -725,12 +735,12 @@ def bicycle_order_add(request):
             return HttpResponseRedirect('/bicycle/order/view/')
     else:
         form = BicycleOrderForm(instance = a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_order.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_order.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
     
 
 def bicycle_order_list(request):
     list = Bicycle_Order.objects.all().order_by("-date")
-    return render_to_response('index.html', {'order': list, 'weblink': 'bicycle_order_list.html'})
+    return render_to_response('index.html', {'order': list, 'weblink': 'bicycle_order_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
     
 
 def bicycle_order_edit(request, id):
@@ -1621,12 +1631,14 @@ def catalog_add(request):
     else:
         form = CatalogForm()
     #return render_to_response('catalog.html', {'form': form})
-    return render_to_response('index.html', {'form': form, 'weblink': 'catalog.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'catalog.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def catalog_edit(request, id):
     if request.is_ajax():
         if request.method == 'POST':  
+            if auth_group(request.user, 'admin')==False:
+                return HttpResponse('Error: У вас не має прав для редагування')
             POST = request.POST  
             if POST.has_key('id'):
                 id = request.POST.get('id')
@@ -1655,7 +1667,7 @@ def catalog_edit(request, id):
     else:
         form = CatalogForm(instance=a)
     #url=request.META['HTTP_REFERER']
-    return render_to_response('index.html', {'form': form, 'myurl':url1, 'weblink': 'catalog.html'})
+    return render_to_response('index.html', {'form': form, 'myurl':url1, 'weblink': 'catalog.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def catalog_list(request, id=None):
@@ -1665,12 +1677,12 @@ def catalog_list(request, id=None):
     else:
         list = Catalog.objects.filter(id=id)
     #return render_to_response('catalog_list.html', {'catalog': list.values_list()})
-    return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
+    return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def catalog_discount_list(request):
     list = Catalog.objects.filter(sale__gt=0)[:100]
-    return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
+    return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def catalog_manufacture_list(request, id=None):
@@ -1681,13 +1693,16 @@ def catalog_manufacture_list(request, id=None):
     else:
         list = Catalog.objects.filter(manufacturer=id).order_by("-id")
     #return render_to_response('catalog_list.html', {'catalog': list.values_list()})
-    return render_to_response('index.html', {'catalog': list, 'company_list': company_list, 'view': True, 'weblink': 'catalog_list.html'})
+    print_url = None
+    if id:
+        print_url = '/shop/price/company/'+ str(id) +'/view/'
+    return render_to_response('index.html', {'catalog': list, 'company_list': company_list, 'url': print_url, 'view': True, 'weblink': 'catalog_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def catalog_part_list(request, id, num=5):
     list = Catalog.objects.filter(manufacturer=id).order_by("-id")[:num]
     #return render_to_response('catalog_list.html', {'catalog': list.values_list()})
-    return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
+    return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def catalog_manu_type_list(request, id, tid):
@@ -2670,8 +2685,8 @@ def shopdailysales_delete(request, id):
 #from reportlab.pdfbase import ttfonts
 
 
-
-def shop_price(request, mid, limit=0, pprint=False):
+#Стара функція
+def shop_price_old(request, mid, limit=0, pprint=False):
 #    list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=id).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__country__name').annotate(sum_catalog=Sum('count'))
     #list = InvoiceComponentList.objects.filter(manufacturer = id)
     company = Manufacturer.objects.get(id=mid)
@@ -2713,24 +2728,37 @@ def shop_price(request, mid, limit=0, pprint=False):
     if pprint:
         return render_to_response('price_list.html', {'catalog': new_list, 'company': company, 'company_list': company_list,})
     
-    return render_to_response('index.html', {'catalog': new_list, 'company': company, 'company_list': company_list, 'weblink': 'price_list.html', 'view': True, 'link': url})
+    return render_to_response('index.html', {'catalog': new_list, 'company': company, 'company_list': company_list, 'weblink': 'price_list.html', 'view': True, 'link': url, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
-def shop_price_lastadd(request, id):
-    url = '/shop/price/lastadded/'+id+'/print/'
-    list = InvoiceComponentList.objects.all().order_by("-id")[:id]
-    return render_to_response('index.html', {'catalog': list, 'weblink': 'price_list.html', 'view': True, 'link': url})    
 
+def shop_price(request, mid, limit=0, pprint=False):
+#    list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=id).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__country__name').annotate(sum_catalog=Sum('count'))
+    #list = InvoiceComponentList.objects.filter(manufacturer = id)
+    list = Catalog.objects.filter(manufacturer = mid, count__gt=0).order_by("type")    
+    company = Manufacturer.objects.get(id=mid)
+    company_list = Manufacturer.objects.all()
+    url = '/shop/price/company/'+mid+'/print/'
     
-def shop_price_lastadd_print(request, id):
-    list = Catalog.objects.all().order_by("-id")[:id]
-    return render_to_response('price_list.html', {'catalog': list})     
+    if pprint:
+        return render_to_response('price_list.html', {'catalog': list, 'company': company, 'company_list': company_list,})
+    
+    return render_to_response('index.html', {'catalog': list, 'company': company, 'company_list': company_list, 'weblink': 'price_list.html', 'view': True, 'link': url, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+
+
+def shop_price_lastadd(request, id, pprint = False):
+    url = '/shop/price/lastadded/'+id+'/print/'
+    #list = InvoiceComponentList.objects.all().order_by("-id")[:id]
+    list = Catalog.objects.filter(count__gt=0).order_by("-id")[:id]
+    if pprint:
+        return render_to_response('price_list.html', {'catalog': list})
+    return render_to_response('index.html', {'catalog': list, 'weblink': 'price_list.html', 'view': True, 'link': url, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def shop_price_bysearch_id(request, id):
     url = '/shop/price/bysearch_id/'+id+'/print/'
     list = Catalog.objects.filter(ids__icontains=id).order_by("-id")
-    return render_to_response('index.html', {'catalog': list, 'weblink': 'price_list.html', 'view': True, 'link': url})    
+    return render_to_response('index.html', {'catalog': list, 'weblink': 'price_list.html', 'view': True, 'link': url, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))    
 
     
 def shop_price_bysearch_id_print(request, id):
@@ -2738,15 +2766,12 @@ def shop_price_bysearch_id_print(request, id):
     return render_to_response('price_list.html', {'catalog': list})    
 
 
-def shop_price_bysearch_name(request, id):
+def shop_price_bysearch_name(request, id, pprint = False):
     url = '/shop/price/bysearch_name/'+id+'/print/'
-    list = Catalog.objects.filter(name__icontains=id).order_by("manufacturer","-id")
-    return render_to_response('index.html', {'catalog': list, 'weblink': 'price_list.html', 'view': True, 'link': url})    
-
-    
-def shop_price_bysearch_name_print(request, id):
-    list = Catalog.objects.filter(name__icontains=id).order_by("manufacturer","-id")
-    return render_to_response('price_list.html', {'catalog': list})    
+    list = Catalog.objects.filter(name__icontains=id, count__gt=0).order_by("manufacturer","-id")
+    if pprint:
+        return render_to_response('price_list.html', {'catalog': list})
+    return render_to_response('index.html', {'catalog': list, 'weblink': 'price_list.html', 'view': True, 'link': url, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))    
 
 
 #--------------------- MY Costs -------------------------
