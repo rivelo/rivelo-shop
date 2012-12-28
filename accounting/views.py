@@ -8,8 +8,8 @@ from django.core.urlresolvers import resolve
 from models import Manufacturer, Country, Type, Currency, Bicycle_Type, Bicycle,  FrameSize, Bicycle_Store, Bicycle_Sale, Bicycle_Order
 from forms import ContactForm, ManufacturerForm, CountryForm, CurencyForm, CategoryForm, BicycleTypeForm, BicycleForm, BicycleFrameSizeForm, BicycleStoreForm, BicycleSaleForm, BicycleOrderForm, BicycleSaleEditForm, BicycleOrderEditForm 
 
-from models import Catalog, Client, ClientDebts, ClientCredits, ClientInvoice 
-from forms import CatalogForm, ClientForm, ClientDebtsForm, ClientCreditsForm, ClientInvoiceForm
+from models import Catalog, Client, ClientDebts, ClientCredits, ClientInvoice, ClientOrder 
+from forms import CatalogForm, ClientForm, ClientDebtsForm, ClientCreditsForm, ClientInvoiceForm, ClientOrderForm
 
 from models import Dealer, DealerManager, DealerManager, DealerPayment, DealerInvoice, InvoiceComponentList, Bank, Exchange, PreOrder
 from forms import DealerManagerForm, DealerForm, DealerPaymentForm, DealerInvoiceForm, InvoiceComponentListForm, BankForm, ExchangeForm, PreOrderForm, InvoiceComponentForm
@@ -34,6 +34,7 @@ from django.core.mail import send_mail
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from django.utils import simplejson
+from django.core import serializers
 
 import pytils_ua
 
@@ -523,7 +524,7 @@ def bicycle_store_price(request, pprint=False):
         list_id = []
         for id in checkbox_list:
             list_id.append( int(id.replace('checkbox_', '')) )
-        list = Bicycle_Store.objects.filter(model__id__in = list_id)
+        list = Bicycle_Store.objects.filter(id__in = list_id)
     else: 
         list = Bicycle_Store.objects.filter(count=1)
     if pprint:
@@ -1747,6 +1748,25 @@ def catalog_search_result(request):
     return render_to_response('index.html', {'catalog': list, 'url':print_url, 'weblink': 'catalog_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
+
+def catalog_lookup(request):
+    # Default return list
+    results = []
+    if request.method == "GET":
+        if request.GET.has_key(u'query'):
+            value = request.GET[u'query']
+            # Ignore queries shorter than length 3
+            if len(value) > 2:
+                #model_results = Catalog.objects.filter(name__icontains=value).values('id', 'ids', 'name', 'price')
+                model_results = Catalog.objects.filter(name__icontains=value)
+#                results = [ x.name for x in model_results ]
+#    json = simplejson.dumps(results)
+                data = serializers.serialize("json", model_results, fields=('name','id', 'ids', 'price'))
+    return HttpResponse(data)    
+    #return HttpResponse(json)
+
+
+
 # ------------- Clients -------------
 def client_add(request):
     if request.method == 'POST':
@@ -2179,6 +2199,86 @@ def client_invoice_id(request, id):
     return render_to_response('index.html', {'buycomponents': cinvoices, 'sumall':psum, 'countall':scount, 'weblink': 'clientinvoice_list.html'})
 
 
+
+def client_order_list(request):
+    list = ClientOrder.objects.all()    
+    return render_to_response('index.html', {'c_order': list, 'weblink': 'client_order_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))    
+
+
+def client_order_add(request, cid=None):
+    #a = ClientOrder(date=datetime.datetime.today(), pay=0, count=1, currency=Currency.objects.get(id=3), catalog=Catalog.objects.all())
+    a = ClientOrder(date=datetime.datetime.today(), pay=0, count=1, currency=Currency.objects.get(id=3))
+    if request.method == 'POST':
+        #form = ClientOrderForm(request.POST, instance = a, catalog_id=cid)
+        form = ClientOrderForm(request.POST, instance = a)        
+        if form.is_valid():
+            client = form.cleaned_data['client']
+#            catalog = form.cleaned_data['catalog']
+#            arrray = catalog.split(":")
+#            catalog = array[0]
+            post = form.cleaned_data['post_id']
+            catalog = None
+            if post:
+                catalog = Catalog.objects.get(id=post)
+            description = form.cleaned_data['description']
+            count = form.cleaned_data['count']
+            price = form.cleaned_data['price']
+            sum = form.cleaned_data['sum']
+            currency = form.cleaned_data['currency']
+            pay = form.cleaned_data['pay']
+            date = form.cleaned_data['date']
+            user = None #form.cleaned_data['user_id']
+            if request.user.is_authenticated():
+                user = request.user
+            if catalog:
+                s = u"Аванс - " + catalog.name + "(" + description + ")"
+            else:
+                s = u"Аванс - " + description 
+            ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=pay, description=s, user=user)
+            ccred.save()
+
+            ClientOrder(client=client, catalog=catalog, count=count, sum=sum, price=price, currency=currency, pay=pay, date=date, description=description, user=user).save()
+            return HttpResponseRedirect('/client/order/view/')
+    else:
+        #form = ClientOrderForm(instance = a, catalog_id=cid)
+        form = ClientOrderForm(instance = a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'clientorder.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+
+
+def client_order_edit(request, id):
+    if request.is_ajax():
+        if request.method == 'GET':  
+            GET = request.GET  
+            if GET.has_key('id'):
+                q = request.GET.get( 'id' )
+                r = ClientOrder.objects.get(id = id)
+                r.status = not r.status
+                r.save()
+                search = ClientOrder.objects.filter(id = id).values('status')
+                return HttpResponse(simplejson.dumps(list(search)))
+    
+    a = ClientOrder.objects.get(pk=id)
+    if request.method == 'POST':
+        form = ClientOrderForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/client/order/view/')
+    else:
+        form = ClientOrderForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'clientorder.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+
+
+def client_order_delete(request, id):
+    if auth_group(request.user, "admin") == False:
+        return HttpResponseRedirect('/')
+    obj = ClientOrder.objects.get(id=id)
+    del_logging(obj)
+    obj.delete()
+    return HttpResponseRedirect('/client/order/view/')
+#    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+
+
+
 def client_invoice_sale_report(request):
     query = "SELECT EXTRACT(year FROM date) as year, EXTRACT(month from date) as month, MONTHNAME(date) as month_name, COUNT(*) as bike_count, sum(price) as s_price FROM accounting_clientinvoice GROUP BY year,month;"
     #sql2 = "SELECT sum(price) FROM accounting_clientdebts WHERE client_id = %s;"
@@ -2283,7 +2383,7 @@ def client_result(request):
         res = "Такого клієнта не існує, або в нього не має заборгованостей"
     
     try:
-        client_name = Client.objects.values('name', 'forumname', 'id').get(id=user)
+        client_name = Client.objects.values('name', 'forumname', 'id', 'phone', 'birthday', 'email').get(id=user)
     except ObjectDoesNotExist:
         client_name = ""
     
@@ -3280,7 +3380,6 @@ def xhr_test(request):
         message = "Hello"
     return HttpResponse(message, mimetype="text/plain")
 
-from django.core import serializers
 
 def ajax_test(request):
     search = None

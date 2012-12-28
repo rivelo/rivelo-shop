@@ -69,3 +69,42 @@ background-color: #fbf4aa;
 /* font-weight: bold; */
 }
 
+
+table#balance {
+	border: 2px solid black; /* Рамка вокруг таблицы */
+	border-collapse: collapse; /* Отображать только одинарные линии */
+}
+
+table#balance TH {
+	text-align: center; /* Выравнивание по левому краю */
+	background: #ccc; /* Цвет фона ячеек */
+	padding: 5px; /* Поля вокруг содержимого ячеек */
+	border: 1px solid black; /* Граница вокруг ячеек */
+}
+
+table#balance TD { /* padding: 5px; /* Поля вокруг содержимого ячеек */
+	border: 1px solid black; /* Граница вокруг ячеек */
+	font-size: 14pt;
+}
+
+
+table#product {
+	border: 2px solid black; /* Рамка вокруг таблицы */
+	border-collapse: collapse; /* Отображать только одинарные линии */
+	width: 100%;
+	font-size : 12px;
+	font-family : Arial;
+}
+
+table#product TH {
+	text-align: center; /* Выравнивание по левому краю */
+	background: #ccc; /* Цвет фона ячеек */
+	padding: 5px; /* Поля вокруг содержимого ячеек */
+	border: 1px solid black; /* Граница вокруг ячеек */
+}
+
+table#product TD { /* padding: 5px; /* Поля вокруг содержимого ячеек */
+	border: 1px solid black; /* Граница вокруг ячеек */
+	font-size: 10pt;
+/*	width: 30pt; */
+}

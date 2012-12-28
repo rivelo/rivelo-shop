@@ -316,13 +316,14 @@ class ClientOrder(models.Model):
     pay = models.FloatField(default = 0, blank = True, null = True)    
     date = models.DateTimeField(auto_now_add = False)    
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)    
+    status = models.BooleanField(default=False, verbose_name="Прокат?")
             
     def __unicode__(self):
         return "%s - %s шт." % (self.catalog, self.count) 
         #return self.origin_id 
 
     class Meta:
-        ordering = ["client", "catalog", "date"]    
+        ordering = ["client", "-date", "catalog"]    
 
 
 #my costs (Затрати)

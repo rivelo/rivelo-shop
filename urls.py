@@ -191,6 +191,7 @@ urlpatterns = patterns('',
     (r'^catalog/search/$', 'catalog.accounting.views.catalog_search'),
     (r'^catalog/search/id/$', 'catalog.accounting.views.catalog_search_id'),
     (r'^catalog/search/result/$', 'catalog.accounting.views.catalog_search_result'),
+    (r'^catalog/lookup/$', 'catalog.accounting.views.catalog_lookup'),
 
     # Client
     (r'^client/(?P<id>\d+)$', 'catalog.accounting.views.client_data'),
@@ -225,6 +226,11 @@ urlpatterns = patterns('',
     (r'^clientcredits/edit/(?P<id>\d+)$', 'catalog.accounting.views.clientcredits_edit'),    
     (r'^clientcredits/delete/(?P<id>\d+)$', 'catalog.accounting.views.clientcredits_delete'),
     (r'^clientcredits/(?P<client_id>\d+)/delete/all/$', 'catalog.accounting.views.clientcredits_delete_all'),
+
+    (r'^client/order/add/$', 'catalog.accounting.views.client_order_add'),
+    (r'^client/order/view/$', 'catalog.accounting.views.client_order_list'),
+    (r'^client/order/delete/(?P<id>\d+)$', 'catalog.accounting.views.client_order_delete'),
+    (r'^client/order/edit/(?P<id>\d+)/$', 'catalog.accounting.views.client_order_edit'),
 
     # WorkShop 
     #operation by GROUP
