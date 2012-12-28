@@ -306,3 +306,39 @@ Key = date - Value = 2012-12-19 20:38:13
 Key = price - Value = 40.0
 Key = description - Value = Роботи: заміна касети; Заміна касети або фрівіла; Заміна передніх зірок (якщо передбачено конструкцією); "Заміна або встановлення ""рубашок"" і наконечників"; 
 Key = user - Value = 4
+2012-12-28 00:27:10.390000 >>> DELETE FROM TABLE client order WHERE id = 5 
+Key = id - Value = 5
+Key = client - Value = 2
+Key = catalog - Value = 2100
+Key = description - Value = 
+Key = count - Value = 1
+Key = price - Value = 45.0
+Key = sum - Value = 45.0
+Key = currency - Value = 3
+Key = pay - Value = 0.0
+Key = date - Value = 2012-12-27 22:39:22
+Key = user - Value = 4
+2012-12-28 00:27:14.031000 >>> DELETE FROM TABLE client order WHERE id = 6 
+Key = id - Value = 6
+Key = client - Value = 2
+Key = catalog - Value = 2100
+Key = description - Value = 
+Key = count - Value = 1
+Key = price - Value = 55.0
+Key = sum - Value = 55.0
+Key = currency - Value = 3
+Key = pay - Value = 0.0
+Key = date - Value = 2012-12-27 22:45:31
+Key = user - Value = 4
+2012-12-28 00:27:17.609000 >>> DELETE FROM TABLE client order WHERE id = 4 
+Key = id - Value = 4
+Key = client - Value = 2
+Key = catalog - Value = 2100
+Key = description - Value = test
+Key = count - Value = 1
+Key = price - Value = 74.0
+Key = sum - Value = 74.0
+Key = currency - Value = 3
+Key = pay - Value = 0.0
+Key = date - Value = 2012-12-27 22:38:53
+Key = user - Value = 4

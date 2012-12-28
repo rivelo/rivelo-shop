@@ -96,7 +96,7 @@ for(var i = 0; i < All.elements.length; ++i) {
 	<td>
 	<a href="/workshop/edit/{{ type.id }}">edit</a>
 	{% if perms.accounting.delete_workshop %}	
-    <a href="/workshop/delete/{{ type.id }}">delete</a>
+    <a href="/workshop/delete/{{ type.id }}" onclick="return confirm('Видалити роботу?')">delete</a>
     {% endif %}
     </td>
     <td>

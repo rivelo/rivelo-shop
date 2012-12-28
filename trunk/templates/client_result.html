@@ -1,7 +1,20 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
+
+    <link rel="stylesheet" type="text/css" href="/media/table.css">
+{#    <script type="text/javascript" src="/media/jquery-1.7.2.min.js"></script> #}
+	<link rel="stylesheet" type="text/css" href="/media/jquery-ui-1.9.2.custom.css">	
+
+	<script type="text/javascript" src="/media/jquery-1.8.3.js"></script>	
+	<script type="text/javascript" src="/media/jquery-ui-1.9.2.custom.min.js"></script>
+    
+    
 <script language="JavaScript">
+$(document).ready(function() {
+	$( document ).tooltip();
+})
+
 
 function res()
 {
@@ -34,12 +47,16 @@ for(var i = 0; i < All.elements.length; ++i) {
 
 <body onLoad="res(); resWorkshop()">
 
-    <h1>Виписка по клієнту: <a href=/client/edit/{{client_name.id}}> {{client_name.name}} ({{client_name.forumname}}) </a></h1>
+    <h1>Виписка по клієнту:
+    <span title="Телефон: {{client_name.phone}} <br> E-mail: {{client_name.email}}">
+    	 <a href=/client/edit/{{client_name.id}}> {{client_name.name}} ({{client_name.forumname}}) </a>
+    </span>
+    </h1>
 	<br>
 	 <h2 style="color:red;"> Cума:  {{clients}} грн.<h2>
 	<br>
 	
-	<table border=1>
+<table id="balance" >
 	<tr><th>Дата</th>
 	<th>Опис</th>
 	<th>Сума (грн)</th>
@@ -117,7 +134,7 @@ for(var i = 0; i < All.elements.length; ++i) {
 	
 <form action="/payform/" method="post" name="formSum">
 	<br>
-	<table border=1 width="100%" style="font-size : 12px; font-family : Arial;">
+	<table id="product">
 	<tr bgcolor="grey">
 	<th>Дата</th>
 	<th>Товар</th>

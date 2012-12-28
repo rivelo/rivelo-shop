@@ -5,38 +5,18 @@
 <!--
  	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
  	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
--->
+ 
  <script type="text/javascript" src="/media/jquery-1.7.2.min.js"></script>
+-->
+	<link rel="stylesheet" type="text/css" href="/media/jquery-ui-1.9.2.custom.css">	
+
+ 	<script type="text/javascript" src="/media/jquery-1.8.3.js"></script> 	
+	<script type="text/javascript" src="/media/jquery-ui-1.9.2.custom.min.js"></script>
 	    
 
 	<script type="text/javascript">
 $(document).ready(function() {
-$('span.jQtooltip').each(function() {
-  var el = $(this);
-  var title = el.attr('title');
-  if (title && title != '') {
-    el.attr('title', '').append('<div>' + title + '</div>');
-    var width = el.find('div').width();
-    var height = el.find('div').height();
-    el.hover(
-      function() {
-        el.find('div')
-          .clearQueue()
-          .delay(200)
-          .animate({width: width + 20, height: height + 20}, 200).show(200)
-          .animate({width: width, height: height}, 200);
-      },
-      function() {
-        el.find('div')
-          .animate({width: width + 20, height: height + 20}, 150)
-          .animate({width: 'hide', height: 'hide'}, 150);
-      }
-    ).mouseleave(function() {
-      if (el.children().is(':hidden')) el.find('div').clearQueue();
-    });
-  }
-})
-
+	$( document ).tooltip();
 })
 
 
@@ -47,11 +27,12 @@ function true_false(obj){
             //res = $(this).attr('id');
             $.ajax({
                 type: "GET",
-                url: "/rent/edit/"+res[1]+"/",
+                url: "/client/order/edit/"+res[1]+"/",
+//                url: "/rent/edit/"+res[1]+"/",
                 data: { id: res[1] },
                 dataType: "json",
                 success:function(msg){
-                    //alert("Все отлично ушло на сервер - " + msg);
+//                    alert("Все отлично ушло на сервер - " + msg);
 //                    $('#status_2').text(obj);
 //                    obj.innerHTML = msg;
                     $(obj).html(''+ msg[0].status.toString().toUpperCase());
@@ -73,25 +54,26 @@ function true_false(obj){
     
 
     
-    <h1>Прокат  <a href="/rent/add/">(Додати)</a></h1>
+    <h1>Замовлення  <a href="/client/order/add/">(Додати)</a></h1>
 
     <table>
 	<tr>
 		<th>№</th>
     	<th>ID</th>
-    	<th>Назва</th>
+    	<th>Назва компонентів</th>
+    	<th>Опис замовлення</th>    	
     	<th>Кієнт</th>
-    	<th>Дата видачі</th>
-    	<th>Дата повернення</th>
+    	<th>Дата</th>
     	<th>Кількість</th>
-    	<th>Завдаток</th>
-    	<th>Поверенення</th>
+    	<th>Аванс</th>
+    	<th>Ціна</th>
+    	<th>Сума</th>
+    	<th>Статус</th>
     	<th>Відпустив</th>
-    	<th>Опис</th>
     	<th>Дії</th>
     </tr>
     
-{% for type in rent %}
+{% for type in c_order %}
 {% if type.status %}
 <tr class="tr_true">
 {% else %}
@@ -104,28 +86,34 @@ function true_false(obj){
 	<a href="/rent/edit/{{ type.id }}">{{type.id}}</a>
 	</td>
 	<td>
-	<a href="/{{ type.id }}/" title="Список продукції даного виробника" >
+	<a href="catalog/id/{{ type.catalog.id }}/view/" title="" >
 	{{type.catalog}}
 	</a>
 	</td>
 	<td>
-	<span class="jQtooltip" title="Телефон: {{type.client.phone}}"> 
+	{{type.description}}
+	</td>
+	<td>
+	<span title="Телефон: {{type.client.phone}}"> 
 	<a href="/client/{{ type.client.id }}"> 
 	{{type.client}}
 	</a>
 	</span>
 	</td>
-	<td align="center">       
-	{{type.date_start|date:'d-m-Y' }}
-	</td>
-	<td align="center">       
-	{{type.date_end|date:'d-m-Y' }}
+	<td align="center" title="{{type.date|date:'d-m-Y H:i:s' }}">       
+	{{type.date|date:'d-m-Y' }}
 	</td>
 	<td align="center">       
 	{{type.count}}
 	</td>
+	<td align="center">       
+	{{type.pay}} грн.
+	</td>
 	<td>       
-	{{type.deposit}} грн.
+	{{type.price}} 
+	</td>
+	<td>
+	{{type.sum}}
 	</td>	
 	<td align="center">       
 	<span title="Змінити статус" id="status_{{type.id}}" onclick="true_false(this)" >{{type.status}}</span>
@@ -133,13 +121,10 @@ function true_false(obj){
 	<td align="center">       
 	{{type.user}}
 	</td>	
-	<td>       
-	{{type.description}}
-	</td>	
-	
+
 	<td>
-    <a href="/rent/edit/{{ type.id }}">edit</a>
-    <a href="/rent/delete/{{ type.id }}">delete</a>
+    <a href="/client/order/edit/{{ type.id }}">edit</a>
+    <a href="/client/order/delete/{{ type.id }}" onclick="return confirm('Видалити замовлення?')">delete</a>
     </td>
 </tr>
 {% endfor %}       
@@ -148,6 +133,4 @@ function true_false(obj){
     <table>
 
 <br><br>
-<a href="/">HOME</a> 
-
 
