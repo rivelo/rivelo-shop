@@ -10,9 +10,14 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 //      $('select.autocomplete').autocomplete();
-     $('#id_client').focus();
+//     $('#id_client').focus();
      $( document ).tooltip();
-	
+     
+    $('#id_count').bind('change', function(){
+    	$('#id_sum').val($('#id_price').val() * $('#id_count').val());
+    	$('#result').html("Сума " + $('#id_sum').val() + " грн.")		
+	});
+
   });
 
 
@@ -52,6 +57,7 @@
             	$('#val_id_catalog').val(ui.item.pk_id);
             	$('#id_post_id').val(ui.item.pk_id);
             	$('#id_catalog').val(ui.item.label);
+            	$('#result').html("Сума " + $('#id_sum').val() + " грн.")
             	            
                 log( ui.item ?
                     ui.item.pk_id + " -> Selected: " + ui.item.label :
@@ -264,12 +270,12 @@
             $('#id_client').toggle();
 //            $( "#combobox" ).toggle();
         });
-        $('#id_client').focus();
+        
     });
     </script>
 
 
-<body onload="document.getElementById('id_client').focus()">
+<body  onload="document.getElementById('city').focus()">
 
 <h1>Замовлення товару</h1>
 {# <button id="toggle">Show underlying select</button> #}
@@ -289,11 +295,12 @@
     <input type="hidden" id="val_id_catalog" >
 
 
-    <br>
+<!--     
     Result:
 <div id="log" style="height: 200px; width: 300px; overflow: auto;" class="ui-widget-content"></div>    
     </form>
-</div>    
+</div>
+ -->    
     <h3 id="result" style="color:red; background-color:#CCCCCC"}>Сума грн.</h3>
     
 </body>
