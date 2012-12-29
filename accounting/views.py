@@ -2237,7 +2237,7 @@ def client_order_add(request, cid=None):
             ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=pay, description=s, user=user)
             ccred.save()
 
-            ClientOrder(client=client, catalog=catalog, count=count, sum=sum, price=price, currency=currency, pay=pay, date=date, description=description, user=user).save()
+            ClientOrder(client=client, catalog=catalog, count=count, sum=sum, price=price, currency=currency, pay=pay, date=date, description=description, user=user, cred_id=ccred).save()
             return HttpResponseRedirect('/client/order/view/')
     else:
         #form = ClientOrderForm(instance = a, catalog_id=cid)
@@ -2261,7 +2261,11 @@ def client_order_edit(request, id):
     if request.method == 'POST':
         form = ClientOrderForm(request.POST, instance=a)
         if form.is_valid():
+            pay = form.cleaned_data['pay']
             form.save()
+            cred = ClientCredits.objects.get(id = a.credit.id)
+            cred.price = pay
+            cred.save()
             return HttpResponseRedirect('/client/order/view/')
     else:
         form = ClientOrderForm(instance=a)
@@ -2273,6 +2277,9 @@ def client_order_delete(request, id):
         return HttpResponseRedirect('/')
     obj = ClientOrder.objects.get(id=id)
     del_logging(obj)
+    cred = ClientCredits.objects.get(id=obj.credit.id)
+    del_logging(cred)
+    cred.delete()
     obj.delete()
     return HttpResponseRedirect('/client/order/view/')
 #    return HttpResponseRedirect(request.META['HTTP_REFERER'])

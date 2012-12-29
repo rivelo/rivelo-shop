@@ -317,6 +317,7 @@ class ClientOrder(models.Model):
     date = models.DateTimeField(auto_now_add = False)    
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)    
     status = models.BooleanField(default=False, verbose_name="Прокат?")
+    credit = models.ForeignKey(ClientCredits, blank=True, null=True)
             
     def __unicode__(self):
         return "%s - %s шт." % (self.catalog, self.count) 
