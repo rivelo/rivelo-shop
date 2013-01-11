@@ -1,6 +1,59 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
+	<script type="text/javascript" src="/media/sh/shCore.js"></script>
+	<script type="text/javascript" src="/media/sh/shBrushJScript.js"></script>
+	<link type="text/css" rel="stylesheet" href="/media/sh/shCore.css"/>
+	<link type="text/css" rel="stylesheet" href="/media/sh/shThemeDefault.css"/>
+	<script type="text/javascript">
+		SyntaxHighlighter.all();
+	</script>
+	<!-- END syntax highlighter -->
+
+	<link rel="stylesheet" type="text/css" href="/media/autocomplete.css">
+
+	<script type="text/javascript" src="/media/jquery-1.3.1.min.js"></script>
+ 	<script type="text/javascript" src="/media/jquery.autocomplete.pack.js"></script>  
+	<script type="text/javascript" src="/media/jquery.select-autocomplete.js"></script> 
+
+	<script type="text/javascript" src="/media/jquery.searchabledropdown-1.0.8.min.js"></script>
+	
+<script type="text/javascript">
+$(document).ready(function() {
+    $('select.autocomplete').select_autocomplete({width: 410,
+    											 minChars: 2,
+    											});
+    $("#id_model").searchable();
+	$("#id_model").change(function(){
+//				$('#id_price').val(this.value);
+//				$("#value").html(this.options[this.selectedIndex].text + " (VALUE: " + this.value + ")");
+		$.getJSON("/bicycle/price/", {id: $("select#id_model").val()}, function(data) {
+			//alert(data);    
+    		$('#id_price').val(data[0].price);
+
+    		$('#result').empty();
+			var res = $('#id_price').val() * (1 - $('#id_sale').val() /100);
+			$('#id_sale').after('<span id="result"> Зі знижкою ' + res.toFixed(2) + ' грн.</span>');
+    		
+		});
+
+	});
+    
+    $('#id_client').attr({width: '400px'});
+	$('#id_model').focus();
+	
+	$('#id_sale').change(function(){
+		$('#result').empty();
+		var res = $('#id_price').val() * (1 - this.value /100);
+		$('#id_sale').after('<span id="result"> Зі знижкою ' + res.toFixed(2) + ' грн.</span>');
+	//alert(this.value);
+	})
+});
+  
+
+</script>
+
+
 <h1>Створити замовлення велосипеду{{text}}</h1>
 <form action="." method="POST" enctype="multipart/form-data">
 <table>
@@ -12,7 +65,5 @@
 <a href="/bicycle/view/">Каталог велосипедів</a>
 <br>
 <a href="/">HOME</a>
-
-
 
 

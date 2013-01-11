@@ -731,8 +731,11 @@ def bicycle_order_add(request):
             date = form.cleaned_data['date']
             done = form.cleaned_data['done']
             description = form.cleaned_data['description']
-            ClientCredits(client=client, date=date, price=prepay, description="Передоплата за "+str(model)).save()
-            Bicycle_Order(client=client, model=model, size=size, price=price, sale=sale, currency=currency, date=date, done=done, description=description, prepay=prepay).save()            
+            user = None             
+            if request.user.is_authenticated():
+                user = request.user            
+            Bicycle_Order(client=client, model=model, size=size, price=price, sale=sale, currency=currency, date=date, done=done, description=description, prepay=prepay, user=user).save()
+            ClientCredits(client=client, date=date, price=prepay, description="Передоплата за "+str(model), user=user).save()                        
             return HttpResponseRedirect('/bicycle/order/view/')
     else:
         form = BicycleOrderForm(instance = a)
@@ -772,6 +775,23 @@ def bicycle_order_done(request, id):
     obj.done = True
     obj.save()
     return HttpResponseRedirect('/bicycle/order/view/')
+
+# lookup bicycle price
+def bicycle_order_ajax(request):
+    search = None
+    message = ""
+    if request.is_ajax():
+        if request.method == 'GET':  
+            GET = request.GET  
+            if GET.has_key('id'):
+                q = request.GET.get( 'id' )
+                message = "It's AJAX!!!"
+    else:
+        message = "Error"
+
+    search = Bicycle.objects.filter(id=q).values('price', 'sale')
+    return HttpResponse(simplejson.dumps(list(search)), mimetype="application/json")
+
 
 # --------------------Dealer company ------------------------
 def dealer_add(request):
@@ -2237,7 +2257,7 @@ def client_order_add(request, cid=None):
             ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=pay, description=s, user=user)
             ccred.save()
 
-            ClientOrder(client=client, catalog=catalog, count=count, sum=sum, price=price, currency=currency, pay=pay, date=date, description=description, user=user, cred_id=ccred).save()
+            ClientOrder(client=client, catalog=catalog, count=count, sum=sum, price=price, currency=currency, pay=pay, date=date, description=description, user=user, credit=ccred).save()
             return HttpResponseRedirect('/client/order/view/')
     else:
         #form = ClientOrderForm(instance = a, catalog_id=cid)
@@ -2262,7 +2282,13 @@ def client_order_edit(request, id):
         form = ClientOrderForm(request.POST, instance=a)
         if form.is_valid():
             pay = form.cleaned_data['pay']
+            post = form.cleaned_data['post_id']
+            catalog = None
+            if post:
+                catalog = Catalog.objects.get(id=post)
             form.save()
+            a.catalog = catalog
+            a.save()
             cred = ClientCredits.objects.get(id = a.credit.id)
             cred.price = pay
             cred.save()
@@ -2277,9 +2303,12 @@ def client_order_delete(request, id):
         return HttpResponseRedirect('/')
     obj = ClientOrder.objects.get(id=id)
     del_logging(obj)
-    cred = ClientCredits.objects.get(id=obj.credit.id)
-    del_logging(cred)
-    cred.delete()
+    try:
+        cred = ClientCredits.objects.get(id=obj.credit.id)
+        del_logging(cred)
+        cred.delete()
+    except TypeError:
+        res = "Помилка"
     obj.delete()
     return HttpResponseRedirect('/client/order/view/')
 #    return HttpResponseRedirect(request.META['HTTP_REFERER'])

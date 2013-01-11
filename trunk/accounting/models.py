@@ -320,7 +320,7 @@ class ClientOrder(models.Model):
     credit = models.ForeignKey(ClientCredits, blank=True, null=True)
             
     def __unicode__(self):
-        return "%s - %s шт." % (self.catalog, self.count) 
+        return "%s (%s) - %s шт." % (self.catalog, self.description, self.count) 
         #return self.origin_id 
 
     class Meta:

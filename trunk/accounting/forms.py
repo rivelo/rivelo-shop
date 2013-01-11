@@ -192,12 +192,18 @@ class BicycleOrderEditForm(forms.ModelForm):
 
 class BicycleOrderForm(forms.ModelForm):
     cur_year = datetime.datetime.today().year
-    model = forms.ModelChoiceField(queryset = Bicycle.objects.filter(year__year=cur_year))
-    client = forms.ModelChoiceField(queryset = Client.objects.all())
-    size = forms.CharField(max_length=50)
-    price = forms.FloatField(initial = 0)
-    sale = forms.IntegerField(initial = 0)
-    prepay = forms.FloatField(initial = 0)
+    model = forms.ModelChoiceField(queryset = Bicycle.objects.filter(year__gte=datetime.datetime(cur_year-1, 1, 1)).order_by('-year'), empty_label="", label = 'Модель велосипеду')
+#    model = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete'}), queryset = Bicycle.objects.filter(year__year=cur_year), empty_label="", label = 'Модель велосипеду')    
+#    client = forms.ModelChoiceField(queryset = Client.objects.all())
+
+    #Hidden field    
+    #post_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
+    
+    client = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete'}), queryset = Client.objects.all(), empty_label="", label = 'Клієнт')    
+    size = forms.CharField(max_length=50, label = 'Розмір рами')
+    price = forms.FloatField(initial = 0, label = 'Ціна')
+    sale = forms.IntegerField(initial = 0, label = 'Знижка (%)')
+    prepay = forms.FloatField(initial = 0, label = 'Аванс')
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
     date = forms.DateTimeField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
     done = forms.BooleanField(required=False) 
@@ -395,7 +401,7 @@ class ClientOrderForm(forms.ModelForm):
 #    catalog = forms.CharField(label='Товар', widget=forms.TextInput(attrs={'width':'300px'}), required=True)    
     #catalog = forms.ModelChoiceField(queryset = '')    
     post_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)    
-    description = forms.CharField(label='Опис товару', widget=forms.Textarea(), required=False)
+    description = forms.CharField(label='Опис товару', widget=forms.Textarea(), required=False)    
     count = forms.IntegerField(min_value=0, initial = 1)
     price = forms.FloatField(initial=0)
     sum = forms.FloatField(initial=0)
