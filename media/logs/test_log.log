@@ -377,3 +377,10 @@ Key = date - Value = 2012-12-28 12:47:00
 Key = price - Value = 151.0
 Key = description - Value = Аванс - ротор SM-RT98 S, XTR, 160мм ()
 Key = user - Value = 4
+2013-01-11 16:34:52.296000 >>> DELETE FROM TABLE client credits WHERE id = 2764 
+Key = id - Value = 2764
+Key = client - Value = 31
+Key = date - Value = 2013-01-11 00:00:00
+Key = price - Value = 1000.0
+Key = description - Value = задаток за велосипед cannondale sl5 17 дюйм
+Key = user - Value = None
