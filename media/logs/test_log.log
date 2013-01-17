@@ -384,3 +384,272 @@ Key = date - Value = 2013-01-11 00:00:00
 Key = price - Value = 1000.0
 Key = description - Value = задаток за велосипед cannondale sl5 17 дюйм
 Key = user - Value = None
+2013-01-12 23:51:15.859000 >>> DELETE FROM TABLE work shop WHERE id = 730 
+Key = id - Value = 730
+Key = client - Value = 2
+Key = date - Value = 2013-01-12 23:49:20
+Key = work_type - Value = 658
+Key = price - Value = 5.0
+Key = pay - Value = False
+Key = user - Value = 3
+Key = description - Value = 
+2013-01-16 02:45:15.140000 >>> DELETE FROM TABLE dealer payment WHERE id = 81 
+Key = id - Value = 81
+Key = dealer_invoice - Value = 346
+Key = invoice_number - Value = 007
+Key = date - Value = 2013-01-16
+Key = bank - Value = 5
+Key = price - Value = 10.0
+Key = currency - Value = 4
+Key = letter - Value = False
+Key = description - Value = 
+2013-01-17 01:32:54.187000 >>> DELETE FROM TABLE bicycle_ sale WHERE id = 218 
+Key = id - Value = 218
+Key = model - Value = 275
+Key = client - Value = 2
+Key = price - Value = 7370.0
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = date - Value = 2013-01-17
+Key = service - Value = False
+Key = description - Value = 
+Key = user - Value = 4
+Key = debt - Value = None
+2013-01-17 01:33:05.484000 >>> DELETE FROM TABLE client debts WHERE id = 3110 
+Key = id - Value = 3110
+Key = client - Value = 2
+Key = date - Value = 2013-01-17 00:00:00
+Key = price - Value = 7370.0
+Key = description - Value = Велосипед Trek. Модель Trek 4500. 2013 (білий) [WTU246C7116G]
+Key = user - Value = None
+2013-01-17 01:36:32.703000 >>> DELETE FROM TABLE client debts WHERE id = 3111 
+Key = id - Value = 3111
+Key = client - Value = 2
+Key = date - Value = 2013-01-17 00:00:00
+Key = price - Value = 7370.0
+Key = description - Value = Велосипед Trek. Модель Trek 4500. 2013 (білий) [WTU246C7116G]
+Key = user - Value = None
+2013-01-17 01:36:48.093000 >>> DELETE FROM TABLE bicycle_ sale WHERE id = 219 
+Key = id - Value = 219
+Key = model - Value = 275
+Key = client - Value = 2
+Key = price - Value = 7370.0
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = date - Value = 2013-01-17
+Key = service - Value = False
+Key = description - Value = 
+Key = user - Value = 4
+Key = debt - Value = None
+2013-01-17 01:39:54.187000 >>> DELETE FROM TABLE bicycle_ sale WHERE id = 220 
+Key = id - Value = 220
+Key = model - Value = 275
+Key = client - Value = 2
+Key = price - Value = 7370.0
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = date - Value = 2013-01-17
+Key = service - Value = False
+Key = description - Value = 
+Key = user - Value = 4
+Key = debt - Value = 3112
+2013-01-17 01:42:47.796000 >>> DELETE FROM TABLE client debts WHERE id = 3112 
+Key = id - Value = 3112
+Key = client - Value = 2
+Key = date - Value = 2013-01-17 00:00:00
+Key = price - Value = 7370.0
+Key = description - Value = Велосипед Trek. Модель Trek 4500. 2013 (білий) [WTU246C7116G]
+Key = user - Value = None
+2013-01-17 01:45:58.390000 >>> DELETE FROM TABLE bicycle_ sale WHERE id = 221 
+Key = id - Value = 221
+Key = model - Value = 275
+Key = client - Value = 2
+Key = price - Value = 7370.0
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = date - Value = 2013-01-17
+Key = service - Value = False
+Key = description - Value = 
+Key = user - Value = 4
+Key = debt - Value = 3113
+2013-01-17 01:46:32.828000 >>> DELETE FROM TABLE bicycle_ sale WHERE id = 221 
+Key = id - Value = 221
+Key = model - Value = 275
+Key = client - Value = 2
+Key = price - Value = 7370.0
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = date - Value = 2013-01-17
+Key = service - Value = False
+Key = description - Value = 
+Key = user - Value = 4
+Key = debt - Value = 3113
+2013-01-17 01:47:45.062000 >>> DELETE FROM TABLE client debts WHERE id = 3114 
+Key = id - Value = 3114
+Key = client - Value = 2
+Key = date - Value = 2013-01-17 00:00:00
+Key = price - Value = 1843.0
+Key = description - Value = Велосипед Trek. Модель Jet 20. 2013 (Чорно-зелений) [wtu246c9158G]
+Key = user - Value = None
+2013-01-17 01:47:52.625000 >>> DELETE FROM TABLE bicycle_ sale WHERE id = 222 
+Key = id - Value = 222
+Key = model - Value = 276
+Key = client - Value = 2
+Key = price - Value = 1940.0
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = date - Value = 2013-01-17
+Key = service - Value = False
+Key = description - Value = 
+Key = user - Value = 4
+Key = debt - Value = None
+2013-01-17 01:49:49.125000 >>> DELETE FROM TABLE bicycle_ sale WHERE id = 222 
+Key = id - Value = 222
+Key = model - Value = 276
+Key = client - Value = 2
+Key = price - Value = 1940.0
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = date - Value = 2013-01-17
+Key = service - Value = False
+Key = description - Value = 
+Key = user - Value = 4
+Key = debt - Value = None
+2013-01-17 01:52:22.921000 >>> DELETE FROM TABLE bicycle_ sale WHERE id = 222 
+Key = id - Value = 222
+Key = model - Value = 276
+Key = client - Value = 2
+Key = price - Value = 1940.0
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = date - Value = 2013-01-17
+Key = service - Value = False
+Key = description - Value = 
+Key = user - Value = 4
+Key = debt - Value = None
+2013-01-17 01:53:23.265000 >>> DELETE FROM TABLE bicycle_ sale WHERE id = 222 
+Key = id - Value = 222
+Key = model - Value = 276
+Key = client - Value = 2
+Key = price - Value = 1940.0
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = date - Value = 2013-01-17
+Key = service - Value = False
+Key = description - Value = 
+Key = user - Value = 4
+Key = debt - Value = None
+2013-01-17 01:53:35.953000 >>> DELETE FROM TABLE bicycle_ sale WHERE id = 222 
+Key = id - Value = 222
+Key = model - Value = 276
+Key = client - Value = 2
+Key = price - Value = 1940.0
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = date - Value = 2013-01-17
+Key = service - Value = False
+Key = description - Value = 
+Key = user - Value = 4
+Key = debt - Value = None
+2013-01-17 01:54:04.890000 >>> DELETE FROM TABLE bicycle_ sale WHERE id = 222 
+Key = id - Value = 222
+Key = model - Value = 276
+Key = client - Value = 2
+Key = price - Value = 1940.0
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = date - Value = 2013-01-17
+Key = service - Value = False
+Key = description - Value = 
+Key = user - Value = 4
+Key = debt - Value = None
+2013-01-17 02:04:02.718000 >>> DELETE FROM TABLE bicycle_ sale WHERE id = 223 
+Key = id - Value = 223
+Key = model - Value = 266
+Key = client - Value = 2
+Key = price - Value = 10110.0
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = date - Value = 2013-01-17
+Key = service - Value = False
+Key = description - Value = 
+Key = user - Value = 4
+Key = debt - Value = 3115
+2013-01-17 02:05:37.406000 >>> DELETE FROM TABLE client debts WHERE id = 3116 
+Key = id - Value = 3116
+Key = client - Value = 2
+Key = date - Value = 2013-01-17 00:00:00
+Key = price - Value = 9604.5
+Key = description - Value = Велосипед Trek. Модель Cobia. 2013 (Black) [WTU236C5691G]
+Key = user - Value = None
+2013-01-17 02:05:46.718000 >>> DELETE FROM TABLE bicycle_ sale WHERE id = 224 
+Key = id - Value = 224
+Key = model - Value = 266
+Key = client - Value = 2
+Key = price - Value = 10110.0
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = date - Value = 2013-01-17
+Key = service - Value = False
+Key = description - Value = тестове повідомлення
+Key = user - Value = 4
+Key = debt - Value = None
+2013-01-17 02:11:07.265000 >>> DELETE FROM TABLE bicycle_ sale WHERE id = 225 
+Key = id - Value = 225
+Key = model - Value = 266
+Key = client - Value = 2
+Key = price - Value = 10110.0
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = date - Value = 2013-01-17
+Key = service - Value = False
+Key = description - Value = перевірка
+Key = user - Value = 4
+Key = debt - Value = 3117
+2013-01-17 02:26:59.375000 >>> DELETE FROM TABLE bicycle_ sale WHERE id = 226 
+Key = id - Value = 226
+Key = model - Value = 266
+Key = client - Value = 2
+Key = price - Value = 10110.0
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = date - Value = 2013-01-17
+Key = service - Value = False
+Key = description - Value = 
+Key = user - Value = 4
+Key = debt - Value = 3118
+2013-01-17 03:28:13 >>> DELETE FROM TABLE bicycle_ sale WHERE id = 228 
+Key = id - Value = 228
+Key = model - Value = 266
+Key = client - Value = 2
+Key = price - Value = 10110.0
+Key = currency - Value = 3
+Key = sale - Value = 6
+Key = date - Value = 2013-01-17
+Key = service - Value = False
+Key = description - Value = 
+Key = user - Value = 4
+Key = debt - Value = None
+2013-01-17 03:29:32.062000 >>> DELETE FROM TABLE bicycle_ sale WHERE id = 227 
+Key = id - Value = 227
+Key = model - Value = 266
+Key = client - Value = 2
+Key = price - Value = 10110.0
+Key = currency - Value = 3
+Key = sale - Value = 10
+Key = date - Value = 2013-01-17
+Key = service - Value = False
+Key = description - Value = 
+Key = user - Value = 4
+Key = debt - Value = 3119
+2013-01-17 04:34:57.093000 >>> DELETE FROM TABLE rent WHERE id = 1 
+Key = id - Value = 1
+Key = catalog - Value = 448
+Key = client - Value = 2
+Key = date_start - Value = 2013-01-17 04:27:52
+Key = date_end - Value = 2013-01-19
+Key = count - Value = 1
+Key = deposit - Value = 280.0
+Key = status - Value = False
+Key = user - Value = 4
+Key = description - Value = 

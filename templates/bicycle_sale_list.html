@@ -4,6 +4,8 @@
 
 <h1>Список проданих велосипедів</h1>
 
+{% load template_math %}   
+
 <table border="1">
 	<tr>
 		<th>№</th>
@@ -13,6 +15,8 @@
 		<th>Клієнт</th>
 		<th>Ціна</th>
 		<th>Валюта</th>
+		<th>Знижка %</th>
+		<th>Сума</th>
 		<th>Дата</th>
 		<th>Сервіс</th>
 		<th>Опис</th>
@@ -21,14 +25,16 @@
 
 	{% for type in bicycles %}
 	<tr>
-		<td>{{forloop.counter}}</td>
-		<td><a href="/bicycle/sale/edit/{{ type.id }}">{{type.id}}</a></td>
+		<td title="{{type.user}}">{{forloop.counter}}</td>
+		<td title="Редагувати"><a href="/bicycle/sale/edit/{{ type.id }}">{{type.id}}</a></td>
 		<td><a href="/bicycle/photo/{{type.model.model.id}}">{{type.model}}</a></td>
 		<td>{{type.model.serial_number}}</td>
 		<td><a href="/client/{{type.client.id}}">{{type.client}}</a></td>
-		<td>{{type.price}}</td>
+		<td title="{{type.price|percentage:type.sale}}">{{type.price}}</td>
 		<td>{{type.currency}}</td>
-		<td>{{type.date|date:"D d M Y"}}</td>
+		<td align="center" title="{{type.price|percentage:type.sale}}">{{type.sale}}</td>
+		<td align="center">{{type.sum}}</td>
+		<td align="center">{{type.date|date:"D d M Y"}}</td>
 		
 {% if type.service %}
 <td>{{type.service|yesno:"Пройдено,Непройдено,Невідомо"}}
@@ -53,6 +59,8 @@
 		<th></th>
 		<th>{{price_summ}}</th>
 		<th>грн</th>
+		<th></th>
+		<th></th>
 		<th>Не пройдено ТО:</th>
 		<th>{{service_summ}}</th>
 		<th></th>

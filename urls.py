@@ -18,7 +18,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     (r'^search/$', 'catalog.accounting.views.search'), 
-    (r'^contact/thanks/$', direct_to_template, {'template': 'thanks.html'}),
+#    (r'^contact/thanks/$', direct_to_template, {'template': 'thanks.html'}),
 
     (r'^manyforms/(?P<author_id>\d+)$', 'catalog.accounting.views.manage_works'),
     (r'^manyforms/test/$', 'catalog.accounting.views.formset_test'),
@@ -65,7 +65,8 @@ urlpatterns = patterns('',
     (r'^bicycle/edit/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_edit'),    
     (r'^bicycle/delete/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_del'),
     (r'^bicycle/photo/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_photo'),
-    (r'^bicycle/price/$', 'catalog.accounting.views.bicycle_order_ajax'),
+    # get bicycle price and sale by id 
+    (r'^bicycle/price/$', 'catalog.accounting.views.bicycle_lookup_ajax'),
 
     (r'^bicycle/store/report/bysize/(?P<id>\d+)/$', 'catalog.accounting.views.store_report_bysize'),
     (r'^bicycle/store/report/bytype/(?P<id>\d+)/$', 'catalog.accounting.views.store_report_bytype'),
@@ -99,7 +100,9 @@ urlpatterns = patterns('',
     (r'^bicycle/sale/report/month/$', 'catalog.accounting.views.bicycle_sale_report'),
     (r'^bicycle/sale/service/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_sale_service'),
     (r'^bicycle/sale/(?P<id>\d+)/check/$', 'catalog.accounting.views.bicycle_sale_check'),
-    (r'^bicycle/sale/(?P<id>\d+)/check/print/$', 'catalog.accounting.views.bicycle_sale_check_print'),
+    #(r'^bicycle/sale/(?P<id>\d+)/check/print/$', 'catalog.accounting.views.bicycle_sale_check_print'),
+    (r'^bicycle/sale/(?P<id>\d+)/check/print/$', 'catalog.accounting.views.bicycle_sale_check', {'param': 'print'}),
+    (r'^bicycle/sale/(?P<id>\d+)/check/email/$', 'catalog.accounting.views.bicycle_sale_check', {'param': 'email'}),
     (r'^bicycle/sale/report/brand/$', 'catalog.accounting.views.bicycle_sale_report_by_brand'),    
     
     
@@ -204,6 +207,8 @@ urlpatterns = patterns('',
     (r'^client/search/$', 'catalog.accounting.views.client_search'),
     (r'^client/search/result/$', 'catalog.accounting.views.client_search_result'),
     (r'^client/result/search/$', 'catalog.accounting.views.client_result'),
+    (r'^client/lookup/$', 'catalog.accounting.views.client_lookup'),
+    
 #delete    (r'^client/result/$', 'catalog.accounting.views.search_client_id'),
     (r'^client/invoice/view/$', 'catalog.accounting.views.client_invoice_view'),
     (r'^client/invoice/(?P<id>\d+)/edit/$', 'catalog.accounting.views.client_invoice_edit'),
@@ -215,6 +220,8 @@ urlpatterns = patterns('',
     (r'^client/invoice/year/(?P<year>\d+)/month/(?P<month>\d+)/view/$', 'catalog.accounting.views.client_invoice_view', {'day':"all"}),
     (r'^client/invoice/year/(?P<year>\d+)/month/(?P<month>\d+)/day/(?P<day>\d+)/view/$', 'catalog.accounting.views.client_invoice_view'),
     (r'^client/invoice/report/$', 'catalog.accounting.views.client_invoice_sale_report'),
+    (r'^client/invoice/check/$', 'catalog.accounting.views.client_invoice_check', {'param': 'print'}),
+    (r'^client/invoice/check/email/$', 'catalog.accounting.views.client_invoice_check', {'param': 'email'}),
 
     (r'^clientdebts/add/(?P<id>\d+)$', 'catalog.accounting.views.clientdebts_add'),
     (r'^clientdebts/view/$', 'catalog.accounting.views.clientdebts_list'),
@@ -244,7 +251,8 @@ urlpatterns = patterns('',
     (r'^worktype/edit/(?P<id>\d+)$', 'catalog.accounting.views.worktype_edit'),
     (r'^worktype/view/group/(?P<id>\d+)$', 'catalog.accounting.views.worktype_list'),        
     (r'^worktype/view/$', 'catalog.accounting.views.worktype_list'),
-    (r'^worktype/delete/(?P<id>\d+)$', 'catalog.accounting.views.worktype_delete'),    
+    (r'^worktype/delete/(?P<id>\d+)$', 'catalog.accounting.views.worktype_delete'),
+    (r'^worktype/price/$', 'catalog.accounting.views.worktype_ajax'),    
 
     (r'^workstatus/add/$', 'catalog.accounting.views.workstatus_add'),
     (r'^workstatus/view/$', 'catalog.accounting.views.workstatus_list'),
@@ -297,10 +305,7 @@ urlpatterns = patterns('',
     (r'^cost/delete/(?P<id>\d+)/$', 'catalog.accounting.views.cost_delete'),    
     (r'^cost/edit/(?P<id>\d+)/$', 'catalog.accounting.views.cost_edit'),
 
-    (r'^preorder/add/$', 'catalog.accounting.views.preorder_add'),
-    (r'^preorder/view/$', 'catalog.accounting.views.preorder_list'),
-    (r'^preorder/edit/(?P<id>\d+)/$', 'catalog.accounting.views.preorder_edit'),
-    (r'^preorder/delete/(?P<id>\d+)/$', 'catalog.accounting.views.preorder_delete'),
+
 
     (r'^rent/add/$', 'catalog.accounting.views.rent_add'),
     (r'^rent/edit/(?P<id>\d+)/$', 'catalog.accounting.views.rent_edit'),
@@ -346,6 +351,12 @@ urlpatterns = patterns('',
 
 #from django.contrib.staticfiles.urls import staticfiles_urlpatterns 
 #urlpatterns += staticfiles_urlpatterns()
+urlpatterns += patterns('', 
+    (r'^preorder/add/$', 'catalog.accounting.views.preorder_add'),
+    (r'^preorder/view/$', 'catalog.accounting.views.preorder_list'),
+    (r'^preorder/edit/(?P<id>\d+)/$', 'catalog.accounting.views.preorder_edit'),
+    (r'^preorder/delete/(?P<id>\d+)/$', 'catalog.accounting.views.preorder_delete'),         
+) 
 
 #===============================================================================
 # 

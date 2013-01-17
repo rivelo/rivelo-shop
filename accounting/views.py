@@ -6,7 +6,7 @@ from django.template import RequestContext
 from django.core.urlresolvers import resolve
 
 from models import Manufacturer, Country, Type, Currency, Bicycle_Type, Bicycle,  FrameSize, Bicycle_Store, Bicycle_Sale, Bicycle_Order
-from forms import ContactForm, ManufacturerForm, CountryForm, CurencyForm, CategoryForm, BicycleTypeForm, BicycleForm, BicycleFrameSizeForm, BicycleStoreForm, BicycleSaleForm, BicycleOrderForm, BicycleSaleEditForm, BicycleOrderEditForm 
+from forms import ContactForm, ManufacturerForm, CountryForm, CurencyForm, CategoryForm, BicycleTypeForm, BicycleForm, BicycleFrameSizeForm, BicycleStoreForm, BicycleSaleForm, BicycleOrderForm, BicycleOrderEditForm 
 
 from models import Catalog, Client, ClientDebts, ClientCredits, ClientInvoice, ClientOrder 
 from forms import CatalogForm, ClientForm, ClientDebtsForm, ClientCreditsForm, ClientInvoiceForm, ClientOrderForm
@@ -559,6 +559,7 @@ def store_report_bytype(request, id):
 
 
 def bicycle_sale_add(request, id=None):
+    a = Bicycle_Sale()
     bike = None
     serial_number = ''
     if id != None:
@@ -566,16 +567,23 @@ def bicycle_sale_add(request, id=None):
         serial_number = bike.serial_number
         
     if request.method == 'POST':
-        form = BicycleSaleForm(request.POST, initial={'currency': 3})
+        form = BicycleSaleForm(request.POST, initial={'currency': 3}, instance=a)
         if form.is_valid():
             model = form.cleaned_data['model']
             client = form.cleaned_data['client']
             price = form.cleaned_data['price']
             currency = form.cleaned_data['currency']
+            sale = form.cleaned_data['sale']
+            sum = form.cleaned_data['sum']
             date = form.cleaned_data['date']
             service = form.cleaned_data['service']
             description = form.cleaned_data['description']
-            Bicycle_Sale(model = model, client=client, price = price, currency = currency, date=date, service=service, description=description).save()
+            user = None             
+            if request.user.is_authenticated():
+                user = request.user            
+            
+            bs = Bicycle_Sale(model = model, client=client, price = price, currency = currency, sale=sale, date=date, service=service, description=description, user=user, sum=sum)
+            bs.save()
             
             update_bicycle = Bicycle_Store.objects.get(id=model.id)
             if update_bicycle.count != 0: 
@@ -587,28 +595,59 @@ def bicycle_sale_add(request, id=None):
             update_client.summ = update_client.summ + price 
             update_client.save()
             
-            ClientDebts(client=client, date=date, price=price, description=""+str(model)).save()
+            cdeb_price = price * (1 - sale/100.0)
+            cdeb = ClientDebts(client=client, date=datetime.datetime.now(), price=cdeb_price, description=""+str(model), user=user)
+            cdeb.save()
+            bs.debt = cdeb
+            bs.save()
             redirect = "/client/result/search/?id="+str(client.id)
             return HttpResponseRedirect(redirect)
     else:
         if bike != None:
-            form = BicycleSaleForm(initial={'model': bike.id, 'price': bike.model.price, 'currency': bike.model.currency.id})
+            form = BicycleSaleForm(initial={'model': bike.id, 'price': bike.model.price, 'currency': bike.model.currency.id, 'sale': bike.model.sale}, instance=a)
         else:
-            form = BicycleSaleForm(initial={'currency': 3})
+            form = BicycleSaleForm(initial={'currency': 3}, instance=a)
     
     return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_sale.html', 'serial_number': serial_number, 'text': 'Продаж велосипеду', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_sale_edit(request, id):
     a = Bicycle_Sale.objects.get(pk=id)
+    user = None             
+    if request.user.is_authenticated():
+        user = request.user
+    else:
+        return HttpResponse("<h2>Для виконання операції редагування авторизуйтесь</h2>")
     
     if request.method == 'POST':
-        form = BicycleSaleEditForm(request.POST, instance=a, bike_id=a.model.model.id)
+        form = BicycleSaleForm(request.POST, instance=a, bike_id=a.model.model.id)
+        #form = BicycleSaleForm(request.POST, instance=a)
         if form.is_valid():
+            model = form.cleaned_data['model']
+            client = form.cleaned_data['client']
+            price = form.cleaned_data['price']
+            currency = form.cleaned_data['currency']
+            sale = form.cleaned_data['sale']
+            date = form.cleaned_data['date']
+            service = form.cleaned_data['service']
+            description = form.cleaned_data['description']
+            sum = form.cleaned_data['sum']
             form.save()
+            
+            cdeb_price = price * (1 - sale/100.0)
+            try:
+                cdeb = ClientDebts.objects.get(pk=a.debt.id)
+                #cdeb.client=client
+                cdeb.price=cdeb_price
+                cdeb.description=""+str(model)
+                cdeb.user=user
+                cdeb.save()
+            except:
+                pass
+
             return HttpResponseRedirect('/bicycle/sale/view/')
     else:
-        form = BicycleSaleEditForm(instance=a, bike_id=a.model.model.id)
+        form = BicycleSaleForm(instance=a, bike_id=a.model.model.id)
         
     serial_number = a.model.serial_number
     #serial_number = "test number"
@@ -616,6 +655,8 @@ def bicycle_sale_edit(request, id):
 
 
 def bicycle_sale_del(request, id):
+    if auth_group(request.user, 'admin')==False:
+        return HttpResponse("<h2>Для видалення потрібні права адміністратора </h2>")    
     obj = Bicycle_Sale.objects.get(id=id)
     del_logging(obj)
     update_client = Client.objects.get(id=obj.client.id)
@@ -624,6 +665,11 @@ def bicycle_sale_del(request, id):
     update_storebike = Bicycle_Store.objects.get(id=obj.model.id)
     update_storebike.count = update_storebike.count + 1
     update_storebike.save()
+    try:
+        update_debt = ClientDebts.objects.get(id=obj.debt.id)
+        update_debt.delete()
+    except:
+        pass
     obj.delete()
     return HttpResponseRedirect('/bicycle/sale/view/')
 
@@ -651,6 +697,9 @@ def bicycle_sale_list(request, year=False, month=False, id=None):
 
 
 def bicycle_sale_service(request, id):
+    if request.user.is_authenticated()==False:
+        return HttpResponse("<h2>Для виконання операції, авторизуйтесь</h2>")
+   
     list = Bicycle_Sale.objects.get(id=id)
     list.service = True
     list.save()
@@ -659,18 +708,31 @@ def bicycle_sale_service(request, id):
     #return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_sale_list.html',})
 
 
-def bicycle_sale_check(request, id=None):
+def bicycle_sale_check(request, id=None, param=None):
     list = Bicycle_Sale.objects.get(id=id)
     text = pytils_ua.numeral.in_words(int(list.price))
     month = pytils_ua.dt.ru_strftime(u"%d %B %Y", list.date, inflected=True)
-    return render_to_response('index.html', {'bicycle': list, 'month':month, 'str_number':text, 'weblink': 'bicycle_sale_check.html', 'print':'True', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
-
-
-def bicycle_sale_check_print(request, id=None):
-    list = Bicycle_Sale.objects.get(id=id)
-    text = pytils_ua.numeral.in_words(int(list.price))
-    month = pytils_ua.dt.ru_strftime(u"%d %B %Y", list.date, inflected=True)
-    return render_to_response('bicycle_sale_check.html', {'bicycle': list, 'month':month, 'str_number':text,})
+    w = render_to_response('bicycle_sale_check.html', {'bicycle': list, 'month':month, 'str_number':text,})
+    if param == 'print':
+        return w
+    if param == 'email':
+        if request.user.is_authenticated() == False:
+            return HttpResponse("<h2>Для виконання операції, авторизуйтесь</h2>")
+        if list.client.email == '':
+            return HttpResponse("<h2>Введіть поштову адресу покупця</h2>")
+        
+        subject, from_email, to, to_copy = 'Товарний чек від веломагазину Rivelo', 'rivelo@ymail.com', list.client.email, 'rivelo@ukr.net'
+        text_content = 'Доброго дня! Ваш чек на велосипед.'
+        html_content = w.content
+        msg = EmailMultiAlternatives(subject, text_content, from_email, [to, to_copy])
+        msg.attach_alternative(html_content, "text/html")
+        try:
+            msg.send()
+            return HttpResponse("<h2>Чек відправлено!</h2>")
+        except:
+            return HttpResponse("<h2>Сталася помилка при відправленні. Перевірте з'єднання до інтернету.</h2>")
+        
+    return render_to_response('index.html', {'bicycle': list, 'month':month, 'str_number':text, 'weblink': 'bicycle_sale_check.html', 'print':'True', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc])) 
 
 
 
@@ -777,19 +839,25 @@ def bicycle_order_done(request, id):
     return HttpResponseRedirect('/bicycle/order/view/')
 
 # lookup bicycle price
-def bicycle_order_ajax(request):
+def bicycle_lookup_ajax(request):
     search = None
     message = ""
     if request.is_ajax():
         if request.method == 'GET':  
             GET = request.GET  
+            if GET.has_key('store_id'):
+                q = request.GET.get( 'store_id' )
+                message = "It's AJAX!!!"
+                search = Bicycle_Store.objects.filter(id=q).values('model__price', 'model__sale', 'serial_number')
             if GET.has_key('id'):
                 q = request.GET.get( 'id' )
                 message = "It's AJAX!!!"
+                search = Bicycle.objects.filter(id=q).values('price', 'sale')
+            
     else:
         message = "Error"
 
-    search = Bicycle.objects.filter(id=q).values('price', 'sale')
+    #search = Bicycle.objects.filter(id=q).values('price', 'sale')
     return HttpResponse(simplejson.dumps(list(search)), mimetype="application/json")
 
 
@@ -906,13 +974,25 @@ def dealer_payment_add(request):
                     exchange_dealer = 1
                     d = dealer_invoice.price
                 else:
-                    exchange_dealer = Exchange.objects.get(date=datetime.date.today, currency=str(dealer_invoice.currency.id))
+                    try:
+                        exchange_dealer = Exchange.objects.get(date=datetime.date.today, currency=str(dealer_invoice.currency.id))
+                    except Exchange.DoesNotExist:
+                        now = datetime.date.today()
+                        html = "<html><body>Не має курсу валют. Введіть <a href=""/exchange/view/"" >курс валют на сьогодні</a> (%s) та спробуйте знову.</body></html>" % now
+                        return HttpResponse(html)
+
                     d = dealer_invoice.price * float(exchange_dealer.value)
                 if currency.id == 3:
                     exchange_pay = 1
                     p = price
                 else:
-                    exchange_pay = Exchange.objects.get(date=datetime.date.today, currency=str(currency.id))
+                    try:
+                        exchange_pay = Exchange.objects.get(date=datetime.date.today, currency=str(currency.id))
+                    except Exchange.DoesNotExist:
+                        now = datetime.date.today()
+                        html = "<html><body>Не має курсу валют. Введіть <a href=""/exchange/view/"" >курс валют на сьогодні</a> (%s) та спробуйте знову.</body></html>" % now
+                        return HttpResponse(html)
+                    
                     p = price * float(exchange_pay.value)
                 if d <= p:
                      obj = DealerInvoice.objects.get(id=dealer_invoice.id)
@@ -2219,6 +2299,33 @@ def client_invoice_id(request, id):
     return render_to_response('index.html', {'buycomponents': cinvoices, 'sumall':psum, 'countall':scount, 'weblink': 'clientinvoice_list.html'})
 
 
+def client_invoice_check(request, param=None):
+    list_id = request.session['invoice_id']
+    ci = ClientInvoice.objects.filter(id__in=list_id)
+    #-------- показ і відправка чеку на електронку ------
+    client = ci[0].client
+    sum = ci.aggregate(Sum('sum'))
+    sum = sum['sum__sum']
+    text = pytils_ua.numeral.in_words(int(sum))
+    month = pytils_ua.dt.ru_strftime(u"%d %B %Y", ci[0].date, inflected=True)
+    
+    w = render_to_response('client_invoice_sale_check.html', {'check_invoice': ci, 'month':month, 'sum': sum, 'client': client, 'str_number':text})
+    if param == 'print':
+        return w
+    if param == 'email': 
+        if client.email == '':
+            return HttpResponse("Заповніть поле Email для відправки чеку")
+        subject, from_email, to = 'Товарний чек від веломагазину Rivelo', 'rivelo@ymail.com', client.email
+        text_content = 'www.rivelo.com.ua'
+        html_content = w.content
+        msg = EmailMultiAlternatives(subject, text_content, from_email, [to, 'rivelo@ukr.net'])
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+        return HttpResponse("Лист з чеком успішно відправлено")        
+    
+    return w    
+    #return HttpResponse("Ваши логин и пароль не соответствуют. Session = " + str(list_id))
+
 
 def client_order_list(request):
     list = ClientOrder.objects.all()    
@@ -2442,6 +2549,19 @@ def client_result(request):
     #return render_to_response('index.html', {'clients': list_credit.values_list(), 'weblink': 'client_result.html'})
     #return render_to_response('index.html', {'clients': list_debt.values_list(), 'weblink': 'client_result.html'})
     return render_to_response('index.html', {'weblink': 'client_result.html', 'clients': res, 'invoice': client_invoice, 'client_invoice_sum': client_invoice_sum, 'workshop': client_workshop, 'client_workshop_sum': client_workshop_sum, 'debt_list': debt_list, 'credit_list': credit_list, 'client_name': client_name, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+
+
+def client_lookup(request):
+    if request.method == "GET":
+        if request.GET.has_key(u'query'):
+            value = request.GET[u'query']
+            if len(value) > 2:
+                model_results = Client.objects.filter(name__icontains=value)
+                model_results = Client.objects.filter(Q(name__icontains = value) | Q(forumname__icontains = value))
+                data = serializers.serialize("json", model_results, fields=('name','id', 'sale', 'forumname'))
+            else:
+                data = []
+    return HttpResponse(data)    
 
 
 # --------------- WorkShop -----------------
@@ -2729,6 +2849,23 @@ def workshop_delete(request, id):
     del_logging(obj)
     obj.delete()
     return HttpResponseRedirect('/workshop/view/')
+
+
+# lookup workshop price
+def worktype_ajax(request):
+    search = None
+    message = ""
+    if request.is_ajax():
+        if request.method == 'GET':  
+            GET = request.GET  
+            if GET.has_key('id'):
+                q = request.GET.get( 'id' )
+                message = "It's AJAX!!!"
+    else:
+        message = "Error"
+
+    search = WorkType.objects.filter(id=q).values('price', 'description')
+    return HttpResponse(simplejson.dumps(list(search)), mimetype="application/json")
 
 
 #------------- Shop operation --------------
@@ -3155,7 +3292,8 @@ def payform(request):
     if 'send_check' in request.POST:
         text = pytils_ua.numeral.in_words(int(sum))
         month = pytils_ua.dt.ru_strftime(u"%d %B %Y", ci[0].date, inflected=True)
-        return render_to_response('index.html', {'check_invoice': ci, 'month':month, 'sum': sum, 'client': client, 'str_number':text, 'weblink': 'client_invoice_sale_check.html', 'print':'True', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+        request.session['invoice_id'] = list_id
+        return render_to_response('index.html', {'check_invoice': ci, 'month':month, 'sum': sum, 'client': client, 'str_number':text, 'weblink': 'client_invoice_sale_check.html', 'print': True, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
      
     url = '/client/result/search/?id=' + str(client.id)
     return render_to_response('index.html', {'checkbox': list_id, 'invoice': ci, 'summ': sum, 'client': client, 'weblink': 'payform.html', 'next': url}, context_instance=RequestContext(request, processors=[custom_proc]))
@@ -3265,10 +3403,10 @@ def catalog_saleform(request):
 
 
 def rent_add(request):
-    #a = Rent()
+    a = Rent()
     if request.method == 'POST':
-        #form = RentForm(request.POST, instance = a)
-        form = RentForm(request.POST)
+        form = RentForm(request.POST, instance = a)
+        #form = RentForm(request.POST)
         if form.is_valid():
             catalog = form.cleaned_data['catalog']
             client = form.cleaned_data['client']
@@ -3278,15 +3416,15 @@ def rent_add(request):
             deposit = form.cleaned_data['deposit']
             status = form.cleaned_data['status']
             description = form.cleaned_data['description']
-            user = form.cleaned_data['user']            
+            user = None            
             if request.user.is_authenticated():
                 user = request.user
 
             Rent(catalog=catalog, client=client, date_start=date_start, date_end=date_end, count=count, deposit=deposit, status=status, description=description, user=user).save()
             return HttpResponseRedirect('/rent/view/')
     else:
-        #form = RentForm(instance = a)
-        form = RentForm()
+        form = RentForm(instance = a)
+        #form = RentForm()
     return render_to_response('index.html', {'form': form, 'weblink': 'rent.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
     
 
@@ -3356,18 +3494,54 @@ def ajax_search(request):
     else:
         message = "Error"
     return HttpResponse(simplejson.dumps(list(search)))
+
        
-
+from django.core.mail import EmailMultiAlternatives
 def sendemail(request):
+    list = Catalog.objects.filter(manufacturer = 28, count__gt=0).order_by("type")    
+    company = Manufacturer.objects.get(id=28)
+    company_list = Manufacturer.objects.all()
+    
+    w = render_to_response('price_list.html', {'catalog': list, 'company': company, 'company_list': company_list,})
+    
+    
+    subject, from_email, to = 'hello', 'rivelo@ymail.com', 'rivelo@ukr.net'
+    text_content = 'This is an important message.'
+#    html_content = '<p>This is an <strong>important</strong> message.</p>'
+    html_content = w.content
+    msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
 #    send_mail('Rivelo shop', 'Here is the new message with you check.', 'rivelo@ymail.com', ['igor.panchuk@gmail.com'], fail_silently=False)
-    send_mail('subj - Test rivelo check', 'Here is the new message with you check.', 'rivelo@ymail.com', ['igor.panchuk@gmail.com'],)
+    #send_mail('subj - Test rivelo check', 'Here is the new message with you check.', 'rivelo@ymail.com', ['igor.panchuk@gmail.com'],)
+    # Define these once; use them twice!
+    strFrom = 'rivelo@ymail.com'
+    strTo = 'rivelo@ukr.net'
+#    send_mail('Товарний Чек - Test rivelo check', 'Here is the new message with you check.', 'rivelo@ymail.com', [strTo,],)
     #send_mail('subj - Test rivelo check', ‘message’, ‘from@mail.ru’, ‘rivelo@ymail.com’)        
-    return render_to_response('index.html')
+    #return render_to_response('index.html', {'weblink': 'index.html'})
+    return render_to_response("index.html", {"weblink": 'top.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
+from django.views.decorators.csrf import csrf_protect
 from django.contrib import auth 
 
 def login(request):
+    message = "AJAX"
+    if request.is_ajax():
+        if request.method == 'POST':  
+            POST = request.POST  
+            if POST.has_key('user'):
+                user = request.POST.get('user')
+            if POST.has_key('password'):
+                password = request.POST.get('password')
+            user = auth.authenticate(username=user, password=password)
+            if user is not None and user.is_active:
+                auth.login(request, user)
+                return HttpResponse(simplejson.dumps({'response': message, 'result': 'success'}))
+            else:
+                return HttpResponse(simplejson.dumps({'response': message, 'result': 'error'}))
+        
     username = request.POST['username']
     password = request.POST['password']
     next = request.POST['next']
@@ -3382,6 +3556,8 @@ def login(request):
             return HttpResponseRedirect("/.")            
     else:
         # Отображение страницы с ошибкой
+        
+            #return HttpResponse(simplejson.dumps(TheStory), mimetype="application/json")
         if next:
             return HttpResponseRedirect(next)
         else:
@@ -3393,12 +3569,12 @@ def logout(request):
     next_page = request.POST['next_page']
     # Перенаправление на страницу.
     if next_page:
-        return HttpResponseRedirect(next_page)
+        #return HttpResponseRedirect(next_page)
+        return HttpResponseRedirect("/.")
     else:
         return HttpResponseRedirect("/.")
 
 
-from django.views.decorators.csrf import csrf_protect
 
 def insertstory(request):
     if 'TextStory' in request.POST and request.POST['TextStory']:
@@ -3408,13 +3584,17 @@ def insertstory(request):
     return HttpResponse(simplejson.dumps(list(search)))
 
 
+
 def xhr_test(request):
     if request.is_ajax():
         price = 56 #Catalog.objects.get(id=448).value("price")
         message = "Hello AJAX; Price = " + str(price)
     else:
         message = "Hello"
-    return HttpResponse(message, mimetype="text/plain")
+#    if 'TextStory' in request.POST and request.POST['TextStory']:
+#        TheStory = request.POST['TextStory']
+    #return HttpResponse(message, mimetype="text/plain")
+    return HttpResponse(simplejson.dumps({'response': message, 'result': 'success'}))
 
 
 def ajax_test(request):
