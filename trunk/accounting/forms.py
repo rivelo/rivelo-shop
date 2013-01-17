@@ -61,10 +61,12 @@ class CurencyForm(forms.ModelForm):
     country = forms.ModelChoiceField(queryset = Country.objects.all())
 
 
-
-class MyModelChoiceField(forms.ModelChoiceField):
-    def label_from_instance(self, obj):
-        return "My Object - %i" % obj.name
+#===============================================================================
+# 
+# class MyModelChoiceField(forms.ModelChoiceField):
+#    def label_from_instance(self, obj):
+#        return "My Object - %i" % obj.name
+#===============================================================================
 
 
 class ExchangeForm(forms.ModelForm):
@@ -119,7 +121,7 @@ class BicycleForm(forms.ModelForm):
 
     class Meta:
         model = Bicycle
-    
+   
     
 
 class BicycleStoreForm(forms.ModelForm):
@@ -137,17 +139,30 @@ class BicycleStoreForm(forms.ModelForm):
         model = Bicycle_Store
 
 
+from django.contrib.auth.models import User
 class BicycleSaleForm(forms.ModelForm):
-    model = forms.ModelChoiceField(queryset = Bicycle_Store.objects.filter(count = 1), required=False)
+    model = forms.ModelChoiceField(queryset = Bicycle_Store.objects.filter(count = 1), required=False, label="Модель")
     client = forms.ModelChoiceField(queryset = Client.objects.all()) #.order_by("-id"))
-    price = forms.FloatField()
-    currency = forms.ModelChoiceField(queryset = Currency.objects.all())
-    date = forms.DateTimeField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
-    service = forms.BooleanField(required=False) 
-    description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
+    price = forms.FloatField(label="Ціна")
+    sum = forms.FloatField(label="Сума", initial=0)
+    currency = forms.ModelChoiceField(queryset = Currency.objects.all(), label="Валюта")
+    sale = forms.IntegerField(initial = 0, label="Знижка")
+    date = forms.DateTimeField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'), label="Дата продажу")
+    service = forms.BooleanField(required=False, label="Перший сервіс") 
+    description = forms.CharField(label='Опис', widget=forms.Textarea(), required=False)
+    #debt = forms.ModelChoiceField(queryset = ClientDebts.objects.all(), required=False)
+    #debt = forms.IntegerField(widget=forms.HiddenInput(), required=False)
+    user = forms.ModelChoiceField(queryset = User.objects.all(), widget=forms.HiddenInput(), required=False)
     
-    class Meta:
-        model = Bicycle_Sale
+#    class Meta:
+#        model = Bicycle_Sale
+                         
+    def __init__(self, *args, **kwargs):
+        bike_id = kwargs.pop('bike_id', None)
+        super(BicycleSaleForm, self).__init__(*args, **kwargs)
+        if bike_id<>None:
+            self.fields['model'].queryset = Bicycle_Store.objects.filter(model = bike_id)             
+
 
 
 class BicycleSaleEditForm(forms.ModelForm):
@@ -155,6 +170,7 @@ class BicycleSaleEditForm(forms.ModelForm):
     client = forms.ModelChoiceField(queryset = Client.objects.all()) #.order_by("-id"))
     price = forms.FloatField()
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
+    sale = forms.IntegerField(initial = 0)    
     date = forms.DateTimeField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
     service = forms.BooleanField(required=False) 
     description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
@@ -459,12 +475,13 @@ class WorkTypeForm(forms.ModelForm):
     
 
 class WorkShopForm(forms.ModelForm):
-    client = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete'}), queryset = Client.objects.all(), empty_label="")
-    date = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'), required=False)
-    work_type = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete', 'width':'340px'}), queryset = WorkType.objects.all())
-    price = forms.FloatField(initial=0)
-    pay = forms.BooleanField(initial=False, required=False)
-    description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255, required=False)
+    client = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete'}), queryset = Client.objects.all(), empty_label="", label="Клієнт")
+    date = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'), required=False, label="Дата")
+#    work_type = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete', 'width':'340px'}), queryset = WorkType.objects.all())
+    work_type = forms.ModelChoiceField(queryset = WorkType.objects.all(), label="Робота")    
+    price = forms.FloatField(initial=0, label="Ціна")
+    pay = forms.BooleanField(initial=False, required=False, label="Оплачено?")
+    description = forms.CharField(label='Опис', widget=forms.Textarea(), max_length=255, required=False)
     
     class Meta:
         model = WorkShop
@@ -530,7 +547,7 @@ class RentForm(forms.ModelForm):
     status = forms.BooleanField(initial = False, required=False)
     description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
 
-    class Meta:
-        model = Rent
+#    class Meta:
+#        model = Rent
 
 

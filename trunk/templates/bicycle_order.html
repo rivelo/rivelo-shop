@@ -34,9 +34,7 @@ $(document).ready(function() {
     		$('#result').empty();
 			var res = $('#id_price').val() * (1 - $('#id_sale').val() /100);
 			$('#id_sale').after('<span id="result"> Зі знижкою ' + res.toFixed(2) + ' грн.</span>');
-    		
 		});
-
 	});
     
     $('#id_client').attr({width: '400px'});

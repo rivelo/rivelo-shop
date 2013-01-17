@@ -90,3 +90,7 @@ alter table accounting_clientdebts change date date datetime;
 alter table accounting_client add `birthday` date;
 alter table accounting_clientorder add `status` bool NOT NULL;
 alter table accounting_clientorder add `credit_id` integer;
+
+alter table accounting_bicycle_sale add `sale` integer NOT NULL;
+alter table accounting_bicycle_sale add `debt_id` integer;
+alter table accounting_bicycle_sale add `sum` double precision;

@@ -419,17 +419,22 @@ class Bicycle_Sale(models.Model):
     client = models.ForeignKey(Client)
     price = models.FloatField()
     currency = models.ForeignKey(Currency)
+    sale = models.IntegerField()
     date = models.DateField(auto_now_add=True)
-    service = models.BooleanField(default = True) 
+    service = models.BooleanField(default = False) 
     description = models.TextField(blank=True, null=True)
-    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)    
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
+    sum = models.FloatField(blank=True, null=True)
+
+    #debt = models.ForeignKey(ClientDebts, blank=True, null=True, on_delete=models.SET_NULL)
+    debt = models.ForeignKey(ClientDebts, blank=True, null=True)
     
     def __unicode__(self):
         #return self.model
         return u'%s' % self.model
 
     class Meta:
-        ordering = ["client", "model"]
+        ordering = ["client", "model", "date"]
 
         
 # Bicycle ORDER for client
@@ -613,12 +618,13 @@ class Discount(models.Model):
     class Meta:
         ordering = ["name", "sale", "date_end"]    
 
+import datetime
 
 class Rent(models.Model):
     catalog = models.ForeignKey(Catalog)    
     client = models.ForeignKey(Client)
     date_start = models.DateTimeField(auto_now_add=True)
-    date_end = models.DateField(auto_now_add=False)
+    date_end = models.DateField(auto_now_add=False, default = datetime.date.today() + datetime.timedelta(days=3))
     count = models.IntegerField(default = 1)
     deposit = models.FloatField(default = 0, blank = True, null = True)
     status = models.BooleanField(default=False, verbose_name="Прокат?")

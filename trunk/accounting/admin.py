@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
-from catalog.accounting.models import Type, Size, Exchange, Manufacturer, Catalog, Country, Dealer, Currency
+from catalog.accounting.models import Type, Size, Exchange, Manufacturer, Catalog, Country, Dealer, Currency, Rent
 
 
 
@@ -70,6 +70,13 @@ class CurrencyAdmin(admin.ModelAdmin):
     
 admin.site.register(Currency, CurrencyAdmin)
 
+
+class RentAdmin(admin.ModelAdmin):
+    list_display = ('catalog', 'client', 'date_start', 'date_end', 'count', 'deposit', 'status', 'description')
+    ordering = ('client',)
+    search_fields = ('catalog', 'status',)
+    
+admin.site.register(Rent, RentAdmin)
 
 
 

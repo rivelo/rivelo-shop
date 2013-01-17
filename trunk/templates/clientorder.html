@@ -8,7 +8,7 @@
 	<script type="text/javascript" src="/media/jquery-ui-1.9.2.custom.min.js"></script>
 	
 <script type="text/javascript">
-	$(document).ready(function() {
+$(document).ready(function() {
 //      $('select.autocomplete').autocomplete();
 //     $('#id_client').focus();
      $( document ).tooltip();
@@ -45,8 +45,6 @@
                                 pk_id: item.pk                                
     							}
                         	}));                                
-                                
-                                
                             }
                     })
             },
@@ -59,9 +57,6 @@
             	$('#id_catalog').val(ui.item.label);
             	$('#result').html("Сума " + $('#id_sum').val() + " грн.")
             	            
-                log( ui.item ?
-                    ui.item.pk_id + " -> Selected: " + ui.item.label :
-                    "Nothing selected, input was " + this.value);
             },
             open: function() {
                 $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
@@ -70,46 +65,8 @@
                 $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
             }
         });
-  
-    
-        $( "#id_catalog" ).autocomplete({
-            source: function( request, response ) {
-                $.ajax({
-                type: "GET",
-                url: "/catalog/lookup",
-				data: { query: $("#id_catalog").val() },
-                dataType: "json",
-                success: function( data ) {
-                        	response( $.map( data, function( item ) {
-                            return {
-                                label: item.fields.name,
-                                value: item.pk, 
-                                // + ": [" + item.fields.ids + "] "+ item.fields.name,
-                                idid: item.fields.price,
-                                pk_id: item.pk
-    							}
-                        	}));                                
-                            }
-                    })
-            },
-            minLength: 3,
-            select: function( event, ui ) {
-            	$('#id_price').val(ui.item.idid);
-            	$('#id_sum').val($('#id_price').val() * $('#id_count').val());
-            	$('val_id_catalog').val(ui.item.pk_id);
-            	$('id_catalog').val(ui.item.label);
-                log( ui.item ?
-                    "Selected : " + ui.item.label + " : " +ui.item.value:
-                    "Nothing selected, input was " + this.value);
-            },
-            open: function() {
-                $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
-            },
-            close: function() {
-                $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
-            }
-        });
-    });  
+      
+});  
     
 </script>
 
@@ -133,7 +90,11 @@
         margin: 0;
         padding: 0.3em;
     }
-    </style>
+  .ui-autocomplete-loading {
+    background: white url('/media/images/ui-anim_basic_16x16.gif') right center no-repeat;
+  }
+  city { width: 90em; }
+</style>
     <script>
     (function( $ ) {
         $.widget( "ui.combobox", {
@@ -286,7 +247,7 @@
 <tr> 
 <th><label>Перелік товарів</label></th>
 <td>
-	<input id="city" class="autocomplete" style="width: 400px;">       	
+	<input id="city" />       	
 </td>    
 </tr>    
             {{ form.as_table }}
