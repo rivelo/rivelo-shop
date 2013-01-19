@@ -26,6 +26,7 @@
 			<li><a href="/bicycle/order/view/">Список замовлень</a></li>
 			<li><a href="/bicycle/store/price/">Цінники на велосипеди</a></li>
 			<li><a href="/bicycle-store/search/">Пошук велосипеду за номером рами</a></li>
+			<li><a href="/bicycle/sale/search/model/">Пошук велосипедів(проданих) по моделі</a></li>
 		</ul>
 	</li>
 	<li><a href="#">Запчастини</a>
@@ -53,8 +54,6 @@
 {%endif%}
 		<li><a href="#">Магазин</a>
 		<ul>
-			<li><a href="/shop/sale/day/add/">Торгівельна виручка</a></li>
-			<li><a href="/shop/sale/view/">Виручка за місяць</a></li>
 			<li><a href="/shop/price/lastadded/10/view/">Цінники по останнім товарам</a></li>
 			<li><a href="/shop/price/company/12/view/">Цінники по виробнику</a></li>
 			<li><a href="/invoice/add/">Додати товар</a></li>
@@ -97,6 +96,7 @@
 		<ul>
 			<li><a href="/shop/sale/month/view/">Оборот коштів за місяць</a></li>
 			<li><a href="/invoice/all/report/">Сума по наявному товару</a></li>
+			<li><a href="/client/invoice/report/">Сума проданих аксесуарів по місяцях</a></li>
 		</ul>
 	</li>
 {%endif%}	
@@ -113,4 +113,17 @@
 		</ul>
 	</li>
 {%endif%}	
+
+{% if request.user.is_superuser %} 
+</li>	
+	<li><a href="#">Старий функціонал</a>
+		<ul>
+			<li><a href="/shop/sale/day/add/">Торгівельна виручка</a></li>
+			<li><a href="/shop/sale/view/">Виручка за місяць</a></li>
+		</ul>
+	</li>
+{%endif%}	
+
+
+
 </ul>
