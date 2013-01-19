@@ -653,3 +653,18 @@ Key = deposit - Value = 280.0
 Key = status - Value = False
 Key = user - Value = 4
 Key = description - Value = 
+2013-01-18 22:45:11.250000 >>> DELETE FROM TABLE client credits WHERE id = 2795 
+Key = id - Value = 2795
+Key = client - Value = 143
+Key = date - Value = 2013-01-18 14:23:29
+Key = price - Value = 0.0
+Key = description - Value = Аванс - 14434 Вилка EPICON-X1 RL-R lite +манетка блокировки,100мм, 26"/28,6/A-H, Disc, черн АКЦИЯ!
+
+Key = user - Value = 4
+2013-01-18 22:45:41.546000 >>> DELETE FROM TABLE client credits WHERE id = 2796 
+Key = id - Value = 2796
+Key = client - Value = 143
+Key = date - Value = 2013-01-18 14:23:59
+Key = price - Value = 2881.0
+Key = description - Value = Аванс - Вилка AXON-RLD, манетка  блокир.хода, 100мм 26"/28,6/A-H, воздух, под диск тормоз, черн ()
+Key = user - Value = 4

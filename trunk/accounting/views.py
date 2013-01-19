@@ -735,6 +735,24 @@ def bicycle_sale_check(request, id=None, param=None):
     return render_to_response('index.html', {'bicycle': list, 'month':month, 'str_number':text, 'weblink': 'bicycle_sale_check.html', 'print':'True', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc])) 
 
 
+def bicycle_sale_search_by_name(request):
+    return render_to_response('index.html', {'weblink': 'bicycle_sale_search_by_name.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+
+
+def bsale_search_by_name_result(request, all=False):
+    list = None
+    name = request.GET['model_name']
+    if all==True:
+        list = Bicycle_Sale.objects.all()
+    else:
+        list = Bicycle_Sale.objects.filter(model__model__model__icontains = name)
+    price_summ = 0
+    real_summ = 0
+    bike_summ = 0
+    for item in list:
+        price_summ = price_summ + item.price 
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_sale_list.html', 'price_summ': price_summ, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+
 
 def dictfetchall(cursor):
     "Returns all rows from a cursor as a dict"
@@ -2423,6 +2441,8 @@ def client_order_delete(request, id):
 
 
 def client_invoice_sale_report(request):
+    if auth_group(request.user, "admin") == False:
+        return render_to_response('index.html', {'weblink': 'error_message.html', 'mtext': 'У вас немає доступу до даної сторінки!', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
     query = "SELECT EXTRACT(year FROM date) as year, EXTRACT(month from date) as month, MONTHNAME(date) as month_name, COUNT(*) as bike_count, sum(price) as s_price FROM accounting_clientinvoice GROUP BY year,month;"
     #sql2 = "SELECT sum(price) FROM accounting_clientdebts WHERE client_id = %s;"
     #user = id;
@@ -2443,7 +2463,7 @@ def client_invoice_sale_report(request):
          bike_sum = bike_sum + month['bike_count']
 
     #list = Bicycle_Sale.objects.all().order_by('date')
-    return render_to_response('index.html', {'bicycles': list, 'all_sum': sum, 'bike_sum': bike_sum, 'weblink': 'clientinvoice_sale_report.html'})
+    return render_to_response('index.html', {'bicycles': list, 'all_sum': sum, 'bike_sum': bike_sum, 'weblink': 'clientinvoice_sale_report.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 
@@ -2575,7 +2595,7 @@ def workgroup_add(request):
             return HttpResponseRedirect('/workgroup/view/')
     else:
         form = WorkGroupForm()
-    return render_to_response('index.html', {'form': form, 'weblink': 'workgroup.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'workgroup.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def workgroup_edit(request, id):
@@ -2587,12 +2607,24 @@ def workgroup_edit(request, id):
             return HttpResponseRedirect('/workgroup/view/')
     else:
         form = WorkGroupForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'workgroup.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'workgroup.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+
+#===============================================================================
+# 
+# def workgroup_list(request, id=None):
+#    list = WorkGroup.objects.all()
+#    return render_to_response('index.html', {'workgroups': list, 'weblink': 'workgroup_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+#===============================================================================
 
 
 def workgroup_list(request, id=None):
-    list = WorkGroup.objects.all()
-    return render_to_response('index.html', {'workgroups': list, 'weblink': 'workgroup_list.html'})
+    list = None
+    if id != None:
+        list = WorkType.objects.filter(worktype=id)
+    else:
+        list = WorkGroup.objects.all()
+    
+    return render_to_response('index.html', {'workgroups': list, 'weblink': 'workgroup_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def workgroup_delete(request, id):
@@ -2629,11 +2661,6 @@ def worktype_edit(request, id):
     return render_to_response('index.html', {'form': form, 'weblink': 'worktype.html'})
 
 
-def worktype_list(request):
-    list = WorkType.objects.all()
-    return render_to_response('index.html', {'worktypes': list, 'weblink': 'worktype_list.html'})
-
-
 def worktype_list(request, id=None):
     list = None
     if id != None:
@@ -2641,19 +2668,14 @@ def worktype_list(request, id=None):
     else:
         list = WorkType.objects.all()
     
-    return render_to_response('index.html', {'worktypes': list, 'weblink': 'worktype_list.html'})
+    return render_to_response('index.html', {'worktypes': list, 'weblink': 'worktype_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
-
-
-def workgroup_list(request, id=None):
-    list = None
-    if id != None:
-        list = WorkType.objects.filter(worktype=id)
-    else:
-        list = WorkGroup.objects.all()
-    
-    return render_to_response('index.html', {'workgroups': list, 'weblink': 'workgroup_list.html'})
-
+#===============================================================================
+# 
+# def worktype_list(request):
+#    list = WorkType.objects.all()
+#    return render_to_response('index.html', {'worktypes': list, 'weblink': 'worktype_list.html'})
+#===============================================================================
 
 
 def worktype_delete(request, id):
@@ -2900,10 +2922,10 @@ def shopmonthlysales_view(request, year=now.year, month=now.month):
                 sum_deb = sum_deb + deb_element['suma']
                 #element['balance']=element['sum_catalog'] - element['c_sale']
             
-    strdate = pytils_ua.dt.ru_strftime(u"%d %B %Y", now, inflected=True)
-    date_month = pytils_ua.dt.ru_strftime(u"%B %Y", now, inflected=True)
-
-    return render_to_response('index.html', {'sum_cred': sum_cred, 'sum_deb': sum_deb, 'Cdeb': deb, 'Ccred':cred, 'date': strdate, 'date_month': date_month, 'l_month': xrange(1,13), 'weblink': 'shop_monthly_sales_view.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
+#    strdate = pytils_ua.dt.ru_strftime(u"%d %B %Y", datetime.datetime(int(year), int(month), 1), inflected=True)
+    date_month = pytils_ua.dt.ru_strftime(u"%B %Y", datetime.datetime(int(year), int(month), 1), inflected=False)
+#'date': strdate,
+    return render_to_response('index.html', {'sum_cred': sum_cred, 'sum_deb': sum_deb, 'Cdeb': deb, 'Ccred':cred, 'date_month': date_month, 'sel_year': year, 'l_month': xrange(1,13), 'weblink': 'shop_monthly_sales_view.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def shopdailysales_view(request, year, month, day):

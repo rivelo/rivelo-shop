@@ -103,7 +103,9 @@ urlpatterns = patterns('',
     #(r'^bicycle/sale/(?P<id>\d+)/check/print/$', 'catalog.accounting.views.bicycle_sale_check_print'),
     (r'^bicycle/sale/(?P<id>\d+)/check/print/$', 'catalog.accounting.views.bicycle_sale_check', {'param': 'print'}),
     (r'^bicycle/sale/(?P<id>\d+)/check/email/$', 'catalog.accounting.views.bicycle_sale_check', {'param': 'email'}),
-    (r'^bicycle/sale/report/brand/$', 'catalog.accounting.views.bicycle_sale_report_by_brand'),    
+    (r'^bicycle/sale/report/brand/$', 'catalog.accounting.views.bicycle_sale_report_by_brand'),
+    (r'^bicycle/sale/search/model/$', 'catalog.accounting.views.bicycle_sale_search_by_name'),        
+    (r'^bicycle/sale/search/model/result/$', 'catalog.accounting.views.bsale_search_by_name_result'),
     
     
     # bicycle order by client
@@ -279,6 +281,7 @@ urlpatterns = patterns('',
 
     (r'^shop/sale/day/add/$', 'catalog.accounting.views.shopdailysales_add'),
     (r'^shop/sale/month/(?P<month>\d+)/view/$', 'catalog.accounting.views.shopmonthlysales_view'),    
+    (r'^shop/sale/year/(?P<year>\d+)/month/(?P<month>\d+)/view/$', 'catalog.accounting.views.shopmonthlysales_view'),    
     (r'^shop/sale/month/view/$', 'catalog.accounting.views.shopmonthlysales_view'),
     (r'^shop/year/(?P<year>\d+)/month/(?P<month>\d+)/day/(?P<day>\d+)/view/$', 'catalog.accounting.views.shopdailysales_view'),    
     (r'^shop/sale/day/edit/(?P<id>\d+)/$', 'catalog.accounting.views.shopdailysales_edit'),

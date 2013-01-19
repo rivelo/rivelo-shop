@@ -41,7 +41,7 @@ ul#hmenu ul:after {
 }
 
 ul#hmenu ul li {
-	width: 220px;
+	width: 300px;
 	float: left;
 	display: block !important;
 	display: inline;

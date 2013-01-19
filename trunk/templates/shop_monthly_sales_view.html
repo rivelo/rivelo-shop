@@ -4,9 +4,15 @@
 
 {# range(12)#}
 
+<b>Рік:</b>
+<a href="/shop/sale/year/2011/month/1/view">2011</a>, 
+<a href="/shop/sale/year/2012/month/1/view">2012</a>,
+<a href="/shop/sale/year/2013/month/1/view">2013</a>
+<br>
+
 <b>Місяць:</b>
 {% for month in l_month %}
-<a href="/shop/sale/month/{{month}}/view">{{month}}</a>, 
+<a href="/shop/sale/year/{{sel_year}}/month/{{month}}/view">{{month}}</a>, 
 {% endfor %}
 
 
