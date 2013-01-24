@@ -1,5 +1,53 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
+{# <link rel="stylesheet" href="/media/themes/blue/style.css" type="text/css" id="" media="print, projection, screen" /> #}
+<style type="text/css" title="currentStyle">
+			@import "/media/css/demo_page.css"; @import "/media/css/jquery.dataTables.css";
+			@import "/media/css/demo_table.css";
+
+
+th {
+	clear: both;
+	background-color: white !important;
+}
+
+tr.zero.odd {
+	clear: both;
+	background: #CCCC99 !important;
+}
+
+tr.zero.even {
+	clear: both;
+	background: #d1d1a3 !important;
+}
+
+
+tr.last.odd {
+	clear: both;
+	background: #FFFF99 !important;
+}
+
+tr.last.even {
+	clear: both;
+	background: #ffffa3 !important;
+}
+
+tr.even {
+	background-color: white !important;
+} 
+
+tr.odd {
+	background-color: white !important;
+} 
+
+			
+
+</style>
+
+<script type="text/javascript" src="/media/jquery-1.8.3.js"></script>
+{# <script type="text/javascript" src="/media/jquery.tablesorter.js"></script> #}
+<script type="text/javascript" language="javascript" src="/media/jquery.dataTables.min.js"></script>
+
 <script language="JavaScript">
 
 function res()
@@ -14,6 +62,131 @@ for(var i = 0; i < All.elements.length; ++i) {
 	}
 	document.getElementById('for_pay').innerHTML = p.toFixed(2)+" грн.";
 }
+}
+
+jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+    "num-html-pre": function ( a ) {
+        var x = a.replace( /<.*?>/g, "" );
+        return parseFloat( x );
+    },
+ 
+    "num-html-asc": function ( a, b ) {
+        return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+    },
+ 
+    "num-html-desc": function ( a, b ) {
+        return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+    }
+    
+} );
+
+jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+    "currency-pre": function ( a ) {
+        a = (a==="-") ? 0 : a.replace( /[^\d\-\.]/g, "" );
+        return parseFloat( a );
+    },
+ 
+    "currency-asc": function ( a, b ) {
+        return a - b;
+    },
+ 
+    "currency-desc": function ( a, b ) {
+        return b - a;
+    }
+} );
+
+
+jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+    "currency-html-pre": function ( a ) {
+        var x = a.replace( /<.*?>/g, "" );
+        a = (x==="-") ? 0 : x.replace( /[^\d\-\.]/g, "" );
+        return parseFloat( a );
+    },
+ 
+    "currency-html-asc": function ( a, b ) {
+        return a - b;
+    },
+ 
+    "currency-html-desc": function ( a, b ) {
+        return b - a;
+    }
+} );
+
+
+
+var oTable;
+
+$('#myTable tbody td').hover( function() {
+		var iCol = $('td').index(this) % 5;
+		var nTrs = oTable.fnGetNodes();
+		$('td:nth-child('+(iCol+1)+')', nTrs).addClass( 'highlighted' );
+	}, function() {
+		var nTrs = oTable.fnGetNodes();
+		$('td.highlighted', nTrs).removeClass('highlighted');
+	} );
+	
+
+function ShowHideRow(){
+	//$('tr.zero') ? $('tr.zero').hide() : $('tr.zero').show(); 
+	$('tr.zero').toggle(); 
+
+	if ($('tr.zero').css('display') == 'none') {
+		$('#show_hide').html('Всі'); 
+	}
+	else {
+		$('#show_hide').html('Наявні');
+	}
+	
+	//$('tr.zero').css("color", "#cc0000");
+	//oTable.fnDraw();
+}	
+	
+
+$(document).ready(function() {
+    oTable = $('#myTable').dataTable({
+    "sPaginationType": "full_numbers",
+    "iDisplayLength": 100,
+    "bAutoWidth": true,
+    "asStripClasses": null,
+    "bSortClasses": false,
+    "aoColumns": [
+      { "sType": "numeric" },
+      null,
+      null,
+    {"sType": "string"},
+      null,
+	{"sType": "num-html"},
+	{"sType": "num-html"},
+    {"sType": "num-html"},
+    
+	{"sType": "currency-html"},
+	{"sType": "numeric"},
+{% if perms.accounting.delete_invoicecomponentlist %}
+      null,
+{% endif %}      
+       null
+    ]
+   });
+   
+// Hide the second column after initialisation
+{% if category_name %}
+  oTable.fnSetColumnVis( 3, false );
+{% endif %}
+{% if company_name %}
+  oTable.fnSetColumnVis( 2, false );
+{% endif %}
+
+  oTable.fnSetColumnVis( 9, false );   
+  oTable.fnSetColumnVis( 10, false );
+});
+
+function fnShowHide( iCol )
+{
+    /* Get the DataTables object again - this is not a recreation, just a get of the object */
+    var oTable = $('#myTable').dataTable();
+     
+    var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+    oTable.fnSetColumnVis( iCol, bVis ? false : true );
 }
 
 </script>
@@ -35,45 +208,60 @@ for(var i = 0; i < All.elements.length; ++i) {
 
     <h1>Список наявного товару ({{company_name}}{{category_name}})</h1>
 {%if company_id %}
-    <a href="/invoice/manufacture/{{company_id}}/view/"> Всі </a>,  
-    <a href="/invoice/manufacture/{{company_id}}/availability/view/"> Наявний </a>,
-    <a href="/invoice/manufacture/{{company_id}}/availability/view/html/"> Наявність HTML </a>
-{% endif %}    
+{#     <a href="/invoice/manufacture/{{company_id}}/view/"> Всі </a>, #}  
+{#   <a href="/invoice/manufacture/{{company_id}}/availability/view/"> Наявний </a>, #}
+    <a href="/invoice/manufacture/{{company_id}}/availability/view/html/"> Наявність HTML </a>,
+{% endif %}
+    
+<a href="javascript:void(0);" onclick="ShowHideRow();" id="show_hide">Наявний</a> 
+<b> Поле: </b>
+ <a href="javascript:void(0);" onclick="fnShowHide(2);">Виробник</a>
+, <a href="javascript:void(0);" onclick="fnShowHide(3);">Тип</a>
+, <a href="javascript:void(0);" onclick="fnShowHide(9);">Сума</a>
+, <a href="javascript:void(0);" onclick="fnShowHide(10);">Опис</a>
+
 
 <form action="/catalog/saleform/" method="post" name="formSum">
-    <table border="1" width="100%">
+<table border="1" width="100%" id="myTable" class="pretty" cellspacing="1">
+<thead> 
 	<tr>
     	<th ROWSPAN="2">#</th>	
     	<th ROWSPAN="2">ID</th>
-
-{% if perms.accounting.delete_invoicecomponentlist %}
-	<th ROWSPAN="2">
-	</th>
-{% endif %}
-
+    	<th ROWSPAN="2">Виробник</th>
+    	<th ROWSPAN="2">Тип</th>
     	<th ROWSPAN="2">Найменування товару</th>
-    	<th align="center" COLSPAN="3" width="80px">Кількість</th>
+    	{# <th align="center" COLSPAN="3" width="80px" ROWSPAN="1">Кількість</th> #}
+    	<th COLSPAN="3">Кількість</th>    	
     	
     	<th ROWSPAN="2">Ціна</th>
     	<th ROWSPAN="2">Сума</th>    	
     	<th ROWSPAN="2">Опис</th>
+{% if perms.accounting.delete_invoicecomponentlist %}
+	<th ROWSPAN="2" width="10px">
+	</th>
+{% endif %}
+    	
     </tr>
     <tr>
-    	<th align="center" width="10">Поч.</th>
-    	<th align="center" width="10">Продано</th>
+    	<th align="center" >Поч.</th>
+    	<th align="center" >Продано</th>
     	<th align="center">Наявність</th>
     </tr>
-    
+</thead> 
+
+<tbody>     
 {% load template_math %}    
     
 {% for type in componentlist %}
 
 
 {% ifequal type.sum_catalog type.c_sale %}
-<tr BGCOLOR="#CCCC99">
+{# <tr BGCOLOR="#CCCC99"> #}
+<tr class="zero odd">
 {% else %}
 {% ifequal type.balance 1 %}
-<tr BGCOLOR="#FFFF99">
+{# <tr BGCOLOR="#FFFF99"> #}
+<tr class="last odd">
 {% else %}
 <tr>
 {% endifequal %}
@@ -85,15 +273,14 @@ for(var i = 0; i < All.elements.length; ++i) {
 	<td>       
 		<a href="/catalog/id/{{type.catalog}}/view">{{type.catalog}}</a>
 	</td>
-{% if perms.accounting.delete_invoicecomponentlist %}	
 	<td>
-{#		<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{type.sum_catalog|sub:type.c_sale|mul:type.catalog__price|floatformat}}" name="checkbox_{{ type.catalog }}"/ onclick="res()">  #}
-		<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{type.catalog__price|floatformat}}" name="checkbox_{{ type.catalog }}"/ onclick="res()">		
-		<p id="ch_{{forloop.counter}}"></p>
+	{{type.catalog__manufacturer__name}}
 	</td>
-{% endif %}
 	<td>
-	[{{type.catalog__ids}}] - ({{type.catalog__manufacturer__name}}) {{type.catalog__name}}
+	{{type.catalog__type__name}}
+	</td>
+	<td>
+	[{{type.catalog__ids}}] - {{type.catalog__name}}
 	</td>
 	<td align="center">
 	<a href="/invoice/catalog/{{type.catalog}}/view/">
@@ -111,7 +298,8 @@ for(var i = 0; i < All.elements.length; ++i) {
 {% else %}
 		<abbr title="Продати товар"> 
 		<a href="/client/invoice/catalog/{{type.catalog}}/add">
-		{{type.sum_catalog|sub:type.c_sale|floatformat}}
+		{# {{type.sum_catalog|sub:type.c_sale|floatformat}} #}
+		{{type.balance}}
 		</a>
 		</abbr>
 {% endifequal %}
@@ -124,38 +312,53 @@ for(var i = 0; i < All.elements.length; ++i) {
 <abbr title="Знижка - {{type.catalog__sale}}%. Ціна зі знижкою {{type.catalog__sale|div:100|sub:1|mul:type.catalog__price}}">
 {% endifequal %}
 	
-	
-	{{type.catalog__price}} грн.
+	{{type.catalog__price}} грн	
 	</td>
 	<td>       
 	{{type.catalog__price|mul:type.sum_catalog}}
 	</td>
 	<td align="center">    
 	</td>
+{% if perms.accounting.delete_invoicecomponentlist %}	
+	<td>
+{#		<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{type.sum_catalog|sub:type.c_sale|mul:type.catalog__price|floatformat}}" name="checkbox_{{ type.catalog }}"/ onclick="res()">  #}
+		<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{type.catalog__price|floatformat}}" name="checkbox_{{ type.catalog }}"/ onclick="res()">		
+		<p id="ch_{{forloop.counter}}"></p>
+	</td>
+{% endif %}
 
 </tr>
-{% endfor %}         
+{% endfor %}
+
+</tbody> 
+<tfoot>    
 	<tr>
-    	<th></th>	
-    	<th></th>
+    	<td></td>	
+    	<td></td>
+    	<td></td>
+    	<td></td>
+    	<td></td>
+    	<td>{{countsum}}</td>
+    	<td></td>
+    	<td>Кількість: {{zcount}}</td>
+    	<td>{{allpricesum}} грн.</td>    	
+    	<td>{{zsum}} грн.</td>
+    	<td></td>
 {% if perms.accounting.delete_invoicecomponentlist %}    	
-    	<th> <p id="for_pay" BGCOLOR="#D5FFB4"></p>
+    	<td> <p id="for_pay" BGCOLOR="#D5FFB4"></p>
     	<p>Знижка:<br> <input type="text" name="sale" id="sale" width="5px" value="0"></p>
-    	<input type="submit" value="Знижка" name="pay"></th>
+    	<input type="submit" value="Знижка" name="pay"></td>
 {% endif %}    	
-    	<th></th>
-    	<th>{{countsum}}</th>
-    	<th></th>
-    	<th>Кількість: {{zcount}}</th>
-    	<th>{{allpricesum}} грн.</th>    	
-    	<th>{{zsum}} грн.</th>
-    	<th></th>    	
+    	    	
     </tr>
-    
+</tfoot>
 </table>
 </form>
     
+<br><br>
 
+{% load poll_extras %}    
+{% orm_debug %}
 
 </body>
 </html>

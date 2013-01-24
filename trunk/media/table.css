@@ -108,3 +108,21 @@ table#product TD { /* padding: 5px; /* Поля вокруг содержимого ячеек */
 	font-size: 10pt;
 /*	width: 30pt; */
 }
+
+.invoiceTABLE { /*width: 100%; */ /* Ширина таблицы */
+	/*border: 4px double black; /* Рамка вокруг таблицы */
+	border: 2px solid black; /* Рамка вокруг таблицы */
+	border-collapse: collapse; /* Отображать только одинарные линии */
+}
+
+.invoieceTABLE TH {
+	text-align: center; /* Выравнивание по левому краю */
+	background: #ccc; /* Цвет фона ячеек */
+	padding: 5px; /* Поля вокруг содержимого ячеек */
+	border: 1px solid black; /* Граница вокруг ячеек */
+}
+
+.invoiceTD { /* padding: 5px; /* Поля вокруг содержимого ячеек */
+	border: 1px solid black; /* Граница вокруг ячеек */
+	font-size: 10pt;
+}
