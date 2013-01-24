@@ -12,10 +12,9 @@ class Type(models.Model):
     name_ukr = models.CharField(max_length=100, blank=True, null=True)
     description_ukr = models.CharField(max_length=255, blank=True, null=True)
     
-    
     def __unicode__(self):
-        return u'%s - %s' % (self.name, self.name_ukr) 
-    
+        return u'%s' % self.name
+        #return u'%s - %s' % (self.name, self.name_ukr) 
 
     class Meta:
         ordering = ["name"]    

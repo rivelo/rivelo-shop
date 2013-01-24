@@ -1275,31 +1275,42 @@ def invoicecomponent_list(request, mid=None, limit=0):
 def invoicecomponent_list_by_manufacturer(request, mid=None, availability=False):
     company_list = Manufacturer.objects.all()
     list = None
+    new_list = None
     id_list=[]
     psum = 0
     zsum = 0
     scount = 0
     zcount = 0
-    
+    #Наявність
     if availability == False:
+        #old work variant
         list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
+        #list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count', 'catalog__type__name', 'count')        
+        #new_list = list.annotate(sum_catalog=Sum('count')).order_by("catalog__type")
+#        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count', 'count').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
     else:
-        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid, catalog__count__gt=0).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
+        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid, catalog__count__gt=0).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count', 'catalog__type__name').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
+
 
     for item in list:
+#        item['sum_catalog'] = 0
         psum = psum + (item['catalog__price'] * item['sum_catalog'])
         scount = scount + item['sum_catalog']
         id_list.append(item['catalog'])
         item['balance']=item['sum_catalog']
 #        list_sale = ClientInvoice.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
 #        list_sale = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
-    sale_list = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__price').annotate(sum_catalog=Sum('count'))        
+    sale_list = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__price', 'catalog__type__name').annotate(sum_catalog=Sum('count'))        
     for element in list:
         element['c_sale']=0
         for sale in sale_list:
             if element['catalog']==sale['catalog']:
                 element['c_sale']=sale['sum_catalog']
                 element['balance']=element['sum_catalog'] - element['c_sale']
+                element['catalog__type__name'] = sale['catalog__type__name']                
+            #else:
+        if element.get('catalog__type__name') == None:
+            element['catalog__type__name'] = Catalog.objects.values('type__name').get(id=element['catalog'])['type__name']
         zsum = zsum + ((element['sum_catalog'] - element['c_sale']) * element['catalog__price'])
         zcount = zcount + (element['sum_catalog'] - element['c_sale'])
 #        return render_to_response('index.html', {'componentlist': list, 'salelist': list_sale, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
@@ -1463,12 +1474,16 @@ def invoice_search_result(request):
         id_list.append(item['catalog'])
 #        list_sale = ClientInvoice.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
 #        list_sale = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
-    sale_list = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__price').annotate(sum_catalog=Sum('count'))        
+    sale_list = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__price', 'catalog__type__name').annotate(sum_catalog=Sum('count'))        
     for element in list:
         element['c_sale']=0
         for sale in sale_list:
             if element['catalog']==sale['catalog']:
                 element['c_sale']=sale['sum_catalog']
+                element['catalog__type__name'] = sale['catalog__type__name']                
+        if element.get('catalog__type__name') == None:
+            element['catalog__type__name'] = Catalog.objects.values('type__name').get(id=element['catalog'])['type__name']
+        element['balance']=element['sum_catalog'] - element['c_sale']                
         zsum = zsum + ((element['sum_catalog'] - element['c_sale']) * element['catalog__price'])
         zcount = zcount + (element['sum_catalog'] - element['c_sale'])
 #        return render_to_response('index.html', {'componentlist': list, 'salelist': list_sale, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
@@ -3500,7 +3515,7 @@ def ajax_search1(request):
                 matches = matches + "%s\n" % (result.name)
             return HttpResponse(matches, mimetype="text/plain")
 
-
+# search client in autocomplete field
 def ajax_search(request):
     results = []
     search = None
@@ -3509,7 +3524,8 @@ def ajax_search(request):
             GET = request.GET  
             if GET.has_key('term'):
                 q = request.GET.get( 'term' )
-                search = Client.objects.filter(name__icontains = q).values_list('name', flat=True)
+#                search = Client.objects.filter(name__icontains = q).values_list('name', flat=True)
+                search = Client.objects.filter(Q(name__icontains = q) | Q(forumname__icontains = q)).values_list('name', flat=True)
                 #results = search.filter(name__icontains = q).values_list('name', flat=True)
                 #for i in search:
                 #    results.append(i)

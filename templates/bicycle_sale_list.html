@@ -57,8 +57,13 @@
 		<th></th>
 		<th></th>
 		<th></th>
+{% if user.is_authenticated %}		
 		<th>{{price_summ}}</th>
 		<th>грн</th>
+{% else %}
+		<th></th>
+		<th></th>
+{% endif %}
 		<th></th>
 		<th></th>
 		<th>Не пройдено ТО:</th>
