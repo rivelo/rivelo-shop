@@ -215,6 +215,8 @@ urlpatterns = patterns('',
     (r'^client/invoice/view/$', 'catalog.accounting.views.client_invoice_view'),
     (r'^client/invoice/(?P<id>\d+)/edit/$', 'catalog.accounting.views.client_invoice_edit'),
     (r'^client/(?P<cid>\d+)/invoice/add/$', 'catalog.accounting.views.client_invoice'),
+# ajax table for client invoice    
+    (r'^client/(?P<client_id>\d+)/invoice/lookup/$', 'catalog.accounting.views.client_invoice_lookup'),     
     (r'^client/invoice/catalog/(?P<cid>\d+)/add/$', 'catalog.accounting.views.client_invoice'),
     (r'^client/invoice/catalog/(?P<id>\d+)/view/$', 'catalog.accounting.views.client_invoice_id'),
     (r'^client/invoice/add/$', 'catalog.accounting.views.client_invoice'),
@@ -297,19 +299,6 @@ urlpatterns = patterns('',
     (r'^shop/price/bysearch_name/(?P<id>.*)/view/$', 'catalog.accounting.views.shop_price_bysearch_name'),
     (r'^shop/price/bysearch_name/(?P<id>.*)/print/$', 'catalog.accounting.views.shop_price_bysearch_name', {'pprint': True}),
     
-    # my cost
-    (r'^cost/type/add/$', 'catalog.accounting.views.costtype_add'),
-    (r'^cost/type/view/$', 'catalog.accounting.views.costtype_list'),
-    (r'^cost/type/delete/(?P<id>\d+)$', 'catalog.accounting.views.costtype_delete'),    
-
-    (r'^cost/add/(?P<id>\d+)$', 'catalog.accounting.views.cost_add'),
-    (r'^cost/add/$', 'catalog.accounting.views.cost_add'),
-    (r'^cost/view/$', 'catalog.accounting.views.cost_list'),
-    (r'^cost/delete/(?P<id>\d+)/$', 'catalog.accounting.views.cost_delete'),    
-    (r'^cost/edit/(?P<id>\d+)/$', 'catalog.accounting.views.cost_edit'),
-
-
-
     (r'^rent/add/$', 'catalog.accounting.views.rent_add'),
     (r'^rent/edit/(?P<id>\d+)/$', 'catalog.accounting.views.rent_edit'),
     (r'^rent/delete/(?P<id>\d+)/$', 'catalog.accounting.views.rent_delete'),    
@@ -359,6 +348,22 @@ urlpatterns += patterns('',
     (r'^preorder/view/$', 'catalog.accounting.views.preorder_list'),
     (r'^preorder/edit/(?P<id>\d+)/$', 'catalog.accounting.views.preorder_edit'),
     (r'^preorder/delete/(?P<id>\d+)/$', 'catalog.accounting.views.preorder_delete'),         
+
+    # my cost
+    (r'^cost/type/add/$', 'catalog.accounting.views.costtype_add'),
+    (r'^cost/type/view/$', 'catalog.accounting.views.costtype_list'),
+    (r'^cost/type/delete/(?P<id>\d+)$', 'catalog.accounting.views.costtype_delete'),    
+
+    (r'^cost/add/(?P<id>\d+)$', 'catalog.accounting.views.cost_add'),
+    (r'^cost/add/$', 'catalog.accounting.views.cost_add'),
+    (r'^cost/view/$', 'catalog.accounting.views.cost_list'),
+    (r'^cost/delete/(?P<id>\d+)/$', 'catalog.accounting.views.cost_delete'),    
+    (r'^cost/edit/(?P<id>\d+)/$', 'catalog.accounting.views.cost_edit'),
+
+    (r'^report/sales/user/report/$', 'catalog.accounting.views.user_invoice_report', {'day':"all"}),
+    (r'^report/sales/user/year/(?P<year>\d+)/month/(?P<month>\d+)/report/$', 'catalog.accounting.views.user_invoice_report', {'day':"all"}),
+    (r'^report/sales/user/year/(?P<year>\d+)/month/(?P<month>\d+)/day/(?P<day>\d+)/report/$', 'catalog.accounting.views.user_invoice_report'),
+
 ) 
 
 #===============================================================================

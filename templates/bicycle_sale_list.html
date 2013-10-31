@@ -27,7 +27,7 @@
 	<tr>
 		<td title="{{type.user}}">{{forloop.counter}}</td>
 		<td title="Редагувати"><a href="/bicycle/sale/edit/{{ type.id }}">{{type.id}}</a></td>
-		<td><a href="/bicycle/photo/{{type.model.model.id}}">{{type.model}}</a></td>
+		<td title="{{type.model.size}}"><a href="/bicycle/photo/{{type.model.model.id}}">{{type.model}}</a></td>
 		<td>{{type.model.serial_number}}</td>
 		<td><a href="/client/{{type.client.id}}">{{type.client}}</a></td>
 		<td title="{{type.price|percentage:type.sale}}">{{type.price}}</td>

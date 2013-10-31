@@ -54,11 +54,15 @@ function res()
 {
 var p=0;
 var All=document.forms['formSum'];
-for(var i = 0; i < All.elements.length; ++i) {
+for(var i = 0; i < All.elements.length; i++) {
 	if(All.elements[i].checked){
 	p=p+parseFloat(All.elements[i].value);
-	var t = i + 1
-	document.getElementById("ch_"+t).innerHTML = parseFloat(All.elements[i].value) * (1 - parseFloat(document.getElementById("sale").value) / 100) + 'грн.';
+	var t = i - 3;
+	$('#ch_' + i).html("Check");
+	//document.getElementById("ch_"+t).innerHTML = "ID"+parseFloat(i)+" = "+parseFloat(t); // parseFloat(All.elements[i].value) * (1 - parseFloat(document.getElementById("sale").value) / 100) + 'грн.';
+	}
+	else {
+	$('#ch_' + i).html("empty");
 	}
 	document.getElementById('for_pay').innerHTML = p.toFixed(2)+" грн.";
 }
@@ -175,7 +179,8 @@ $(document).ready(function() {
 {% if company_name %}
   oTable.fnSetColumnVis( 2, false );
 {% endif %}
-
+	
+	oTable.fnSetColumnVis( 1, false );   
   oTable.fnSetColumnVis( 9, false );   
   oTable.fnSetColumnVis( 10, false );
 });
@@ -206,7 +211,7 @@ function fnShowHide( iCol )
 <a href="/invoice/manufacture/{{company.id}}/view/">{{company.name}}</a>
 {% endfor %}
 
-    <h1>Список наявного товару ({{company_name}}{{category_name}})</h1>
+    <h1>Список наявного товару ({{company_name|capfirst}}{{category_name|capfirst}})</h1>
 {%if company_id %}
 {#     <a href="/invoice/manufacture/{{company_id}}/view/"> Всі </a>, #}  
 {#   <a href="/invoice/manufacture/{{company_id}}/availability/view/"> Наявний </a>, #}
@@ -215,7 +220,8 @@ function fnShowHide( iCol )
     
 <a href="javascript:void(0);" onclick="ShowHideRow();" id="show_hide">Наявний</a> 
 <b> Поле: </b>
- <a href="javascript:void(0);" onclick="fnShowHide(2);">Виробник</a>
+ <a href="javascript:void(0);" onclick="fnShowHide(1);">ID</a>
+, <a href="javascript:void(0);" onclick="fnShowHide(2);">Виробник</a>
 , <a href="javascript:void(0);" onclick="fnShowHide(3);">Тип</a>
 , <a href="javascript:void(0);" onclick="fnShowHide(9);">Сума</a>
 , <a href="javascript:void(0);" onclick="fnShowHide(10);">Опис</a>
@@ -274,10 +280,10 @@ function fnShowHide( iCol )
 		<a href="/catalog/id/{{type.catalog}}/view">{{type.catalog}}</a>
 	</td>
 	<td>
-	{{type.catalog__manufacturer__name}}
+	<a href="/invoice/manufacture/{{type.catalog__manufacturer__id}}/view">{{type.catalog__manufacturer__name}}</a>
 	</td>
 	<td>
-	{{type.catalog__type__name}}
+	<a href="/invoice/category/{{type.catalog__type__id}}/view">{{type.catalog__type__name}}</a>
 	</td>
 	<td>
 	[{{type.catalog__ids}}] - {{type.catalog__name}}
