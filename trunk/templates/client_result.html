@@ -8,12 +8,56 @@
 
 	<script type="text/javascript" src="/media/jquery-1.8.3.js"></script>	
 	<script type="text/javascript" src="/media/jquery-ui-1.9.2.custom.min.js"></script>
-    
+
+<style type="text/css">
+#button > span.ui-icon-custom { 
+    background-image: url(/media/images/Bicycle_ico.png)    
+}
+</style>
+
+{% load poll_extras %}     
     
 <script language="JavaScript">
 $(document).ready(function() {
 	$( document ).tooltip();
+	$( "#dialog" ).hide();
 })
+
+
+$(function() {
+    $( "button:first" ).button({
+      icons: {
+        primary: "ui-icon-custom"
+      },
+      text: false
+    })
+	.click(function() {
+        alert( "Running the last action" );
+    })
+    .next().button({
+      icons: {
+        primary: "ui-icon-custom"
+      }
+    })
+	.click(function() {
+		$( "#dialog" ).dialog();
+        //alert( "Running the last action" );
+    })    
+    .next().button({
+      icons: {
+        primary: "ui-icon-locked"
+      }
+    })
+    .next().button({
+      icons: {
+        primary: "ui-icon-locked"
+      }
+    })
+	.click(function() {
+		$( "#dialog" ).dialog();
+        //alert( "Running the last action" );
+    });
+});
 
 
 function res()
@@ -43,18 +87,78 @@ for(var i = 0; i < All.elements.length; ++i) {
 }
 }
 
+
+$(function() {
+    $( "#tabs" ).tabs({
+      beforeLoad: function( event, ui ) {
+        ui.jqXHR.error(function() {
+          ui.panel.html(
+            "Couldn't load this tab. We'll try to fix this as soon as possible. " +
+            "If this wouldn't be a demo." );
+        });
+      }
+    });
+
+        $("#all_cred").click(function(){
+            var TextStory = "ygrik" 
+            var MailStory = $("#mail_story").val();
+            $.ajax({
+                type: "POST",
+                url: "/insertstory/",
+                data: { TextStory: TextStory },
+                dataType: "json",
+                success:function(msg){
+                    alert("Все отлично ушло на сервер - " + msg);
+//                    $('#ttt').append("<strong> " + msg + "</strong>");
+//                    $('#ttt').text(""+msg);
+//                    $('#id_deposit').val(""+msg);
+                    
+                },
+                error:function(){
+                    alert("При отправке возникли проблемы");
+                }
+            });      
+		});
+
+        
+});        
 </script>
 
 <body onLoad="res(); resWorkshop()">
 
+<div style=" margin: 10px 0px 0px 0px;
+    width: 800px;      
+    float:left;  ">
     <h1>Виписка по клієнту:
-    <span title="Телефон: {{client_name.phone}} <br> E-mail: {{client_name.email}}">
+    <span title="Телефон: {{client_name.phone|phone2Str}} <br> E-mail: {{client_name.email}}">
     	 <a href=/client/edit/{{client_name.id}}> {{client_name.name}} ({{client_name.forumname}}) </a>
     </span>
     </h1>
+</div>
+<div style="float: right;   
+  margin: 10px 0px 0px 0px;  
+  text-align: right;  ">    
+<button id="button">Button with icon only</button>
+{% for bike in b_bike %}
+<button>{{bike.model__model__model}} - {{bike.date}}</button>
+{% endfor %}
+</div>
+
+<div id="dialog" title="Придбані велосипеди">
+{% for bike in b_bike %}
+<p><b>Велосипед {{bike.model__model__brand__name}} {{bike.model__model__model}} {{bike.model__size__name}}</b> S/N: [{{bike.model__serial_number}}] <br> Дата продажу: {{bike.date}} <br> Сервіс: {{bike.service|default:"Не пройдено"}}</p>
+{% endfor %}  
+</div>	
+   
+    
+
+    <div style="clear:both;">
 	<br>
-	 <h2 style="color:red;"> Cума:  {{clients}} грн.<h2>
+	 <h2 style="color:red;"> Cума:  {{clients|floatformat:2}} грн.</h2>
 	<br>
+	</div>
+
+	
 	
 <table id="balance" >
 	<tr><th>Дата</th>
@@ -64,11 +168,13 @@ for(var i = 0; i < All.elements.length; ++i) {
 	
 	<tr BGCOLOR="#29AE48">
 	<td>
-	Проплати клієнта
+	Оплати
 	</td>
 	<td><a href="/clientcredits/add/{{client_name.id}}">Створити нову проплату</a>  
 	{% if perms.accounting.delete_clientcredits %}
 	 /-----/ <a href="/clientcredits/{{client_name.id}}/delete/all">(Видалити всі проплати)</a> 
+	 /-----/ <a id="all_cred" href="javascript:">(Показати всі проплати)</a>
+	 <div id="target">Я готовий до змін.</div>
 	{% endif %}	
 	 
 	</td>
@@ -131,7 +237,16 @@ for(var i = 0; i < All.elements.length; ++i) {
 	</tr>
 	
 	</table>
-	
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Товари</a></li>
+    <li><a href="/client/{{client_name.id}}/invoice/lookup/">Проданий товар</a></li>
+    <li><a href="//content3-slow.php">Виконані роботи</a></li>
+    <li><a href="#tabs-2">Майстерня</a></li>
+  </ul>
+  <div id="tabs-1">
+{# Проданий Товар #}	
 <form action="/payform/" method="post" name="formSum">
 	<br>
 	<table id="product">
@@ -202,6 +317,10 @@ for(var i = 0; i < All.elements.length; ++i) {
 	</table>
 </form>	
 
+  </div>
+
+<div id="tabs-2">
+{# Роботи майстерні #}
 <form action="/payform/workshop/" method="post" name="formWorkshopSum" >
 <br>
 	<table border=1 width="100%" style="font-size : 12px; font-family : Arial;">
@@ -257,6 +376,10 @@ for(var i = 0; i < All.elements.length; ++i) {
 	</tr>
 	</table>
 </form>
+	</div>
+</div>
+
+
 <a href=/workticket/add/client/{{client_name.id}}/> 
 Створити заявку на ремонт
 </a>

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db.models import Q
+from django.db.models import F
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.urlresolvers import resolve
@@ -1235,9 +1236,9 @@ def invoicecomponent_list(request, mid=None, limit=0):
     zcount = 0
     
     if limit == 0:
-        list = InvoiceComponentList.objects.all().values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count').annotate(sum_catalog=Sum('count')).order_by("catalog__type")        
+        list = InvoiceComponentList.objects.all().values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count', 'catalog__type__id').annotate(sum_catalog=Sum('count')).order_by("catalog__type")        
     else:
-        list = InvoiceComponentList.objects.filter(catalog__count__gt=0).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
+        list = InvoiceComponentList.objects.filter(catalog__count__gt=0).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count', 'catalog__type__id').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
         list = list[:limit]
         #list = list.order_by("catalog__manufacturer__name")
         #list = list.filter(catalog=90)                
@@ -1284,12 +1285,12 @@ def invoicecomponent_list_by_manufacturer(request, mid=None, availability=False)
     #Наявність
     if availability == False:
         #old work variant
-        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
+        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__count', 'catalog__type__id').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
         #list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count', 'catalog__type__name', 'count')        
         #new_list = list.annotate(sum_catalog=Sum('count')).order_by("catalog__type")
 #        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count', 'count').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
     else:
-        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid, catalog__count__gt=0).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count', 'catalog__type__name').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
+        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid, catalog__count__gt=0).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__count', 'catalog__type__name', 'catalog__type__id').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
 
 
     for item in list:
@@ -1334,9 +1335,9 @@ def invoicecomponent_list_by_category(request, cid=None, limit=0):
     zcount = 0
     
     if limit == 0:
-        list = InvoiceComponentList.objects.filter(catalog__type__exact=cid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale').annotate(sum_catalog=Sum('count')).order_by('catalog__manufacturer__name')
+        list = InvoiceComponentList.objects.filter(catalog__type__exact=cid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale').annotate(sum_catalog=Sum('count')).order_by('catalog__manufacturer__name')
     else:
-        list = InvoiceComponentList.objects.filter(catalog__type__exact=cid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale').annotate(sum_catalog=Sum('count'))[:limit]
+        list = InvoiceComponentList.objects.filter(catalog__type__exact=cid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale').annotate(sum_catalog=Sum('count'))[:limit]
         
     for item in list:
         psum = psum + (item['catalog__price'] * item['sum_catalog'])
@@ -1461,11 +1462,11 @@ def invoice_search_result(request):
     if 'name' in request.GET and request.GET['name']:
         name = request.GET['name']
         #list = Catalog.objects.filter(name__icontains = name).order_by('manufacturer') 
-        list = InvoiceComponentList.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale').annotate(sum_catalog=Sum('count'))
+        list = InvoiceComponentList.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__type__id').annotate(sum_catalog=Sum('count'))
     elif  'id' in request.GET and request.GET['id']:
         id = request.GET['id']
         #list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id)
-        list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale').annotate(sum_catalog=Sum('count'))
+        list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__type__id').annotate(sum_catalog=Sum('count'))
         #list = Catalog.objects.filter(ids__icontains = id).order_by('manufacturer')
 
     for item in list:
@@ -2308,6 +2309,20 @@ def client_invoice_view(request, month=None, year=None, day=None, id=None):
     return render_to_response('index.html', {'sel_year':year, 'sel_month':month, 'month_days':days, 'buycomponents': cinvoices, 'sumall':psum, 'countall':scount, 'weblink': 'clientinvoice_list.html', 'view': True, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
+def client_invoice_lookup(request, client_id):
+    list = None
+    client_invoice_sum = 0
+    if request.is_ajax():
+        list = ClientInvoice.objects.filter(client=client_id).order_by("-date", "-id")
+        for a in list:
+            client_invoice_sum = client_invoice_sum + a.sum
+
+        #return HttpResponse("AJAX - TEST TAB for myTable")            
+        return render_to_response('clientinvoice_ajax.html', {'invoice': list, 'client_invoice_sum': client_invoice_sum})
+    #return HttpResponse("TEST TAB for myTable")
+    return render_to_response('clientinvoice_ajax.html', {'invoice': list})
+
+
 def client_invoice_id(request, id):
     list = ClientInvoice.objects.filter(catalog__id=id).order_by("-date", "-id")
     psum = 0
@@ -2458,7 +2473,7 @@ def client_order_delete(request, id):
 def client_invoice_sale_report(request):
     if auth_group(request.user, "admin") == False:
         return render_to_response('index.html', {'weblink': 'error_message.html', 'mtext': 'У вас немає доступу до даної сторінки!', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
-    query = "SELECT EXTRACT(year FROM date) as year, EXTRACT(month from date) as month, MONTHNAME(date) as month_name, COUNT(*) as bike_count, sum(price) as s_price FROM accounting_clientinvoice GROUP BY year,month;"
+    query = "SELECT EXTRACT(year FROM date) as year, EXTRACT(month from date) as month, MONTHNAME(date) as month_name, COUNT(*) as bike_count, sum(pay) as s_price FROM accounting_clientinvoice GROUP BY year,month;"
     #sql2 = "SELECT sum(price) FROM accounting_clientdebts WHERE client_id = %s;"
     #user = id;
     list = None
@@ -2565,10 +2580,10 @@ def client_result(request):
     except ObjectDoesNotExist:
         client_name = ""
     
-    credit_list = ClientCredits.objects.filter(client=user)
-    debt_list = ClientDebts.objects.filter(client=user)
+    credit_list = ClientCredits.objects.filter(client=user, date__gt=now-datetime.timedelta(days=90))
+    debt_list = ClientDebts.objects.filter(client=user, date__gt=now-datetime.timedelta(days=90))
     
-    client_invoice = ClientInvoice.objects.filter(client=user).order_by("-date", "-id")
+    client_invoice = ClientInvoice.objects.filter(Q(client=user) & (Q(pay__lt = F('sum')) | Q(date__gt=now-datetime.timedelta(days=31))) ).order_by("-date", "-id")
     client_invoice_sum = 0
     for a in client_invoice:
         client_invoice_sum = client_invoice_sum + a.sum
@@ -2578,12 +2593,13 @@ def client_result(request):
     for a in client_workshop:
         client_workshop_sum = client_workshop_sum + a.price
             
+    b_bike = Bicycle_Sale.objects.filter(client=user).values('model__model__model', 'model__model__brand__name', 'model__serial_number', 'model__size__name', 'date', 'service')
     #list_debt = ClientDebts.objects.filter(client='2').values("client", "price").select_related('client')
     #list_debt = ClientDebts.objects.filter(client='2').select_related('client')
     #list_debt = ClientDebts.objects.filter(client='2').annotate(Sum("price"))
     #return render_to_response('index.html', {'clients': list_credit.values_list(), 'weblink': 'client_result.html'})
     #return render_to_response('index.html', {'clients': list_debt.values_list(), 'weblink': 'client_result.html'})
-    return render_to_response('index.html', {'weblink': 'client_result.html', 'clients': res, 'invoice': client_invoice, 'client_invoice_sum': client_invoice_sum, 'workshop': client_workshop, 'client_workshop_sum': client_workshop_sum, 'debt_list': debt_list, 'credit_list': credit_list, 'client_name': client_name, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'weblink': 'client_result.html', 'clients': res, 'invoice': client_invoice, 'client_invoice_sum': client_invoice_sum, 'workshop': client_workshop, 'client_workshop_sum': client_workshop_sum, 'debt_list': debt_list, 'credit_list': credit_list, 'client_name': client_name, 'b_bike': b_bike, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def client_lookup(request):
@@ -2591,7 +2607,7 @@ def client_lookup(request):
         if request.GET.has_key(u'query'):
             value = request.GET[u'query']
             if len(value) > 2:
-                model_results = Client.objects.filter(name__icontains=value)
+                #model_results = Client.objects.filter(name__icontains=value)
                 model_results = Client.objects.filter(Q(name__icontains = value) | Q(forumname__icontains = value))
                 data = serializers.serialize("json", model_results, fields=('name','id', 'sale', 'forumname'))
             else:
@@ -3437,6 +3453,57 @@ def catalog_saleform(request):
 #===============================================================================
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 #    return HttpResponse("You pressed button SALE" + str(list_id))
+
+from django.contrib.auth.models import User
+
+def user_invoice_report(request, month=None, year=None, day=None, user_id=None):
+    #user_id = 5; #choper
+    #user_id = 6; #andre
+    #user_id = 4; #ygrik
+
+    if request.user.is_authenticated():
+        user_id = request.user.id
+    else:
+        user_id = None
+    
+    if year == None:
+        year = datetime.datetime.now().year
+    if month == None:
+        month = datetime.datetime.now().month
+
+    if day == None:
+        day = datetime.datetime.now().day
+        list = ClientInvoice.objects.filter(date__year=year, date__month=month, date__day=day, user__id=user_id).order_by("-date", "-id")
+    else:
+        if day == 'all':
+            list = ClientInvoice.objects.filter(date__year=year, date__month=month, user__id=user_id).order_by("-date", "-id")
+        else:
+            list = ClientInvoice.objects.filter(date__year=year, date__month=month, date__day=day, user__id=user_id).order_by("-date", "-id")
+            
+    psum = 0
+    scount = 0
+    for item in list:
+        psum = psum + item.sum
+        scount = scount + item.count
+    days = xrange(1, calendar.monthrange(int(year), int(month))[1]+1)
+    
+    paginator = Paginator(list, 15)
+    page = request.GET.get('page')
+    if page == None:
+        page = 1
+    try:
+        cinvoices = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        cinvoices = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        cinvoices = paginator.page(paginator.num_pages)
+
+    user = User.objects.get(id=user_id)
+            
+    return render_to_response('index.html', {'sel_user':user, 'sel_year':year, 'sel_month':month, 'month_days':days, 'buycomponents': cinvoices, 'sumall':psum, 'countall':scount, 'weblink': 'report_clientinvoice_byuser.html', 'view': True, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+
 
 
 def rent_add(request):

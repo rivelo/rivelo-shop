@@ -391,15 +391,17 @@ class ClientCreditsForm(forms.ModelForm):
 
 
 class ClientInvoiceForm(forms.ModelForm):
-    client = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete'}), queryset = Client.objects.all(), empty_label="")
+    #client = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete'}), queryset = Client.objects.all(), empty_label="")
+    client = forms.ModelChoiceField(widget=forms.HiddenInput(), queryset = Client.objects.all(), empty_label="")
     #catalog = forms.ModelChoiceField(queryset = Catalog.objects.filter(manufacturer=36))
-    catalog = forms.ModelChoiceField(queryset = Catalog.objects.all())    
-    count = forms.IntegerField(min_value=0, initial = 1)
-    price = forms.FloatField(initial=0)
-    sum = forms.FloatField(initial=0)
+    count = forms.IntegerField(min_value=0, initial = 1, label = "Кількість")
+    catalog = forms.ModelChoiceField(queryset = Catalog.objects.all(), label="Товар")    
+    
+    price = forms.FloatField(initial=0, label="Ціна")
+    sum = forms.FloatField(initial=0, label="Сума")
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
-    sale = forms.IntegerField(min_value=0, initial = 0)
-    pay = forms.FloatField(initial=0)
+    sale = forms.IntegerField(min_value=0, initial = 0, label="Знижка (%)")
+    pay = forms.FloatField(initial=0, label="Оплачено")
 #    date = forms.DateTimeField(initial = datetime.datetime.today(), label='Дата', input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
     date = forms.DateTimeField(initial = datetime.datetime.now(), label='Дата',  input_formats=['%d/%m/%Y %H:%M:%S', '%d/%m/%Y %H:%M:%S'], widget=forms.DateTimeInput(format='%d/%m/%Y %H:%M:%S'))
     description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)

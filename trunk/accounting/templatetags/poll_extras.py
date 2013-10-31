@@ -49,3 +49,16 @@ def orm_debug():
         'query_time': query_time,
         'query_count': query_count,
         'queries': queries}    
+
+        
+@register.filter(name='phone2Str')  
+def phone2Str(value):  
+    try:  
+        s = value
+        res = s[0:3]+'-'+s[3:6]+' '+s[6:8]+' '+s[8:10]
+        return res
+        
+        #return "%.2f" % (a_percent)  
+        #return round(a_percent)
+    except ValueError:  
+        return ''  
