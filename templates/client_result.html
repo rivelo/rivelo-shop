@@ -100,19 +100,23 @@ $(function() {
     });
 
         $("#all_cred").click(function(){
-            var TextStory = "ygrik" 
-            var MailStory = $("#mail_story").val();
+            var Id = 2 
             $.ajax({
                 type: "POST",
-                url: "/insertstory/",
-                data: { TextStory: TextStory },
+                url: "/client_history/",
+                data: { clientId: Id },
                 dataType: "json",
                 success:function(msg){
-                    alert("Все отлично ушло на сервер - " + msg);
-//                    $('#ttt').append("<strong> " + msg + "</strong>");
-//                    $('#ttt').text(""+msg);
-//                    $('#id_deposit').val(""+msg);
-                    
+                	$.each(msg,function(index,item){
+                	    $('.in_cred').after('<tr><td>'+ item.fields.date +'</td><td>'+ item.fields.description +'</td><td>' + item.fields.price+'</td></tr>');
+//                        tr = '<tr><td>'+ item.fields.date+'</td>';
+//                        tr += '<td>' + item.fields.description+'</td>';
+//                        tr += '<td>' + item.fields.price+'</td>';
+//                        tr += '</tr>';
+//                        $('#balance').children('tbody').append(tr);
+                    });
+//					$('#balance').append('<tr><td>00/00/0000</td><td>'+ msg[0].description +'</td><td></td></tr>');
+//					$('.in_cred').after('<tr><td>00/00/0000</td><td>'+ msg[1].fields.description +'</td><td></td></tr>');
                 },
                 error:function(){
                     alert("При отправке возникли проблемы");
@@ -120,7 +124,7 @@ $(function() {
             });      
 		});
 
-        
+       
 });        
 </script>
 
@@ -166,7 +170,7 @@ $(function() {
 	<th>Сума (грн)</th>
 	</tr>
 	
-	<tr BGCOLOR="#29AE48">
+	<tr BGCOLOR="#29AE48"  class="in_cred">
 	<td>
 	Оплати
 	</td>
@@ -174,7 +178,6 @@ $(function() {
 	{% if perms.accounting.delete_clientcredits %}
 	 /-----/ <a href="/clientcredits/{{client_name.id}}/delete/all">(Видалити всі проплати)</a> 
 	 /-----/ <a id="all_cred" href="javascript:">(Показати всі проплати)</a>
-	 <div id="target">Я готовий до змін.</div>
 	{% endif %}	
 	 
 	</td>
