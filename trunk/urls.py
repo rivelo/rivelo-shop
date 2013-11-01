@@ -324,6 +324,8 @@ urlpatterns = patterns('',
     (r'^accounts/login/$',  'catalog.accounting.views.login'),
     (r'^accounts/logout/$', 'catalog.accounting.views.logout'),
     
+    #ajax
+    (r'^client_history/$', 'catalog.accounting.views.client_history'),
     (r'^insertstory/$', 'catalog.accounting.views.insertstory'),
     (r'^ajax/test/$', 'catalog.accounting.views.ajax_test'),
     (r'^xhr_test/$','catalog.accounting.views.xhr_test'),    

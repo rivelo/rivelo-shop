@@ -1462,11 +1462,13 @@ def invoice_search_result(request):
     if 'name' in request.GET and request.GET['name']:
         name = request.GET['name']
         #list = Catalog.objects.filter(name__icontains = name).order_by('manufacturer') 
-        list = InvoiceComponentList.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__type__id').annotate(sum_catalog=Sum('count'))
+#        list = InvoiceComponentList.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price', 'catalog__sale').annotate(sum_catalog=Sum('count'))
+        list = InvoiceComponentList.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale').annotate(sum_catalog=Sum('count'))        
     elif  'id' in request.GET and request.GET['id']:
         id = request.GET['id']
         #list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id)
-        list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__type__id').annotate(sum_catalog=Sum('count'))
+        list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale').annotate(sum_catalog=Sum('count'))
+#        list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__type__id').annotate(sum_catalog=Sum('count'))        
         #list = Catalog.objects.filter(ids__icontains = id).order_by('manufacturer')
 
     for item in list:
@@ -1475,13 +1477,14 @@ def invoice_search_result(request):
         id_list.append(item['catalog'])
 #        list_sale = ClientInvoice.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
 #        list_sale = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
-    sale_list = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__price', 'catalog__type__name').annotate(sum_catalog=Sum('count'))        
+    sale_list = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__price', 'catalog__type__name', 'catalog__type__id').annotate(sum_catalog=Sum('count'))        
     for element in list:
         element['c_sale']=0
         for sale in sale_list:
             if element['catalog']==sale['catalog']:
                 element['c_sale']=sale['sum_catalog']
                 element['catalog__type__name'] = sale['catalog__type__name']                
+                element['catalog__type__id'] = sale['catalog__type__id']
         if element.get('catalog__type__name') == None:
             element['catalog__type__name'] = Catalog.objects.values('type__name').get(id=element['catalog'])['type__name']
         element['balance']=element['sum_catalog'] - element['c_sale']                
@@ -3679,6 +3682,19 @@ def logout(request):
     else:
         return HttpResponseRedirect("/.")
 
+
+def client_history(request):
+    if 'clientId' in request.POST and request.POST['clientId']:
+        clientId = request.POST['clientId']
+    #return render_to_response('news_list.html')
+    #search = ClientDebts.objects.filter(id = clientId).values('date', 'description', 'price')
+    search_c = ClientCredits.objects.filter(client = clientId)
+#    search_d = ClientDebts.objects.filter(client = clientId)
+    #search = ClientDebts.objects.filter(id = clientId, price__gt = 500).values_list('description', flat=True)
+    data_c = serializers.serialize('json',search_c)
+#    data_d = serializers.serialize('json',search_d)
+    return HttpResponse(data_c, mimetype='application/json')    
+    #return HttpResponse(simplejson.dumps(list(search)))
 
 
 def insertstory(request):
