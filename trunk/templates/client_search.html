@@ -9,19 +9,19 @@
  
 <script type="text/javascript">
 $(document).ready(function() {  
-       $( "#search_field" ).autocomplete({
+       $( "#client_search_field" ).autocomplete({
         source: "/asearch/", // url that provides JSON data
 	    });
     });
 </script>
 
 
-<body onload="document.getElementById('search_field').focus()">
+<body onload="document.getElementById('client_search_field').focus()">
 <input type="hidden" name="csrfmiddlewaretoken" value="$csrf_token"/>
   <h1>Пошук клієнта</h1>
   <form action="/client/search/result/" method="GET">
     <label>Введіть ім'я або прізвище клієнта: </label>
-    <input type="text" name="name" id="search_field">
+    <input type="text" name="name" id="client_search_field">
  <!--    <input id="q1" type="text" />   -->
 
     

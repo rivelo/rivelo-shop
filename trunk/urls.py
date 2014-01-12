@@ -218,6 +218,7 @@ urlpatterns = patterns('',
 # ajax table for client invoice    
     (r'^client/(?P<client_id>\d+)/invoice/lookup/$', 'catalog.accounting.views.client_invoice_lookup'),     
     (r'^client/invoice/catalog/(?P<cid>\d+)/add/$', 'catalog.accounting.views.client_invoice'),
+    (r'^sale/(?P<cid>\d+)/$', 'catalog.accounting.views.client_invoice'), #short link for sale in android device
     (r'^client/invoice/catalog/(?P<id>\d+)/view/$', 'catalog.accounting.views.client_invoice_id'),
     (r'^client/invoice/add/$', 'catalog.accounting.views.client_invoice'),
     (r'^client/invoice/(?P<id>\d+)/delete/$', 'catalog.accounting.views.client_invoice_delete'),

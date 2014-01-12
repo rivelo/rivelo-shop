@@ -56,6 +56,8 @@ input{
 </style>
 
 <script type="text/javascript" src="/media/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/media/jquery.qrcode-0.7.0.min.js"></script>
+<script type="text/javascript" src="/media/jquery.hotkeys-0.7.9.min.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function() {
@@ -100,7 +102,37 @@ $(document).ready(function() {
 	return false;
                  
 	});
+
 })
+
+
+$('#ss').qrcode({
+	render: 'image',
+	width: 60,
+	height: 60,
+	size: 80,
+	fill: '#3a3',
+	ecLevel: 'M',
+	text: 'www.rivelo.com.ua'
+	});
+
+
+</script>
+
+<script>
+
+$(document).bind('keydown', 'alt+z', function(){
+  //alert("Привет!");
+  //document.getElementById('search_field').focus();
+  $('#search_field').focus();
+});
+
+$(document).bind('keydown', 'alt+x', function(){
+  //alert("Привет!");
+  //document.getElementById('search_field').focus();
+  $('#asearch_field').focus();
+});
+
 </script>
 
 
@@ -108,6 +140,20 @@ $(document).ready(function() {
 <td style="border-color:white;">
 <a href="/"><img src="/media/images/site_logo_small.gif" alt="" title=""/></a>
 </td>
+
+<td id="ss"> </td>
+
+<td>  
+  <form action="/invoice/search/result" method="GET">
+    <label>Введіть назву товару: </label>
+    <input type="text" name="name" id="search_field">
+    <br>
+    <label>Введіть артикул товару: </label>
+    <input type="text" name="id" id="asearch_field">
+    <input type="submit" value="Пошук">
+  </form>
+</td>
+
 <td id="tdlogo">
 <a href="/"><img src="/media/images/riban.gif" alt="" title=""/></a>
 

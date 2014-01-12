@@ -2,6 +2,25 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
+<script type="text/javascript" src="/media/jquery-1.8.3.js"></script>
+<script type="text/javascript" src="/media/jquery.qrcode-0.7.0.min.js"></script>
+
+<script language="JavaScript">
+function qrcode(){
+$("#qr_tr1").qrcode({
+	render: 'image',
+	width: 60,
+	height: 60,
+	size: 80,
+	fill: '#3a3',
+	ecLevel: 'H',
+	text: '/catalog/edit/{{ type.id }}'
+	});
+};
+</script>
+
+{% load poll_extras %}
+
 {% if view %}
     
 <h1>Цінники на продукцію {{company.name}}  ({{catalog.count}})  <a href="{{link}}">(Версія для друку)</a> </h1>
@@ -14,16 +33,23 @@
 
 {% endif %}
 
-
 <table BORDER=0 CELLPADDING=4> 
 <tr>
 {% for type in catalog %}
 
-
 <td>
-<table>
-<tr>
 
+<table width=400mm>
+
+<tr >
+{% with type.id|sale_url:request.get_host as url_buy %}
+<td rowspan="5" width=80px>
+<img src="{{url_buy|qr:"80x80"}}" />
+</td>
+{% endwith %}
+</tr>
+
+<tr>
 	<td>
 <b><FONT COLOR=black FACE="Geneva, Arial" SIZE=1>	Код </FONT></b> 
 	</td>
@@ -35,15 +61,6 @@
 	</td>
 </tr>
 
-<tr>
-	<td>       
-<b>	Назва </FONT></b>
-	</td>
-	<td width = 190>       
-	<a href="/catalog/edit/{{ type.id }}">{{type.name}}</a>
-	</td>
-</tr>
-	
 <tr>
 	<td>
 <b>	Виробник </b>
@@ -64,13 +81,14 @@
 -->
 
 <tr>
-	<td>
+	<td width=100px>
 <b>	Країна виробник </b>
 	</td>
 	<td>
 	{{type.country}}
 	</td>	
 </tr>
+
 <tr>
 	<td>
 <b>	Ціна </b>
@@ -79,6 +97,16 @@
 <b>	{{type.price}} грн. </b>
 	</td>
 </tr>       
+
+<tr>
+	<td>       
+<b>	Назва </FONT></b>
+	</td>
+	<td width = 190 colspan=2>       
+	<a href="/catalog/edit/{{ type.id }}">{{type.name}}</a>
+	</td>
+</tr>
+
 
 </table>
 </td>
@@ -92,7 +120,7 @@
 
 {% if forloop.counter|divisibleby:"18"  %}
 </table>
-<br style="page-break-after: always">
+<p style="page-break-after: always"></p>
 <table BORDER=0 CELLPADDING=4> 
 {% endif %}
  
