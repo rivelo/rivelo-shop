@@ -2309,7 +2309,7 @@ def client_invoice_view(request, month=None, year=None, day=None, id=None):
         # If page is out of range (e.g. 9999), deliver last page of results.
         cinvoices = paginator.page(paginator.num_pages)
             
-    return render_to_response('index.html', {'sel_year':year, 'sel_month':month, 'month_days':days, 'buycomponents': cinvoices, 'sumall':psum, 'countall':scount, 'weblink': 'clientinvoice_list.html', 'view': True, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'sel_year':year, 'sel_month':month, 'month_days':days, 'sel_day':int(day), 'buycomponents': cinvoices, 'sumall':psum, 'countall':scount, 'weblink': 'clientinvoice_list.html', 'view': True, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def client_invoice_lookup(request, client_id):
@@ -2804,15 +2804,18 @@ def workticket_edit(request, id):
 
 
 def workticket_list(request, year=None, month=None, all=False):
-    cur_year = datetime.datetime.now().year
+#    cur_year = datetime.datetime.now().year
+    list = None
     if month != None:
-        list = WorkTicket.objects.filter(date__year=cur_year, date__month=month)
+        list = WorkTicket.objects.filter(date__year=year, date__month=month)
     if (year == None) and (month == None):
         month = datetime.datetime.now().month
-        list = WorkTicket.objects.filter(date__year=cur_year, date__month=month)
+        year = datetime.datetime.now().year
+        list = WorkTicket.objects.filter(date__year=year, date__month=month)
     if all == True:
         list = WorkTicket.objects.all()
-    return render_to_response('index.html', {'workticket': list, 'sel_year':cur_year, 'weblink': 'workticket_list.html'})
+    
+    return render_to_response('index.html', {'workticket':list, 'sel_year':year, 'sel_month':int(month), 'weblink': 'workticket_list.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def workticket_delete(request, id):
@@ -3070,7 +3073,7 @@ def shop_price(request, mid, limit=0, pprint=False):
     url = '/shop/price/company/'+mid+'/print/'
     
     if pprint:
-        return render_to_response('price_list.html', {'catalog': list, 'company': company, 'company_list': company_list,})
+        return render_to_response('price_list.html', {'catalog': list, 'company': company, 'company_list': company_list, 'request':request,})
     
     return render_to_response('index.html', {'catalog': list, 'company': company, 'company_list': company_list, 'weblink': 'price_list.html', 'view': True, 'link': url, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
@@ -3080,7 +3083,7 @@ def shop_price_lastadd(request, id, pprint = False):
     #list = InvoiceComponentList.objects.all().order_by("-id")[:id]
     list = Catalog.objects.filter(count__gt=0).order_by("-id")[:id]
     if pprint:
-        return render_to_response('price_list.html', {'catalog': list})
+        return render_to_response('price_list.html', {'catalog': list, 'request':request,})
     return render_to_response('index.html', {'catalog': list, 'weblink': 'price_list.html', 'view': True, 'link': url, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 

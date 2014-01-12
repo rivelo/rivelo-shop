@@ -1,23 +1,35 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
+<style>
+	a.select {
+		color: #FFFFFF;
+		background-color:#006600;
+	}
+	a.non {
+		color: #0000FF;
+		background-color:#FFFFFF;
+	}
+</style>
+
 
 <br>
 <h2>
-    За місяць: 
-    <a href="/workticket/year/{{sel_year}}/month/1/view">01,</a>
-	<a href="/workticket/year/{{sel_year}}/month/2/view">02,</a>
-	<a href="/workticket/year/{{sel_year}}/month/3/view">03,</a>
-	<a href="/workticket/year/{{sel_year}}/month/4/view">04,</a>
-	<a href="/workticket/year/{{sel_year}}/month/5/view">05,</a>
-	<a href="/workticket/year/{{sel_year}}/month/6/view">06,</a>
-	<a href="/workticket/year/{{sel_year}}/month/7/view">07,</a>
-	<a href="/workticket/year/{{sel_year}}/month/8/view">08,</a>
-	<a href="/workticket/year/{{sel_year}}/month/9/view">09,</a>
-	<a href="/workticket/year/{{sel_year}}/month/10/view">10,</a>
-	<a href="/workticket/year/{{sel_year}}/month/11/view">11,</a>
-	<a href="/workticket/year/{{sel_year}}/month/12/view">12,</a>
-	<a href="/workticket/all/view">Всі</a>
+    За рік: 
+    <a href="/workticket/year/2012/month/1/view">2012,</a>
+	<a href="/workticket/year/2013/month/12/view">2013,</a>
+	<a href="/workticket/year/2014/month/1/view">2014,</a>
+<br>
+	За місяць: 
+	{% for i in "123456789012" %}
+	{% ifequal forloop.counter sel_month %}
+    <a href="/workticket/year/{{sel_year}}/month/{{forloop.counter}}/view" class="select">{{forloop.counter}}</a>,
+    {% else %}
+    <a href="/workticket/year/{{sel_year}}/month/{{forloop.counter}}/view" class="non">{{forloop.counter}}</a>,
+    {% endifequal %}
+	{% endfor %}
+	
+	<a href="/workticket/all/view" class="non">Всі</a>
 </h2>    
 
 

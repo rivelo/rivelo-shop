@@ -4,6 +4,23 @@
     <title>Список товару</title>
     <link rel="stylesheet" type="text/css" href="/media/table.css">
 </head>
+
+
+<script type="text/javascript">
+//myFocus("search_field");
+
+function myFocus(id){
+ try{
+    document.getElementById(id).focus();
+ } catch(e) {
+    // обработчик ошибки, можно оставить пустым
+    // alert(e);
+ }
+}
+
+myFocus("search_field");
+</script>
+
 <body>
 
 {% for company in company_list %}

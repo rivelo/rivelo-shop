@@ -5,6 +5,18 @@
     <title>Список проданого товару</title>
     <link rel="stylesheet" type="text/css" href="/media/table.css">
 </head>
+
+<style>
+	a.select {
+		color: #FFFFFF;
+		background-color:#006600;
+	}
+	a.non {
+		color: #0000FF;
+		background-color:#FFFFFF;
+	}
+</style>
+
 <body onLoad="res()">
 
 <link rel="stylesheet" type="text/css" href="/media/jquery-ui-1.9.2.custom.css">	
@@ -72,7 +84,11 @@ $(document).ready( function() {
 <h2>
 	За день:
 	{% for day in month_days %}		 
-    <a href="/client/invoice/year/{{sel_year}}/month/{{sel_month}}/day/{{day}}/view">{{day}},</a>
+	{% ifequal day sel_day %}
+    <a href="/client/invoice/year/{{sel_year}}/month/{{sel_month}}/day/{{day}}/view" class="select">{{day}},</a>
+    {% else %}
+	<a href="/client/invoice/year/{{sel_year}}/month/{{sel_month}}/day/{{day}}/view" class="non">{{day}},</a>
+    {% endifequal %}
     {% endfor %}
 </h2>    
 {% endif %}

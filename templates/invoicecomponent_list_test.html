@@ -45,6 +45,7 @@ tr.odd {
 </style>
 
 <script type="text/javascript" src="/media/jquery-1.8.3.js"></script>
+<script type="text/javascript" src="/media/jquery.hotkeys.js"></script>
 {# <script type="text/javascript" src="/media/jquery.tablesorter.js"></script> #}
 <script type="text/javascript" language="javascript" src="/media/jquery.dataTables.min.js"></script>
 
@@ -193,15 +194,59 @@ function fnShowHide( iCol )
     var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
     oTable.fnSetColumnVis( iCol, bVis ? false : true );
 }
+</script>
+
+<script>
+
+function runOnKeys(func) {
+  var codes = [].slice.call(arguments, 1);
+
+  var pressed = {};
+
+  document.onkeydown = function(e) {
+    e = e || window.event;
+
+    pressed[e.keyCode] = true;
+
+    for(var i=0; i<codes.length; i++) { // проверить, все ли клавиши нажаты
+      if (!pressed[codes[i]]) {
+        return;
+      }
+    }
+
+    // во время показа alert, если посетитель отпустит клавиши - не возникнет keyup
+    // при этом JavaScript "пропустит" факт отпускания клавиш, а pressed[keyCode] останется true
+    // чтобы избежать "залипания" клавиши -- обнуляем статус всех клавиш, пусть нажимает всё заново
+    pressed = {};
+
+    func();
+
+  };
+
+  document.onkeyup = function(e) {
+    e = e || window.event;
+
+    delete pressed[e.keyCode];
+  };
+
+}
+
+runOnKeys(
+  function() { alert("Привет!") 
+  document.getElementById('search_field').focus()},
+  "Q".charCodeAt(0),
+  "W".charCodeAt(0)
+);
 
 </script>
+
 
 <html lang="en">
 <head>
     <title>Список товару</title>
     <link rel="stylesheet" type="text/css" href="/media/table.css">
 </head>
-<body>
+<body onload="document.getElementById('search_field').focus()">
 
 {% for category in category_list %}
 <b> | </b> <a href="/invoice/category/{{category.id}}/view/">{{category.name_ukr}}</a>

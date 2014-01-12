@@ -62,3 +62,24 @@ def phone2Str(value):
         #return round(a_percent)
     except ValueError:  
         return ''  
+
+
+@register.filter
+def qr(value,size="150x150"):
+    """
+        Usage:
+        <img src="{{object.code|qr:"120x130"}}" />
+    """
+    return "http://chart.apis.google.com/chart?chs=%s&cht=qr&chl=%s&choe=UTF-8&chld=H|0" % (size, value)
+
+
+from django.http import HttpRequest
+
+@register.filter
+def sale_url(value,host):
+    """
+        Usage:
+        {{object.code|sale_url}}"
+    """
+    #return "http://127.0.0.1:8001/client/invoice/catalog/%s/add" % (value)
+    return "%s/sale/%s/" % (host, value)
