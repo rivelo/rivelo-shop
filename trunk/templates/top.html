@@ -124,7 +124,7 @@ $('#ss').qrcode({
 $(document).bind('keydown', 'alt+z', function(){
   //alert("Привет!");
   //document.getElementById('search_field').focus();
-  $('#search_field').focus();
+  $('#tsearch_field').focus();
 });
 
 $(document).bind('keydown', 'alt+x', function(){
@@ -146,7 +146,7 @@ $(document).bind('keydown', 'alt+x', function(){
 <td>  
   <form action="/invoice/search/result" method="GET">
     <label>Введіть назву товару: </label>
-    <input type="text" name="name" id="search_field">
+    <input type="text" name="name" id="tsearch_field">
     <br>
     <label>Введіть артикул товару: </label>
     <input type="text" name="id" id="asearch_field">

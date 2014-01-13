@@ -2288,6 +2288,7 @@ def client_invoice_view(request, month=None, year=None, day=None, id=None):
             list = ClientInvoice.objects.filter(date__year=year, date__month=month).order_by("-date", "-id")
         else:
             list = ClientInvoice.objects.filter(date__year=year, date__month=month, date__day=day).order_by("-date", "-id")
+            day = int(day)
             
     psum = 0
     scount = 0
@@ -2309,7 +2310,7 @@ def client_invoice_view(request, month=None, year=None, day=None, id=None):
         # If page is out of range (e.g. 9999), deliver last page of results.
         cinvoices = paginator.page(paginator.num_pages)
             
-    return render_to_response('index.html', {'sel_year':year, 'sel_month':month, 'month_days':days, 'sel_day':int(day), 'buycomponents': cinvoices, 'sumall':psum, 'countall':scount, 'weblink': 'clientinvoice_list.html', 'view': True, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'sel_year':year, 'sel_month':int(month), 'month_days':days, 'sel_day':day, 'buycomponents': cinvoices, 'sumall':psum, 'countall':scount, 'weblink': 'clientinvoice_list.html', 'view': True, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def client_invoice_lookup(request, client_id):

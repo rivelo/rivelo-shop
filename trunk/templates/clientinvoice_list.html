@@ -67,27 +67,22 @@ $(document).ready( function() {
 {% if view %}
 <h2>
     За місяць: 
-    <a href="/client/invoice/year/{{sel_year}}/month/1/view">01,</a>
-	<a href="/client/invoice/year/{{sel_year}}/month/2/view">02,</a>
-	<a href="/client/invoice/year/{{sel_year}}/month/3/view">03,</a>
-	<a href="/client/invoice/year/{{sel_year}}/month/4/view">04,</a>
-	<a href="/client/invoice/year/{{sel_year}}/month/5/view">05,</a>
-	<a href="/client/invoice/year/{{sel_year}}/month/6/view">06,</a>
-	<a href="/client/invoice/year/{{sel_year}}/month/7/view">07,</a>
-	<a href="/client/invoice/year/{{sel_year}}/month/8/view">08,</a>
-	<a href="/client/invoice/year/{{sel_year}}/month/9/view">09,</a>
-	<a href="/client/invoice/year/{{sel_year}}/month/10/view">10,</a>
-	<a href="/client/invoice/year/{{sel_year}}/month/11/view">11,</a>
-	<a href="/client/invoice/year/{{sel_year}}/month/12/view">12</a>
+	{% for i in "123456789012" %}
+	{% ifequal forloop.counter sel_month %}
+	<a href="/client/invoice/year/{{sel_year}}/month/{{forloop.counter}}/view" class="select">{{forloop.counter}}</a>,
+    {% else %}
+	<a href="/client/invoice/year/{{sel_year}}/month/{{forloop.counter}}/view" class="non">{{forloop.counter}}</a>,
+    {% endifequal %}
+	{% endfor %}    
 </h2>    
 
 <h2>
 	За день:
 	{% for day in month_days %}		 
 	{% ifequal day sel_day %}
-    <a href="/client/invoice/year/{{sel_year}}/month/{{sel_month}}/day/{{day}}/view" class="select">{{day}},</a>
+    <a href="/client/invoice/year/{{sel_year}}/month/{{sel_month}}/day/{{day}}/view" class="select">{{day}}</a>,
     {% else %}
-	<a href="/client/invoice/year/{{sel_year}}/month/{{sel_month}}/day/{{day}}/view" class="non">{{day}},</a>
+	<a href="/client/invoice/year/{{sel_year}}/month/{{sel_month}}/day/{{day}}/view" class="non">{{day}}</a>,
     {% endifequal %}
     {% endfor %}
 </h2>    
