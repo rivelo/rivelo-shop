@@ -37,7 +37,6 @@ urlpatterns = patterns('',
     (r'^country/view/$', 'catalog.accounting.views.country_list'),
     (r'^country/edit/(?P<id>\d+)/$', 'catalog.accounting.views.country_edit'),    
     (r'^country/delete/(?P<id>\d+)/$', 'catalog.accounting.views.country_del'),
-
     # Bank operation
     (r'^bank/add/$', 'catalog.accounting.views.bank_add'),
     (r'^bank/view/$', 'catalog.accounting.views.bank_list'),
@@ -210,15 +209,17 @@ urlpatterns = patterns('',
     (r'^client/search/result/$', 'catalog.accounting.views.client_search_result'),
     (r'^client/result/search/$', 'catalog.accounting.views.client_result'),
     (r'^client/lookup/$', 'catalog.accounting.views.client_lookup'),
+    (r'^client/lookup/byid/$', 'catalog.accounting.views.client_lookup_by_id'),
     
 #delete    (r'^client/result/$', 'catalog.accounting.views.search_client_id'),
     (r'^client/invoice/view/$', 'catalog.accounting.views.client_invoice_view'),
     (r'^client/invoice/(?P<id>\d+)/edit/$', 'catalog.accounting.views.client_invoice_edit'),
     (r'^client/(?P<cid>\d+)/invoice/add/$', 'catalog.accounting.views.client_invoice'),
 # ajax table for client invoice    
-    (r'^client/(?P<client_id>\d+)/invoice/lookup/$', 'catalog.accounting.views.client_invoice_lookup'),     
+    (r'^client/(?P<client_id>\d+)/invoice/lookup/$', 'catalog.accounting.views.client_invoice_lookup'),
     (r'^client/invoice/catalog/(?P<cid>\d+)/add/$', 'catalog.accounting.views.client_invoice'),
-    (r'^sale/(?P<cid>\d+)/$', 'catalog.accounting.views.client_invoice'), #short link for sale in android device
+    (r'^client/(?P<id>\d+)/invoice/catalog/(?P<cid>\d+)/add/$', 'catalog.accounting.views.client_invoice'),
+    (r'^sale/(?P<cid>\d+)/$', 'catalog.accounting.views.client_invoice', {'id': 138}), #short link for sale in android device
     (r'^client/invoice/catalog/(?P<id>\d+)/view/$', 'catalog.accounting.views.client_invoice_id'),
     (r'^client/invoice/add/$', 'catalog.accounting.views.client_invoice'),
     (r'^client/invoice/(?P<id>\d+)/delete/$', 'catalog.accounting.views.client_invoice_delete'),
@@ -263,6 +264,8 @@ urlpatterns = patterns('',
     (r'^workstatus/view/$', 'catalog.accounting.views.workstatus_list'),
     (r'^workstatus/edit/(?P<id>\d+)$', 'catalog.accounting.views.workstatus_edit'),
     (r'^workstatus/delete/(?P<id>\d+)$', 'catalog.accounting.views.workstatus_delete'),
+    
+    
 
     (r'^workticket/add/$', 'catalog.accounting.views.workticket_add'),
     (r'^workticket/add/client/(?P<id>\d+)/$', 'catalog.accounting.views.workticket_add'),    

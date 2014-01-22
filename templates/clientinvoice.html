@@ -14,18 +14,21 @@
 	
 <script type="text/javascript">
 	$(document).ready(function() {
+		$("#s_client").val($('#id_client').val());
+		$("#s_client").select();
+		
 //      $('select.autocomplete').select_autocomplete();
 });
 
 $(function() {
 	var sale = $('#id_sale').val();
-        $( "#city" ).autocomplete({
+        $( "#s_client" ).autocomplete({
         //$('select.autocomplete').autocomplete({
             source: function( request, response ) {
                 $.ajax({
                 type: "GET",
                 url: "/client/lookup",
-				data: { query: $("#city").val() },
+				data: { query: $("#s_client").val() },
                 dataType: "json",
                 success: function( data ) {
                         	response( $.map( data, function( item ) {
@@ -62,6 +65,27 @@ $(function() {
     });
 
 
+//$('#s_client').bind('change', 
+function id2name(){
+
+            $.ajax({
+                type: "GET",
+                url: "/client/lookup/byid/",
+                data: { client_id: 2 },
+                dataType: "json",
+                success:function(msg){
+                	$.each(msg,function(index,item){
+                	$("#s_client").val(item)    
+                    });
+                },
+                error:function(){
+                    alert("При отправке возникли проблемы");
+                }
+            });      
+
+};
+
+
 function sum() {
 	sale = 1 - ((parseFloat(document.getElementById('id_sale').value)||0)/100)
     res = document.getElementById('result').innerHTML = parseFloat(document.getElementById("id_count").value||0) * (parseFloat(document.getElementById('id_price').value)||0) * sale
@@ -72,14 +96,17 @@ function sum() {
 //setTimeout(sum, 100)
 setInterval(sum, 100)
 
+//id2name();
+
 </script>
+
 <!--  <body onload="document.getElementById('id_client').focus()">  -->
-<body onload="document.getElementById('city').focus()">
+<body onload="document.getElementById('s_client').focus()">
 
     <h1>Продаж товару</h1>
     <form action="." method="POST">
         <table>
-        	<input id="city" style="width: 550px;" />
+        	<input id="s_client" style="width: 550px;" />
             {{ form.as_ul }}
         </table>
         <p><input type="submit" value="Save"></p>

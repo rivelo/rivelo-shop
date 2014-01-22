@@ -414,7 +414,24 @@ def bicycle_store_add(request, id=None):
     return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_store.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
-def bicycle_store_edit(request, id):
+def bicycle_store_edit(request, id=None):
+    if request.is_ajax():
+        if request.method == 'POST':  
+            if auth_group(request.user, 'seller')==False:
+                return HttpResponse('Error: У вас не має прав для редагування')
+            POST = request.POST  
+            if POST.has_key('id'):
+                id = request.POST.get('id')
+                p = request.POST.get('serial')
+                obj = Bicycle_Store.objects.get(pk = id)
+                obj.serial_number = p
+                obj.save() 
+                c = Bicycle_Store.objects.filter(pk = id).values_list('serial_number', flat=True)
+                #c = "ajax work"
+                return HttpResponse(c)
+            else:
+                return HttpResponse("dont work ajax")
+    
     a = Bicycle_Store.objects.get(pk=id)
     if request.method == 'POST':
         form = BicycleStoreForm(request.POST, instance=a)
@@ -435,7 +452,7 @@ def bicycle_store_edit(request, id):
             return HttpResponseRedirect('/bicycle-store/view/seller/')
     else:
         form = BicycleStoreForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_store.html', 'text': 'Редагувати тип'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_store.html', 'text': 'Редагувати тип'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_store_del(request, id):
@@ -462,7 +479,7 @@ def bicycle_store_list(request, all=False):
             price_summ = price_summ + item.price * item.count 
         real_summ = real_summ + item.realization
         bike_summ = bike_summ + item.count
-    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list.html', 'price_summ': price_summ, 'real_summ': real_summ, 'bike_summ': bike_summ})
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list.html', 'price_summ': price_summ, 'real_summ': real_summ, 'bike_summ': bike_summ}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_store_list_by_seller(request, all=False, size='all', year='all', brand='all', html=False):
@@ -609,7 +626,7 @@ def bicycle_sale_add(request, id=None):
         else:
             form = BicycleSaleForm(initial={'currency': 3}, instance=a)
     
-    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_sale.html', 'serial_number': serial_number, 'text': 'Продаж велосипеду', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'form': form, 'weblink': 'bicycle_sale.html', 'serial_number': serial_number, 'bike_id': bike.id, 'text': 'Продаж велосипеду', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_sale_edit(request, id):
@@ -1792,7 +1809,7 @@ def catalog_edit(request, id):
     
     
     a = Catalog.objects.get(pk=id)
-    url1=request.META['HTTP_REFERER']
+    #url1=request.META['HTTP_REFERER']
     if request.method == 'POST':
         form = CatalogForm(request.POST, instance=a)
         if form.is_valid():
@@ -1805,7 +1822,7 @@ def catalog_edit(request, id):
     else:
         form = CatalogForm(instance=a)
     #url=request.META['HTTP_REFERER']
-    return render_to_response('index.html', {'form': form, 'myurl':url1, 'weblink': 'catalog.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'form': form, 'weblink': 'catalog.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def catalog_list(request, id=None):
@@ -2214,9 +2231,13 @@ def clientcredits_delete_all(request, client_id):
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 
-def client_invoice(request, cid=None):
+def client_invoice(request, cid=None, id=None):
     cat = Catalog.objects.get(id = cid)
-    a = ClientInvoice(date=datetime.datetime.today(), price=cat.price, sum=Catalog.objects.get(id = cid).price, sale=int(Catalog.objects.get(id = cid).sale), pay=0, count=1, currency=Currency.objects.get(id=3), catalog=Catalog.objects.get(id = cid))
+    if (id):
+        client = Client.objects.get(pk = id)
+        a = ClientInvoice(client = client, date=datetime.datetime.today(), price=cat.price, sum=Catalog.objects.get(id = cid).price, sale=int(Catalog.objects.get(id = cid).sale), pay=0, count=1, currency=Currency.objects.get(id=3), catalog=Catalog.objects.get(id = cid))
+    else:
+        a = ClientInvoice(date=datetime.datetime.today(), price=cat.price, sum=Catalog.objects.get(id = cid).price, sale=int(Catalog.objects.get(id = cid).sale), pay=0, count=1, currency=Currency.objects.get(id=3), catalog=Catalog.objects.get(id = cid))
     if request.method == 'POST':
         form = ClientInvoiceForm(request.POST, instance = a, catalog_id=cid)
         if form.is_valid():
@@ -2527,8 +2548,20 @@ def client_search_result(request):
                 return HttpResponse(simplejson.dumps(list(c)))
     
     username = request.GET['name']
+    phone = request.GET['phone']
+    city = request.GET['city']
+    description = request.GET['description']
+    client = None
     #clients = Client.objects.filter(name__icontains=username)
-    clients = Client.objects.filter(Q(name__icontains=username) | Q(forumname__icontains=username))
+    if description:
+        clients = Client.objects.filter(Q(description__icontains=description))
+    if city:
+        clients = Client.objects.filter(Q(city__icontains=city))
+    if phone:
+        clients = Client.objects.filter(Q(phone__icontains=phone))
+    if username:
+        clients = Client.objects.filter(Q(name__icontains=username) | Q(forumname__icontains=username))
+        
     if clients.count() == 1:
         return HttpResponseRedirect("/client/result/search/?id=" + str(clients[0].id))
     paginator = Paginator(clients, 25)
@@ -2598,12 +2631,13 @@ def client_result(request):
         client_workshop_sum = client_workshop_sum + a.price
             
     b_bike = Bicycle_Sale.objects.filter(client=user).values('model__model__model', 'model__model__brand__name', 'model__serial_number', 'model__size__name', 'date', 'service')
+    workshop = WorkTicket.objects.filter(client=user).values('date', 'description', 'status__name').order_by('-date')
     #list_debt = ClientDebts.objects.filter(client='2').values("client", "price").select_related('client')
     #list_debt = ClientDebts.objects.filter(client='2').select_related('client')
     #list_debt = ClientDebts.objects.filter(client='2').annotate(Sum("price"))
     #return render_to_response('index.html', {'clients': list_credit.values_list(), 'weblink': 'client_result.html'})
     #return render_to_response('index.html', {'clients': list_debt.values_list(), 'weblink': 'client_result.html'})
-    return render_to_response('index.html', {'weblink': 'client_result.html', 'clients': res, 'invoice': client_invoice, 'client_invoice_sum': client_invoice_sum, 'workshop': client_workshop, 'client_workshop_sum': client_workshop_sum, 'debt_list': debt_list, 'credit_list': credit_list, 'client_name': client_name, 'b_bike': b_bike, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'weblink': 'client_result.html', 'clients': res, 'invoice': client_invoice, 'client_invoice_sum': client_invoice_sum, 'workshop': client_workshop, 'client_workshop_sum': client_workshop_sum, 'debt_list': debt_list, 'credit_list': credit_list, 'client_name': client_name, 'b_bike': b_bike, 'workshop': workshop, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def client_lookup(request):
@@ -2616,6 +2650,18 @@ def client_lookup(request):
                 data = serializers.serialize("json", model_results, fields=('name','id', 'sale', 'forumname'))
             else:
                 data = []
+    return HttpResponse(data)                
+
+
+def client_lookup_by_id(request):
+    if request.method == "GET":                
+        if request.GET.has_key(u'client_id'):
+            value = request.GET[u'client_id']
+            
+            model_results = Client.objects.get(pk = value)
+            #print "MODEL = ", model_result
+            #data = serializers.serialize("json", model_results, fields=('name','id', 'sale', 'forumname'))
+            data = json.dumps(model_results.__dict__)
     return HttpResponse(data)    
 
 
@@ -2746,6 +2792,18 @@ def workstatus_edit(request, id):
 
 
 def workstatus_list(request):
+    
+    search = None
+    if request.is_ajax():
+        if request.method == 'GET':  
+            GET = request.GET  
+            if GET.has_key('id'):
+                q = request.GET.get( 'id' )
+        search = dict ((o.pk, o.name) for o in WorkStatus.objects.all())
+        return HttpResponse(simplejson.dumps(search), content_type="application/json")
+    else:
+        message = "Error"
+    
     list = WorkStatus.objects.all()
     return render_to_response('index.html', {'workstatus': list.values_list(), 'weblink': 'workstatus_list.html'})
 
@@ -2788,6 +2846,25 @@ def workticket_add(request, id=None):
 
 
 def workticket_edit(request, id):
+        
+    if request.is_ajax():
+        if request.method == 'POST':  
+            if auth_group(request.user, 'seller')==False:
+                return HttpResponse('Error: У вас не має прав для редагування')
+            POST = request.POST  
+            if POST.has_key('id_w'):
+                id = request.POST.get('id_w')
+                p = request.POST.get('value')
+                obj = WorkTicket.objects.get(pk = id)
+                print "bla-bla   =   " + p
+                obj.status = WorkStatus.objects.get(pk = p)
+                obj.save() 
+                c = WorkTicket.objects.filter(pk = id).values_list('status__name', flat=True)
+                return HttpResponse(c)
+            else:
+                return HttpResponse("dont work ajax")
+    
+    
     a = WorkTicket.objects.get(pk=id)
     if request.method == 'POST':
         form = WorkTicketForm(request.POST, instance=a)

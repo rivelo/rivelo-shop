@@ -85,6 +85,8 @@ $(document).ready(function() {
                     	$('#login_form').hide();
                     	$('#logout_form').show();
                     	//return true;
+
+                    	//location.reload(); //перезавантаження сторінки
                     }
                     	
 //                    $('#ttt').append("<strong> " + msg + "</strong>");
@@ -141,9 +143,9 @@ $(document).bind('keydown', 'alt+x', function(){
 <a href="/"><img src="/media/images/site_logo_small.gif" alt="" title=""/></a>
 </td>
 
-<td id="ss"> </td>
+<td id="ss" style="border: 0;"> </td>
 
-<td>  
+<td style="border: 0;">  
   <form action="/invoice/search/result" method="GET">
     <label>Введіть назву товару: </label>
     <input type="text" name="name" id="tsearch_field">

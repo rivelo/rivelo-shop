@@ -11,14 +11,15 @@ $(document).ready(function() {
      $('.edit').editable('/catalog/edit/149', {
      	 id   : 'id',
          name : 'price',
-         //submitdata: { _method: "GET", id: 149 , price : 100},
+   // submitdata: { _method: "GET", id: 149 , price : 100},
          
-     //    submitdata: {id: $(this).attr('id_price')},
+   //    submitdata: {id: $(this).attr('id_price')},
          submitdata : function() {
       	 	return {id : $(this).attr('id_price')};
     	 },
          indicator : 'Saving...',
          tooltip   : 'Click to edit...',
+         select : true,
          callback : function(value, settings) {
          $(this).html(value);
      }

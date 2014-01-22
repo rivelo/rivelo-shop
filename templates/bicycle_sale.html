@@ -4,6 +4,7 @@
 
 <script type="text/javascript" src="/media/jquery-1.8.3.js"></script>	
 <script type="text/javascript" src="/media/jquery-ui-1.9.2.custom.min.js"></script>
+<script src="/media/jquery.jeditable.mini.js" type="text/javascript" charset="utf-8"></script>
 
 <style>
   .ui-autocomplete-loading {
@@ -98,14 +99,38 @@ glob_c_sale = 0;
     });
     
 $('#id_sale').change();
+
+$('.click').editable('/bicycle-store/edit/362/', {
+     	 id   : 'id',
+         name : 'serial',
+         submitdata : function() {
+      	 	return {id : $(this).attr('id_serial')};
+    	 },
+         indicator : 'Saving...',
+         tooltip   : 'Click to edit...',
+         select : true,
+         style  : "inherit",
+         callback : function(value, settings) {
+         $(this).html(value);
+     	}
+     });
+
 });
 
 </script>
 
 <body  onload="document.getElementById('client').focus()">
 
-<h1> {{text}} <font color="red" id="s_number">
-({{serial_number}}) </font></h1>
+<h1> {{text}}
+<font color="red" id="s_number">
+
+{% if user.is_authenticated %} 
+<b class="click" style="display: inline" id_serial="{{ bike_id }}" title="Doubleclick to edit...">({{serial_number}})</b> </font>
+{% else %}
+<b id_serial="{{ bike_id }}" title="Doubleclick to edit...">({{serial_number}})</b> </font>
+{% endif %}
+
+</h1>
 <form action="." method="POST" enctype="multipart/form-data">
 <div class="ui-widget">
   <label for="client">Клієнт: </label>

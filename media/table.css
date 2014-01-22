@@ -1,6 +1,11 @@
+table#price {
+	border: 0; /* Рамка вокруг таблицы */
+}
+
 TABLE { /*width: 100%; */ /* Ширина таблицы */
 	/*border: 4px double black; /* Рамка вокруг таблицы */
-	border: 2px solid black; /* Рамка вокруг таблицы */
+	border: 0; /* Рамка вокруг таблицы */
+	/*border: 0px solid black; /* Рамка вокруг таблицы */
 	border-collapse: collapse; /* Отображать только одинарные линии */
 }
 
@@ -126,3 +131,5 @@ table#product TD { /* padding: 5px; /* Поля вокруг содержимого ячеек */
 	border: 1px solid black; /* Граница вокруг ячеек */
 	font-size: 10pt;
 }
+
+

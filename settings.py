@@ -24,8 +24,8 @@ MANAGERS = ADMINS
 DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 DATABASE_NAME = 'rivelo'             # Or path to database file if using sqlite3.
 DATABASE_USER = 'rivelo'             # Not used with sqlite3.
-DATABASE_PASSWORD = 'SZEw2QjzyEyo38oyTlAsYu55Lhnv1ZDM'         # Not used with sqlite3.
-DATABASE_HOST = '212.224.118.173'             # Set to empty string for localhost. Not used with sqlite3.
+DATABASE_PASSWORD = 'uOmkJPnj5i5zjF6uC7nvh7tASGn3Tr8L3C0ieJtAgndCZ'         # Not used with sqlite3.
+DATABASE_HOST = '62.210.141.180'             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = '3306'             # Set to empty string for default. Not used with sqlite3.
 
 
