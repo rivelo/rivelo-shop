@@ -19,6 +19,40 @@ $("#qr_tr1").qrcode({
 };
 </script>
 
+<style type="text/css">
+.table {
+    width: 310px;
+    height: 143px;
+}
+
+.TableD {
+	border: 1px solid white; /* Граница вокруг ячеек */
+	border-bottom: 1px solid white;
+	}     
+
+table {
+    border: 2px solid white;
+    border-spacing: 1px;
+    }
+
+TR {
+	/* border-bottom: 1px solid black; */ 
+	}
+TD{
+
+	}
+
+.nameTD { /* padding: 5px; /* Поля вокруг содержимого ячеек */
+	border: 1px solid white; /* Граница вокруг ячеек */
+	/*border-bottom: 1px solid black;*/ 
+	}     
+
+a { 
+    text-decoration: none; /* Отменяем подчеркивание у ссылки */
+   } 
+     
+</style>
+
 {% load poll_extras %}
 
 {% if view %}
@@ -33,39 +67,38 @@ $("#qr_tr1").qrcode({
 
 {% endif %}
 
-<table BORDER=0 CELLPADDING=4> 
+<!-- <table border="1" CELLPADDING=0px style="padding: 1px;">  --> 
+<table>
 <tr>
 {% for type in catalog %}
 
-<td>
+<td class="nameTD">
 
-<table width=400mm>
+<table class="table">
 
-<tr >
-{% with type.id|sale_url:request.get_host as url_buy %}
-<td rowspan="5" width=80px>
-<img src="{{url_buy|qr:"80x80"}}" />
+<tr>
+{% with type.id|sale_url:request.get_host as url_buy %}  
+<td rowspan="5" width=105px height=100px class="nameTD" style="border-bottom: 1px solid black;">
+<img src="{{url_buy|qr:"100x100"}}" />
 </td>
 {% endwith %}
 </tr>
 
-<tr>
-	<td>
-<b><FONT COLOR=black FACE="Geneva, Arial" SIZE=1>	Код </FONT></b> 
+<tr >
+	<td align="right" style="font-size: 10pt;" class="nameTD">
+<b>Код</b> 
 	</td>
-	<td>
-	<FONT COLOR=black FACE="Geneva, Arial" SIZE=1>	       
+	<td style="padding-left: 3px; font-family: Arial; font-size: 9pt;" class="nameTD">
 	{{type.catalog__ids}}
 	{{type.ids}}
-	</FONT>
 	</td>
 </tr>
 
 <tr>
-	<td>
+	<td align="right" style="font-size: 10pt;" class="nameTD">
 <b>	Виробник </b>
 	</td>	
-	<td>       
+	<td style="padding-left: 5px; font-size: 10pt;" class="nameTD">       
 	{{type.manufacturer}}
 	</td>
 </tr>
@@ -81,29 +114,40 @@ $("#qr_tr1").qrcode({
 -->
 
 <tr>
-	<td width=100px>
-<b>	Країна виробник </b>
+	<td width=95px align="right" class="nameTD">
+<b style="font-size: 10pt;"> Країна виробник </b>
 	</td>
-	<td>
+	<td style="padding-left: 5px;" class="nameTD">
 	{{type.country}}
 	</td>	
 </tr>
 
 <tr>
-	<td>
-<b>	Ціна </b>
+	<td align="right" class="nameTD" style="border-bottom: 1px solid black;">
+<b style="font-size: 10pt;">	Ціна </b>
 	</td>
-	<td>       
+	<td style="padding-left: 5px; font-size: 10pt; border-bottom: 1px solid black;" class="nameTD">       
 <b>	{{type.price}} грн. </b>
 	</td>
 </tr>       
 
 <tr>
-	<td>       
+<!--
+ 	<td>       
 <b>	Назва </FONT></b>
 	</td>
-	<td width = 190 colspan=2>       
-	<a href="/catalog/edit/{{ type.id }}">{{type.name}}</a>
+--> 
+{% with type.name|lenght as s_len %}
+{% if s_len >= 80  %}
+	<td width = 80mm colspan=3 style="padding-left: 5px; text-align: center; font-size: 8pt;" class="TableD">
+{% endif %}
+{% if s_len >= 40 and  s_len < 79 %} 
+	<td width = 80mm colspan=3 style="padding-left: 5px; text-align: center; font-size: 9pt;" class="TableD">	       
+{% else %}
+	<td width = 80mm colspan=3 style="padding-left: 5px; text-align: center; font-size: 11pt;" class="TableD">
+{% endif %}
+{% endwith %}
+	<a href="/catalog/edit/{{ type.id }}" style="margin-right:20px">{{type.name}}</a>
 	</td>
 </tr>
 
@@ -114,14 +158,14 @@ $("#qr_tr1").qrcode({
 
 
 
-{% if forloop.counter|divisibleby:"2"  %}
+{% if forloop.counter|divisibleby:"3"  %}
 </tr><tr>
 {% endif %}
 
-{% if forloop.counter|divisibleby:"18"  %}
+{% if forloop.counter|divisibleby:"27"  %}
 </table>
 <p style="page-break-after: always"></p>
-<table BORDER=0 CELLPADDING=4> 
+<table> 
 {% endif %}
  
 {% endfor %}   

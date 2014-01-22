@@ -11,7 +11,9 @@
 			<li><a href="/client/view/">Клієнти</a></li>
 			<li><a href="/clientdebts/view/">Боржники</a></li>
 			<li><a href="/clientcredits/view/">Платежі (Кредитори)</a></li>
+{% if user.is_authenticated %}			
 			<li><a href="/clients/balance/">Баланс</a></li>
+{% endif %}			
 		</ul>
 	</li>
 	<li><a href="#">Велосипеди</a>
@@ -56,7 +58,7 @@
 		<ul>
 			<li><a href="/shop/price/lastadded/10/view/">Цінники по останнім товарам</a></li>
 			<li><a href="/shop/price/company/12/view/">Цінники по виробнику</a></li>
-			<li><a href="/invoice/add/">Додати товар</a></li>
+<!-- 			<li><a href="/invoice/add/">Додати товар</a></li>  -->
        		<li><a href="/invoice/search/">Пошук наявного товару</a></li>
        		<li><a href="/invoice/list/10/view/">Наявний товар 10 останніх</a></li>
        		<li><a href="/invoice/manufacture/view/">Вибірка по виробнику</a></li>
@@ -70,16 +72,23 @@
 			<li><a href="/workshop/view/">Виконані роботи</a></li>
 			<li><a href="/workstatus/view/">Статус роботи</a></li>
 			<li><a href="/workticket/view/">Заявка</a></li>
+<!--
 			<li><a href="/manyforms/2">Тестовий формсет 1</a></li>
 			<li><a href="/manyforms/test/">Тестовий формсет 2</a></li>
 			<li><a href="/manyforms/test1/">Тестовий формсет 3</a></li>
+-->
 		</ul>
 		<li><a href="#">Прокат</a>
 		<ul>
-			<li><a href="/rent/view/">Прокат</a></li>
-			<li><a href="/client/order/add/">Замовлення запчастин</a></li>			
+			<li><a href="/rent/add/">Створити</a></li>
+			<li><a href="/rent/view/">Список речей у прокаті</a></li>			
+		</ul>
+		<li><a href="#">Замовлення</a>
+		<ul>
+			<li><a href="/client/order/add/">Замовити</a></li>			
 			<li><a href="/client/order/view/">Список замовлених запчастин</a></li>
 		</ul>
+		
 {% if perms.accounting.add_preorder %}		
 	</li>	
 		<li><a href="#">Власні затрати</a>

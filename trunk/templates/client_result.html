@@ -21,6 +21,11 @@
 $(document).ready(function() {
 	$( document ).tooltip();
 	$( "#dialog" ).hide();
+	
+	$( "#img_repair" ).click(function() {
+      $( "#dialog_r" ).dialog({ autoOpen: true });
+  	});
+	
 })
 
 
@@ -125,7 +130,13 @@ $(function() {
 		});
 
        
-});        
+});
+
+$(function() {
+    $( "#dialog_r" ).dialog({ autoOpen: false });
+  });
+  
+         
 </script>
 
 <body onLoad="res(); resWorkshop()">
@@ -139,9 +150,30 @@ $(function() {
     </span>
     </h1>
 </div>
+
+<!-- repair bike  -->
+<img style="display: none;" id="img_repair" src="http://thumb10.shutterstock.com/thumb_small/295516/103760093/stock-photo-bicycle-repair-sign-on-a-white-background-part-of-a-series-103760093.jpg" height="64px" >
+
+<div id="dialog_r" title="Заявки на ремонт:">
+<table>
+{% for ticket in workshop  %}
+{% if ticket.status__name = 'Прийнято' %}
+  <tr bgcolor="#CCFF99" > 
+  <script>
+  $('#img_repair').show();
+  </script>
+{% else %}
+  <tr bgcolor="#FFFFFF">
+{% endif %}  
+  <td>{{ticket.date}}</td><td>{{ticket.description}}</td><td>{{ticket.status__name}}</td>
+  </tr>
+{% endfor %}
+</table>
+</div>
+
 <div style="float: right;   
   margin: 10px 0px 0px 0px;  
-  text-align: right;  ">    
+  text-align: right;  ">
 <button id="button">Button with icon only</button>
 {% for bike in b_bike %}
 <button>{{bike.model__model__model}} - {{bike.date}}</button>
@@ -158,8 +190,9 @@ $(function() {
 
     <div style="clear:both;">
 	<br>
-	 <h2 style="color:red;"> Cума:  {{clients|floatformat:2}} грн.</h2>
-	<br>
+	 <h2 style="color:red;"> Cума:  {{clients|floatformat:2}} грн.
+	 </h2>	
+	
 	</div>
 
 	

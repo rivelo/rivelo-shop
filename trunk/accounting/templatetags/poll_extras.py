@@ -81,5 +81,15 @@ def sale_url(value,host):
         Usage:
         {{object.code|sale_url}}"
     """
-    #return "http://127.0.0.1:8001/client/invoice/catalog/%s/add" % (value)
+#    host="192.168.0.102:8001"
     return "%s/sale/%s/" % (host, value)
+
+
+@register.filter
+def lenght(value):
+    """
+        Usage:
+        {{object.code|lenght}}"
+    """
+    return len(value)
+

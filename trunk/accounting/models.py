@@ -323,7 +323,7 @@ class ClientOrder(models.Model):
         #return self.origin_id 
 
     class Meta:
-        ordering = ["client", "-date", "catalog"]    
+        ordering = ["status", "client", "-date", "catalog"]    
 
 
 #my costs (Затрати)
