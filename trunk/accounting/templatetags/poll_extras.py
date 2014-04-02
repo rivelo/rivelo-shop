@@ -82,7 +82,8 @@ def sale_url(value,host):
         {{object.code|sale_url}}"
     """
 #    host="192.168.0.102:8001"
-    return "%s/sale/%s/" % (host, value)
+    host="10.0.0.5:8001"
+    return "%s/s/%s/" % (host, value)
 
 
 @register.filter

@@ -2,6 +2,21 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
+<br>
+{% for group in user.groups.all %}
+    {% if group.name == 'admin' %}
+<a href="/bicycle/sale/brand/11/year/2012/month/11/view">Orbea 2012</a> /    
+<a href="/bicycle/sale/brand/11/year/2013/month/11/view">Orbea 2013</a> /
+<a href="/bicycle/sale/brand/1/year/2011/month/1/view">Kellys 2011</a> /
+<a href="/bicycle/sale/brand/1/year/2012/month/1/view">Kellys 2012</a> /   
+<a href="/bicycle/sale/brand/1/year/2013/month/1/view">Kellys 2013</a> /
+<a href="/bicycle/sale/brand/3/year/2012/month/1/view">Trek 2012</a> / 
+<a href="/bicycle/sale/brand/3/year/2013/month/1/view">Trek 2013</a> /
+<a href="/bicycle/sale/brand/138/year/2013/month/1/view">Schwinn 2013</a> /
+
+    {% endif %}
+{% endfor %}		
+
 <h1>Список проданих велосипедів</h1>
 
 {% load template_math %}   
@@ -18,6 +33,11 @@
 		<th>Знижка %</th>
 		<th>Сума</th>
 		<th>Дата</th>
+{% for group in user.groups.all %}
+    {% if group.name == 'admin' %}
+		<th>Ціна $</th>
+    {% endif %}
+{% endfor %}		
 		<th>Сервіс</th>
 		<th>Опис</th>
 		<th>Дія</th>
@@ -27,7 +47,9 @@
 	<tr>
 		<td title="{{type.user}}">{{forloop.counter}}</td>
 		<td title="Редагувати"><a href="/bicycle/sale/edit/{{ type.id }}">{{type.id}}</a></td>
-		<td title="{{type.model.size}}"><a href="/bicycle/photo/{{type.model.model.id}}">{{type.model}}</a></td>
+<!-- 		<td title="{{type.model.size}}"><a href="/bicycle/photo/{{type.model.model.id}}">{{type.model}}</a></td>
+ -->
+		<td title="{{type.model.size}}"><a href="/bicycle-store/edit/{{type.model.id}}">{{type.model}}</a></td>
 		<td>{{type.model.serial_number}}</td>
 		<td><a href="/client/{{type.client.id}}">{{type.client}}</a></td>
 		<td title="{{type.price|percentage:type.sale}}">{{type.price}}</td>
@@ -35,6 +57,11 @@
 		<td align="center" title="{{type.price|percentage:type.sale}}">{{type.sale}}</td>
 		<td align="center">{{type.sum}}</td>
 		<td align="center">{{type.date|date:"D d M Y"}}</td>
+{% for group in user.groups.all %}
+    {% if group.name == 'admin' %}
+		<td align="center">{{type.model.price}}</td>
+    {% endif %}
+{% endfor %}			
 		
 {% if type.service %}
 <td>{{type.service|yesno:"Пройдено,Непройдено,Невідомо"}}
@@ -67,6 +94,11 @@
 		<th></th>
 		<th></th>
 		<th>Не пройдено ТО:</th>
+{% for group in user.groups.all %}
+    {% if group.name == 'admin' %}
+		<th>{{price_opt}}</th>
+    {% endif %}
+{% endfor %}			
 		<th>{{service_summ}}</th>
 		<th></th>
 		<th></th>

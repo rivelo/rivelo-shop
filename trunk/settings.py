@@ -24,8 +24,8 @@ MANAGERS = ADMINS
 DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 DATABASE_NAME = 'rivelo'             # Or path to database file if using sqlite3.
 DATABASE_USER = 'rivelo'             # Not used with sqlite3.
-DATABASE_PASSWORD = 'uOmkJPnj5i5zjF6uC7nvh7tASGn3Tr8L3C0ieJtAgndCZ'         # Not used with sqlite3.
-DATABASE_HOST = '62.210.141.180'             # Set to empty string for localhost. Not used with sqlite3.
+DATABASE_PASSWORD = 'Pnj5i5zjF6uC7nv'         # Not used with sqlite3.
+DATABASE_HOST = '195.154.74.135'             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = '3306'             # Set to empty string for default. Not used with sqlite3.
 
 
@@ -56,7 +56,7 @@ DEFAULT_FROM_EMAIL = 'user@domain.com'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'velorivne@gmail.com'
-EMAIL_HOST_PASSWORD = 'velo4velo'
+EMAIL_HOST_PASSWORD = 'gvelovelo'
 EMAIL_PORT = 587
 
 # Absolute path to the directory that holds media.

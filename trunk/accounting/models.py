@@ -617,6 +617,7 @@ class Discount(models.Model):
     class Meta:
         ordering = ["name", "sale", "date_end"]    
 
+
 import datetime
 
 class Rent(models.Model):
@@ -636,3 +637,17 @@ class Rent(models.Model):
     class Meta:
         ordering = ["catalog", "date_start", "date_end"]    
     
+
+class ShopPrice(models.Model):
+    catalog = models.ForeignKey(Catalog)
+    scount = models.IntegerField(default = 1) # shop
+    dcount = models.IntegerField(default = 0) # depository
+    date = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
+    
+    def __unicode__(self):
+        return self.count
+
+    class Meta:
+        ordering = ["catalog", "scount"]    
+

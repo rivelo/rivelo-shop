@@ -44,8 +44,10 @@ tr.odd {
 
 </style>
 
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
 <script type="text/javascript" src="/media/jquery-1.8.3.js"></script>
-<script type="text/javascript" src="/media/jquery.hotkeys.js"></script>
+<script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+{# <script type="text/javascript" src="/media/jquery.hotkeys.js"></script> #}
 {# <script type="text/javascript" src="/media/jquery.tablesorter.js"></script> #}
 <script type="text/javascript" language="javascript" src="/media/jquery.dataTables.min.js"></script>
 
@@ -148,7 +150,8 @@ function ShowHideRow(){
 	
 
 $(document).ready(function() {
-    oTable = $('#myTable').dataTable({
+	
+ oTable = $('#myTable').dataTable({
     "sPaginationType": "full_numbers",
     "iDisplayLength": 100,
     "bAutoWidth": true,
@@ -171,7 +174,7 @@ $(document).ready(function() {
 {% endif %}      
        null
     ]
-   });
+ });
    
 // Hide the second column after initialisation
 {% if category_name %}
@@ -181,9 +184,50 @@ $(document).ready(function() {
   oTable.fnSetColumnVis( 2, false );
 {% endif %}
 	
-	oTable.fnSetColumnVis( 1, false );   
+  oTable.fnSetColumnVis( 1, false );   
   oTable.fnSetColumnVis( 9, false );   
   oTable.fnSetColumnVis( 10, false );
+
+
+$("#dialog").dialog({
+	autoOpen: false,
+      resizable: false,
+      modal: true,
+      buttons: {
+        "Додати": function() {
+			$.ajax({
+                type: "GET",
+                url: "/shop/price/print/add/",
+                data: {id:  $("#dtext").attr("ids"), scount: $('#spinner').val()},
+                dataType: "text",
+                success:function(msg){
+//                    alert("Все отлично ушло на сервер - " + msg);
+//               	    $('#spinner').after('<p>ajax done</p>');
+                },
+                error:function(){
+                    alert("При отправке возникли проблемы");
+                }
+            });
+
+        
+          $( this ).dialog( "close" );
+        },
+        "Відмінити": function() {
+          $( this ).dialog( "close" );
+        }
+      }
+});
+
+
+ $(".addprice" ).click(function() {
+    $("#dtext").html($(this).attr('href'));
+    $("#dtext").attr({"ids": $(this).attr('ids')});
+	var spinner = $("#spinner").spinner();
+	$("#spinner").val(1);       
+   $("#dialog").dialog("open");
+ 
+ });
+ 
 });
 
 function fnShowHide( iCol )
@@ -232,8 +276,9 @@ function runOnKeys(func) {
 }
 
 runOnKeys(
-  function() { alert("Привет!") 
-  document.getElementById('search_field').focus()},
+  function() { 
+  //alert("Привет!") 
+  document.getElementById('tsearch_field').focus()},
   "Q".charCodeAt(0),
   "W".charCodeAt(0)
 );
@@ -246,7 +291,7 @@ runOnKeys(
     <title>Список товару</title>
     <link rel="stylesheet" type="text/css" href="/media/table.css">
 </head>
-<body onload="document.getElementById('search_field').focus()">
+<body onload="document.getElementById('tsearch_field').focus()">
 
 {% for category in category_list %}
 <b> | </b> <a href="/invoice/category/{{category.id}}/view/">{{category.name_ukr}}</a>
@@ -271,6 +316,12 @@ runOnKeys(
 , <a href="javascript:void(0);" onclick="fnShowHide(9);">Сума</a>
 , <a href="javascript:void(0);" onclick="fnShowHide(10);">Опис</a>
 
+<!-- Dialog to add print price -->
+	<div id="dialog" title="Add price">
+	<p id="dtext">Додати цінник до списку друку</p>
+	<label for="spinner">Кількість:</label>
+  	<input id="spinner" name="value" value="1">
+	</div>
 
 <form action="/catalog/saleform/" method="post" name="formSum">
 <table border="1" width="100%" id="myTable" class="pretty" cellspacing="1">
@@ -319,7 +370,7 @@ runOnKeys(
 {% endifequal %}
 
 	<td>
-	{{forloop.counter}}
+<p href="/shop/price/print/{{type.catalog}}/add" class="addprice" ids="{{type.catalog}}"> {{forloop.counter}}</p>
 	</td>
 	<td>       
 		<a href="/catalog/id/{{type.catalog}}/view">{{type.catalog}}</a>
