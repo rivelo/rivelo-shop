@@ -94,6 +94,7 @@ urlpatterns = patterns('',
     (r'^bicycle/sale/id/(?P<id>\d+)/view/$', 'catalog.accounting.views.bicycle_sale_list'),
     (r'^bicycle/sale/view/$', 'catalog.accounting.views.bicycle_sale_list'),
     (r'^bicycle/sale/year/(?P<year>\d+)/month/(?P<month>\d+)/view/$', 'catalog.accounting.views.bicycle_sale_list'),
+    (r'^bicycle/sale/brand/(?P<id>\d+)/year/(?P<year>\d+)/month/(?P<month>\d+)/view/$', 'catalog.accounting.views.bicycle_sale_list_by_brand'),    
     (r'^bicycle/sale/edit/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_sale_edit'),    
     (r'^bicycle/sale/delete/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_sale_del'),
     (r'^bicycle/sale/report/month/$', 'catalog.accounting.views.bicycle_sale_report'),
@@ -220,6 +221,7 @@ urlpatterns = patterns('',
     (r'^client/invoice/catalog/(?P<cid>\d+)/add/$', 'catalog.accounting.views.client_invoice'),
     (r'^client/(?P<id>\d+)/invoice/catalog/(?P<cid>\d+)/add/$', 'catalog.accounting.views.client_invoice'),
     (r'^sale/(?P<cid>\d+)/$', 'catalog.accounting.views.client_invoice', {'id': 138}), #short link for sale in android device
+    (r'^s/(?P<cid>\d+)/$', 'catalog.accounting.views.client_invoice', {'id': 138}), #short link for sale in android device    
     (r'^client/invoice/catalog/(?P<id>\d+)/view/$', 'catalog.accounting.views.client_invoice_id'),
     (r'^client/invoice/add/$', 'catalog.accounting.views.client_invoice'),
     (r'^client/invoice/(?P<id>\d+)/delete/$', 'catalog.accounting.views.client_invoice_delete'),
@@ -294,14 +296,6 @@ urlpatterns = patterns('',
     (r'^shop/sale/view/month/(\d+)/$', 'catalog.accounting.views.shopdailysales_list'),
     (r'^shop/sale/view/$', 'catalog.accounting.views.shopdailysales_list'),
     (r'^shop/sale/day/(?P<id>\d+)/delete/$', 'catalog.accounting.views.shopdailysales_delete'),
-    (r'^shop/price/lastadded/(?P<id>\d+)/view/$', 'catalog.accounting.views.shop_price_lastadd'),    
-    (r'^shop/price/lastadded/(?P<id>\d+)/print/$', 'catalog.accounting.views.shop_price_lastadd', {'pprint': True}),
-    (r'^shop/price/company/(?P<mid>\d+)/view/$', 'catalog.accounting.views.shop_price'), #work
-    (r'^shop/price/company/(?P<mid>\d+)/print/$', 'catalog.accounting.views.shop_price', {'pprint': True}), #work
-    (r'^shop/price/bysearch_id/(?P<id>.*)/view/$', 'catalog.accounting.views.shop_price_bysearch_id'),
-    (r'^shop/price/bysearch_id/(?P<id>.*)/print/$', 'catalog.accounting.views.shop_price_bysearch_id_print'),
-    (r'^shop/price/bysearch_name/(?P<id>.*)/view/$', 'catalog.accounting.views.shop_price_bysearch_name'),
-    (r'^shop/price/bysearch_name/(?P<id>.*)/print/$', 'catalog.accounting.views.shop_price_bysearch_name', {'pprint': True}),
     
     (r'^rent/add/$', 'catalog.accounting.views.rent_add'),
     (r'^rent/edit/(?P<id>\d+)/$', 'catalog.accounting.views.rent_edit'),
@@ -369,6 +363,22 @@ urlpatterns += patterns('',
     (r'^report/sales/user/report/$', 'catalog.accounting.views.user_invoice_report', {'day':"all"}),
     (r'^report/sales/user/year/(?P<year>\d+)/month/(?P<month>\d+)/report/$', 'catalog.accounting.views.user_invoice_report', {'day':"all"}),
     (r'^report/sales/user/year/(?P<year>\d+)/month/(?P<month>\d+)/day/(?P<day>\d+)/report/$', 'catalog.accounting.views.user_invoice_report'),
+
+    (r'^shop/price/lastadded/(?P<id>\d+)/view/$', 'catalog.accounting.views.shop_price_lastadd'),    
+    (r'^shop/price/lastadded/(?P<id>\d+)/print/$', 'catalog.accounting.views.shop_price_lastadd', {'pprint': True}),
+    (r'^shop/price/company/(?P<mid>\d+)/view/$', 'catalog.accounting.views.shop_price'), #work
+    (r'^shop/price/company/(?P<mid>\d+)/print/$', 'catalog.accounting.views.shop_price', {'pprint': True}), #work
+    (r'^shop/price/bysearch_id/(?P<id>.*)/view/$', 'catalog.accounting.views.shop_price_bysearch_id'),
+    (r'^shop/price/bysearch_id/(?P<id>.*)/print/$', 'catalog.accounting.views.shop_price_bysearch_id_print'),
+    (r'^shop/price/bysearch_name/(?P<id>.*)/view/$', 'catalog.accounting.views.shop_price_bysearch_name'),
+    (r'^shop/price/bysearch_name/(?P<id>.*)/print/$', 'catalog.accounting.views.shop_price_bysearch_name', {'pprint': True}),
+    (r'^shop/price/print/(?P<id>\d+)/add/$', 'catalog.accounting.views.shop_price_print_add'),
+#    (r'^shop/price/print/add/$', 'catalog.accounting.views.ajax_price_print'),
+    (r'^shop/price/print/add/$', 'catalog.accounting.views.shop_price_print_add'),
+    (r'^shop/price/print/view/$', 'catalog.accounting.views.shop_price_print_view'),
+    (r'^shop/price/print/empty/$', 'catalog.accounting.views.shop_price_print_delete_all'),    
+    (r'^shop/price/print/list/$', 'catalog.accounting.views.shop_price_print_list'),
+    (r'^shop/price/print/(?P<id>\d+)/delete/$', 'catalog.accounting.views.shop_price_print_delete'),
 
 ) 
 

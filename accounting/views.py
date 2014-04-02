@@ -15,7 +15,7 @@ from forms import CatalogForm, ClientForm, ClientDebtsForm, ClientCreditsForm, C
 from models import Dealer, DealerManager, DealerManager, DealerPayment, DealerInvoice, InvoiceComponentList, Bank, Exchange, PreOrder
 from forms import DealerManagerForm, DealerForm, DealerPaymentForm, DealerInvoiceForm, InvoiceComponentListForm, BankForm, ExchangeForm, PreOrderForm, InvoiceComponentForm
 
-from models import WorkGroup, WorkType, WorkShop, WorkStatus, WorkTicket, CostType, Costs, ShopDailySales, Rent
+from models import WorkGroup, WorkType, WorkShop, WorkStatus, WorkTicket, CostType, Costs, ShopDailySales, Rent, ShopPrice
 from forms import WorkGroupForm, WorkTypeForm, WorkShopForm, WorkStatusForm, WorkTicketForm, CostTypeForm, CostsForm, ShopDailySalesForm, RentForm
   
 from django.http import HttpResponseRedirect, HttpRequest, HttpResponseNotFound
@@ -712,6 +712,31 @@ def bicycle_sale_list(request, year=False, month=False, id=None):
         if item.service == False:
             service_summ =  service_summ + 1
     return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_sale_list.html', 'price_summ':price_summ, 'service_summ':service_summ, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+
+
+def bicycle_sale_list_by_brand(request, year=False, month=False, id=None):
+    list = None
+    if (year==False) & (month==False):
+        year = datetime.datetime.now().year
+        month = datetime.datetime.now().month
+        #list = Bicycle_Sale.objects.all().order_by('date')
+        if (id != None):
+            list = Bicycle_Sale.objects.filter(model__model__brand=1, date__year=year).order_by('date')
+        else:
+            list = Bicycle_Sale.objects.filter(date__year=year, date__month=month).order_by('date')
+    else:
+       #list = Bicycle_Sale.objects.filter(date__year=year, date__month=month).order_by('date')
+       list = Bicycle_Sale.objects.filter(model__model__brand=id, date__year=year).order_by('date')
+       
+    price_summ = 0
+    price_opt = 0
+    service_summ = 0
+    for item in list:
+        price_summ = price_summ + item.price
+        price_opt = price_opt + item.model.price
+        if item.service == False:
+            service_summ =  service_summ + 1
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_sale_list.html', 'price_summ':price_summ, 'price_opt': price_opt, 'service_summ':service_summ, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_sale_service(request, id):
@@ -3184,6 +3209,64 @@ def shop_price_bysearch_name(request, id, pprint = False):
     return render_to_response('index.html', {'catalog': list, 'weblink': 'price_list.html', 'view': True, 'link': url, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))    
 
 
+def shop_price_print_add(request, id=None):
+    if request.is_ajax():
+        if auth_group(request.user, 'seller')==False:
+            return HttpResponse('Error: У вас не має прав для редагування')
+        if request.method == 'GET':  
+            GET = request.GET  
+            if GET.has_key('id'):
+                q = request.GET.get( 'id' )
+                if GET.has_key('scount'):
+                    s = request.GET.get( 'scount' )
+                cat = Catalog.objects.get(id=q)
+                sp = ShopPrice()
+                sp.catalog = cat
+                sp.scount = s
+                sp.dcount = 0
+                sp.user = request.user
+                sp.save()
+                return HttpResponse("Виконано", mimetype="text/plain")
+
+    if request.method == 'POST':
+        cat = Catalog.objects.get(id=id)
+        sp = ShopPrice()
+        sp.catalog = cat
+        sp.scount = 1
+        sp.dcount = 1
+        sp.user = request.user
+        sp.save()
+    
+    return HttpResponseRedirect('/shop/price/print/view/')
+#    list = ShopPrice.objects.all().order_by("-id")
+#    return render_to_response('manual_price_list.html', {'price_list': list})    
+
+
+def shop_price_print_view(request):
+    list = ShopPrice.objects.all().order_by("user")
+    return render_to_response('manual_price_list.html', {'price_list': list, 'view': True}, context_instance=RequestContext(request, processors=[custom_proc]))    
+
+
+def shop_price_print_list(request):
+    list = ShopPrice.objects.all().order_by("user", "date", "catalog__manufacturer")
+#    return render_to_response('mtable_pricelist.html', {'price_list': list}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'weblink': 'mtable_pricelist.html', 'price_list': list}, context_instance=RequestContext(request, processors=[custom_proc]))    
+    
+
+def shop_price_print_delete_all(request):
+    list = ShopPrice.objects.all().delete()
+    return render_to_response('index.html', {'weblink': 'manual_price_list.html', 'price_list': list}, context_instance=RequestContext(request, processors=[custom_proc]))        
+#    return render_to_response('manual_price_list.html', {'price_list': list, 'view': True}, context_instance=RequestContext(request, processors=[custom_proc]))    
+
+
+def shop_price_print_delete(request, id):
+    obj = ShopPrice.objects.get(id=id)
+    del_logging(obj)
+    obj.delete()
+    return HttpResponseRedirect('/shop/price/print/list/')
+
+    
+
 #--------------------- MY Costs -------------------------
 def costtype_add(request):
     if request.method == 'POST':
@@ -3817,4 +3900,22 @@ def ajax_test(request):
     return HttpResponse(simplejson.dumps(list(search)), mimetype="application/json")
     #return HttpResponse(serialized_queryset, mimetype='application/json')
 #    return HttpResponse(message, mimetype="text/plain")
+
+def ajax_price_print(request):
+    search = None
+    message = ""
+    if request.is_ajax():
+        if request.method == 'GET':  
+            GET = request.GET  
+            if GET.has_key('id'):
+                q = request.GET.get( 'id' )
+                message = "It's AJAX!!!"
+    else:
+        message = "Error"
+    search = "ok"
+    #search = Catalog.objects.filter(id=q).values('price', 'sale', 'name')
+    #return HttpResponse(simplejson.dumps(list(search)), mimetype="application/json")
+    return HttpResponse(search, mimetype="text/plain")
+
+
 

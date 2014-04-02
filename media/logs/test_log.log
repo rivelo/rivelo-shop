@@ -1200,3 +1200,186 @@ Key = price - Value = 574.77
 Key = currency - Value = 3
 Key = date - Value = 2012-04-21
 Key = description - Value = 
+2014-02-03 00:48:00.406000 >>> DELETE FROM TABLE shop price WHERE id = 8 
+Key = id - Value = 8
+Key = catalog - Value = 1276
+Key = scount - Value = 1
+Key = dcount - Value = 0
+Key = date - Value = 2014-02-03 00:47:46
+Key = user - Value = 4
+2014-02-03 01:30:40.281000 >>> DELETE FROM TABLE shop price WHERE id = 28 
+Key = id - Value = 28
+Key = catalog - Value = 2743
+Key = scount - Value = 1
+Key = dcount - Value = 0
+Key = date - Value = 2014-02-03 01:28:05
+Key = user - Value = 4
+2014-02-03 01:41:39.468000 >>> DELETE FROM TABLE shop price WHERE id = 30 
+Key = id - Value = 30
+Key = catalog - Value = 5974
+Key = scount - Value = 4
+Key = dcount - Value = 0
+Key = date - Value = 2014-02-03 01:41:13
+Key = user - Value = 4
+2014-02-13 01:42:12.546000 >>> DELETE FROM TABLE client invoice WHERE id = 15901 
+Key = id - Value = 15901
+Key = client - Value = 116
+Key = catalog - Value = 5573
+Key = count - Value = 2
+Key = price - Value = 50.0
+Key = sum - Value = 95.0
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = pay - Value = 95.0
+Key = date - Value = 2014-02-08 18:04:06
+Key = description - Value = 
+Key = user - Value = 5
+2014-02-13 01:42:27.765000 >>> DELETE FROM TABLE bicycle_ sale WHERE id = 374 
+Key = id - Value = 374
+Key = model - Value = 353
+Key = client - Value = 2
+Key = price - Value = 3614.0
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = date - Value = 2014-02-11
+Key = service - Value = False
+Key = description - Value = 
+Key = user - Value = 5
+Key = sum - Value = 3433.3
+Key = debt - Value = 8975
+2014-02-16 23:33:31.750000 >>> DELETE FROM TABLE invoice component list WHERE id = 5091 
+Key = id - Value = 5091
+Key = invoice - Value = 465
+Key = catalog - Value = 2246
+Key = count - Value = 10
+Key = price - Value = 2.94
+Key = currency - Value = 2
+Key = date - Value = 2013-04-11
+Key = description - Value = 
+2014-02-17 11:18:05.046000 >>> DELETE FROM TABLE client invoice WHERE id = 15886 
+Key = id - Value = 15886
+Key = client - Value = 121
+Key = catalog - Value = 1122
+Key = count - Value = 1
+Key = price - Value = 193.0
+Key = sum - Value = 193.0
+Key = currency - Value = 3
+Key = sale - Value = 0
+Key = pay - Value = 193.0
+Key = date - Value = 2014-02-08 14:14:24
+Key = description - Value = 
+Key = user - Value = 5
+2014-02-27 13:08:43.203000 >>> DELETE FROM TABLE bicycle_ sale WHERE id = 382 
+Key = id - Value = 382
+Key = model - Value = 406
+Key = client - Value = 867
+Key = price - Value = 4899.0
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = date - Value = 2014-02-22
+Key = service - Value = False
+Key = description - Value = 
+Key = user - Value = 5
+Key = sum - Value = 4654.05
+Key = debt - Value = 9073
+2014-03-05 01:52:15.406000 >>> DELETE FROM TABLE client invoice WHERE id = 3152 
+Key = id - Value = 3152
+Key = client - Value = 138
+Key = catalog - Value = 3436
+Key = count - Value = 1
+Key = price - Value = 55.0
+Key = sum - Value = 55.0
+Key = currency - Value = 3
+Key = sale - Value = 0
+Key = pay - Value = 55.0
+Key = date - Value = 2012-06-23 00:00:00
+Key = description - Value = 
+Key = user - Value = None
+2014-03-05 01:53:35.937000 >>> DELETE FROM TABLE catalog WHERE id = 3436 
+Key = id - Value = 3436
+Key = ids - Value = 10415310
+Key = name - Value = Камера Schwalbe AV7, 20x1.5-2.5 40mm
+Key = manufacturer - Value = 8
+Key = type - Value = 51
+Key = size - Value = None
+Key = weight - Value = None
+Key = photo - Value = 
+Key = year - Value = 2012
+Key = sale_to - Value = 2012-04-10
+Key = color - Value = Чорний
+Key = price - Value = 63.0
+Key = currency - Value = 3
+Key = sale - Value = 0.0
+Key = country - Value = 27
+Key = count - Value = 7
+Key = length - Value = None
+Key = description - Value = 
+2014-03-05 01:56:11.359000 >>> DELETE FROM TABLE catalog WHERE id = 4787 
+Key = id - Value = 4787
+Key = ids - Value = MUD-43-23
+Key = name - Value = Крыло задн. 28" SKS S-Blade
+Key = manufacturer - Value = 14
+Key = type - Value = 34
+Key = size - Value = None
+Key = weight - Value = None
+Key = photo - Value = 
+Key = year - Value = 2012
+Key = sale_to - Value = 2013-04-07
+Key = color - Value = Чорний
+Key = price - Value = 170.0
+Key = currency - Value = 3
+Key = sale - Value = 0.0
+Key = country - Value = 6
+Key = count - Value = 2
+Key = length - Value = 0.0
+Key = description - Value = 
+2014-03-10 02:19:05.718000 >>> DELETE FROM TABLE client invoice WHERE id = 15927 
+Key = id - Value = 15927
+Key = client - Value = 405
+Key = catalog - Value = 3616
+Key = count - Value = 1
+Key = price - Value = 235.0
+Key = sum - Value = 223.25
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = pay - Value = 223.25
+Key = date - Value = 2014-02-10 16:28:24
+Key = description - Value = 
+Key = user - Value = None
+2014-03-26 02:37:34.703000 >>> DELETE FROM TABLE client invoice WHERE id = 16918 
+Key = id - Value = 16918
+Key = client - Value = 439
+Key = catalog - Value = 6443
+Key = count - Value = 4
+Key = price - Value = 445.0
+Key = sum - Value = 1691.0
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = pay - Value = 0.0
+Key = date - Value = 2014-03-26 02:36:42
+Key = description - Value = 
+Key = user - Value = 4
+2014-03-27 01:54:14.093000 >>> DELETE FROM TABLE bicycle_ store WHERE id = 456 
+Key = id - Value = 456
+Key = model - Value = 155
+Key = serial_number - Value = WTU070C5735G
+Key = size - Value = 25
+Key = price - Value = 250.0
+Key = currency - Value = 2
+Key = count - Value = 1
+Key = realization - Value = False
+Key = date - Value = 2014-03-22
+Key = description - Value = 
+2014-03-29 02:32:06.359000 >>> DELETE FROM TABLE client invoice WHERE id = 16968 
+Key = id - Value = 16968
+Key = client - Value = 832
+Key = catalog - Value = 6441
+Key = count - Value = 2
+Key = price - Value = 445.0
+Key = sum - Value = 845.5
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = pay - Value = 0.0
+Key = date - Value = 2014-03-27 02:00:28
+Key = description - Value = 
+Key = user - Value = 4
