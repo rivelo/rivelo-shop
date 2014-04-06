@@ -114,16 +114,17 @@ a {
 	</td>
 --> 
 {% with price.catalog.name|lenght as s_len %}
-{% if s_len >= 80  %}
+{% if s_len > 79  %}
 	<td width = 80mm colspan=3 style="padding-left: 5px; text-align: center; font-size: 8pt;" class="TableD">
 {% endif %}
 {% if s_len >= 40 and  s_len < 79 %} 
-	<td width = 80mm colspan=3 style="padding-left: 5px; text-align: center; font-size: 9pt;" class="TableD">	       
-{% else %}
+	<td width = 80mm colspan=3 style="padding-left: 5px; text-align: center; font-size: 9pt;" class="TableD">
+{% endif %}
+{% if s_len < 40 %}		       
 	<td width = 80mm colspan=3 style="padding-left: 5px; text-align: center; font-size: 11pt;" class="TableD">
 {% endif %}
 {% endwith %}
-	<a href="/catalog/edit/{{ type.id }}" style="margin-right:20px">{{price.catalog.name}}</a>
+	<a href="/catalog/edit/{{ type.id }}" style="margin-right:20px">{{price.catalog.name|slice:"100"}}</a>
 	</td>
 </tr>
 
