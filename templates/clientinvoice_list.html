@@ -169,13 +169,16 @@ $(document).ready( function() {
     <td align="center">
 <!-- 	<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{type.sum}}" onclick="resWorkshop()"/>
  -->	
- 
+
 {% ifequal type.sum type.pay %}
 <input type="checkbox" id="model{{forloop.counter}}" class="mc" value="{{type.sum}}" onclick="res()" name="checkbox_{{ type.id }}"/>
 {% else %}
+{% ifequal request.user.username type.user.username %} 
 <input type="checkbox" id="model{{forloop.counter}}" class="mc" value="{{type.sum}}" onclick="res()" checked name="checkbox_{{ type.id }}"/>
+{% else %}
+<input type="checkbox" id="model{{forloop.counter}}" class="mc" value="{{type.sum}}" onclick="res()" name="checkbox_{{ type.id }}"/>
 {% endifequal %}
-
+{% endifequal %}
 	</td>
 	<td align="center">
 	{{type.catalog.count}}

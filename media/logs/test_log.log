@@ -1383,3 +1383,9 @@ Key = pay - Value = 0.0
 Key = date - Value = 2014-03-27 02:00:28
 Key = description - Value = 
 Key = user - Value = 4
+2014-04-10 01:49:08.968000 >>> DELETE FROM TABLE costs WHERE id = 209 
+Key = id - Value = 209
+Key = date - Value = 2014-04-10 01:49:00
+Key = cost_type - Value = 4
+Key = price - Value = 300.0
+Key = description - Value = merck

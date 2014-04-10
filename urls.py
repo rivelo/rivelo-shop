@@ -379,7 +379,7 @@ urlpatterns += patterns('',
     (r'^shop/price/print/empty/$', 'catalog.accounting.views.shop_price_print_delete_all'),    
     (r'^shop/price/print/list/$', 'catalog.accounting.views.shop_price_print_list'),
     (r'^shop/price/print/(?P<id>\d+)/delete/$', 'catalog.accounting.views.shop_price_print_delete'),
-
+    (r'^catalog/price/import/$', 'catalog.accounting.views.price_import'),
 ) 
 
 #===============================================================================
