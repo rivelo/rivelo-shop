@@ -3265,6 +3265,39 @@ def shop_price_print_delete(request, id):
     obj.delete()
     return HttpResponseRedirect('/shop/price/print/list/')
 
+
+import csv
+
+def price_import(request):
+
+    ids_list = []
+#    if 'name' in request.GET and request.GET['name']:
+#        name = request.GET['name']
+    name = 'import'
+    path = settings.MEDIA_ROOT + 'csv/' + name + '.csv'
+    csvfile = open(path, 'rb')
+    pricereader = csv.reader(csvfile, delimiter=';', quotechar='|')
+    w_file = open(settings.MEDIA_ROOT + 'csv/miss.csv', 'wb')
+    spamwriter = csv.writer(w_file, delimiter=';', quotechar='|') #, quoting=csv.QUOTE_MINIMAL)
+    for row in pricereader:
+        id = None
+        #print row[0] + " - " + row[2]
+        id = row[0]
+        ids_list.append(row[0])
+        try:
+            cat = Catalog.objects.get(ids = id)
+            try:
+                cat.price = row[2]
+                cat.save()
+            except:
+                spamwriter.writerow([row[0], row[1], row[2]])
+                    
+        except Catalog.DoesNotExist:          
+            spamwriter.writerow([row[0], row[1], row[2]])
+        #return HttpResponse("Виконано", mimetype="text/plain")
+
+    list = Catalog.objects.filter(ids__in = ids_list)
+    return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
     
 
 #--------------------- MY Costs -------------------------
