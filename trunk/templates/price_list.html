@@ -21,8 +21,10 @@ $("#qr_tr1").qrcode({
 
 <style type="text/css">
 .table {
-    width: 310px;
-    height: 143px;
+    width: 70mm;
+    height: 42mm; 
+    /* width: 100%;
+    height: 243px; */
 }
 
 .TableD {
@@ -78,7 +80,7 @@ a {
 
 <tr>
 {% with type.id|sale_url:request.get_host as url_buy %}  
-<td rowspan="5" width=105px height=100px class="nameTD" style="border-bottom: 1px solid black;">
+<td rowspan="5" class="nameTD" style="border-bottom: 1px solid black;">
 <img src="{{url_buy|qr:"100x100"}}" />
 </td>
 {% endwith %}
@@ -114,8 +116,8 @@ a {
 -->
 
 <tr>
-	<td width=95px align="right" class="nameTD">
-<b style="font-size: 10pt;"> Країна виробник </b>
+	<td align="right" class="nameTD">
+<b style="font-size: 8pt;"> Країна виробник </b>
 	</td>
 	<td style="padding-left: 5px;" class="nameTD">
 	{{type.country}}
@@ -163,7 +165,7 @@ a {
 </tr><tr>
 {% endif %}
 
-{% if forloop.counter|divisibleby:"27"  %}
+{% if forloop.counter|divisibleby:"24"  %}
 </table>
 <p style="page-break-after: always"></p>
 <table> 
