@@ -1322,8 +1322,8 @@ def invoicecomponent_list_by_manufacturer(request, mid=None, availability=False)
     id_list=[]
     psum = 0
     zsum = 0
-    scount = 0
-    zcount = 0
+    scount = 0 # загальна сума товару 
+    zcount = 0 # реальна наявність (сумарно)
     #Наявність
     if availability == False:
         #old work variant
@@ -1341,6 +1341,10 @@ def invoicecomponent_list_by_manufacturer(request, mid=None, availability=False)
         scount = scount + item['sum_catalog']
         id_list.append(item['catalog'])
         item['balance']=item['sum_catalog']
+        cat_count_upd = Catalog.objects.get(id = item['catalog'])
+        cat_count_upd.count = item['balance']
+        cat_count_upd.save()
+        
 #        list_sale = ClientInvoice.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
 #        list_sale = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
     sale_list = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__price', 'catalog__type__name').annotate(sum_catalog=Sum('count'))        
@@ -1350,7 +1354,11 @@ def invoicecomponent_list_by_manufacturer(request, mid=None, availability=False)
             if element['catalog']==sale['catalog']:
                 element['c_sale']=sale['sum_catalog']
                 element['balance']=element['sum_catalog'] - element['c_sale']
-                element['catalog__type__name'] = sale['catalog__type__name']                
+                element['catalog__type__name'] = sale['catalog__type__name']
+                cat_count_upd = Catalog.objects.get(id = element['catalog'])
+                cat_count_upd.count = element['balance']
+                cat_count_upd.save()
+                
             #else:
         if element.get('catalog__type__name') == None:
             element['catalog__type__name'] = Catalog.objects.values('type__name').get(id=element['catalog'])['type__name']
@@ -1404,8 +1412,7 @@ def invoicecomponent_list_by_category(request, cid=None, limit=0):
     else:
         cat_name = category_list.get(id=cid)
 
-
-    return render_to_response('index.html', {'category_list': category_list, 'category_name': cat_name, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'category_list': category_list, 'category_name': cat_name, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'type_id':cid, 'weblink': 'invoicecomponent_list_test.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def invoicecomponent_manufacturer_html(request, mid):
@@ -1420,6 +1427,20 @@ def invoicecomponent_manufacturer_html(request, mid):
         company_name = Manufacturer.objects.get(id=mid)
         
     return render_to_response('index.html', {'componentlist': list, 'company_name': company_name, 'zcount': zcount, 'weblink': 'component_list_by_manufacturer_html.html'})
+
+
+def invoicecomponent_category_html(request, mid):
+    list = Catalog.objects.filter(type__id=mid, count__gt=0)
+    zcount = 0
+    for elem in list:
+        zcount = zcount + elem.count
+    
+    if mid == None:
+        category = ""
+    else:
+        category = Type.objects.get(id=mid)
+        
+    return render_to_response('index.html', {'componentlist': list, 'type_name': category, 'zcount': zcount, 'weblink': 'component_list_by_type_html.html'})
 
 
 from django.db.models import F
@@ -1460,7 +1481,7 @@ def invoicecomponent_del(request, id):
     del_logging(obj)
     obj.delete()
     cat = Catalog.objects.get(id = obj.catalog.id)
-    cat.count = cat.count + obj.catalog.count
+    cat.count = cat.count - obj.count
     cat.save()
     return HttpResponseRedirect('/invoice/list/10/view/')
 
@@ -1600,6 +1621,41 @@ def invoice_cat_id_list(request, cid=None, limit=0):
         scount = scount + item.count
         
     return render_to_response('index.html', {'list': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoice_component_report.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+
+
+def invoice_import(request):
+# id / name / company / type / color / country / count/ price / currency / invoice_id / rrp_price / currency /
+# id / name / count / price / currency / invoice number
+    ids_list = []
+#    if 'name' in request.GET and request.GET['name']:
+#        name = request.GET['name']
+    name = 'id'
+    path = settings.MEDIA_ROOT + 'csv/' + name + '.csv'
+    csvfile = open(path, 'rb')
+    invoice_reader = csv.reader(csvfile, delimiter=';', quotechar='|')
+    w_file = open(settings.MEDIA_ROOT + 'csv/' + name + '_miss.csv', 'wb')
+    spamwriter = csv.writer(w_file, delimiter=';', quotechar='|') #, quoting=csv.QUOTE_MINIMAL)
+    for row in invoice_reader:
+        id = None
+        #print row[0] + " - " + row[2]
+        id = row[0]
+        ids_list.append(row[0])
+        try:
+            cat = Catalog.objects.get(ids = id)
+            c = Currency.objects.get(id = row[8])
+            inv = DealerInvoice.objects.get(id = row[9])
+            InvoiceComponentList(invoice = inv, catalog = cat, count = row[6], price= row[7], currency = c, date= now).save()
+            cat.count = cat.count + int(row[6])
+            cat.save()
+            #if row[6]: 
+            #    cat.price = row[6]
+            #    cat.save()
+                    
+        except Catalog.DoesNotExist:
+            spamwriter.writerow([row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11]])
+
+    list = Catalog.objects.filter(ids__in = ids_list)
+    return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))    
 
 
 # --------------- Classification ---------
@@ -1779,6 +1835,46 @@ def manufacturer_delete(request, id):
     obj.delete()
     return HttpResponseRedirect('/manufacturer/view/')
 
+
+def catalog_import(request):
+# id / company / type / name / color / country / price / currency / 
+# id / name / company / type / color / country / count/ price / currency / invoice_id / rrp_price / currency /
+
+    ids_list = []
+#    if 'name' in request.GET and request.GET['name']:
+#        name = request.GET['name']
+    name = 'catalog'
+    path = settings.MEDIA_ROOT + 'csv/' + name + '.csv'
+    csvfile = open(path, 'rb')
+    pricereader = csv.reader(csvfile, delimiter=';', quotechar='|')
+    w_file = open(settings.MEDIA_ROOT + 'csv/catalog_miss.csv', 'wb')
+    spamwriter = csv.writer(w_file, delimiter=';', quotechar='|') #, quoting=csv.QUOTE_MINIMAL)
+    for row in pricereader:
+        id = None
+        #print row[0] + " - " + row[2]
+        id = row[0]
+        ids_list.append(row[0])
+        try:
+            cat = Catalog.objects.get(ids = id)
+            if row[10]: 
+                cat.type = Type.objects.get(id = row[3])
+                cat.manufacturer = Manufacturer.objects.get(id = row[2])
+                cat.price = row[10]
+                cat.save()
+            else:
+                spamwriter.writerow([row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]])
+                    
+        except Catalog.DoesNotExist:
+            m = Manufacturer.objects.get(id=row[2])
+            t = Type.objects.get(id=row[3])
+            c = Currency.objects.get(id = row[11])
+            country = Country.objects.get(id=row[5])                                        
+            Catalog(ids=row[0], name=row[1], manufacturer=m, type=t, year=2014, color=row[4], price=row[10], currency=c, sale=0, country=country, count = 0).save()          
+            spamwriter.writerow([row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]])
+        #return HttpResponse("Виконано", mimetype="text/plain")
+
+    list = Catalog.objects.filter(ids__in = ids_list)
+    return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def catalog_add(request):
@@ -3245,6 +3341,11 @@ def shop_price_print_add(request, id=None):
 def shop_price_print_view(request):
     list = ShopPrice.objects.all().order_by("user")
     return render_to_response('manual_price_list.html', {'price_list': list, 'view': True}, context_instance=RequestContext(request, processors=[custom_proc]))    
+
+
+def shop_price_qrcode_print_view(request):
+    list = ShopPrice.objects.all().order_by("user")
+    return render_to_response('manual_qrcode_price_list.html', {'price_list': list, 'view': True}, context_instance=RequestContext(request, processors=[custom_proc]))    
 
 
 def shop_price_print_list(request):

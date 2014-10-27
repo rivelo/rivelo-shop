@@ -73,6 +73,7 @@ $(document).ready(function() {
 
     
 	<tr>
+	<th>#</th>
     	<th id="id_col">ID</th>
     	<th>Код</th>
     	<th>Назва</th>
@@ -98,7 +99,9 @@ $(document).ready(function() {
 {% else %}
 <tr BGCOLOR="#FF6600">
 {% endifequal %}
-
+	<td>
+	{{forloop.counter}}
+	</td>	
 	<td>       
 	<abbr title="Додати товар до накладної"><a href="/invoice/catalog/{{ type.id }}/add">{{type.id}}</a></abbr>
 	</td>
