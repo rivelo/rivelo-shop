@@ -367,6 +367,10 @@ urlpatterns += patterns('',
     (r'^report/sales/user/year/(?P<year>\d+)/month/(?P<month>\d+)/report/$', 'catalog.accounting.views.user_invoice_report', {'day':"all"}),
     (r'^report/sales/user/year/(?P<year>\d+)/month/(?P<month>\d+)/day/(?P<day>\d+)/report/$', 'catalog.accounting.views.user_invoice_report'),
 
+    (r'^report/workshop/byuser/$', 'catalog.accounting.views.user_workshop_report', {'day':"all"}),
+    (r'^report/workshop/byuser/year/(?P<year>\d+)/month/(?P<month>\d+)/$', 'catalog.accounting.views.user_workshop_report', {'day':"all"}),
+    (r'^report/workshop/byuser/year/(?P<year>\d+)/month/(?P<month>\d+)/day/(?P<day>\d+)/$', 'catalog.accounting.views.user_workshop_report'),
+
     (r'^shop/price/lastadded/(?P<id>\d+)/view/$', 'catalog.accounting.views.shop_price_lastadd'),    
     (r'^shop/price/lastadded/(?P<id>\d+)/print/$', 'catalog.accounting.views.shop_price_lastadd', {'pprint': True}),
     (r'^shop/price/company/(?P<mid>\d+)/view/$', 'catalog.accounting.views.shop_price'), #work

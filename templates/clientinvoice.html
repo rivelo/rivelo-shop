@@ -13,6 +13,15 @@
 	<script type="text/javascript" src="/media/jquery-ui-1.9.2.custom.min.js"></script>	
 	
 <script type="text/javascript">
+
+function payed()
+{
+$("#id_pay").val($('#id_sum').val())
+document.getElementById("UserEnter").submit();
+
+
+}
+
 	$(document).ready(function() {
 		$("#s_client").val($('#id_client').val());
 		$("#s_client").select();
@@ -104,12 +113,12 @@ setInterval(sum, 100)
 <body onload="document.getElementById('s_client').focus()">
 
     <h1>Продаж товару</h1>
-    <form action="." method="POST">
+    <form id="UserEnter" action="." method="POST">
         <table>
         	<input id="s_client" style="width: 550px;" />
             {{ form.as_ul }}
         </table>
-        <p><input type="submit" value="Save"></p>
+        <p><input type="submit" value="Save"><input id="bpay" onclick="payed()" type="button" value="Оплатити"></p>
     </form>
     
     <h3 id="result" style="color:red; background-color:#CCCCCC"}>Сума грн.</h3>

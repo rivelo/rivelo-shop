@@ -42,7 +42,7 @@
 			<li><a href="/category/view/">Класифікатор</a></li>
 			<li><a href="/catalog/import/">Імпортувати з файлу</a></li>
 		</ul>
-{% if user.is_authenticated %}			
+{% if perms.accounting.add_preorder %}			
 	</li>
 		<li><a href="#">Постачальники</a>
 		<ul>
@@ -139,6 +139,14 @@
 	</li>
 {%endif%}	
 
+{% if user.is_authenticated %}		
+	<li><a href="#">Моє меню</a>
+		<ul>
+			<li><a href="/report/sales/user/report/">Продажі за місяць</a></li>
+ 			<li><a href="/report/workshop/byuser/">Роботи за місяць</a></li>  
+		</ul>
+	</li>
+{%endif%}	
 
 
 </ul>

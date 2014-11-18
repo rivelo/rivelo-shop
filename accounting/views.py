@@ -610,7 +610,9 @@ def bicycle_sale_add(request, id=None):
             update_bicycle.save()
             
             update_client = Client.objects.get(id=client.id)
-            update_client.summ = update_client.summ + price 
+            update_client.summ = update_client.summ + price
+            if update_client.sale < 5:
+                update_client.sale = 5 
             update_client.save()
             
             cdeb_price = price * (1 - sale/100.0)
@@ -1916,7 +1918,7 @@ def catalog_edit(request, id):
             if auth_group(request.user, 'admin')==False:
                 return HttpResponse('Error: У вас не має прав для редагування')
             POST = request.POST  
-            if POST.has_key('id'):
+            if POST.has_key('id') and POST.has_key('price'):
                 id = request.POST.get('id')
                 p = request.POST.get('price')
                 obj = Catalog.objects.get(id = id)
@@ -1924,11 +1926,19 @@ def catalog_edit(request, id):
                 obj.save() 
 #                c = Catalog.objects.filter(id = id).values('price', 'id')
                 c = Catalog.objects.filter(id = id).values_list('price', flat=True)
+                return HttpResponse(c)
+            
+            if POST.has_key('id') and POST.has_key('sale'):
+                id = request.POST.get('id')                
+                s = request.POST.get('sale')
+                obj = Catalog.objects.get(id = id)                                
+                obj.sale = s
+                obj.save() 
 
+                c = Catalog.objects.filter(id = id).values_list('sale', flat=True)
                 return HttpResponse(c)
               #  return HttpResponse(simplejson.dumps(list(c)))
-    
-    
+        
     a = Catalog.objects.get(pk=id)
     #url1=request.META['HTTP_REFERER']
     if request.method == 'POST':
@@ -1990,7 +2000,7 @@ def catalog_manu_type_list(request, id, tid):
 def catalog_type_list(request, id):
     list = Catalog.objects.filter(type=id)
     #return render_to_response('catalog_list.html', {'catalog': list.values_list()})
-    return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'})
+    return render_to_response('index.html', {'catalog': list, 'weblink': 'catalog_list.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def catalog_delete(request, id):
@@ -2378,6 +2388,14 @@ def client_invoice(request, cid=None, id=None):
             ClientInvoice(client=client, catalog=catalog, count=count, sum=sum, price=price, currency=currency, sale=sale, pay=pay, date=date, description=description, user=user).save()
             cat.count = cat.count - count
             cat.save()
+            
+            if pay == sum:
+                desc = catalog.name
+                ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=pay, description=desc, user=user)
+                ccred.save()
+                cdeb = ClientDebts(client=client, date=datetime.datetime.now(), price=sum, description=desc, user=user)
+                cdeb.save()
+
             #WorkGroup(name=name, description=description).save()
             return HttpResponseRedirect('/client/invoice/view/')
     else:
@@ -3648,9 +3666,37 @@ def payform(request):
         month = pytils_ua.dt.ru_strftime(u"%d %B %Y", ci[0].date, inflected=True)
         request.session['invoice_id'] = list_id
         return render_to_response('index.html', {'check_invoice': ci, 'month':month, 'sum': sum, 'client': client, 'str_number':text, 'weblink': 'client_invoice_sale_check.html', 'print': True, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+
+     
+    user = client.id
+    if user == 138:
+        bal = 0
+    else:  
+        sql1 = "SELECT sum(price) FROM accounting_clientcredits WHERE client_id = %s;"
+        sql2 = "SELECT sum(price) FROM accounting_clientdebts WHERE client_id = %s;"
+        #user = id;
+        try:
+            cursor = connection.cursor()
+            cursor.execute(sql1, [user])   
+            credit= cursor.fetchone()
+    
+            cursor.execute(sql2, [user])
+            debts = cursor.fetchone()
+    
+            if (credit[0] is None):
+                credit = (0,)
+            elif (debts[0] is None):
+                debts = (0,)
+    
+            res = credit[0] - debts[0]
+            
+        except TypeError:
+            res = "Такого клієнта не існує, або в нього не має заборгованостей"    
+     
+        bal = res
      
     url = '/client/result/search/?id=' + str(client.id)
-    return render_to_response('index.html', {'checkbox': list_id, 'invoice': ci, 'summ': sum, 'client': client, 'weblink': 'payform.html', 'next': url}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'checkbox': list_id, 'invoice': ci, 'summ': sum, 'balance':bal, 'client': client, 'weblink': 'payform.html', 'next': url}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def workshop_payform(request):
@@ -3803,8 +3849,56 @@ def user_invoice_report(request, month=None, year=None, day=None, user_id=None):
 
     user = User.objects.get(id=user_id)
             
-    return render_to_response('index.html', {'sel_user':user, 'sel_year':year, 'sel_month':month, 'month_days':days, 'buycomponents': cinvoices, 'sumall':psum, 'countall':scount, 'weblink': 'report_clientinvoice_byuser.html', 'view': True, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'sel_user':user, 'sel_year':year, 'sel_month':month, 'sel_day':day, 'month_days':days, 'buycomponents': cinvoices, 'sumall':psum, 'sum_salary':psum*0.05, 'countall':scount, 'weblink': 'report_clientinvoice_byuser.html', 'view': True, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
+
+def user_workshop_report(request, month=None, year=None, day=None, user_id=None):
+    #user_id = 5; #choper
+    #user_id = 6; #andre
+    #user_id = 4; #ygrik
+
+    if request.user.is_authenticated():
+        user_id = request.user.id
+    else:
+        user_id = None
+    
+    if year == None:
+        year = datetime.datetime.now().year
+    if month == None:
+        month = datetime.datetime.now().month
+
+    if day == None:
+        day = datetime.datetime.now().day
+        list = WorkShop.objects.filter(date__year=year, date__month=month, date__day=day, user__id=user_id).order_by("-date", "-id")
+    else:
+        if day == 'all':
+            list = WorkShop.objects.filter(date__year=year, date__month=month, user__id=user_id).order_by("-date", "-id")
+        else:
+            list = WorkShop.objects.filter(date__year=year, date__month=month, date__day=day, user__id=user_id).order_by("-date", "-id")
+            
+    psum = 0
+    scount = 0
+    for item in list:
+        psum = psum + item.price
+        scount = scount + 1
+    days = xrange(1, calendar.monthrange(int(year), int(month))[1]+1)
+    
+    paginator = Paginator(list, 15)
+    page = request.GET.get('page')
+    if page == None:
+        page = 1
+    try:
+        cinvoices = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        cinvoices = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        cinvoices = paginator.page(paginator.num_pages)
+
+    user = User.objects.get(id=user_id)
+            
+    return render_to_response('index.html', {'sel_user':user, 'sel_year':year, 'sel_month':month, 'sel_day':day, 'month_days':days, 'workshop': cinvoices, 'sumall':psum, 'sum_salary':psum*0.4, 'countall':scount, 'weblink': 'report_workshop_byuser.html', 'view': True, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def rent_add(request):
