@@ -24,6 +24,21 @@ $(document).ready(function() {
          $(this).html(value);
      }
      });
+     $('.edit_sale').editable('/catalog/edit/149', {
+     	 id   : 'id',
+         name : 'sale',
+
+         submitdata : function() {
+      	 	return {id : $(this).attr('id_sale')};
+    	 },
+         indicator : 'Saving...',
+         tooltip   : 'Click to edit...',
+         select : true,
+         callback : function(value, settings) {
+         $(this).html(value);
+     }
+     });
+     
      $('.edit_area').editable('http://www.example.com/save.php', { 
          type      : 'textarea',
          cancel    : 'Cancel',
@@ -139,13 +154,14 @@ $(document).ready(function() {
 	<td>       
 	{{type.currency}}
 	</td>	
-	<td class="edit_area">       
+	<td class="edit_sale" id_sale="{{type.id}}">
 	{{type.sale}}
 	</td>
 	<td>       
 	{{type.country}}
 	</td>	
-	<td>       
+      
+	<td class="edit_area">	
 	{{type.description}}
 	</td>
 	<td>

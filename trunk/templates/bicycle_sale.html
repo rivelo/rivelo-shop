@@ -15,6 +15,10 @@
 
 <script type="text/javascript">
 //$(function() {
+function float2int (value) {
+    return value | 0;
+}
+
 $(document).ready(function() {
 
 var glob_sale = 0;
@@ -86,7 +90,7 @@ glob_c_sale = 0;
       	}
       	else{
       	//if ((ui.item.sale < 5) && (ui.item.sale < $('#id_sale').val())) {
-      		$('#id_sale').val(glob_b_sale);
+      		$('#id_sale').val(float2int(glob_b_sale));
       		$('#id_sale').change();
       	};
       },

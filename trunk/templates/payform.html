@@ -1,13 +1,36 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
+{% load poll_extras %}
+
+<script language="JavaScript">
+
+function AllSum()
+{
+	document.getElementById('pay').value = {{summ|sub:balance}};
+	document.getElementById('pay').focus();
+	document.getElementById('pay').select();
+	
+//	alert('Спасибо');
+}
+
+function PaySum()
+{
+	document.getElementById('pay').value = {{summ}};
+	document.getElementById('pay').focus();
+	document.getElementById('pay').select();
+}
+    
+</script>
+
 <head>
     <title>PayForm</title>
 </head>
 <body onload="document.getElementById('pay').focus()">
 
     <h1>{{client}}</h1>
-    <h2>До оплати: {{summ}} грн.</h2>
+    <h2 onclick="PaySum()">До сплати: {{summ}} грн. / <font color="#fe6037"> Ваш рахунок: {{balance}} грн. </font></h2>
+    <h2 onclick="AllSum()"> <font color="#006699"> Загальна сума: {{summ|sub:balance}} грн.</font></h2>
     
 <form action="/client/payform/" method="POST">
         <p>Оплата: <input type="text" name="pay" id="pay" width="20" value="{{summ}}"></p>

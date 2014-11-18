@@ -14,7 +14,7 @@ def div(value, arg):
 
 @register.filter
 def sub(value, arg):
-    return value / arg
+    return value - arg
 
 
 @register.inclusion_tag('orm_debug.html')
