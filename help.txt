@@ -20,3 +20,5 @@ GRANT ALL ON mysite.* TO user@localhost;
 Если вы его не создадите, то вам потребуется выполнить django/contrib/auth/bin/create_superuser.py для его создания позже. В противном случае вы не сможете войти в интерфейс администратора. 
 
 svn checkout https://rivelo-shop.googlecode.com/svn/trunk/ catalog --username Igor.Panchuk@gmail.com
+
+36788 - шалена черепаха
