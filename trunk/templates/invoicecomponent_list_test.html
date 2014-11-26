@@ -1,4 +1,6 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Наявний товар - {{company_name|capfirst}}{{category_name|capfirst}}</title>
+
 
 {# <link rel="stylesheet" href="/media/themes/blue/style.css" type="text/css" id="" media="print, projection, screen" /> #}
 <style type="text/css" title="currentStyle">
@@ -163,6 +165,7 @@ $(document).ready(function() {
       { "sType": "numeric" },
       null,
       null,
+      null,
     {"sType": "string"},
       null,
 	{"sType": "num-html"},
@@ -200,7 +203,7 @@ $("#dialog").dialog({
 			$.ajax({
                 type: "GET",
                 url: "/shop/price/print/add/",
-                data: {id:  $("#dtext").attr("ids"), scount: $('#spinner').val()},
+                data: {id:  $("#dtext").attr("ids"), url: $('#spinner').val()},
                 dataType: "text",
                 success:function(msg){
 //                    alert("Все отлично ушло на сервер - " + msg);
@@ -219,6 +222,91 @@ $("#dialog").dialog({
         }
       }
 });
+
+
+$("#dialog_photo").dialog({
+	autoOpen: false,
+      resizable: true,
+      modal: true,
+      width: 535,
+      position: "center",
+      buttons: {
+        "Додати": function() {
+        	$("#dialog_photo_add").dialog("open");
+        	           
+          $( this ).dialog( "close" );
+        },
+        "Відмінити": function() {
+          $( this ).dialog( "close" );
+        }
+      }
+});
+
+
+$("#dialog_photo_add").dialog({
+	autoOpen: false,
+      resizable: true,
+      modal: true,
+      width: 650,
+      buttons: {
+        "Додати": function() {
+			$.ajax({
+                type: "POST",
+                url: "/photo/url/add/",
+                data: {id:  $("#photo_url").attr("ids"), url: $('#photo_url').val()},
+                dataType: "text",
+                success:function(value){
+                //	var obj = jQuery.parseJSON(value);
+                //	document.getElementById("link_1197").setAttribute("url", "TEST");
+                if (value != "ok"){
+                	alert(value);
+			    }
+                },
+                error:function(){
+                    alert("При отправке возникли проблемы");
+                }
+            });
+        
+          $( this ).dialog( "close" );
+        },
+        "Відмінити": function() {
+          $( this ).dialog( "close" );
+        }
+      }
+});
+
+
+
+ $(".c_photo" ).click(function() {
+
+			$.ajax({
+                type: "POST",
+                url: "/photo/url/get/",
+                data: {id:  $(this).attr('ids') },
+                dataType: "json",
+                success:function(data){
+                
+//					document.getElementById("link_" + data.id).setAttribute("url", String(data.aData[0][0]));
+			
+					if (data.aData.length > 0) {
+						document.getElementById("img_url").setAttribute("src", String(data.aData[0][0]));
+					    $("#dialog_photo").dialog("open");
+					    $("#dialog_photo").dialog("moveToTop");
+					}
+					else {
+				   		$("#photo_url").attr({'ids': data.id});
+   						$("#dialog_photo_add").dialog("open");
+   						$("#photo_url").select();
+					}   					
+					                
+//                    alert("Все отлично ушло на сервер - " + msg.aData[0][0]);                
+                },
+                error:function(){
+                    alert("При отправке возникли проблемы");
+                }
+            });
+
+ });
 
 
  $(".addprice" ).click(function() {
@@ -279,7 +367,7 @@ function runOnKeys(func) {
 
 runOnKeys(
   function() { 
-  //alert("Привет!") 
+//alert("Привет!") 
   document.getElementById('tsearch_field').focus()},
   "Q".charCodeAt(0),
   "W".charCodeAt(0)
@@ -321,6 +409,7 @@ runOnKeys(
  <a href="javascript:void(0);" onclick="fnShowHide(1);">ID</a>
 , <a href="javascript:void(0);" onclick="fnShowHide(2);">Виробник</a>
 , <a href="javascript:void(0);" onclick="fnShowHide(3);">Тип</a>
+, <a href="javascript:void(0);" onclick="fnShowHide(4);">Фото</a>
 , <a href="javascript:void(0);" onclick="fnShowHide(9);">Сума</a>
 , <a href="javascript:void(0);" onclick="fnShowHide(10);">Опис</a>
 
@@ -331,6 +420,18 @@ runOnKeys(
   	<input id="spinner" name="value" value="1">
 	</div>
 
+<!-- Dialog to view photo -->
+	<div id="dialog_photo" title="Photo">
+	<img id="img_url" src="" width="500">
+	</div>
+
+<!-- Dialog to add photo -->
+	<div id="dialog_photo_add" title="Add Photo">
+	<label for="photo_url">Посилання на фото:</label>
+	<input type="text" name="photoname" id="photo_url" value="http://" ids="" size="75">
+	</div>
+
+
 <form action="/catalog/saleform/" method="post" name="formSum">
 <table border="1" width="100%" id="myTable" class="pretty" cellspacing="1">
 <thead> 
@@ -339,6 +440,7 @@ runOnKeys(
     	<th ROWSPAN="2">ID</th>
     	<th ROWSPAN="2">Виробник</th>
     	<th ROWSPAN="2">Тип</th>
+    	<th ROWSPAN="2">Ф</th>
     	<th ROWSPAN="2">Найменування товару</th>
     	{# <th align="center" COLSPAN="3" width="80px" ROWSPAN="1">Кількість</th> #}
     	<th COLSPAN="3">Кількість</th>    	
@@ -389,6 +491,9 @@ runOnKeys(
 	<td>
 	<a href="/invoice/category/{{type.catalog__type__id}}/view">{{type.catalog__type__name}}</a>
 	</td>
+	
+	<td align="center" class="c_photo" id="link_{{type.catalog}}" url="" ids={{type.catalog}}>F</td>
+	
 	<td>
 	[{{type.catalog__ids}}] - {{type.catalog__name}}
 	</td>
@@ -444,6 +549,7 @@ runOnKeys(
 <tfoot>    
 	<tr>
     	<td></td>	
+    	<td></td>
     	<td></td>
     	<td></td>
     	<td></td>

@@ -15,7 +15,7 @@ from forms import CatalogForm, ClientForm, ClientDebtsForm, ClientCreditsForm, C
 from models import Dealer, DealerManager, DealerManager, DealerPayment, DealerInvoice, InvoiceComponentList, Bank, Exchange, PreOrder
 from forms import DealerManagerForm, DealerForm, DealerPaymentForm, DealerInvoiceForm, InvoiceComponentListForm, BankForm, ExchangeForm, PreOrderForm, InvoiceComponentForm
 
-from models import WorkGroup, WorkType, WorkShop, WorkStatus, WorkTicket, CostType, Costs, ShopDailySales, Rent, ShopPrice
+from models import WorkGroup, WorkType, WorkShop, WorkStatus, WorkTicket, CostType, Costs, ShopDailySales, Rent, ShopPrice, Photo
 from forms import WorkGroupForm, WorkTypeForm, WorkShopForm, WorkStatusForm, WorkTicketForm, CostTypeForm, CostsForm, ShopDailySalesForm, RentForm
   
 from django.http import HttpResponseRedirect, HttpRequest, HttpResponseNotFound
@@ -1241,6 +1241,12 @@ def dealer_invoice_search_result(request):
     return render_to_response('index.html', {'invoice_list': list, 'weblink': 'dealer_invoice_list_search.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
+def invoice_new_item(request):
+    date=datetime.date.today()
+    list_comp = InvoiceComponentList.objects.filter(invoice__date__year = date.year, invoice__date__month = date.month) #(invoice = list[1].id)
+    return render_to_response('index.html', {'dinvoice_list': list_comp, 'weblink': 'dealer_invoice_new_item.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))  
+
+
 #-------------- InvoiceComponentList -----------------------
 def invoicecomponent_add(request, mid=None, cid=None):
     company_list = Manufacturer.objects.all()
@@ -1312,7 +1318,6 @@ def invoicecomponent_list(request, mid=None, limit=0):
         #upd = Catalog.objects.get(pk = element['catalog'])
         #upd.count = element['balance'] 
         #upd.save()
-
         
     return render_to_response('index.html', {'company_list': company_list, 'componentlist': new_list, 'zsum':zsum, 'zcount':zcount, 'weblink': 'invoicecomponent_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
  
@@ -1923,6 +1928,8 @@ def catalog_edit(request, id):
                 p = request.POST.get('price')
                 obj = Catalog.objects.get(id = id)
                 obj.price = p
+                obj.last_update = datetime.datetime.now()
+                obj.user_update = request.user
                 obj.save() 
 #                c = Catalog.objects.filter(id = id).values('price', 'id')
                 c = Catalog.objects.filter(id = id).values_list('price', flat=True)
@@ -1933,6 +1940,8 @@ def catalog_edit(request, id):
                 s = request.POST.get('sale')
                 obj = Catalog.objects.get(id = id)                                
                 obj.sale = s
+                obj.last_update = datetime.datetime.now()
+                obj.user_update = request.user
                 obj.save() 
 
                 c = Catalog.objects.filter(id = id).values_list('sale', flat=True)
@@ -1946,6 +1955,9 @@ def catalog_edit(request, id):
         if form.is_valid():
             manufacturer = form.cleaned_data['manufacturer']
             type = form.cleaned_data['type']
+            a.last_update = datetime.datetime.now()
+            a.user_update = request.user
+            a.save()
             form.save()
             #return HttpResponseRedirect('/catalog/manufacture/' + str(manufacturer.id) + '/view/5')
             return HttpResponseRedirect('/catalog/manufacture/' + str(manufacturer.id) + '/type/'+str(type.id)+'/view')
@@ -4107,7 +4119,7 @@ def xhr_test(request):
 #    if 'TextStory' in request.POST and request.POST['TextStory']:
 #        TheStory = request.POST['TextStory']
     #return HttpResponse(message, mimetype="text/plain")
-    return HttpResponse(simplejson.dumps({'response': message, 'result': 'success'}))
+    return HttpResponse(simplejson.dumps({'response': message, 'result': 'success', 'param1':'Ти таки', 'param2':'натиснув його!'}), mimetype='application/json')
 
 
 def ajax_test(request):
@@ -4145,5 +4157,70 @@ def ajax_price_print(request):
     #return HttpResponse(simplejson.dumps(list(search)), mimetype="application/json")
     return HttpResponse(search, mimetype="text/plain")
 
+
+def invoice_new_edit(request):
+    if request.is_ajax():
+        if request.method == 'POST':  
+            if auth_group(request.user, 'admin')==False:
+                return HttpResponse('Error: У вас не має прав для редагування')
+            POST = request.POST  
+            if POST.has_key('id') and POST.has_key('rcount'):
+                id = request.POST.get('id')
+                p = request.POST.get('rcount')
+                obj = InvoiceComponentList.objects.get(id = id)
+                obj.user = request.user
+                obj.rcount = p
+                obj.save()
+
+                c = InvoiceComponentList.objects.filter(id = id).values('rcount', 'user__username', 'id')
+                #return HttpResponse(c, mimetype='text/plain')
+            
+    results = {'value': c[0]['rcount'], 'user': c[0]['user__username'], 'id':c[0]['id']}
+    json = simplejson.dumps(results)
+    return HttpResponse(json, mimetype='application/json')
+    
+
+def photo_url_add(request):
+    if request.is_ajax():
+        if request.method == 'POST':  
+            if auth_group(request.user, 'admin')==False:
+                return HttpResponse('Error: У вас не має прав для редагування')
+            POST = request.POST  
+            if POST.has_key('id') and POST.has_key('url'):
+                pid = request.POST.get('id')
+                p_url = request.POST.get('url')
+                
+                if Photo.objects.filter(url = p_url):
+                    return HttpResponse("Таке фото вже існує", mimetype="text/plain")
+                
+                p1 = Photo(url = p_url, date = datetime.datetime.now(), user = request.user, description="")
+                p1.save()
+                c = Catalog.objects.get(id = pid)
+                c.photo_url.add(p1)
+                c.save()
+
+    search = "ok"
+    return HttpResponse(search, mimetype="text/plain")
+
+
+def photo_url_get(request):
+    if request.is_ajax():
+        if request.method == 'POST':  
+            if auth_group(request.user, 'admin')==False:
+                return HttpResponse('Error: У вас не має прав для редагування')
+            POST = request.POST  
+            if POST.has_key('id'):
+                pid = request.POST.get('id')
+                photo_list = Photo.objects.filter(catalog__id = pid).values_list('url', 'description')
+                try:
+                    json = simplejson.dumps({'aData': list(photo_list), 'id': pid})
+                except:
+                    json = simplejson.dumps({'aData': "None", 'id': pid})
+#                json = simplejson.dumps(photo_list)
+
+    return HttpResponse(json, mimetype='application/json')
+
+#    search = pid;
+#    return HttpResponse(search, mimetype="text/plain")
 
 

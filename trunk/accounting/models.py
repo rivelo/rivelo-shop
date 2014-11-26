@@ -97,15 +97,31 @@ class Manufacturer(models.Model):
         ordering = ["name"]    
 
 
+class Photo(models.Model):
+    url = models.CharField(max_length=255)
+    date = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
+    description = models.TextField(blank=True, null=True)
+    #goo_url = models.CharField(max_length=255)
+    
+    def __unicode__(self):
+        return u'%s' % self.url
+
+    class Meta:
+        ordering = ["date", "description"]    
+
+
 # Main table 
 class Catalog(models.Model):
     ids = models.CharField("code", unique=True, max_length=50)
+    dealer_code = models.CharField("dealer code", max_length=50, blank=True, null=True)
     name = models.CharField(max_length=255)
     manufacturer = models.ForeignKey(Manufacturer)
     type = models.ForeignKey(Type, related_name='type')
     size = models.ForeignKey(Size, blank=True, null=True)
     weight = models.FloatField(blank=True, null=True)    
     photo = models.FileField(upload_to = 'media/upload/catalog/%Y/%m/%d', blank=True, null=True)
+    photo_url = models.ManyToManyField(Photo, blank=True)
     year = models.IntegerField(blank=True, null=True)
     sale_to = models.DateField(auto_now_add=True)
     color = models.CharField(max_length=255, blank=True, null=True)
@@ -115,6 +131,8 @@ class Catalog(models.Model):
     country = models.ForeignKey(Country, null=True)
     count = models.IntegerField()
     length = models.FloatField(blank=True, null=True)
+    last_update = models.DateTimeField(auto_now_add=False, null=True, blank=True)
+    user_update = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
     description = models.CharField(max_length=255)
     
     def __unicode__(self):
@@ -202,7 +220,9 @@ class InvoiceComponentList(models.Model):
     price = models.FloatField()
     currency = models.ForeignKey(Currency)
     date = models.DateField(auto_now_add=False)
+    rcount = models.IntegerField(blank = True, null = True)
     description = models.TextField(blank = True, null = True)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
             
     def __unicode__(self):
         return "%s - %s" % (self.invoice, self.catalog) 

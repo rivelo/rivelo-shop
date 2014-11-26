@@ -134,6 +134,8 @@ urlpatterns = patterns('',
     (r'^dealer/invoice/edit/(?P<id>\d+)/$', 'catalog.accounting.views.dealer_invoice_edit'),
     (r'^dealer/invoice/delete/(?P<id>\d+)/$', 'catalog.accounting.views.dealer_invoice_del'),
     (r'^dealer/invoice/import/$', 'catalog.accounting.views.invoice_import'),
+    (r'^dealer/invoice/new/$', 'catalog.accounting.views.invoice_new_item'),
+    (r'^dealer/invoice/new/edit/$', 'catalog.accounting.views.invoice_new_edit'),
     
     (r'^dealer/add/$', 'catalog.accounting.views.dealer_add'),
     (r'^dealer/view/$', 'catalog.accounting.views.dealer_list'),
@@ -388,6 +390,9 @@ urlpatterns += patterns('',
     (r'^shop/price/print/list/$', 'catalog.accounting.views.shop_price_print_list'),
     (r'^shop/price/print/(?P<id>\d+)/delete/$', 'catalog.accounting.views.shop_price_print_delete'),
     (r'^catalog/price/import/$', 'catalog.accounting.views.price_import'),
+
+    (r'^photo/url/add/$', 'catalog.accounting.views.photo_url_add'),
+    (r'^photo/url/get/$', 'catalog.accounting.views.photo_url_get'),
 ) 
 
 #===============================================================================
