@@ -2,6 +2,12 @@
 <title>Наявний товар - {{company_name|capfirst}}{{category_name|capfirst}}</title>
 
 
+<!-- Dialog to view photo -->
+	<div id="dialog_photo" title="Photo">
+	<img id="img_url" src="" width="500">
+	</div>
+
+
 {# <link rel="stylesheet" href="/media/themes/blue/style.css" type="text/css" id="" media="print, projection, screen" /> #}
 <style type="text/css" title="currentStyle">
 			@import "/media/css/demo_page.css"; @import "/media/css/jquery.dataTables.css";
@@ -46,13 +52,9 @@ tr.odd {
 
 </style>
 
-{# <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css"> #}
 <link rel="stylesheet" href="/media/jquery-ui-1.9.2.custom.css">
 <script type="text/javascript" src="/media/jquery-1.8.3.js"></script>
-{# <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script> #}
 <script src="/media/jquery-ui-1.9.2.custom.min.js"></script>
-{# <script type="text/javascript" src="/media/jquery.hotkeys.js"></script> #}
-{# <script type="text/javascript" src="/media/jquery.tablesorter.js"></script> #}
 <script type="text/javascript" language="javascript" src="/media/jquery.dataTables.min.js"></script>
 
 <script language="JavaScript">
@@ -190,7 +192,7 @@ $(document).ready(function() {
 {% endif %}
 	
   oTable.fnSetColumnVis( 1, false );   
-  oTable.fnSetColumnVis( 9, false );   
+  oTable.fnSetColumnVis( 11, false );   
   oTable.fnSetColumnVis( 10, false );
 
 
@@ -226,9 +228,10 @@ $("#dialog").dialog({
 
 $("#dialog_photo").dialog({
 	autoOpen: false,
-      resizable: true,
+      resizable: false,
       modal: true,
-      width: 535,
+      width: 540,
+      maxWidth: 540,
       position: "center",
       buttons: {
         "Додати": function() {
@@ -247,6 +250,7 @@ $("#dialog_photo_add").dialog({
 	autoOpen: false,
       resizable: true,
       modal: true,
+      position: "center",
       width: 650,
       buttons: {
         "Додати": function() {
@@ -258,9 +262,23 @@ $("#dialog_photo_add").dialog({
                 success:function(value){
                 //	var obj = jQuery.parseJSON(value);
                 //	document.getElementById("link_1197").setAttribute("url", "TEST");
-                if (value != "ok"){
-                	alert(value);
-			    }
+                if (value != "ok") {
+                	//alert(value);
+                	$("#dialog_photo").dialog({title: value });
+                	if ($("#img_url").attr('width') > 500) {
+                		$("#img_url").attr({'src' : $('#photo_url').val()}, {'width': "500 px"});
+                	}
+                	else {
+                		$("#img_url").attr({'src' : $('#photo_url').val()});
+                	}
+                	
+                	$("#dialog_photo").dialog({ buttons: [ { text: "Ok", click: function() { $("#dialog_photo").dialog( "close" ); } }, {text: "Cancel", click: function() {$("#dialog_photo").dialog("close"); }} ] }, { position: { my: "right bottom", at: "right bottom", of: window } });
+//                	$("#dialog_photo").dialog({ position: { my: "center top", at: "center top", of: window } });
+					$("#dialog_photo").dialog("open");
+					//$("#dialog_photo").dialog("moveToTop");
+					$("#ui-id-2").attr({"color": '#fe011b'});
+					
+					}
                 },
                 error:function(){
                     alert("При отправке возникли проблемы");
@@ -277,7 +295,7 @@ $("#dialog_photo_add").dialog({
 
 
 
- $(".c_photo" ).click(function() {
+$(".c_photo" ).click(function() {
 
 			$.ajax({
                 type: "POST",
@@ -290,8 +308,9 @@ $("#dialog_photo_add").dialog({
 			
 					if (data.aData.length > 0) {
 						document.getElementById("img_url").setAttribute("src", String(data.aData[0][0]));
+						$("#dialog_photo").dialog({ title: data.cname });
 					    $("#dialog_photo").dialog("open");
-					    $("#dialog_photo").dialog("moveToTop");
+					    //$("#dialog_photo").dialog("moveToTop");
 					}
 					else {
 				   		$("#photo_url").attr({'ids': data.id});
@@ -410,19 +429,14 @@ runOnKeys(
 , <a href="javascript:void(0);" onclick="fnShowHide(2);">Виробник</a>
 , <a href="javascript:void(0);" onclick="fnShowHide(3);">Тип</a>
 , <a href="javascript:void(0);" onclick="fnShowHide(4);">Фото</a>
-, <a href="javascript:void(0);" onclick="fnShowHide(9);">Сума</a>
-, <a href="javascript:void(0);" onclick="fnShowHide(10);">Опис</a>
+, <a href="javascript:void(0);" onclick="fnShowHide(10);">Сума</a>
+, <a href="javascript:void(0);" onclick="fnShowHide(11);">Опис</a>
 
 <!-- Dialog to add print price -->
 	<div id="dialog" title="Add price">
 	<p id="dtext">Додати цінник до списку друку</p>
 	<label for="spinner">Кількість:</label>
   	<input id="spinner" name="value" value="1">
-	</div>
-
-<!-- Dialog to view photo -->
-	<div id="dialog_photo" title="Photo">
-	<img id="img_url" src="" width="500">
 	</div>
 
 <!-- Dialog to add photo -->
@@ -492,7 +506,7 @@ runOnKeys(
 	<a href="/invoice/category/{{type.catalog__type__id}}/view">{{type.catalog__type__name}}</a>
 	</td>
 	
-	<td align="center" class="c_photo" id="link_{{type.catalog}}" url="" ids={{type.catalog}}>F</td>
+	<td align="center"><img class="c_photo" id="link_{{type.catalog}}" url="" ids={{type.catalog}} src="/media/images/photo_ico.png" width="24" height="24"></td>
 	
 	<td>
 	[{{type.catalog__ids}}] - {{type.catalog__name}}
@@ -532,7 +546,8 @@ runOnKeys(
 	<td>       
 	{{type.catalog__price|mul:type.sum_catalog}}
 	</td>
-	<td align="center">    
+	<td align="center">
+	{{type.catalog__description}}	    
 	</td>
 {% if perms.accounting.delete_invoicecomponentlist %}	
 	<td>

@@ -2741,3 +2741,68 @@ Key = pay - Value = 184.0
 Key = date - Value = 2014-11-17 18:35:51
 Key = description - Value = 
 Key = user - Value = 4
+2014-11-27 00:55:11.453000 >>> DELETE FROM TABLE client invoice WHERE id = 20815 
+Key = id - Value = 20815
+Key = client - Value = 138
+Key = catalog - Value = 5911
+Key = count - Value = 1
+Key = price - Value = 205.0
+Key = sum - Value = 198.85
+Key = currency - Value = 3
+Key = sale - Value = 3
+Key = pay - Value = 198.85
+Key = date - Value = 2014-06-24 13:09:07
+Key = description - Value = 
+Key = user - Value = 7
+2014-11-27 03:46:36.171000 >>> DELETE FROM TABLE client invoice WHERE id = 25410 
+Key = id - Value = 25410
+Key = client - Value = 2
+Key = catalog - Value = 3847
+Key = count - Value = 1
+Key = price - Value = 55.0
+Key = sum - Value = 52.25
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = pay - Value = 52.25
+Key = date - Value = 2014-10-24 14:34:17
+Key = description - Value = 
+Key = user - Value = None
+2014-11-27 03:47:05.578000 >>> DELETE FROM TABLE client invoice WHERE id = 25391 
+Key = id - Value = 25391
+Key = client - Value = 386
+Key = catalog - Value = 3847
+Key = count - Value = 1
+Key = price - Value = 55.0
+Key = sum - Value = 0.0
+Key = currency - Value = 3
+Key = sale - Value = 100
+Key = pay - Value = 0.0
+Key = date - Value = 2014-10-23 12:26:40
+Key = description - Value = 
+Key = user - Value = 7
+2014-11-27 03:55:59.640000 >>> DELETE FROM TABLE client invoice WHERE id = 15622 
+Key = id - Value = 15622
+Key = client - Value = 846
+Key = catalog - Value = 3885
+Key = count - Value = 1
+Key = price - Value = 296.0
+Key = sum - Value = 296.0
+Key = currency - Value = 3
+Key = sale - Value = 0
+Key = pay - Value = 296.0
+Key = date - Value = 2014-01-13 18:38:11
+Key = description - Value = 
+Key = user - Value = None
+2014-11-27 03:57:01.328000 >>> DELETE FROM TABLE client invoice WHERE id = 19119 
+Key = id - Value = 19119
+Key = client - Value = 138
+Key = catalog - Value = 6279
+Key = count - Value = 1
+Key = price - Value = 247.0
+Key = sum - Value = 247.0
+Key = currency - Value = 3
+Key = sale - Value = 0
+Key = pay - Value = 247.0
+Key = date - Value = 2014-05-17 16:50:37
+Key = description - Value = 
+Key = user - Value = 5
