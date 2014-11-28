@@ -88,6 +88,8 @@ urlpatterns = patterns('',
     (r'^bicycle-store/delete/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_store_del'),
     (r'^bicycle-store/search/$', 'catalog.accounting.views.bicycle_store_search'),
     (r'^bicycle-store/search/result/$', 'catalog.accounting.views.bicycle_store_search_result'),
+    
+    (r'^bicycle/price/set/$', 'catalog.accounting.views.bicycle_price_set'),
 
     (r'^bicycle/sale/add/(?P<id>\d+)/$', 'catalog.accounting.views.bicycle_sale_add'),
     (r'^bicycle/sale/add/$', 'catalog.accounting.views.bicycle_sale_add'),
@@ -185,8 +187,10 @@ urlpatterns = patterns('',
     (r'^category/view/$', 'catalog.accounting.views.category_list'),
     (r'^category/edit/(?P<id>\d+)$', 'catalog.accounting.views.category_edit'),
     (r'^category/delete/(?P<id>\d+)$', 'catalog.accounting.views.category_del'),    
+    (r'^category/get/list/$', 'catalog.accounting.views.category_get_list'),
 
     # Catalog operation
+    (r'^catalog/set/type/$', 'catalog.accounting.views.catalog_set_type'),
     (r'^catalog/add/$', 'catalog.accounting.views.catalog_add'),
     (r'^catalog/discount/$', 'catalog.accounting.views.catalog_discount_list'),
     (r'^catalog/id/(?P<id>\d+)/view/$', 'catalog.accounting.views.catalog_list'),
