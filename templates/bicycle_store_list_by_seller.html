@@ -38,6 +38,24 @@ $(document).ready(function() {
      	}
      });
     
+     $('.change_sale').editable('/bicycle/price/set/', {
+     	 id   : 'id',
+         name : 'sale',
+         submitdata : function() {
+      	 	return {id : $(this).attr('id_sale')};
+    	 },
+         indicator : 'Saving...',
+         tooltip   : 'Click to edit...',
+         select : true,
+         style  : "inherit",
+         callback : function(value, settings) {
+         $(this).html(value+"%");
+         //console.log($(this).prevAll('.change_price:first').html());
+         var sprice = $(this).prevAll('.change_price:first').html() / 100 * (100 - value);
+         $(this).nextAll('.sale_price:first').html(sprice + ' грн.');
+     	}
+     });
+
 
 });
 
@@ -121,17 +139,24 @@ $(document).ready(function() {
 	{{type.price}}$	
 	</td>
 {% endif %}
+
 {% if user.is_authenticated %}	
 	<td class="change_price" id_price="{{type.model.id}}">
+	{{type.model.price}}   
+	</td>
+	<td align="center" class="change_sale" id_sale="{{type.model.id}}">
+	{{type.model.sale|floatformat:"0"}}%       
+	</td>
 {% else %}	
 	<td>
-{% endif %}	
     {{type.model.price}}   
 	</td>
 	<td align="center">
 	{{type.model.sale|floatformat:"0"}}%       
 	</td>
-	<td align="center">
+{% endif %}
+
+	<td align="center" class="sale_price">
 	{{type.model.sale|div:-100|sub:-1|mul:type.model.price|floatformat:"0"}} грн.       
 	</td>
 <!-- <td>       

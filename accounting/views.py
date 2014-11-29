@@ -2088,6 +2088,9 @@ def catalog_lookup(request):
     #return HttpResponse(json)
 
 
+def photo_list(request):
+    return render_to_response('index.html', {'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+
 
 # ------------- Clients -------------
 def client_add(request):
@@ -4186,7 +4189,7 @@ def ajax_price_print(request):
 def invoice_new_edit(request):
     if request.is_ajax():
         if request.method == 'POST':  
-            if auth_group(request.user, 'admin')==False:
+            if auth_group(request.user, 'seller')==False:
                 return HttpResponse('Error: У вас не має прав для редагування')
             POST = request.POST  
             if POST.has_key('id') and POST.has_key('rcount'):
@@ -4291,5 +4294,15 @@ def bicycle_price_set(request):
                 c = Bicycle.objects.filter(id = id).values_list('price', flat=True)
                 return HttpResponse(c)
     
+
+            if POST.has_key('id') and POST.has_key('sale'):
+                id = request.POST.get('id')
+                p = request.POST.get('sale')
+                obj = Bicycle.objects.get(id = id)
+                obj.sale = p
+                obj.save() 
+                c = Bicycle.objects.filter(id = id).values_list('sale', flat=True)
+                return HttpResponse(c)
+
 
 
