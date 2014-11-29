@@ -296,6 +296,14 @@ $("#dialog_photo_add").dialog({
 
 
 $(".c_photo" ).click(function() {
+	   		//console.log($(this).attr('ids'));
+	   		//console.log($("#url_"+$(this).attr('ids')).parents());
+	   		//console.log($("#td_"+$(this).attr('ids')).nextAll(".c_name:first"));
+	   		
+	   		var t = $("#td_"+$(this).attr('ids')).nextAll(".c_name:first").html();
+    		$("#dialog_photo_add").dialog({title:  t});
+    		
+			
 
 			$.ajax({
                 type: "POST",
@@ -506,9 +514,9 @@ runOnKeys(
 	<a href="/invoice/category/{{type.catalog__type__id}}/view">{{type.catalog__type__name}}</a>
 	</td>
 	
-	<td align="center"><img class="c_photo" id="link_{{type.catalog}}" url="" ids={{type.catalog}} src="/media/images/photo_ico.png" width="24" height="24"></td>
+	<td align="center" id="td_{{type.catalog}}"><img class="c_photo" id="link_{{type.catalog}}" url="" ids={{type.catalog}} src="/media/images/photo_ico.png" width="24" height="24"></td>
 	
-	<td>
+	<td class="c_name">
 	[{{type.catalog__ids}}] - {{type.catalog__name}}
 	</td>
 	<td align="center">

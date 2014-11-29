@@ -397,6 +397,7 @@ urlpatterns += patterns('',
 
     (r'^photo/url/add/$', 'catalog.accounting.views.photo_url_add'),
     (r'^photo/url/get/$', 'catalog.accounting.views.photo_url_get'),
+    (r'^catalog/photo/list/$', 'catalog.accounting.views.photo_list'),
 ) 
 
 #===============================================================================

@@ -2806,3 +2806,14 @@ Key = pay - Value = 247.0
 Key = date - Value = 2014-05-17 16:50:37
 Key = description - Value = 
 Key = user - Value = 5
+2014-11-29 00:40:26.406000 >>> DELETE FROM TABLE bicycle_ store WHERE id = 517 
+Key = id - Value = 517
+Key = model - Value = 286
+Key = serial_number - Value = -
+Key = size - Value = 28
+Key = price - Value = 150.1
+Key = currency - Value = 2
+Key = count - Value = 1
+Key = realization - Value = False
+Key = date - Value = 2014-05-08
+Key = description - Value = 
