@@ -2817,3 +2817,25 @@ Key = count - Value = 1
 Key = realization - Value = False
 Key = date - Value = 2014-05-08
 Key = description - Value = 
+2014-11-30 04:40:28.281000 >>> DELETE FROM TABLE client invoice WHERE id = 26239 
+Key = id - Value = 26239
+Key = client - Value = 1277
+Key = catalog - Value = 7116
+Key = count - Value = 1
+Key = price - Value = 600.0
+Key = sum - Value = 570.0
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = pay - Value = 0.0
+Key = date - Value = 2014-11-29 17:18:09
+Key = description - Value = 
+Key = user - Value = None
+2014-12-01 19:55:41.750000 >>> DELETE FROM TABLE work shop WHERE id = 2436 
+Key = id - Value = 2436
+Key = client - Value = 404
+Key = date - Value = 2014-11-26 15:21:26
+Key = work_type - Value = 691
+Key = price - Value = 15.0
+Key = pay - Value = True
+Key = user - Value = 5
+Key = description - Value = 

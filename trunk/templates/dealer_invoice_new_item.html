@@ -3,12 +3,9 @@
 {% load template_math %}
 
 <link rel="stylesheet" type="text/css" href="/media/table.css">
-<script type="text/javascript" src="/media/jquery-1.7.2.min.js"></script>
+<link rel="stylesheet" href="/media/jquery-ui.min.css">
+<script src="/media/jquery-ui.js"></script>
 <script src="/media/jquery.jeditable.mini.js" type="text/javascript" charset="utf-8"></script>
-
-<link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
-    <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
-
 
 
 <!--   <body onLoad="res()"> -->
@@ -45,42 +42,33 @@ $(function() {
          submitdata : function() {
       	 	return {id : $(this).attr('id_rcount')};
     	 },
+    	 style   : 'inherit',
          indicator : 'Saving...',
          tooltip   : 'Click to edit...',
          select : true,
          callback : function(value, settings) {
-         var obj = jQuery.parseJSON(value);
-         $(this).html(obj.value);
-         //$(this).html(value);
-         //$("#userid").html(obj.user);
-         document.getElementById('userid'+obj.id).innerHTML = obj.user;
-         if (obj.value == parseFloat(document.getElementById('count'+obj.id).innerHTML)) {
-         	document.getElementById('row'+obj.id).style.backgroundColor = "#9fbb31";
-         }    
-         else {
-         	document.getElementById('row'+obj.id).style.backgroundColor = "#FFFFFF";
-         }
-     }
+          var obj = jQuery.parseJSON(value);
+          $(this).html(obj.value);
+          document.getElementById('userid'+obj.id).innerHTML = obj.user;
+          if (obj.value > parseFloat(document.getElementById('count'+obj.id).innerHTML)) {
+          	document.getElementById('row'+obj.id).style.backgroundColor = "#f42525";
+          	$("#row"+obj.id).children("td.recived").html("Надлишок");
+          }
+          if (obj.value == parseFloat(document.getElementById('count'+obj.id).innerHTML)) {
+           	document.getElementById('row'+obj.id).style.backgroundColor = "#9fbb31";
+           	$("#row"+obj.id).children("td.recived").html("Отримано");
+          }    
+          if (obj.value < parseFloat(document.getElementById('count'+obj.id).innerHTML)) {
+           	document.getElementById('row'+obj.id).style.backgroundColor = "#FFFFFF";
+           	$("#row"+obj.id).children("td.recived").html("Недостача");
+          }
+     	 }
      });
 
-        $("#test").click(function() {
-            // AJAX-запит на потрібну адресу
-            $.get("/xhr_test/", function(data) {
-                // Замінюємо текст тегу з id="target" на отримані дані
-                $("#target").html(data.param1+' '+data.param2);
-            });
-        });
 
 });   
 </script>
 <br>    
-
-{% comment %} 
-<a id="test" href="javascript:">Натисни мене</a>
-
-<!-- Елемент, текст якого буде змінено -->
-<div id="target">Я готовий до змін.</div>
-{% endcomment %}
 
 <div id="accordion">
 <h3>EMPTY{{x.invoice.origin_id}}</h3> <div> <table>
@@ -108,16 +96,27 @@ $(function() {
    	<th>Користувач</th>
 </tr> 
 {% endifchanged %}
-{% ifequal x.count x.rcount %}
+{% if x.count == x.rcount %}
 <tr id=row{{x.id}}  bgcolor="#9fbb31">
-{% else %}
+{% endif %}
+{% if  x.count < x.rcount %}
+<tr id=row{{x.id}}  bgcolor="#f42525">
+{% endif %}
+{% if  x.count > x.rcount %}
 <tr id=row{{x.id}}>
-{% endifequal %}
+{% endif %}
+
 <td>{{forloop.counter}}</td>
 <td>{{x.catalog}}</td>
 <td id="count{{x.id}}" align="center">{{x.count}} шт.</td>
 <td>{{x.invoice.origin_id}}</td>
-<td align="center">{{x.invoice.received|default:"В дорозі"}}</td>
+<td class="recived" align="center">
+{% ifequal x.count x.rcount %}
+Отримано
+{% else %}
+В дорозі
+{% endifequal %}
+</td>
 
 {% if user.is_authenticated %}
 	<td class="edit" id_rcount="{{x.id}}" align="center">
