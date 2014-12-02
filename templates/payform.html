@@ -1,5 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Оплата - {{client}}</title>
 
 {% load poll_extras %}
 
@@ -29,7 +30,8 @@ function PaySum()
 <body onload="document.getElementById('pay').focus()">
 
     <h1>{{client}}</h1>
-    <h2 onclick="PaySum()">До сплати: {{summ}} грн. / <font color="#fe6037"> Ваш рахунок: {{balance}} грн. </font></h2>
+    <h2><font color="#fe6037"> Ваш рахунок: {{balance}} грн. </font></h2> 
+    <h2 onclick="PaySum()">До сплати: {{summ}} грн. </h2>
     <h2 onclick="AllSum()"> <font color="#006699"> Загальна сума: {{summ|sub:balance}} грн.</font></h2>
     
 <form action="/client/payform/" method="POST">

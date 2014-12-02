@@ -24,6 +24,8 @@ $(document).ready(function() {
          $(this).html(value);
      }
      });
+     
+     
      $('.edit_sale').editable('/catalog/edit/149', {
      	 id   : 'id',
          name : 'sale',
@@ -39,6 +41,7 @@ $(document).ready(function() {
      }
      });
      
+     
      $('.edit_area').editable('/catalog/edit/149', {
          submitdata : function() {
       	 	return {id : $(this).attr('id_desc')};
@@ -52,9 +55,12 @@ $(document).ready(function() {
      });
 
  
-	$('.edit_type').editable('/catalog/set/type/', {
+   $('.edit_type').each(function() {
+	$(this).editable('/catalog/set/type/', {
 	
-     loadurl : '/category/get/list',
+     loadurl : '/category/get/list/',
+     loaddata : {sel: $(this).attr('cat_id')},
+     loadtype: 'POST',     
      type   : 'select',
      submit : 'OK',
      tooltip   : 'Click to edit...',
@@ -63,17 +69,20 @@ $(document).ready(function() {
       	return {id : $(this).attr('id_type')};
     	 },
      callback : function(value, settings) {
-         console.log(this);
-         console.log(typeof(value));
-         console.log(settings);
+//         console.log(this);
+//         console.log(typeof(value));
+//         console.log(settings);
          var obj = jQuery.parseJSON(value);
-         console.log(obj);
+//         console.log(obj);
+         $(this).attr({'cat_id': obj[0]['type__id']});
+         
          str1 = '<a href="/catalog/type/' + obj[0]['type__id'];
          str2 = '/view">' + obj[0]['type__name'] + "</a>";
          $(this).html(str1 + str2);
          
      }
      });
+    });
      
 }); 
 
@@ -158,9 +167,15 @@ $(document).ready(function() {
 	<td>       
 	<a href="/catalog/manufacture/{{ type.manufacturer.id }}/view">{{type.manufacturer}}</a>
 	</td>
-	<td class="edit_type" id_type="{{type.id}}">       
+	
+	{% if user.is_authenticated %}
+	<td class="edit_type" id_type="{{type.id}}" cat_id="{{type.type.id}}">
+	{% else %}
+	<td id_type="{{type.id}}" cat_id="{{type.type.id}}">
+	{% endif %}		       
 	<a href="/catalog/type/{{type.type.id}}/view">{{type.type}}</a>
 	</td>
+	
 	<td>       
 	{{type.weight}}
 	</td>	

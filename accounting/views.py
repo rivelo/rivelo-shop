@@ -1243,7 +1243,12 @@ def dealer_invoice_search_result(request):
 
 def invoice_new_item(request):
     date=datetime.date.today()
-    list_comp = InvoiceComponentList.objects.filter(invoice__date__year = date.year, invoice__date__month = date.month) #(invoice = list[1].id)
+    start_date = datetime.date(date.year, 1, 1)
+    end_date = datetime.date(date.year, 3, 31)    
+    
+    di = DealerInvoice.objects.filter(received = False).values_list("id", flat=True)
+    
+    list_comp = InvoiceComponentList.objects.filter(invoice__date__year = date.year, invoice__date__month = date.month - 1, invoice__id__in = di) #(invoice = list[1].id)
     return render_to_response('index.html', {'dinvoice_list': list_comp, 'weblink': 'dealer_invoice_new_item.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))  
 
 
@@ -1324,6 +1329,7 @@ def invoicecomponent_list(request, mid=None, limit=0):
 
 def invoicecomponent_list_by_manufacturer(request, mid=None, availability=False):
     company_list = Manufacturer.objects.all()
+    category_list = Type.objects.filter(name_ukr__isnull=False).order_by('name_ukr')
     list = None
     new_list = None
     id_list=[]
@@ -1334,12 +1340,12 @@ def invoicecomponent_list_by_manufacturer(request, mid=None, availability=False)
     #Наявність
     if availability == False:
         #old work variant
-        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__count', 'catalog__type__id', 'catalog__description').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
+        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__count', 'catalog__description').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
         #list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count', 'catalog__type__name', 'count')        
         #new_list = list.annotate(sum_catalog=Sum('count')).order_by("catalog__type")
 #        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count', 'count').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
     else:
-        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid, catalog__count__gt=0).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__count', 'catalog__type__name', 'catalog__type__id', 'catalog__description').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
+        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid, catalog__count__gt=0).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__count', 'catalog__type__name', 'catalog__description').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
 
 
     for item in list:
@@ -1348,9 +1354,9 @@ def invoicecomponent_list_by_manufacturer(request, mid=None, availability=False)
         scount = scount + item['sum_catalog']
         id_list.append(item['catalog'])
         item['balance']=item['sum_catalog']
-        cat_count_upd = Catalog.objects.get(id = item['catalog'])
-        cat_count_upd.count = item['balance']
-        cat_count_upd.save()
+#        cat_count_upd = Catalog.objects.get(id = item['catalog'])
+#        cat_count_upd.count = item['balance']
+#        cat_count_upd.save()
         
 #        list_sale = ClientInvoice.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
 #        list_sale = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
@@ -1362,28 +1368,34 @@ def invoicecomponent_list_by_manufacturer(request, mid=None, availability=False)
                 element['c_sale']=sale['sum_catalog']
                 element['balance']=element['sum_catalog'] - element['c_sale']
                 element['catalog__type__name'] = sale['catalog__type__name']
-                cat_count_upd = Catalog.objects.get(id = element['catalog'])
-                cat_count_upd.count = element['balance']
-                cat_count_upd.save()
+# update Catalog count
+                #cat_count_upd = Catalog.objects.get(id = element['catalog'])
+                #cat_count_upd.count = element['balance']
+                #cat_count_upd.save()
                 
-            #else:
+        c = Catalog.objects.values('type__name', 'type__id').get(id=element['catalog'])
         if element.get('catalog__type__name') == None:
-            element['catalog__type__name'] = Catalog.objects.values('type__name').get(id=element['catalog'])['type__name']
+            element['catalog__type__name'] = c['type__name']
+            element['catalog__type__id'] = c['type__id']
+        else:
+            element['catalog__type__id'] = c['type__id']
+            
         zsum = zsum + ((element['sum_catalog'] - element['c_sale']) * element['catalog__price'])
         zcount = zcount + (element['sum_catalog'] - element['c_sale'])
 #        return render_to_response('index.html', {'componentlist': list, 'salelist': list_sale, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
-
+    
     if mid == None:
         company_name = ""
     else:
-        company_name = company_list.get(id=mid)
-
-    return render_to_response('index.html', {'company_list': company_list, 'weblink': 'invoicecomponent_list_test.html',  'company_name': company_name, 'company_id':mid, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+        company_name = Manufacturer.objects.get(id=mid)
+        #company_name = company_list.get(id=mid)
+    
+    return render_to_response('index.html', {'category_list': category_list, 'company_list': company_list, 'weblink': 'invoicecomponent_list_test.html',  'company_name': company_name, 'company_id':mid, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def invoicecomponent_list_by_category(request, cid=None, limit=0):
     category_list = Type.objects.filter(name_ukr__isnull=False).order_by('name_ukr')
-
+    company_list = Manufacturer.objects.all()
     list = None
     id_list=[]
     psum = 0
@@ -1419,11 +1431,12 @@ def invoicecomponent_list_by_category(request, cid=None, limit=0):
     else:
         cat_name = category_list.get(id=cid)
 
-    return render_to_response('index.html', {'category_list': category_list, 'category_name': cat_name, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'type_id':cid, 'weblink': 'invoicecomponent_list_test.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'company_list': company_list, 'category_list': category_list, 'category_name': cat_name, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'type_id':cid, 'weblink': 'invoicecomponent_list_test.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def invoicecomponent_manufacturer_html(request, mid):
-    list = Catalog.objects.filter(manufacturer__id=mid, count__gt=0)
+    list = Catalog.objects.filter(manufacturer__id=mid, count__gt=0).order_by('type__id')
+    
     zcount = 0
     for elem in list:
         zcount = zcount + elem.count
@@ -1437,7 +1450,7 @@ def invoicecomponent_manufacturer_html(request, mid):
 
 
 def invoicecomponent_category_html(request, mid):
-    list = Catalog.objects.filter(type__id=mid, count__gt=0)
+    list = Catalog.objects.filter(type__id=mid, count__gt=0).order_by('manufacturer__id')
     zcount = 0
     for elem in list:
         zcount = zcount + elem.count
@@ -1562,7 +1575,9 @@ def invoice_search_result(request):
         zcount = zcount + (element['sum_catalog'] - element['c_sale'])
 #        return render_to_response('index.html', {'componentlist': list, 'salelist': list_sale, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
 
-    return render_to_response('index.html', {'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    category_list = Type.objects.filter(name_ukr__isnull=False).order_by('name_ukr')
+    company_list = Manufacturer.objects.all()
+    return render_to_response('index.html', {'company_list': company_list, 'category_list': category_list, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
     #return render_to_response('index.html', {'componentlist': list, 'allpricesum':psum, 'countsum': scount, 'weblink': 'invoicecomponent_list.html'})        
 
 
@@ -1674,8 +1689,13 @@ def category_list(request):
 
 
 def category_get_list(request):
-    list = Type.objects.all().values_list("id", "name")
-    dictionary = dict(list) 
+    list = Type.objects.all().values_list("id", "name", "name_ukr")
+    dictionary = {}
+    for el in list:
+        str = unicode(el[1]) + " / " + unicode(el[2])
+        dictionary[el[0]] = str
+    #dictionary = dict(list)
+    dictionary['selected'] = request.POST['sel']
     #json = simplejson.dumps(list) #{'aData': "None", 'id': pid, 'cname': c_name})
 #    list = {'E':'Letter E','F':'Letter F','G':'Letter G', 'selected':'F'}
     json = simplejson.dumps(dictionary)
@@ -1931,10 +1951,24 @@ def catalog_add(request):
 
 def catalog_edit(request, id):
     if request.is_ajax():
-        if request.method == 'POST':  
+        if request.method == 'POST':
+            POST = request.POST
+            
+            if POST.has_key('id') and POST.has_key('value') and auth_group(request.user, 'seller'):
+                id = request.POST.get('id')
+                d = request.POST.get('value')
+                obj = Catalog.objects.get(id = id)
+                obj.description = d
+                obj.last_update = datetime.datetime.now()
+                obj.user_update = request.user
+                obj.save() 
+
+                c = Catalog.objects.filter(id = id).values_list('description', flat=True)
+                return HttpResponse(c)
+                
             if auth_group(request.user, 'admin')==False:
                 return HttpResponse('Error: У вас не має прав для редагування')
-            POST = request.POST  
+            
             if POST.has_key('id') and POST.has_key('price'):
                 id = request.POST.get('id')
                 p = request.POST.get('price')
@@ -1959,18 +1993,6 @@ def catalog_edit(request, id):
                 c = Catalog.objects.filter(id = id).values_list('sale', flat=True)
                 return HttpResponse(c)
               #  return HttpResponse(simplejson.dumps(list(c)))
-
-            if POST.has_key('id') and POST.has_key('value'):
-                id = request.POST.get('id')
-                d = request.POST.get('value')
-                obj = Catalog.objects.get(id = id)
-                obj.description = d
-                obj.last_update = datetime.datetime.now()
-                obj.user_update = request.user
-                obj.save() 
-
-                c = Catalog.objects.filter(id = id).values_list('description', flat=True)
-                return HttpResponse(c)
 
         
     a = Catalog.objects.get(pk=id)
@@ -4263,7 +4285,8 @@ def catalog_set_type(request):
 #                cid = request.GET.get('id')
 #    else:
 #        message = "Error"
- 
+    if auth_group(request.user, 'seller')==False:
+        return HttpResponse('Error: У вас не має прав для редагування')
     q = request.POST.get('value')
     cid = request.POST.get('id')
 

@@ -13,7 +13,7 @@ class Type(models.Model):
     description_ukr = models.CharField(max_length=255, blank=True, null=True)
     
     def __unicode__(self):
-        return u'%s' % self.name
+        return u'%s/%s' % (self.name, self.name_ukr)
         #return u'%s - %s' % (self.name, self.name_ukr) 
 
     class Meta:

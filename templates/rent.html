@@ -44,7 +44,6 @@
 
 	$(function(){
       $("select#id_catalog").change(function(){
-//	$.get("/xhr_test", function(data) {
 	$.getJSON("/ajax/test/", {id: $("select#id_catalog").val()}, function(data) {
 //        alert(data);    
 //      var text = eval("(" + data + ")");
