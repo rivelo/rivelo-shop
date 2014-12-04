@@ -13,7 +13,7 @@ class Type(models.Model):
     description_ukr = models.CharField(max_length=255, blank=True, null=True)
     
     def __unicode__(self):
-        return u'%s/%s' % (self.name, self.name_ukr)
+        return u'%s / %s' % (self.name, self.name_ukr)
         #return u'%s - %s' % (self.name, self.name_ukr) 
 
     class Meta:
@@ -66,7 +66,6 @@ class Currency(models.Model):
 
     class Meta:
         ordering = ["ids"]    
-
 
 
 # exchange rate
@@ -270,7 +269,7 @@ class Client(models.Model):
     class Meta:
         ordering = ["name"]    
 
-
+#клієнтські борги
 class ClientDebts(models.Model):
     client = models.ForeignKey(Client)
     #date = models.DateTimeField(auto_now_add=True)
@@ -286,7 +285,7 @@ class ClientDebts(models.Model):
     class Meta:
         ordering = ["client", "date"]    
 
-
+#клієнтські проплати
 class ClientCredits(models.Model):
     client = models.ForeignKey(Client)
     date = models.DateTimeField()
@@ -657,7 +656,8 @@ class Rent(models.Model):
     class Meta:
         ordering = ["catalog", "date_start", "date_end"]    
     
-
+    
+#--- Цінники ---
 class ShopPrice(models.Model):
     catalog = models.ForeignKey(Catalog)
     scount = models.IntegerField(default = 1) # shop
@@ -671,3 +671,36 @@ class ShopPrice(models.Model):
     class Meta:
         ordering = ["catalog", "scount"]    
 
+
+#--- Work day / Робочі дні ---
+class WorkDay(models.Model):
+    date = models.DateField()
+    user = models.ForeignKey(User, blank=False, null=False)
+    status = models.IntegerField(default = 0) # 0 - absant; 1 - present; 2 - half-time 
+    description = models.TextField(blank = True, null = True)    
+    
+    def __unicode__(self):
+        return u"[%s] - %s - (%s)" % self.date, self.user, self.description
+
+    class Meta:
+        ordering = ["date"]    
+
+
+#--- Client ---
+class ClientMessage(models.Model):
+    client = models.ForeignKey(Client, blank=False, null=False)
+    msg = models.TextField(blank = True, null = True)
+    status = models.BooleanField(default = False, verbose_name="Виконано?")
+    date = models.DateField(auto_now_add=True)
+    user = models.ForeignKey(User, blank=False, null=False)
+    ddate = models.DateTimeField(auto_now_add=False, blank=False, null=False)
+    duser = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL, related_name='duser')
+    #duser = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
+    
+    def __unicode__(self):
+        return u'%s' % self.msg
+
+    class Meta:
+        ordering = ["client", "date", "status"]
+    
+    

@@ -31,6 +31,17 @@ $('.editable').editable('/workticket/edit/0/', {
          // console.log(settings);
          // console.log($('.editable.select'));
           
+       switch(value) {
+		case 'Прийнято':
+         $(this).closest("tr").attr('BGCOLOR', '#CCFF99');
+         break;
+		case 'Ремонтується':
+         $(this).closest("tr").attr('BGCOLOR', '#FFFF99');
+		 break;
+		default :
+         $(this).closest("tr").attr('BGCOLOR', '#FFFFFF');
+       }
+{% comment %}          
          if (value == 'Прийнято') {
          $(this).closest("tr").attr('BGCOLOR', '#CCFF99');
          }
@@ -40,6 +51,8 @@ $('.editable').editable('/workticket/edit/0/', {
          else {
          $(this).closest("tr").attr('BGCOLOR', '#FFFFFF');
          }
+{% endcomment %}
+         
          console.log("pp="+$(this).innerHTML);
      }
  });

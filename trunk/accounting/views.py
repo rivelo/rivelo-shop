@@ -9,14 +9,15 @@ from django.core.urlresolvers import resolve
 from models import Manufacturer, Country, Type, Currency, Bicycle_Type, Bicycle,  FrameSize, Bicycle_Store, Bicycle_Sale, Bicycle_Order
 from forms import ContactForm, ManufacturerForm, CountryForm, CurencyForm, CategoryForm, BicycleTypeForm, BicycleForm, BicycleFrameSizeForm, BicycleStoreForm, BicycleSaleForm, BicycleOrderForm, BicycleOrderEditForm 
 
-from models import Catalog, Client, ClientDebts, ClientCredits, ClientInvoice, ClientOrder 
+from models import Catalog, Client, ClientDebts, ClientCredits, ClientInvoice, ClientOrder, ClientMessage
 from forms import CatalogForm, ClientForm, ClientDebtsForm, ClientCreditsForm, ClientInvoiceForm, ClientOrderForm
 
 from models import Dealer, DealerManager, DealerManager, DealerPayment, DealerInvoice, InvoiceComponentList, Bank, Exchange, PreOrder
 from forms import DealerManagerForm, DealerForm, DealerPaymentForm, DealerInvoiceForm, InvoiceComponentListForm, BankForm, ExchangeForm, PreOrderForm, InvoiceComponentForm
 
-from models import WorkGroup, WorkType, WorkShop, WorkStatus, WorkTicket, CostType, Costs, ShopDailySales, Rent, ShopPrice, Photo
-from forms import WorkGroupForm, WorkTypeForm, WorkShopForm, WorkStatusForm, WorkTicketForm, CostTypeForm, CostsForm, ShopDailySalesForm, RentForm
+from models import WorkGroup, WorkType, WorkShop, WorkStatus, WorkTicket, CostType, Costs, ShopDailySales, Rent, ShopPrice, Photo, WorkDay
+from forms import WorkGroupForm, WorkTypeForm, WorkShopForm, WorkStatusForm, WorkTicketForm, CostTypeForm, CostsForm, ShopDailySalesForm, RentForm, WorkDayForm
+
   
 from django.http import HttpResponseRedirect, HttpRequest, HttpResponseNotFound
 from django.core.exceptions import ObjectDoesNotExist
@@ -2783,11 +2784,6 @@ def client_search_result(request):
 
 from django.db import connection
 
-#---Delete
-#def search_client_id(request):
-#    #query = request.GET.get('q', '')
-#    return render_to_response('index.html', {'weblink': 'client_id_search.html'})
-
 #----- Виписка клієнта -----
 def client_result(request):
     
@@ -2832,13 +2828,14 @@ def client_result(request):
         client_workshop_sum = client_workshop_sum + a.price
             
     b_bike = Bicycle_Sale.objects.filter(client=user).values('model__model__model', 'model__model__brand__name', 'model__serial_number', 'model__size__name', 'date', 'service')
-    workshop = WorkTicket.objects.filter(client=user).values('date', 'description', 'status__name').order_by('-date')
+    workshop = WorkTicket.objects.filter(client=user).values('id', 'date', 'description', 'status__name').order_by('-date')
+    messages = ClientMessage.objects.filter(client=user).values('msg', 'status', 'date', 'user__username', 'id')
     #list_debt = ClientDebts.objects.filter(client='2').values("client", "price").select_related('client')
     #list_debt = ClientDebts.objects.filter(client='2').select_related('client')
     #list_debt = ClientDebts.objects.filter(client='2').annotate(Sum("price"))
     #return render_to_response('index.html', {'clients': list_credit.values_list(), 'weblink': 'client_result.html'})
     #return render_to_response('index.html', {'clients': list_debt.values_list(), 'weblink': 'client_result.html'})
-    return render_to_response('index.html', {'weblink': 'client_result.html', 'clients': res, 'invoice': client_invoice, 'client_invoice_sum': client_invoice_sum, 'workshop': client_workshop, 'client_workshop_sum': client_workshop_sum, 'debt_list': debt_list, 'credit_list': credit_list, 'client_name': client_name, 'b_bike': b_bike, 'workshop': workshop, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'weblink': 'client_result.html', 'clients': res, 'invoice': client_invoice, 'client_invoice_sum': client_invoice_sum, 'workshop': client_workshop, 'client_workshop_sum': client_workshop_sum, 'debt_list': debt_list, 'credit_list': credit_list, 'client_name': client_name, 'b_bike': b_bike, 'workshop': workshop, 'messages': messages, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def client_lookup(request):
@@ -2993,13 +2990,12 @@ def workstatus_edit(request, id):
 
 
 def workstatus_list(request):
-    
     search = None
     if request.is_ajax():
-        if request.method == 'GET':  
-            GET = request.GET  
-            if GET.has_key('id'):
-                q = request.GET.get( 'id' )
+        if request.method == 'POST':  
+            POST = request.POST  
+            if POST.has_key('id'):
+                q = request.POST.get( 'id' )
         search = dict ((o.pk, o.name) for o in WorkStatus.objects.all())
         return HttpResponse(simplejson.dumps(search), content_type="application/json")
     else:
@@ -3703,6 +3699,71 @@ def preorder_edit(request, id):
         form = PreOrderForm(instance=a)
     return render_to_response('index.html', {'form': form, 'weblink': 'preorder.html'})
 
+
+#--- workday ---
+def workday_add(request):
+    a = WorkDay(date=datetime.date.today())
+    if request.method == 'POST':
+        form = WorkDayForm(request.POST, instance = a)
+        if form.is_valid():
+            date = form.cleaned_data['date']
+            user = form.cleaned_data['user']
+            status = form.cleaned_data['status']
+            description = form.cleaned_data['description']
+            WorkDay(date=date, user=user, status=status, description=description).save()
+            return HttpResponseRedirect('/workday/user/all/report/')
+    else:
+        form = WorkDayForm(instance = a)
+
+    return render_to_response('index.html', {'form': form, 'weblink': 'workday.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))    
+
+
+def workday_list(request):
+    if auth_group(request.user, 'admin')==False:
+        return HttpResponseRedirect('/')
+    list = WorkDay.objects.all()
+    return render_to_response('index.html', {'workdays': list, 'weblink': 'workday_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+
+
+def workday_ajax(request):
+    if request.is_ajax():
+        if request.method == 'POST':  
+            POST = request.POST  
+            if POST.has_key('date'):
+                d = request.POST.get( 'date' )
+                w = WorkDay.objects.filter(date = d).values_list('user__username', 'status', 'description', 'id')
+            if POST.has_key('cmonth'):
+                m = request.POST.get( 'cmonth' )
+                y = request.POST.get( 'cyear' )
+                w = WorkDay.objects.filter(date__month = m, date__year = y).values_list('user__username', 'status', 'description', 'id')
+            search = w    
+                #search = Rent.objects.filter(id = id).values('status')
+            return HttpResponse(simplejson.dumps(list(search)))
+
+
+
+def workday_delete(request, id):
+    if auth_group(request.user, 'admin')==False:
+        return HttpResponseRedirect('/')
+    obj = WorkDay.objects.get(id=id)
+    del_logging(obj)
+    obj.delete()
+    return HttpResponseRedirect('/workday/user/all/report/')
+
+
+def clientmessage_add(request):
+    if request.is_ajax():
+        if request.method == 'POST':  
+            POST = request.POST  
+            if POST.has_key('client'):
+                c = request.POST.get( 'client' )
+                m = request.POST.get( 'msg' )
+                cl = Client.objects.get(id=c)
+                w = ClientMessage(client=cl, msg=m, status=False, date=datetime.date.today(), user=request.user, ddate=datetime.date.today()).save()
+    
+                search = ClientMessage.objects.filter(client = c).values('msg')
+            return HttpResponse(simplejson.dumps(list(search)))
+    
 
 def payform(request):
     checkbox_list = [x for x in request.POST if x.startswith('checkbox_')]
