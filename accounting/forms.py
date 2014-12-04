@@ -349,7 +349,6 @@ class CatalogForm(forms.ModelForm):
         model = Catalog
 
 
-
 # ---------- Client -------------
 class ClientForm(forms.ModelForm):
     name = forms.CharField(max_length=255)
@@ -553,3 +552,8 @@ class RentForm(forms.ModelForm):
 #        model = Rent
 
 
+class WorkDayForm(forms.ModelForm):
+    user = forms.ModelChoiceField(queryset = User.objects.all(), required=True, label='Користувач')
+    date = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'), label='Дата')
+    status = forms.IntegerField(min_value=0, initial = 0, label='Статус')
+    description = forms.CharField(widget=forms.Textarea(), required=False, label='Опис')

@@ -275,8 +275,6 @@ urlpatterns = patterns('',
     (r'^workstatus/view/$', 'catalog.accounting.views.workstatus_list'),
     (r'^workstatus/edit/(?P<id>\d+)$', 'catalog.accounting.views.workstatus_edit'),
     (r'^workstatus/delete/(?P<id>\d+)$', 'catalog.accounting.views.workstatus_delete'),
-    
-    
 
     (r'^workticket/add/$', 'catalog.accounting.views.workticket_add'),
     (r'^workticket/add/client/(?P<id>\d+)/$', 'catalog.accounting.views.workticket_add'),    
@@ -398,6 +396,14 @@ urlpatterns += patterns('',
     (r'^photo/url/add/$', 'catalog.accounting.views.photo_url_add'),
     (r'^photo/url/get/$', 'catalog.accounting.views.photo_url_get'),
     (r'^catalog/photo/list/$', 'catalog.accounting.views.photo_list'),
+    
+    (r'^workday/user/all/report/$', 'catalog.accounting.views.workday_list'),
+    (r'^workday/alluser/report/$', 'catalog.accounting.views.workday_ajax'),
+    (r'^workday/add/$', 'catalog.accounting.views.workday_add'),
+    (r'^workday/(?P<id>\d+)/delete/$', 'catalog.accounting.views.workday_delete'),
+    
+    (r'^clientmessage/add/$', 'catalog.accounting.views.clientmessage_add'),
+    
 ) 
 
 #===============================================================================

@@ -56,7 +56,6 @@ input{
 </style>
 
 <script type="text/javascript" src="/media/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="/media/jquery.qrcode-0.7.0.min.js"></script>
 <script type="text/javascript" src="/media/jquery.hotkeys-0.7.9.min.js"></script>
 
 <script type="text/javascript">
@@ -107,18 +106,6 @@ $(document).ready(function() {
 
 })
 
-
-$('#ss').qrcode({
-	render: 'image',
-	width: 60,
-	height: 60,
-	size: 80,
-	fill: '#3a3',
-	ecLevel: 'M',
-	text: 'www.rivelo.com.ua'
-	});
-
-
 </script>
 
 <script>
@@ -143,7 +130,7 @@ $(document).bind('keydown', 'alt+x', function(){
 <a href="/"><img src="/media/images/site_logo_small.gif" alt="" title=""/></a>
 </td>
 
-<td id="ss" style="border: 0;"> </td>
+
 
 <td style="border: 0;">  
   <form action="/invoice/search/result" method="GET">

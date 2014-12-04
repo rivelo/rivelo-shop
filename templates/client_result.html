@@ -9,6 +9,7 @@
 
 	<script type="text/javascript" src="/media/jquery-1.8.3.js"></script>	
 	<script type="text/javascript" src="/media/jquery-ui-1.9.2.custom.min.js"></script>
+	<script src="/media/jquery.jeditable.mini.js" type="text/javascript" charset="utf-8"></script>
 
 <style type="text/css">
 #button > span.ui-icon-custom { 
@@ -20,50 +21,56 @@
     
 <script language="JavaScript">
 $(document).ready(function() {
-	$( document ).tooltip();
-	$( "#dialog" ).hide();
+	$(document).tooltip();
+	$("#dialog").hide();
+	$("#dialog_r").hide();
+	$("#dialog_msg").hide();
 	
-	$( "#img_repair" ).click(function() {
-      $( "#dialog_r" ).dialog({ autoOpen: true });
-  	});
+  	$( "#img_bike" ).click(function() {
+  		$( "#dialog" ).dialog();
+	});
 	
+	$( "#img_msg" ).click(function() {
+  		$( "#dialog_msg" ).dialog({
+  		resizable: false,
+      	modal: true,
+  		width: 380,
+      	buttons: {
+        "Додати": function() {
+        	if (!$("#msg_text").length) { 
+        	$( this ).append('<textarea type="text" id="msg_text" name="mytext[]" rows="10" cols="40"> </textarea>');
+        	$( this ).append('<input type="button" class="ok_button" name="mytext[]" width="350" value="Відправити">');
+        	}
+        	//$( this ).dialog( "close" );
+        },
+        "Відмінити": function() {
+        	$( this ).dialog( "close" );	
+        },
+        
+        }  		
+  		});
+	});
+
+	$(".ok_button").live('click', function(){
+		console.log("Натиснуто ОК");
+		$.ajax({
+                type: "POST",
+                url: "/clientmessage/add/",
+                data: {client:  {{client_name.id}}, msg: $("#msg_text").attr("value") },
+                dataType: "json",
+                success:function(data){
+                	$('#img_msg').css("opacity", 1);
+//					document.getElementById("link_" + data.id).setAttribute("url", String(data.aData[0][0]));
+					$( "#dialog_msg" ).close();                
+                },
+                error:function(){
+                    alert("При отправке возникли проблемы");
+                }
+            });
+	});
+	
+	//$('#img_repair').css("opacity", 1);
 })
-
-
-$(function() {
-    $( "button:first" ).button({
-      icons: {
-        primary: "ui-icon-custom"
-      },
-      text: false
-    })
-	.click(function() {
-        alert( "Running the last action" );
-    })
-    .next().button({
-      icons: {
-        primary: "ui-icon-custom"
-      }
-    })
-	.click(function() {
-		$( "#dialog" ).dialog();
-        //alert( "Running the last action" );
-    })    
-    .next().button({
-      icons: {
-        primary: "ui-icon-locked"
-      }
-    })
-    .next().button({
-      icons: {
-        primary: "ui-icon-locked"
-      }
-    })
-	.click(function() {
-		$( "#dialog" ).dialog();
-        //alert( "Running the last action" );
-    });
-});
 
 
 function res()
@@ -132,10 +139,6 @@ $(function() {
 
        
 });
-
-$(function() {
-    $( "#dialog_r" ).dialog({ autoOpen: false });
-  });
   
          
 </script>
@@ -152,34 +155,99 @@ $(function() {
     </h1>
 </div>
 
-<!-- repair bike  -->
+<div id="dialog_msg" title="Повідомлення">
+{% for msg in messages %}
+<p><b>Message: </b> <br> {{msg.msg}} </p>
+{% endfor %}  
+</div>	
+
+<!-- repair bike  
 <img style="display: none;" id="img_repair" src="http://thumb10.shutterstock.com/thumb_small/295516/103760093/stock-photo-bicycle-repair-sign-on-a-white-background-part-of-a-series-103760093.jpg" height="64px" >
+-->
+
+<img style="display: True; opacity: 0.2" id="img_repair" src="/media/images/bicycle-repair.jpg" height="56px" title="Майстерня">
+{% if messages %}
+<img style="display: True; opacity: 1" id="img_msg" src="/media/images/Message-ico.png" height="56px" title="Нові повідомлення">
+{% else %}
+<img style="display: True; opacity: 0.2" id="img_msg" src="/media/images/Message-ico.png" height="56px" title="Нові повідомлення">
+{% endif %}
+{% if b_bike %}
+<img style="display: True;" id="img_bike" src="/media/images/green-bicycle_ico.png" height="50px" title="Придбані велосипеди">
+{% endif %}
 
 <div id="dialog_r" title="Заявки на ремонт:">
-<table>
+<table width='100%'>
+  <script>
+	$( "#img_repair" ).click(function() {
+		window.location.href = "/workticket/add/client/"+ {{client_name.id}} +"/";	
+//    	console.log("/workticket/add/client/"+ {{client_name.id}} +"/");
+  	});
+  </script>
+
+
 {% for ticket in workshop  %}
 {% if ticket.status__name = 'Прийнято' %}
   <tr bgcolor="#CCFF99" > 
   <script>
-  $('#img_repair').show();
+  $( "#img_repair" ).unbind(); 
+  $( "#img_repair" ).click(function() {
+  $( "#dialog_r" ).dialog({
+      buttons: {
+        "Додати": function() {
+        	$( this ).dialog( "close" );
+        	window.location.href = "/workticket/add/client/"+ {{client_name.id}} +"/";	
+        },
+        "Відмінити": function() {
+        	$( this ).dialog( "close" );	
+        },
+        
+        }
+  });
+  });
+
+//  $('#img_repair').show();
+  $('#img_repair').css("opacity", 1);
+
+$('.edit_workstatus').editable('/workticket/edit/0/', { 
+     loadurl : '/workstatus/view/',
+     type   : 'select',
+     submit : 'OK',
+     submitdata : function() {
+      	 	return {id_w : $(this).attr('id_workticket')};
+     },
+     callback : function(value, settings) {
+         
+       switch(value) {
+		case 'Прийнято':
+         $(this).closest("tr").attr('BGCOLOR', '#CCFF99');
+         $('#img_repair').css("opacity", 1);
+         break;
+		case 'Ремонтується':
+         $(this).closest("tr").attr('BGCOLOR', '#FFFF99');
+		 break;
+		case 'Виконано':
+         $('#img_repair').css("opacity", 0.2);
+		 break;
+		case 'Виконано невидано':
+         $('#img_repair').css("opacity", 0.2);
+		 break;
+		default :
+         $(this).closest("tr").attr('BGCOLOR', '#FFFFFF');
+       }
+     }
+ });
+
   </script>
+  
 {% else %}
   <tr bgcolor="#FFFFFF">
 {% endif %}  
-  <td>{{ticket.date}}</td><td>{{ticket.description}}</td><td>{{ticket.status__name}}</td>
+  <td>{{ticket.date}}</td><td>{{ticket.description}}</td><td class="edit_workstatus" id_workticket={{ticket.id}}>{{ticket.status__name}}</td>
   </tr>
 {% endfor %}
 </table>
 </div>
 
-<div style="float: right;   
-  margin: 10px 0px 0px 0px;  
-  text-align: right;  ">
-<button id="button">Button with icon only</button>
-{% for bike in b_bike %}
-<button>{{bike.model__model__model}} - {{bike.date}}</button>
-{% endfor %}
-</div>
 
 <div id="dialog" title="Придбані велосипеди">
 {% for bike in b_bike %}

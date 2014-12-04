@@ -2839,3 +2839,34 @@ Key = price - Value = 15.0
 Key = pay - Value = True
 Key = user - Value = 5
 Key = description - Value = 
+2014-12-03 16:00:22.171000 >>> DELETE FROM TABLE work day WHERE id = 3 
+Key = id - Value = 3
+Key = date - Value = 2014-12-03
+Key = user - Value = 3
+Key = status - Value = 0
+Key = description - Value = 
+2014-12-03 16:02:07.843000 >>> DELETE FROM TABLE work day WHERE id = 1 
+Key = id - Value = 1
+Key = date - Value = 2014-12-03
+Key = user - Value = 3
+Key = status - Value = 0
+Key = description - Value = хз
+2014-12-03 16:02:51.750000 >>> DELETE FROM TABLE work day WHERE id = 6 
+Key = id - Value = 6
+Key = date - Value = 2014-12-03
+Key = user - Value = 3
+Key = status - Value = 0
+Key = description - Value = йцйц
+2014-12-03 16:05:52.937000 >>> DELETE FROM TABLE work day WHERE id = 7 
+Key = id - Value = 7
+Key = date - Value = 2014-12-03
+Key = user - Value = 3
+Key = status - Value = 1
+Key = description - Value = бла
+2014-12-04 00:04:55 >>> DELETE FROM TABLE work ticket WHERE id = 814 
+Key = id - Value = 814
+Key = client - Value = 977
+Key = date - Value = 2014-12-04
+Key = end_date - Value = 2014-12-04
+Key = status - Value = 1
+Key = description - Value = цукамаси
