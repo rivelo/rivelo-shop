@@ -742,15 +742,38 @@ def bicycle_sale_list_by_brand(request, year=False, month=False, id=None):
     return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_sale_list.html', 'price_summ':price_summ, 'price_opt': price_opt, 'service_summ':service_summ, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
-def bicycle_sale_service(request, id):
+def bicycle_sale_service(request, id=None):
     if request.user.is_authenticated()==False:
         return HttpResponse("<h2>Для виконання операції, авторизуйтесь</h2>")
+
+    if request.is_ajax():
+        if request.method == 'POST':  
+            POST = request.POST  
+            if POST.has_key('id'):
+                b_id = request.POST.get( 'id' )
+                bserv = request.POST.get( 'value' )
+                list = Bicycle_Sale.objects.get(id=b_id)
+                if (bserv == "1"):
+                    message = "Пройдено"
+                    list.service = True
+                    list.save()
+                else:
+                    message = "Не пройдено"
+                    list.service = False
+                    list.save()
+                    
+                return HttpResponse(message, mimetype="text/plain")
+            
+    else:
+        message = "Error"
+
+#    return HttpResponse(message, mimetype="text/plain")
    
-    list = Bicycle_Sale.objects.get(id=id)
-    list.service = True
-    list.save()
-    list = Bicycle_Sale.objects.filter(id=id)
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+#    list = Bicycle_Sale.objects.get(id=id)
+    
+    #list.save()
+    #list = Bicycle_Sale.objects.filter(id=id)
+#    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     #return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_sale_list.html',})
 
 
@@ -2827,15 +2850,15 @@ def client_result(request):
     for a in client_workshop:
         client_workshop_sum = client_workshop_sum + a.price
             
-    b_bike = Bicycle_Sale.objects.filter(client=user).values('model__model__model', 'model__model__brand__name', 'model__serial_number', 'model__size__name', 'date', 'service')
-    workshop = WorkTicket.objects.filter(client=user).values('id', 'date', 'description', 'status__name').order_by('-date')
+    b_bike = Bicycle_Sale.objects.filter(client=user).values('model__model__model', 'model__model__brand__name', 'model__serial_number', 'model__size__name', 'date', 'service', 'id')
+    workshop_ticket = WorkTicket.objects.filter(client=user).values('id', 'date', 'description', 'status__name').order_by('-date')
     messages = ClientMessage.objects.filter(client=user).values('msg', 'status', 'date', 'user__username', 'id')
     #list_debt = ClientDebts.objects.filter(client='2').values("client", "price").select_related('client')
     #list_debt = ClientDebts.objects.filter(client='2').select_related('client')
     #list_debt = ClientDebts.objects.filter(client='2').annotate(Sum("price"))
     #return render_to_response('index.html', {'clients': list_credit.values_list(), 'weblink': 'client_result.html'})
     #return render_to_response('index.html', {'clients': list_debt.values_list(), 'weblink': 'client_result.html'})
-    return render_to_response('index.html', {'weblink': 'client_result.html', 'clients': res, 'invoice': client_invoice, 'client_invoice_sum': client_invoice_sum, 'workshop': client_workshop, 'client_workshop_sum': client_workshop_sum, 'debt_list': debt_list, 'credit_list': credit_list, 'client_name': client_name, 'b_bike': b_bike, 'workshop': workshop, 'messages': messages, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'weblink': 'client_result.html', 'clients': res, 'invoice': client_invoice, 'client_invoice_sum': client_invoice_sum, 'workshop': client_workshop, 'client_workshop_sum': client_workshop_sum, 'debt_list': debt_list, 'credit_list': credit_list, 'client_name': client_name, 'b_bike': b_bike, 'workshopTicket': workshop_ticket, 'messages': messages, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def client_lookup(request):
@@ -3759,7 +3782,10 @@ def clientmessage_add(request):
                 c = request.POST.get( 'client' )
                 m = request.POST.get( 'msg' )
                 cl = Client.objects.get(id=c)
-                w = ClientMessage(client=cl, msg=m, status=False, date=datetime.date.today(), user=request.user, ddate=datetime.date.today()).save()
+                if (request.user):
+                    w = ClientMessage(client=cl, msg=m, status=False, date=datetime.date.today(), user=request.user, ddate=datetime.date.today()).save()    
+                else:
+                    return HttpResponse(simplejson.dumps(["Для додавання повідомлень потрібно зайти на сайті"]))
     
                 search = ClientMessage.objects.filter(client = c).values('msg')
             return HttpResponse(simplejson.dumps(list(search)))
@@ -3819,7 +3845,8 @@ def payform(request):
         bal = res
      
     url = '/client/result/search/?id=' + str(client.id)
-    return render_to_response('index.html', {'checkbox': list_id, 'invoice': ci, 'summ': sum, 'balance':bal, 'client': client, 'weblink': 'payform.html', 'next': url}, context_instance=RequestContext(request, processors=[custom_proc]))
+    cmsg = ClientMessage.objects.filter(client__id=user)
+    return render_to_response('index.html', {'messages': cmsg,'checkbox': list_id, 'invoice': ci, 'summ': sum, 'balance':bal, 'client': client, 'weblink': 'payform.html', 'next': url}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def workshop_payform(request):
@@ -3930,6 +3957,7 @@ def user_invoice_report(request, month=None, year=None, day=None, user_id=None):
     #user_id = 5; #choper
     #user_id = 6; #andre
     #user_id = 4; #ygrik
+    #user_id = 7; #Vadymyr
 
     if request.user.is_authenticated():
         user_id = request.user.id
@@ -3982,6 +4010,7 @@ def user_workshop_report(request, month=None, year=None, day=None, user_id=None)
 
     if request.user.is_authenticated():
         user_id = request.user.id
+        user_id = 5;
     else:
         user_id = None
     
@@ -4252,6 +4281,7 @@ def ajax_test(request):
     #return HttpResponse(serialized_queryset, mimetype='application/json')
 #    return HttpResponse(message, mimetype="text/plain")
 
+
 def ajax_price_print(request):
     search = None
     message = ""
@@ -4332,9 +4362,6 @@ def photo_url_get(request):
 #                json = simplejson.dumps(photo_list)
 
     return HttpResponse(json, mimetype='application/json')
-
-#    search = pid;
-#    return HttpResponse(search, mimetype="text/plain")
 
 
 def catalog_set_type(request):

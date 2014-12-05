@@ -2870,3 +2870,30 @@ Key = date - Value = 2014-12-04
 Key = end_date - Value = 2014-12-04
 Key = status - Value = 1
 Key = description - Value = цукамаси
+2014-12-04 14:00:45.359000 >>> DELETE FROM TABLE work ticket WHERE id = 816 
+Key = id - Value = 816
+Key = client - Value = 31
+Key = date - Value = 2014-12-04
+Key = end_date - Value = 2014-12-04
+Key = status - Value = 1
+Key = description - Value = test
+2014-12-04 17:38:02.062000 >>> DELETE FROM TABLE client debts WHERE id = 15210 
+Key = id - Value = 15210
+Key = client - Value = 352
+Key = date - Value = 2014-11-11 16:43:31
+Key = price - Value = 360.0
+Key = description - Value = покрышка	Continental RACE KING 26*2,2 FOLD; 
+Key = user - Value = 5
+2014-12-04 17:38:41.406000 >>> DELETE FROM TABLE client invoice WHERE id = 25849 
+Key = id - Value = 25849
+Key = client - Value = 352
+Key = catalog - Value = 7504
+Key = count - Value = 1
+Key = price - Value = 400.0
+Key = sum - Value = 360.0
+Key = currency - Value = 3
+Key = sale - Value = 10
+Key = pay - Value = 360.0
+Key = date - Value = 2014-11-11 16:42:11
+Key = description - Value = 
+Key = user - Value = 5
