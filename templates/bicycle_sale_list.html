@@ -1,6 +1,27 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="/media/table.css">
+<title>Продані велосипеди</title>
+
+<link rel="stylesheet" href="/media/jquery-ui.min.css">
+<script src="/media/jquery-ui.min.js"></script>
+<script src="/media/jquery.jeditable.mini.js" type="text/javascript" charset="utf-8"></script>
+
+<script>
+$(document).ready(function() {
+
+$('.bike_serv').editable('/bicycle/sale/service/', {
+     data   : " {'1':'Пройдено','0':'Не пройдено'}",
+     submitdata : function() {
+      	return {id : $(this).attr('id_bike')};
+    	 },
+     type   : 'select',
+     tooltip   : 'Натисніть для редагування...',
+     submit : 'OK'
+});
+
+});
+</script>
 
 <br>
 {% for group in user.groups.all %}
@@ -64,10 +85,10 @@
 {% endfor %}			
 		
 {% if type.service %}
-<td>{{type.service|yesno:"Пройдено,Непройдено,Невідомо"}}
+<td class="bike_serv" id_bike={{type.id}}>{{type.service|yesno:"Пройдено,Не пройдено,Невідомо"}}
 {% else %}
-<td BGCOLOR="#CCCC99">
-<a href="/bicycle/sale/service/{{ type.id }}">{{type.service|yesno:"Пройдено,Непройдено,Невідомо"}}</a>
+<td BGCOLOR="#CCCC99" class="bike_serv" id_bike={{type.id}}>
+{{type.service|yesno:"Пройдено,Не пройдено,Невідомо"}}</a>
 {% endif %}		
 
 		</td>
