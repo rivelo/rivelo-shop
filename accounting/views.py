@@ -1272,7 +1272,7 @@ def invoice_new_item(request):
     
     di = DealerInvoice.objects.filter(received = False).values_list("id", flat=True)
     
-    list_comp = InvoiceComponentList.objects.filter(invoice__date__year = date.year, invoice__date__month = date.month - 1, invoice__id__in = di) #(invoice = list[1].id)
+    list_comp = InvoiceComponentList.objects.filter(invoice__date__year = date.year, invoice__date__month = date.month, invoice__id__in = di) #(invoice = list[1].id)
     return render_to_response('index.html', {'dinvoice_list': list_comp, 'weblink': 'dealer_invoice_new_item.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))  
 
 
@@ -3201,7 +3201,16 @@ def workshop_list(request, year=None, month=None, day=None):
     return render_to_response('index.html', {'workshop': list, 'summ':sum, 'sel_year':year, 'sel_month':month, 'sel_day':day, 'month_days': days, 'weblink': 'workshop_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
-def workshop_delete(request, id):
+def workshop_delete(request, id=None):
+    
+    if request.is_ajax():
+        if request.method == 'POST':  
+            POST = request.POST  
+            if POST.has_key('id'):
+                wid = request.POST.get( 'id' )
+
+    if wid:
+        id = wid 
     obj = WorkShop.objects.get(id=id)
     del_logging(obj)
     obj.delete()

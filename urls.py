@@ -294,6 +294,7 @@ urlpatterns = patterns('',
     (r'^workshop/year/(?P<year>\d+)/month/(?P<month>\d+)/view/$', 'catalog.accounting.views.workshop_list', {'day': "all"}),
     (r'^workshop/year/(?P<year>\d+)/view/$', 'catalog.accounting.views.workshop_list'),
     (r'^workshop/delete/(?P<id>\d+)/$', 'catalog.accounting.views.workshop_delete'),    
+    (r'^workshop/delete/$', 'catalog.accounting.views.workshop_delete'),
 
     (r'^shop/sale/day/add/$', 'catalog.accounting.views.shopdailysales_add'),
     (r'^shop/sale/month/(?P<month>\d+)/view/$', 'catalog.accounting.views.shopmonthlysales_view'),    
