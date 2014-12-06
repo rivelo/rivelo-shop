@@ -3,7 +3,6 @@
 <title>Майстерня</title>
 
 <link rel="stylesheet" type="text/css" href="/media/table.css">
-
 <script src="/media/jquery-ui-1.9.2.custom.min.js"></script>
 
 
@@ -20,6 +19,30 @@ for(var i = 0; i < All.elements.length; ++i) {
 	document.getElementById('workshop_pay').innerHTML = "До оплати: <br>" + p.toFixed(2)+" грн.";
 }
 }
+
+$(document).ready(function() {
+ $(".w_del").click(function(){
+
+ if (confirm("Ви дійсно бажаєте видалити запис?")) {
+ 	console.log($(this).parents("tr"));
+ 	console.log("log = "+$(this).attr("id_work"));
+	$(this).parents("tr").remove();
+		$.ajax({
+                type: "POST",
+                url: "/workshop/delete/",
+                data: {id:  $(this).attr("id_work") },
+                dataType: "text",
+                success:function(data){
+                	console.log("ajax work");
+                },
+                error:function(data){
+                    alert("Виникли проблеми з сервером" + data);
+                }
+            });	
+ }
+	
+ });
+});
     
 </script>
 
@@ -104,7 +127,7 @@ for(var i = 0; i < All.elements.length; ++i) {
 
 {% if user.is_authenticated %}		
 <!--     <a href="/workshop/delete/{{ type.id }}" onclick="return confirm('Видалити роботу?')">delete</a>  -->
-    <a onclick="$('#row_{{type.id}}').remove()">delete</a>
+    <span class="w_del" id_work={{type.id}} style="cursor: pointer;">Видалити</span>
     {% endif %}
     </td>
     <td>
