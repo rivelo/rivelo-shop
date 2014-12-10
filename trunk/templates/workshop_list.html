@@ -128,7 +128,7 @@ $(document).ready(function() {
 {% if user.is_authenticated %}		
 <!--     <a href="/workshop/delete/{{ type.id }}" onclick="return confirm('Видалити роботу?')">delete</a>  -->
     <span class="w_del" id_work={{type.id}} style="cursor: pointer;">Видалити</span>
-    {% endif %}
+{% endif %}
     </td>
     <td>
 {% if type.pay %}    
