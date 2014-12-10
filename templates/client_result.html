@@ -26,6 +26,7 @@ $(document).ready(function() {
 	$("#dialog").hide();
 	$("#dialog_r").hide();
 	$("#dialog_msg").hide();
+	$("#dialog_ajax_load").hide();
 	
   	$( "#img_bike" ).click(function() {
   		$( "#dialog" ).dialog();
@@ -36,16 +37,19 @@ $(document).ready(function() {
   		resizable: false,
       	modal: true,
   		width: 380,
+  		height:450,
       	buttons: {
         "Додати": function() {
         	if (!$("#msg_text").length) { 
         	$( this ).append('<textarea type="text" id="msg_text" name="mytext[]" rows="10" cols="40"> </textarea>');
-        	$( this ).append('<input type="button" class="ok_button" name="mytext[]" width="350" value="Відправити">');
+        	$( this ).append('<input id="msg_button" type="button" class="ok_button" name="mytext[]" width="350" value="Відправити">');
         	}
         	//$( this ).dialog( "close" );
         },
         "Відмінити": function() {
         	$( this ).dialog( "close" );	
+        	$("#msg_text").remove();
+            $("#msg_button").remove();
         },
         
         }  		
@@ -60,8 +64,12 @@ $(document).ready(function() {
                 data: {client:  {{client_name.id}}, msg: $("#msg_text").attr("value") },
                 dataType: "json",
                 success:function(data){
-                	$( "#dialog_msg" ).dialog("close");
-                	$('#img_msg').css("opacity", 1);
+                	//$( "#dialog_msg" ).dialog("close");
+                	$("#img_msg").css("opacity", 1);
+                	$("#msg_text").remove();
+                	$("#msg_button").remove();
+                	$("#dialog_msg p:last").after("<p><b>Message: </b> <br>"+ $("#msg_text").attr("value") +"</p>");
+                	
 //					document.getElementById("link_" + data.id).setAttribute("url", String(data.aData[0][0]));
 					                
                 },
@@ -75,18 +83,17 @@ $(document).ready(function() {
 })
 
 
-function res()
-{
-var p=0;
-var All=document.forms['formSum'];
-for(var i = 0; i < All.elements.length; ++i) {
-	if(All.elements[i].checked){
-	//p+=parseInt(All.elements[i].value);
-	p=p+parseFloat(All.elements[i].value);
+function res() {
+var sum=0;
+	$('.chk_inv').each(function() {
+	if(this.checked){
+		console.log("THIS = "+ this.value);
+		sum = sum + parseFloat(this.value);
 	}
-	document.getElementById('for_pay').innerHTML = p.toFixed(2)+" грн.";
-	document.getElementById('debet').innerHTML = parseFloat(document.getElementById('for_pay').innerHTML)+parseFloat(document.getElementById('workshop_pay').innerHTML);
-}
+	});
+document.getElementById('for_pay').innerHTML = sum + " грн.";
+document.getElementById('debet').innerHTML = parseFloat(document.getElementById('for_pay').innerHTML)+parseFloat(document.getElementById('workshop_pay').innerHTML);
+document.getElementById('row_count').innerHTML = "Row = " + document.getElementById("product").rows.length;
 }
     
 function resWorkshop()
@@ -114,16 +121,23 @@ $(function() {
       }
     });
 
-        $("#all_cred").click(function(){
-            var Id = 2 
+    $("#all_cred").click(function(){
+            var Id = {{client_name.id}};
             $.ajax({
+            	beforeSend: function() {$( "#dialog_ajax_load" ).dialog({modal: true});},
                 type: "POST",
-                url: "/client_history/",
+                url: "/client_history/cred/",
                 data: { clientId: Id },
                 dataType: "json",
                 success:function(msg){
+                	$("#balance .tr_cred").empty(); 
+                	$("#1month_cred").attr("cred_day", 0);
+                	$("#1month_cred").hide();
                 	$.each(msg,function(index,item){
-                	    $('.in_cred').after('<tr><td>'+ item.fields.date +'</td><td>'+ item.fields.description +'</td><td>' + item.fields.price+'</td></tr>');
+                		var tdate = item.fields.date.split(" ")[0].replace("-", "/").replace("-", "/");
+                		var fcol = '<abbr title="' + item.fields.date.split(" ")[1] + ' - [user]">' + tdate + '</abbr>';
+                		var cdesc = item.fields.description + " <a href='/clientcredits/delete/" + item.pk + "'>delete</a>";
+                	    $('.in_cred').after('<tr class="tr_cred"><td>'+ fcol +'</td><td>'+ cdesc +'</td><td>' + item.fields.price+'</td></tr>');
 //                        tr = '<tr><td>'+ item.fields.date+'</td>';
 //                        tr += '<td>' + item.fields.description+'</td>';
 //                        tr += '<td>' + item.fields.price+'</td>';
@@ -132,12 +146,125 @@ $(function() {
                     });
 //					$('#balance').append('<tr><td>00/00/0000</td><td>'+ msg[0].description +'</td><td></td></tr>');
 //					$('.in_cred').after('<tr><td>00/00/0000</td><td>'+ msg[1].fields.description +'</td><td></td></tr>');
+				$( "#dialog_ajax_load" ).dialog("close");
                 },
                 error:function(){
                     alert("При отправке возникли проблемы");
                 }
             });      
 		});
+
+//--- Борги клієнтів ---
+    $("#all_debt").click(function(){
+            var Id = {{client_name.id}};
+            $.ajax({
+            	beforeSend: function() {$( "#dialog_ajax_load" ).dialog({modal: true});},
+                type: "POST",
+                url: "/client_history/cred/",
+                data: { clientId: Id },
+                dataType: "json",
+                success:function(msg){
+                	$("#balance .tr_debt").empty(); 
+                	$("#1month_debt").hide();
+                	$.each(msg,function(index,item){
+                		var tdate = item.fields.date.split(" ")[0].replace("-", "/").replace("-", "/");
+                		var fcol = '<abbr title="' + item.fields.date.split(" ")[1] + ' - [user]">' + tdate + '</abbr>';
+                		var cdesc = item.fields.description + " <a href='/clientdebts/delete/" + item.pk + "'>delete</a>";
+                	    $('.in_debt').after('<tr class="tr_debt"><td>'+ fcol +'</td><td>'+ cdesc +'</td><td>' + item.fields.price+'</td></tr>');
+                	    
+                    });
+				$( "#dialog_ajax_load" ).dialog("close");                    
+                },
+                error:function(){
+                    alert("При отправке возникли проблемы");
+                }
+            });      
+		});
+
+
+	$("#1month_cred").click(function(){
+		var Id = {{client_name.id}};
+            $.ajax({
+                type: "POST",
+                url: "/client_history/cred/",
+                data: { client_id: Id, cred_month: $(this).attr("cred_month"), cred_year: $(this).attr("cred_year"), cred_day: $(this).attr("cred_day")},
+                dataType: "json",
+                success:function(msg){
+                	if ($("#1month_cred").attr("cred_day") == 0) {
+	                	alert ("Виведено всі проплати клієнта");
+                	}
+                	var prev_day = parseInt($("#1month_cred").attr("cred_day")) + 30;
+                	$("#1month_cred").html("+ " + (prev_day-30) + " днів");
+                	$("#1month_cred").attr("cred_day", prev_day);
+                	//$("#balance .tr_cred").empty(); 
+                	$.each(msg,function(index,item){
+						var fcol = '<abbr title="' + item['user__username'] + '">' + item['date'] + '</abbr>';
+						var ed = '<a href="/clientcredits/edit/'+item['id']+'">edit</a>';
+						var cdesc = item['description'] + ed + " <a href='/clientcredits/delete/" + item['id'] + "'>delete</a>";
+                	    $('.in_cred').after('<tr class="tr_cred"><td>'+ fcol +'</td><td>'+ cdesc +'</td><td>' + item['price']+'</td></tr>');
+                    });
+                },
+                error:function(){
+                    alert("При отправке возникли проблемы");
+                }
+            });      
+	});
+
+
+	$("#1month_debt").click(function(){
+		var Id = {{client_name.id}};
+            $.ajax({
+                type: "POST",
+                url: "/client_history/debt/",
+                data: { client_id: Id, cred_day: $(this).attr("debt_day")},
+                dataType: "json",
+                success:function(msg){
+                	if ($("#1month_debt").attr("debt_day") == 0) {
+                		alert ("Виведено всі борги клієнта");
+                	}
+                	var prev_day = parseInt($("#1month_debt").attr("debt_day")) + 30;
+                	$("#1month_debt").html("+ " + (prev_day-30) + " днів");
+                	$("#1month_debt").attr("debt_day", prev_day);
+                	//$("#balance .tr_debt").empty(); 
+                	$.each(msg,function(index,item){
+						var fcol = '<abbr title="' + item['user__username'] + '">' + item['date'] + '</abbr>';
+						var ed = '<a href="/clientdebts/edit/'+item['id']+'">edit</a>';
+						var cdesc = item['description'] + ed + " <a href='/clientcredits/delete/" + item['id'] + "'>delete</a>";
+                	    $('.in_debt').after('<tr class="tr_debt"><td>'+ fcol +'</td><td>'+ cdesc +'</td><td>' + item['price']+'</td></tr>');
+                    });
+                },
+                error:function(){
+                    alert("При отправке возникли проблемы");
+                }
+            });      
+	});
+
+
+	$("#last_invoice").click(function(){
+		res();	
+		var Id = {{client_name.id}};
+            $.ajax({
+                type: "POST",
+                url: "/client_history/invoice/",
+                data: { client_id: Id, day: $(this).attr("day")},
+                dataType: "json",
+                success:function(msg){
+                	var day = parseInt($("#last_invoice").attr("day")) + {{tdelta}};
+                	$("#last_invoice").html(">>> + " + (day-{{tdelta}}) + " днів");
+                	$("#last_invoice").attr("day", day);
+
+                	//$("#product .tr_inv").empty(); 
+                	$.each(msg,function(index,item){
+                	inp = '<input type="checkbox" class="chk_inv" value="'+item['sum']+'" onclick="res()" name="checkbox_' +item['id']+ '"/>';
+                	    $('#th_inv').after('<tr class="tr_inv"><td>'+ item['date'] +'</td><td>['+ item['catalog__ids'] +'] - '+ item['catalog__name'] +'</td><td>'+ item['count'] +'</td>'+'<td>' + item['price']+'</td>'+'<td>'+item['sum']+'</td>'+'<td>'+item['pay']+'<td>'+item['currency__name']+'<td align="center">'+inp+'</td></tr>');
+                    });
+                },
+                error:function(){
+                    alert("При отправке возникли проблемы");
+                }
+            });      
+	});
+
 
 $("#ticket_tab").on("click", function() {
 	$("#tabs-3").append($("#t_workticket"));
@@ -152,9 +279,23 @@ $('.bike_serv').editable('/bicycle/sale/service/', {
      tooltip   : 'Натисніть для редагування...',
      submit : 'OK'
 });
+
+	$('#selectall').click(function(event) {  //on click 
+        if(this.checked) { // check select status
+            $('.chk_inv').each(function() { //loop through each checkbox
+                this.checked = true;  //select all checkboxes with class "checkbox1"
+                res();               
+            });
+        }else{
+            $('.chk_inv').each(function() { //loop through each checkbox
+                this.checked = false; //deselect all checkboxes with class "checkbox1"    
+                res();                   
+            });         
+        }
+    });
+
       
 });
-  
          
 </script>
 
@@ -164,10 +305,15 @@ $('.bike_serv').editable('/bicycle/sale/service/', {
     width: 800px;      
     float:left;  ">
     <h1>Виписка по клієнту:
-    <span title="Телефон: {{client_name.phone|phone2Str}} <br> E-mail: {{client_name.email}}">
+    <span title="Телефон: {{client_name.phone|phone2Str}} / E-mail: {{client_name.email}}">
     	 <a href=/client/edit/{{client_name.id}}> {{client_name.name}} ({{client_name.forumname}}) </a>
     </span>
     </h1>
+</div>
+
+
+<div id="dialog_ajax_load" title="Завантаження">
+<h2>Зачекайте, триває завантаження ... </h2>
 </div>
 
 <div id="dialog_msg" title="Повідомлення">
@@ -189,6 +335,8 @@ $('.bike_serv').editable('/bicycle/sale/service/', {
 {% if b_bike %}
 <img style="display: True;" id="img_bike" src="/media/images/green-bicycle_ico.png" height="50px" title="Придбані велосипеди">
 {% endif %}
+
+<img style="display: None;" id="img_attention" src="/media/images/system-attention-icon.png" height="50px" title="Непроведені операції/роботи">
 
 <div id="dialog_r" title="Заявки на ремонт:">
 <table width='100%' id="t_workticket">
@@ -224,10 +372,21 @@ $('.bike_serv').editable('/bicycle/sale/service/', {
 //  $('#img_repair').show();
   $('#img_repair').css("opacity", 1);
 
+  </script>
+  
+{% else %}
+  <tr bgcolor="#FFFFFF">
+{% endif %}  
+  <td>{{ticket.date}}</td><td>{{ticket.description}}</td><td class="edit_workstatus" id_workticket={{ticket.id}}>{{ticket.status__name}}</td>
+  </tr>
+{% endfor %}
+
+<script>
 $('.edit_workstatus').editable('/workticket/edit/0/', { 
      loadurl : '/workstatus/view/',
      type   : 'select',
      submit : 'OK',
+     event: 'dblclick',
      submitdata : function() {
       	 	return {id_w : $(this).attr('id_workticket')};
      },
@@ -242,6 +401,7 @@ $('.edit_workstatus').editable('/workticket/edit/0/', {
          $(this).closest("tr").attr('BGCOLOR', '#FFFF99');
 		 break;
 		case 'Виконано':
+		 $(this).closest("tr").attr('BGCOLOR', '#FFFFFF');
          $('#img_repair').css("opacity", 0.2);
 		 break;
 		case 'Виконано невидано':
@@ -252,15 +412,8 @@ $('.edit_workstatus').editable('/workticket/edit/0/', {
        }
      }
  });
+</script>
 
-  </script>
-  
-{% else %}
-  <tr bgcolor="#FFFFFF">
-{% endif %}  
-  <td>{{ticket.date}}</td><td>{{ticket.description}}</td><td class="edit_workstatus" id_workticket={{ticket.id}}>{{ticket.status__name}}</td>
-  </tr>
-{% endfor %}
 </table>
 </div>
 
@@ -296,8 +449,11 @@ $('.edit_workstatus').editable('/workticket/edit/0/', {
 	<td><a href="/clientcredits/add/{{client_name.id}}">Створити нову проплату</a>  
 	{% if perms.accounting.delete_clientcredits %}
 	 /-----/ <a href="/clientcredits/{{client_name.id}}/delete/all">(Видалити всі проплати)</a> 
-	 /-----/ <a id="all_cred" href="javascript:">(Показати всі проплати)</a>
-	{% endif %}	
+	{% endif %}
+	{% if user.is_authenticated %}		
+	 /-----/ <a id="all_cred" href="javascript:" >(Показати всі проплати)</a>
+	 /-----/ <a id="1month_cred" href="javascript:" cred_month="12" cred_year="2014" cred_day="60">(+ 30 днів)</a>	 
+	{% endif %}		
 	 
 	</td>
 	<td>
@@ -306,7 +462,7 @@ $('.edit_workstatus').editable('/workticket/edit/0/', {
 	
 	
 	{% for credit in credit_list %}
-	<tr>
+	<tr class="tr_cred">
 	<td>
 		<abbr title="{{credit.date|time:"H:i"}} - [{{credit.user.username}}]">
 	{{credit.date|date}}
@@ -325,13 +481,17 @@ $('.edit_workstatus').editable('/workticket/edit/0/', {
 	{% endfor %}
 	</tr>
 
-	<tr BGCOLOR="#F11111">
+	<tr BGCOLOR="#F11111" class="in_debt">
 	<td>
 	Борги
 	</td>
 	<td><a href=/clientdebts/add/{{client_name.id}}> Додати борг </a>
 	{% if perms.accounting.delete_clientcredits %}
-	 /-----/ <a href="/clientdebts/{{client_name.id}}/delete/all">(Видалити всі борги)</a> 
+	 /-----/ <a href="/clientdebts/{{client_name.id}}/delete/all">(Видалити всі борги)</a>
+	{% endif %}
+	{% if user.is_authenticated %}	
+	 /-----/ <a id="all_debt" href="javascript:">(Показати всю історію боргів)</a>  
+	 /-----/ <a id="1month_debt" href="javascript:" debt_day=60>(+ 30 днів)</a>
 	{% endif %}	
 	</td>
 	<td id="debet">
@@ -339,7 +499,7 @@ $('.edit_workstatus').editable('/workticket/edit/0/', {
 	</tr>
 
 	{% for debt in debt_list %}
-	<tr>
+	<tr class="tr_debt">
 	<td>
 	<abbr title="{{debt.date|time:"H:i"}} - [{{debt.user.username}}]">
 	{{debt.date|date}}
@@ -372,9 +532,9 @@ $('.edit_workstatus').editable('/workticket/edit/0/', {
 <form action="/payform/" method="post" name="formSum">
 	<br>
 	<table id="product">
-	<tr bgcolor="grey">
+	<tr bgcolor="grey" id="th_inv">
 	<th>Дата</th>
-	<th>Товар</th>
+	<th>Товар <a href="javascript:" id="last_invoice" day="{{ tdelta|add:tdelta }}">  >>> [+ {{tdelta}} днів] </a></th>
 	<th>Кількість</th>
 	<th>Прайс</th>
 	<th>Сума</th>
@@ -384,7 +544,7 @@ $('.edit_workstatus').editable('/workticket/edit/0/', {
 	</tr>
 	
 	{% for inv in invoice %}
-	<tr>
+	<tr class="tr_inv">
 	<td>
 	{{inv.date}}
 	</td>
@@ -409,7 +569,7 @@ $('.edit_workstatus').editable('/workticket/edit/0/', {
 	{{inv.currency}}
 	</td>
 	<td align="center">
-	<input type="checkbox" id="model{{forloop.counter}}" value="{{inv.sum}}" onclick="res()" name="checkbox_{{ inv.id }}"/>
+	<input type="checkbox" id="model{{forloop.counter}}" value="{{inv.sum}}" onclick="res()" class="chk_inv" name="checkbox_{{ inv.id }}"/>
 	</td>
 {% else %}
 	<td BGCOLOR="#FF6600">
@@ -419,25 +579,33 @@ $('.edit_workstatus').editable('/workticket/edit/0/', {
 	{{inv.currency}}
 	</td>
 	<td align="center">
-	<input type="checkbox" id="model{{forloop.counter}}" value="{{inv.sum}}" onclick="res()" checked name="checkbox_{{ inv.id }}"/>
+	<input type="checkbox" id="model{{forloop.counter}}" value="{{inv.sum}}" onclick="res()" class="chk_inv" checked name="checkbox_{{ inv.id }}"/>
 	</td>
+	<script>
+	$("#img_attention").show();
+	</script>
 {% endifequal %}
 	</tr>
 	{% endfor %}
 	
 	<tr>
-	<th></th>
+	<th id="row_count"></th>
 	<th></th>
 	<th></th>
 	<th>Загальна сума</th>
 	<th>{{client_invoice_sum}} грн.</th>
 	<th><p><input type="submit" value="Оплата" name="pay"></p>
 	<input type="submit" value="E-mail" name="send_check"></th>
+	{% if perms.accounting.delete_clientcredits %}
+	<th BGCOLOR="#D5FFB4">До оплати<br><input type="checkbox" id="selectall">Виділити всі<br></th>
+	{% else %}
 	<th BGCOLOR="#D5FFB4">До оплати</th>
+	{% endif %}
 	<th id="for_pay" BGCOLOR="#D5FFB4">0</th>
 	</tr>
 	</table>
 </form>	
+
 
   </div>
 
@@ -482,6 +650,9 @@ $('.edit_workstatus').editable('/workticket/edit/0/', {
 	<td align="center">
 	<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{inv.price}}" onclick="resWorkshop()" checked name="checkbox_{{ inv.id }}"/>
 	</td>
+	<script>
+	$("#img_attention").show();
+	</script>
 {% endif %}
 	</tr>
 	{% endfor %}
@@ -494,9 +665,11 @@ $('.edit_workstatus').editable('/workticket/edit/0/', {
 	<p><input type="submit" value="Оплата" name="pay" onClick="return confirm('Провести операцію?')"></p>
 	<input type="submit" value="E-mail" name="send_check">	
 	</th>
-	<th><p>До оплати:</p><p id="workshop_pay" BGCOLOR="#D5FFB4">0<p></th>
+	<th>  <p>До оплати:</p><p id="workshop_pay" BGCOLOR="#D5FFB4">0<p></th>
 	</tr>
 	</table>
+	
+	
 </form>
 	</div>
 

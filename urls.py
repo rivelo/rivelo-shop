@@ -332,7 +332,6 @@ urlpatterns = patterns('',
     (r'^accounts/logout/$', 'catalog.accounting.views.logout'),
     
     #ajax
-    (r'^client_history/$', 'catalog.accounting.views.client_history'),
     (r'^insertstory/$', 'catalog.accounting.views.insertstory'),
     (r'^ajax/test/$', 'catalog.accounting.views.ajax_test'),
    
@@ -405,6 +404,11 @@ urlpatterns += patterns('',
     (r'^workday/(?P<id>\d+)/delete/$', 'catalog.accounting.views.workday_delete'),
     
     (r'^clientmessage/add/$', 'catalog.accounting.views.clientmessage_add'),
+
+    (r'^client_history/cred/$', 'catalog.accounting.views.client_history_cred'),
+    (r'^client_history/debt/$', 'catalog.accounting.views.client_history_debt'),
+    (r'^client_history/invoice/$', 'catalog.accounting.views.client_history_invoice'),
+
     
 ) 
 

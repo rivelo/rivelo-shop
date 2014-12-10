@@ -156,9 +156,34 @@ function ShowHideRow(){
 	//$('tr.zero').css("color", "#cc0000");
 	//oTable.fnDraw();
 }	
-	
+
+
 
 $(document).ready(function() {
+
+$('#myTable').on( 'dblclick', 'tbody td:not(:first-child)', function (e) {
+//        alert("dbClick OK" + $(this).html());
+//        $(this).removeClass().addClass( "edit_area" );
+		console.log("index col = " + $(this).column());
+		//$('#myTable').column($(this)).index()
+        
+        $(this).editable('/catalog/edit/149', {
+         submitdata : function() {
+      	 	return {id : $(this).attr('id_desc')};
+    	 },         
+         type      : 'textarea',
+         cancel    : 'Cancel',
+         submit    : 'OK',
+         indicator : 'Saving',
+         tooltip   : 'dbClick to edit...',
+         style : "inherit",
+         width: 150,
+         height: 100,
+		 event : "dblclick",         
+     });
+        
+        
+    } );
 	
  oTable = $('#myTable').dataTable({
     "sPaginationType": "full_numbers",
@@ -183,7 +208,11 @@ $(document).ready(function() {
       null,
 {% endif %}      
        null
-    ]
+    ],
+	"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+//          $('td:eq(0)', nRow).addClass( "avo-lime-h avo-heading-white" );
+          $('td:eq(11)', nRow).addClass( "edit_area" );
+    }    
  });
 
 //------ autocomplete field ----------   
@@ -235,7 +264,6 @@ $("#combobox_type").change(function(){
 				}
 				
 			});
-
 
 
 $("#dialog").dialog({
@@ -667,7 +695,7 @@ function fnShowHide( iCol )
 	</td>
 
 {% if user.is_authenticated %}	
-	<td class="edit_area" align="center" id_desc={{type.catalog}}>
+	<td align="center" id_desc={{type.catalog}}>
 {% else %}
 	<td align="center">
 {% endif %}	

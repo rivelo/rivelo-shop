@@ -2308,6 +2308,8 @@ def clientdebts_add(request, id=None):
 
 
 def clientdebts_edit(request, id):
+    if auth_group(request.user, "admin") == False:
+        return HttpResponseRedirect('/')
     a = ClientDebts.objects.get(pk=id)
     if request.method == 'POST':
         form = ClientDebtsForm(request.POST, instance=a)
@@ -2420,6 +2422,8 @@ def clientcredits_list(request):
     return render_to_response('index.html', {'clients': credits, 'weblink': 'clientcredits_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 def clientcredits_edit(request, id):
+    if auth_group(request.user, "admin") == False:
+        return HttpResponseRedirect('/')
     a = ClientCredits.objects.get(pk=id)
     if request.method == 'POST':
         form = ClientCreditsForm(request.POST, instance=a)
@@ -2808,7 +2812,7 @@ def client_search_result(request):
 from django.db import connection
 
 #----- Виписка клієнта -----
-def client_result(request):
+def client_result(request, tdelta = 30):
     
     user = request.GET['id'] 
     sql1 = "SELECT sum(price) FROM accounting_clientcredits WHERE client_id = %s;"
@@ -2836,11 +2840,14 @@ def client_result(request):
         client_name = Client.objects.values('name', 'forumname', 'id', 'phone', 'birthday', 'email').get(id=user)
     except ObjectDoesNotExist:
         client_name = ""
+
+    credit_list = ClientCredits.objects.filter(client=user, date__gt=now-datetime.timedelta(days=tdelta))
+    debt_list = ClientDebts.objects.filter(client=user, date__gt=now-datetime.timedelta(days=tdelta))
     
-    credit_list = ClientCredits.objects.filter(client=user, date__gt=now-datetime.timedelta(days=90))
-    debt_list = ClientDebts.objects.filter(client=user, date__gt=now-datetime.timedelta(days=90))
-    
-    client_invoice = ClientInvoice.objects.filter(Q(client=user) & (Q(pay__lt = F('sum')) | Q(date__gt=now-datetime.timedelta(days=31))) ).order_by("-date", "-id")
+    client_invoice = ClientInvoice.objects.filter(Q(client=user) & (Q(pay__lt = F('sum')) | Q(date__gt=now-datetime.timedelta(days=tdelta))) ).order_by("-date", "-id")
+    if client_invoice.count()>45 :
+        tdelta = 6
+        client_invoice = ClientInvoice.objects.filter(Q(client=user) & (Q(pay__lt = F('sum')) | Q(date__gt=now-datetime.timedelta(days=tdelta))) ).order_by("-date", "-id")
     client_invoice_sum = 0
     for a in client_invoice:
         client_invoice_sum = client_invoice_sum + a.sum
@@ -2858,7 +2865,7 @@ def client_result(request):
     #list_debt = ClientDebts.objects.filter(client='2').annotate(Sum("price"))
     #return render_to_response('index.html', {'clients': list_credit.values_list(), 'weblink': 'client_result.html'})
     #return render_to_response('index.html', {'clients': list_debt.values_list(), 'weblink': 'client_result.html'})
-    return render_to_response('index.html', {'weblink': 'client_result.html', 'clients': res, 'invoice': client_invoice, 'client_invoice_sum': client_invoice_sum, 'workshop': client_workshop, 'client_workshop_sum': client_workshop_sum, 'debt_list': debt_list, 'credit_list': credit_list, 'client_name': client_name, 'b_bike': b_bike, 'workshopTicket': workshop_ticket, 'messages': messages, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'weblink': 'client_result.html', 'clients': res, 'invoice': client_invoice, 'client_invoice_sum': client_invoice_sum, 'workshop': client_workshop, 'client_workshop_sum': client_workshop_sum, 'debt_list': debt_list, 'credit_list': credit_list, 'client_name': client_name, 'b_bike': b_bike, 'workshopTicket': workshop_ticket, 'messages': messages, 'tdelta': tdelta, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def client_lookup(request):
@@ -4236,18 +4243,83 @@ def logout(request):
         return HttpResponseRedirect("/.")
 
 
-def client_history(request):
-    if 'clientId' in request.POST and request.POST['clientId']:
-        clientId = request.POST['clientId']
-    #return render_to_response('news_list.html')
-    #search = ClientDebts.objects.filter(id = clientId).values('date', 'description', 'price')
-    search_c = ClientCredits.objects.filter(client = clientId)
-#    search_d = ClientDebts.objects.filter(client = clientId)
-    #search = ClientDebts.objects.filter(id = clientId, price__gt = 500).values_list('description', flat=True)
-    data_c = serializers.serialize('json',search_c)
-#    data_d = serializers.serialize('json',search_d)
+def client_history_cred(request):
+    if request.is_ajax():
+        if request.method == 'POST':  
+            if auth_group(request.user, 'seller')==False:
+                return HttpResponse('Error: У вас не має прав для перегляду')
+            POST = request.POST  
+            if POST.has_key('client_id') and POST.has_key('cred_day'):
+                cid = request.POST['client_id']
+                cmonth = request.POST['cred_month']
+                cyear = request.POST['cred_year']
+                cday = request.POST['cred_day']
+                n_day = int(cday) - 30;
+                p_cred_month = ClientCredits.objects.filter(client = cid, date__gt=now-datetime.timedelta(days=int(cday)), date__lt=now-datetime.timedelta(days=n_day)).values('id', 'price', 'description', 'user', 'user__username', 'date')
+                #p_cred_month = ClientCredits.objects.filter(client = cid, date__month = cmonth, date__year = cyear).values('id', 'price', 'description', 'user', 'user__username', 'date')
+                json = list(p_cred_month)
+                for x in json:  
+                    x['date'] = x['date'].strftime("%d/%m/%Y")
+                
+                #json = serializers.serialize('json', p_cred_month, fields=('id', 'date', 'price', 'description', 'user', 'user_username'))
+                return HttpResponse(simplejson.dumps(json), mimetype='application/json')
+        
+            if 'clientId' in request.POST and request.POST['clientId']:
+                clientId = request.POST['clientId']
+    
+                search_c = ClientCredits.objects.filter(client = clientId)
+                data_c = serializers.serialize('json',search_c)
+    
     return HttpResponse(data_c, mimetype='application/json')    
     #return HttpResponse(simplejson.dumps(list(search)))
+
+
+def client_history_debt(request):
+    data_c = None
+    if request.is_ajax():
+        if request.method == 'POST':  
+            if auth_group(request.user, 'seller')==False:
+                return HttpResponse('Error: У вас не має прав для перегляду')
+            POST = request.POST  
+            if POST.has_key('client_id') and POST.has_key('cred_day'):
+                cid = request.POST['client_id']
+                cday = request.POST['cred_day']
+                n_day = int(cday) - 30;
+                p_debt_month = ClientDebts.objects.filter(client = cid, date__gt=now-datetime.timedelta(days=int(cday)), date__lt=now-datetime.timedelta(days=n_day)).values('id', 'price', 'description', 'user', 'user__username', 'date')
+                json = list(p_debt_month)
+                for x in json:  
+                    x['date'] = x['date'].strftime("%d/%m/%Y")
+
+                return HttpResponse(simplejson.dumps(json), mimetype='application/json')
+                
+                
+            if 'clientId' in request.POST and request.POST['clientId']:
+                clientId = request.POST['clientId']
+    
+                search_c = ClientDebts.objects.filter(client = clientId).prefetch_related('user__username')
+                data_c = serializers.serialize('json', search_c)
+    
+    return HttpResponse(data_c, mimetype='application/json')    
+
+
+def client_history_invoice(request):
+    if request.is_ajax():
+        if request.method == 'POST':  
+            if auth_group(request.user, 'seller')==False:
+                return HttpResponse('Error: У вас не має прав для перегляду')
+            POST = request.POST  
+            if POST.has_key('client_id') and POST.has_key('day'):
+                cid = request.POST['client_id']
+                day = request.POST['day']
+                nday = int(day)-30
+                client_invoice = ClientInvoice.objects.filter(client=cid, date__gt=now-datetime.timedelta(days=int(day)), date__lt=now-datetime.timedelta(days=nday)).order_by("-date", "-id").values('id', 'catalog', 'catalog__name', 'catalog__ids', 'count', 'price', 'sum', 'currency', 'currency__name', 'pay', 'description', 'user', 'user__username', 'date')
+                json = list(client_invoice) 
+                for x in json:  
+                    x['date'] = x['date'].strftime("%d/%m/%Y")
+
+                return HttpResponse(simplejson.dumps(json), mimetype='application/json')
+            
+    return HttpResponse()#result, mimetype='application/json')
 
 
 def insertstory(request):
@@ -4256,7 +4328,6 @@ def insertstory(request):
     #return render_to_response('news_list.html')
     search = Client.objects.filter(forumname__icontains = TheStory).values_list('name', flat=True)    
     return HttpResponse(simplejson.dumps(list(search)))
-
 
 
 def xhr_test(request):
