@@ -93,6 +93,7 @@ $(function() {
    	<th>Накладна</th>
    	<th>Статус</th>
    	<th style="width:80px">Наявна кількість</th>
+   	<th>Ціна</th>
    	<th>Користувач</th>
 </tr> 
 {% endifchanged %}
@@ -126,6 +127,7 @@ $(function() {
 {{x.rcount}}
 </td>
 
+<td align="center">{{x.catalog.price}} грн.</td>
 <td id="userid{{x.id}}" align="center">{{x.user}}</td>
 </tr>
 

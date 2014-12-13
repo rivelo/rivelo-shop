@@ -133,12 +133,13 @@ class Catalog(models.Model):
     last_update = models.DateTimeField(auto_now_add=False, null=True, blank=True)
     user_update = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
     description = models.CharField(max_length=255)
+    locality = models.CharField("locality", blank=True, null=True, max_length=50)
     
     def __unicode__(self):
         return "[%s] %s - %s" % (self.ids, self.manufacturer, self.name)
 
     class Meta:
-        ordering = ["type", "name"]    
+        ordering = ["type"]    
 
 
 # Frame Size
@@ -686,7 +687,7 @@ class WorkDay(models.Model):
         ordering = ["date"]    
 
 
-#--- Client ---
+#--- message to Client  ---
 class ClientMessage(models.Model):
     client = models.ForeignKey(Client, blank=False, null=False)
     msg = models.TextField(blank = True, null = True)
@@ -703,4 +704,21 @@ class ClientMessage(models.Model):
     class Meta:
         ordering = ["client", "date", "status"]
     
+
+class ClientReturn(models.Model):
+    client = models.ForeignKey(Client, blank=False, null=False)
+    catalog = models.ForeignKey(Catalog)
+    count = models.IntegerField(default = 0)
+    sum = models.FloatField(default = 0, blank = True, null = True)
+    buy_date = models.DateTimeField()
+    buy_user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL, related_name='buy_user')
+    msg = models.TextField(blank = True, null = True)
+    date = models.DateTimeField(auto_now_add=True, blank=False, null=False)
+    user = models.ForeignKey(User, blank=False, null=False)
+    
+    def __unicode__(self):
+        return u'%s' % self.msg
+
+    class Meta:
+        ordering = ["client", "date"]
     

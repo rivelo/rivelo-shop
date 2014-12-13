@@ -202,12 +202,15 @@ urlpatterns = patterns('',
     (r'^catalog/manufacture/view/$', 'catalog.accounting.views.catalog_manufacture_list'),
     (r'^catalog/type/(?P<id>\d+)/view/$', 'catalog.accounting.views.catalog_type_list'),    
     (r'^catalog/edit/(?P<id>\d+)$', 'catalog.accounting.views.catalog_edit'),
+    (r'^catalog/edit/$', 'catalog.accounting.views.catalog_edit'),
     (r'^catalog/delete/(?P<id>\d+)$', 'catalog.accounting.views.catalog_delete'),
-    (r'^catalog/search/$', 'catalog.accounting.views.catalog_search'),
     (r'^catalog/search/id/$', 'catalog.accounting.views.catalog_search_id'),
+    (r'^catalog/search/locality/$', 'catalog.accounting.views.catalog_search_locality'),
     (r'^catalog/search/result/$', 'catalog.accounting.views.catalog_search_result'),
+    (r'^catalog/search/locality/$', 'catalog.accounting.views.catalog_search_result'),
     (r'^catalog/lookup/$', 'catalog.accounting.views.catalog_lookup'),
     (r'^catalog/import/$', 'catalog.accounting.views.catalog_import'),
+    (r'^catalog/get/locality/$', 'catalog.accounting.views.catalog_get_locality'),
 
     # Client
     (r'^client/(?P<id>\d+)$', 'catalog.accounting.views.client_data'),
@@ -331,11 +334,6 @@ urlpatterns = patterns('',
     (r'^accounts/login/$',  'catalog.accounting.views.login'),
     (r'^accounts/logout/$', 'catalog.accounting.views.logout'),
     
-    #ajax
-    (r'^insertstory/$', 'catalog.accounting.views.insertstory'),
-    (r'^ajax/test/$', 'catalog.accounting.views.ajax_test'),
-   
-    
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
@@ -346,12 +344,16 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     #(r'^admin/(.*)', admin.site.root),
-    
+   
 )
 
 #from django.contrib.staticfiles.urls import staticfiles_urlpatterns 
 #urlpatterns += staticfiles_urlpatterns()
-urlpatterns += patterns('', 
+urlpatterns += patterns('',
+    #ajax
+    (r'^insertstory/$', 'catalog.accounting.views.insertstory'),
+    (r'^ajax/test/$', 'catalog.accounting.views.ajax_test'),
+
     (r'^preorder/add/$', 'catalog.accounting.views.preorder_add'),
     (r'^preorder/view/$', 'catalog.accounting.views.preorder_list'),
     (r'^preorder/edit/(?P<id>\d+)/$', 'catalog.accounting.views.preorder_edit'),

@@ -159,7 +159,8 @@ function ShowHideRow(){
 
 
 
-$(document).ready(function() {
+//$(document).ready(function() {
+jQuery(document).ready(function ($) {
 
 $('#myTable').on( 'dblclick', 'tbody td:not(:first-child)', function (e) {
 //        alert("dbClick OK" + $(this).html());
@@ -204,11 +205,14 @@ $('#myTable').on( 'dblclick', 'tbody td:not(:first-child)', function (e) {
     
 	{"sType": "currency-html"},
 	{"sType": "numeric"},
+	null,
+	null,
+	
 {% if perms.accounting.delete_invoicecomponentlist %}
       null,
-{% endif %}      
-       null
-    ],
+{% endif %}
+      
+     ],
 	"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 //          $('td:eq(0)', nRow).addClass( "avo-lime-h avo-heading-white" );
           $('td:eq(11)', nRow).addClass( "edit_area" );
@@ -444,8 +448,9 @@ $(".c_photo" ).click(function() {
     }); 
 	});
 
-
-     $('.edit_area').editable('/catalog/edit/149', {
+	$("td[id_desc]").each(function() {
+	$("td[id_desc]").editable('/catalog/edit/', {
+     //$('.edit_area').editable('/catalog/edit/149', {
          submitdata : function() {
       	 	return {id : $(this).attr('id_desc')};
     	 },         
@@ -458,6 +463,7 @@ $(".c_photo" ).click(function() {
          width: 150,
          height: 100,
 		 event : "dblclick",         
+     });
      });
 
 
@@ -483,6 +489,29 @@ $(".c_photo" ).click(function() {
      	 }
      });
      });
+
+
+     $('.locality_edit').each(function() {
+     $(this).editable('/catalog/edit/', {
+     	loadurl : '/catalog/get/locality/',
+     	loadtype: 'POST',
+		loaddata : {sel_id: $(this).attr('id_locality')},     	
+	   	 id   : 'id',
+         name : 'locality',
+      
+         submitdata : function() {
+      	 	return {id : $(this).attr('id_locality')};
+    	 },
+         indicator : 'Saving...',
+         select : true,
+         event : "dblclick",
+         style : "inherit",
+         callback : function(value, settings) {
+         	$(this).html(value);
+     	 }
+     });
+     });
+ 
  
 // Hide the second column after initialisation
 {% if category_name %}
@@ -493,8 +522,10 @@ $(".c_photo" ).click(function() {
 {% endif %}
 	
   oTable.fnSetColumnVis( 1, false );   
-  oTable.fnSetColumnVis( 11,false );   
-  oTable.fnSetColumnVis( 10, false ); 
+  oTable.fnSetColumnVis( 11,false );
+      
+  oTable.fnSetColumnVis( 10, false );
+  oTable.fnSetColumnVis( 12, false );  
  
 });
 
@@ -572,6 +603,7 @@ function fnShowHide( iCol )
 , <a href="javascript:void(0);" onclick="fnShowHide(4);">Фото</a>
 , <a href="javascript:void(0);" onclick="fnShowHide(10);">Сума</a>
 , <a href="javascript:void(0);" onclick="fnShowHide(11);">Опис</a>
+, <a href="javascript:void(0);" onclick="fnShowHide(12);">Місце</a>
 
 <!-- Dialog to add print price -->
 	<div id="dialog" title="Add price">
@@ -588,7 +620,7 @@ function fnShowHide( iCol )
 
 
 <form action="/catalog/saleform/" method="post" name="formSum">
-<table border="1" width="100%" id="myTable" class="pretty" cellspacing="1">
+<table border="1" width="100%" id="myTable" class="display compact" cellspacing="0">
 <thead> 
 	<tr>
     	<th ROWSPAN="2">#</th>	
@@ -603,6 +635,8 @@ function fnShowHide( iCol )
     	<th ROWSPAN="2">Ціна</th>
     	<th ROWSPAN="2">Сума</th>    	
     	<th ROWSPAN="2">Опис</th>
+    	<th ROWSPAN="2">Місце</th>
+    	
 {% if perms.accounting.delete_invoicecomponentlist %}
 	<th ROWSPAN="2" width="10px">
 	</th>
@@ -701,6 +735,9 @@ function fnShowHide( iCol )
 {% endif %}	
 	{{type.catalog__description}}	    
 	</td>
+	<td align="center" class="locality_edit" id_locality="{{type.catalog}}">
+	{{type.catalog__locality}}
+	</td>
 
 	
 {% if perms.accounting.delete_invoicecomponentlist %}	
@@ -710,7 +747,6 @@ function fnShowHide( iCol )
 		<p id="ch_{{forloop.counter}}"></p>
 	</td>
 {% endif %}
-
 </tr>
 {% endfor %}
 
@@ -729,6 +765,8 @@ function fnShowHide( iCol )
     	<td>{{allpricesum}} грн.</td>    	
     	<td>{{zsum}} грн.</td>
     	<td></td>
+    	<td></td> 	
+    	
 {% if perms.accounting.delete_invoicecomponentlist %}    	
     	<td> <p id="for_pay" BGCOLOR="#D5FFB4"></p>
     	<p>Знижка:<br> <input type="text" name="sale" id="sale" width="5px" value="0"></p>
