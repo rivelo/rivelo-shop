@@ -1570,11 +1570,13 @@ def invoice_search_result(request):
         name = request.GET['name']
         #list = Catalog.objects.filter(name__icontains = name).order_by('manufacturer') 
 #        list = InvoiceComponentList.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price', 'catalog__sale').annotate(sum_catalog=Sum('count'))
-        list = InvoiceComponentList.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__description', 'catalog__type__id').annotate(sum_catalog=Sum('count'))        
+        list = InvoiceComponentList.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__locality', 'catalog__description', 'catalog__type__id').annotate(sum_catalog=Sum('count'))        
     elif  'id' in request.GET and request.GET['id']:
         id = request.GET['id']
         #list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id)
-        list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__description', 'catalog__type__id').annotate(sum_catalog=Sum('count'))
+#        list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__description', 'catalog__type__id').annotate(sum_catalog=Sum('count')) 
+        list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id).values('catalog').annotate(sum_catalog=Sum('count')).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale'
+                                                                                                                                           , 'catalog__description', 'catalog__type__id', 'sum_catalog')
 #        list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__type__id').annotate(sum_catalog=Sum('count'))        
         #list = Catalog.objects.filter(ids__icontains = id).order_by('manufacturer')
 
@@ -1973,7 +1975,7 @@ def catalog_add(request):
     return render_to_response('index.html', {'form': form, 'weblink': 'catalog.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
-def catalog_edit(request, id):
+def catalog_edit(request, id=None):
     if request.is_ajax():
         if request.method == 'POST':
             POST = request.POST
@@ -1988,6 +1990,15 @@ def catalog_edit(request, id):
                 obj.save() 
 
                 c = Catalog.objects.filter(id = id).values_list('description', flat=True)
+                return HttpResponse(c)
+
+            if POST.has_key('id') and POST.has_key('locality') and auth_group(request.user, 'seller'):
+                id = request.POST.get('id')                
+                loc = request.POST.get('locality')
+                obj = Catalog.objects.get(id = id)                                
+                obj.locality = loc
+                obj.save() 
+                c = Catalog.objects.filter(id = id).values_list('locality', flat=True)
                 return HttpResponse(c)
                 
             if auth_group(request.user, 'admin')==False:
@@ -2017,8 +2028,7 @@ def catalog_edit(request, id):
                 c = Catalog.objects.filter(id = id).values_list('sale', flat=True)
                 return HttpResponse(c)
               #  return HttpResponse(simplejson.dumps(list(c)))
-
-        
+       
     a = Catalog.objects.get(pk=id)
     #url1=request.META['HTTP_REFERER']
     if request.method == 'POST':
@@ -2093,13 +2103,12 @@ def catalog_delete(request, id):
     return HttpResponseRedirect('/catalog/search/')
 
 
-def catalog_search(request):
-    #query = request.GET.get('q', '')
-    return render_to_response('index.html', {'weblink': 'catalog_search.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
-
-
 def catalog_search_id(request):
     return render_to_response('index.html', {'weblink': 'catalog_search_id.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+
+
+def catalog_search_locality(request):
+    return render_to_response('index.html', {'weblink': 'catalog_search.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def catalog_search_result(request):
@@ -2109,10 +2118,14 @@ def catalog_search_result(request):
         name = request.GET['name']
         list = Catalog.objects.filter(name__icontains = name).order_by('manufacturer')
         print_url = "/shop/price/bysearch_name/"+name+"/view/"
-    elif  'id' in request.GET and request.GET['id']:
+    elif 'id' in request.GET and request.GET['id']:
         id = request.GET['id']
         list = Catalog.objects.filter(ids__icontains = id).order_by('manufacturer')
         print_url = "/shop/price/bysearch_id/"+id+"/view/"
+    elif 'locality' in request.GET and request.GET['locality']:
+        local = request.GET['locality']
+        list = Catalog.objects.filter(locality__icontains = local).order_by('locality')
+                
     return render_to_response('index.html', {'catalog': list, 'url':print_url, 'weblink': 'catalog_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
@@ -2135,7 +2148,16 @@ def catalog_lookup(request):
 
 
 def photo_list(request):
-    return render_to_response('index.html', {'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    list = Photo.objects.all().values('user', 'date', 'url', 'catalog__name', 'catalog__id', 'catalog__ids', 'user__username').order_by('-date')
+    return render_to_response('index.html', {'weblink': 'photo_list.html', 'list': list, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+
+
+def catalog_get_locality(request):
+    sel_id = None
+    if request.method == 'POST':
+        sel_id = request.POST.get('sel_id')
+    list = Catalog.objects.get(id=sel_id)#.values_list("id", "locality")
+    return HttpResponse(unicode(list.locality), mimetype='text')
 
 
 # ------------- Clients -------------
