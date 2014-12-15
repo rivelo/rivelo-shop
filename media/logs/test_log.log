@@ -2897,3 +2897,20 @@ Key = pay - Value = 360.0
 Key = date - Value = 2014-11-11 16:42:11
 Key = description - Value = 
 Key = user - Value = 5
+2014-12-14 02:46:19.953000 >>> DELETE FROM TABLE client invoice WHERE id = 10908 
+Key = id - Value = 10908
+Key = client - Value = 138
+Key = catalog - Value = 3990
+Key = count - Value = 1
+Key = price - Value = 70.0
+Key = sum - Value = 70.0
+Key = currency - Value = 3
+Key = sale - Value = 0
+Key = pay - Value = 70.0
+Key = date - Value = 2013-06-18 14:20:12
+Key = description - Value = 
+Key = user - Value = None
+2014-12-15 01:17:45.734000 >>> DELETE FROM TABLE cash type WHERE id = 4 
+Key = id - Value = 4
+Key = name - Value = тест
+Key = description - Value = тест1
