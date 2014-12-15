@@ -2,7 +2,7 @@
 from django import forms
 from models import Manufacturer, Country, Type, Bicycle_Type, Bicycle, Currency, FrameSize, Bicycle_Store, Catalog, Size, Bicycle_Sale, Bicycle_Order 
 from models import DealerManager, DealerPayment, DealerInvoice, Dealer, Bank, ShopDailySales, PreOrder, InvoiceComponentList
-from models import Client, ClientDebts, CostType, Costs, ClientCredits, WorkGroup, WorkType, WorkShop, WorkTicket, WorkStatus, Rent, ClientInvoice
+from models import Client, ClientDebts, CostType, Costs, ClientCredits, WorkGroup, WorkType, WorkShop, WorkTicket, WorkStatus, Rent, ClientInvoice, CashType
 
 import datetime
 
@@ -382,6 +382,7 @@ class ClientCreditsForm(forms.ModelForm):
     client = forms.ModelChoiceField(queryset = Client.objects.all())
     date = forms.DateTimeField(initial = datetime.date.today, label='Дата', input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
     price = forms.FloatField()
+    cash_type = forms.ModelChoiceField(queryset = CashType.objects.all())
     description = forms.CharField(label='DescripCred', widget=forms.Textarea(), max_length=255)    
 
     class Meta:
@@ -432,7 +433,12 @@ class ClientOrderForm(forms.ModelForm):
 #        super(ClientOrderForm, self).__init__(*args, **kwargs)
 #        self.fields['catalog'].queryset = Catalog.objects.filter(id = cid)
 #===============================================================================
-
+class CashTypeForm(forms.ModelForm):
+    name = forms.CharField(max_length=100)
+    description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255)    
+ 
+    class Meta:
+        model = CostType
 
 
 class CostTypeForm(forms.ModelForm):

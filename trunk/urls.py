@@ -255,6 +255,7 @@ urlpatterns = patterns('',
     (r'^clientcredits/edit/(?P<id>\d+)$', 'catalog.accounting.views.clientcredits_edit'),    
     (r'^clientcredits/delete/(?P<id>\d+)$', 'catalog.accounting.views.clientcredits_delete'),
     (r'^clientcredits/(?P<client_id>\d+)/delete/all/$', 'catalog.accounting.views.clientcredits_delete_all'),
+    (r'^clientcredits/set/$', 'catalog.accounting.views.clientcredits_set'),
 
     (r'^client/order/add/$', 'catalog.accounting.views.client_order_add'),
     (r'^client/order/view/$', 'catalog.accounting.views.client_order_list'),
@@ -308,12 +309,6 @@ urlpatterns = patterns('',
     (r'^shop/sale/view/month/(\d+)/$', 'catalog.accounting.views.shopdailysales_list'),
     (r'^shop/sale/view/$', 'catalog.accounting.views.shopdailysales_list'),
     (r'^shop/sale/day/(?P<id>\d+)/delete/$', 'catalog.accounting.views.shopdailysales_delete'),
-    
-    (r'^rent/add/$', 'catalog.accounting.views.rent_add'),
-    (r'^rent/edit/(?P<id>\d+)/$', 'catalog.accounting.views.rent_edit'),
-    (r'^rent/delete/(?P<id>\d+)/$', 'catalog.accounting.views.rent_delete'),    
-    (r'^rent/view/$', 'catalog.accounting.views.rent_list'),
-    
 
     (r'^payform/workshop/$', 'catalog.accounting.views.workshop_payform'),
     (r'^payform/$', 'catalog.accounting.views.payform'),
@@ -410,6 +405,17 @@ urlpatterns += patterns('',
     (r'^client_history/cred/$', 'catalog.accounting.views.client_history_cred'),
     (r'^client_history/debt/$', 'catalog.accounting.views.client_history_debt'),
     (r'^client_history/invoice/$', 'catalog.accounting.views.client_history_invoice'),
+    
+    (r'^cashtype/view/$', 'catalog.accounting.views.cashtype_list'),
+    (r'^cashtype/list/$', 'catalog.accounting.views.cashtype_list'),
+    (r'^cashtype/add/$', 'catalog.accounting.views.cashtype_add'),
+    (r'^cashtype/edit/(?P<id>\d+)$', 'catalog.accounting.views.cashtype_edit'),
+    (r'^cashtype/delete/(?P<id>\d+)$', 'catalog.accounting.views.cashtype_del'),
+    
+    (r'^rent/add/$', 'catalog.accounting.views.rent_add'),
+    (r'^rent/edit/(?P<id>\d+)/$', 'catalog.accounting.views.rent_edit'),
+    (r'^rent/delete/(?P<id>\d+)/$', 'catalog.accounting.views.rent_delete'),    
+    (r'^rent/view/$', 'catalog.accounting.views.rent_list'),
 
     
 ) 

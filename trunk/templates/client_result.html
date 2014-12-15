@@ -22,7 +22,11 @@
     
 <script language="JavaScript">
 $(document).ready(function() {
-	$(document).tooltip();
+	$(document).tooltip({
+			 content: function () {
+              return $(this).prop('title');
+              }
+          });
 	$("#dialog").hide();
 	$("#dialog_r").hide();
 	$("#dialog_msg").hide();
@@ -134,19 +138,19 @@ $(function() {
                 	$("#1month_cred").attr("cred_day", 0);
                 	$("#1month_cred").hide();
                 	$.each(msg,function(index,item){
-                		var tdate = item.fields.date.split(" ")[0].replace("-", "/").replace("-", "/");
-                		var fcol = '<abbr title="' + item.fields.date.split(" ")[1] + ' - [user]">' + tdate + '</abbr>';
-                		var cdesc = item.fields.description + " <a href='/clientcredits/delete/" + item.pk + "'>delete</a>";
-                	    $('.in_cred').after('<tr class="tr_cred"><td>'+ fcol +'</td><td>'+ cdesc +'</td><td>' + item.fields.price+'</td></tr>');
-//                        tr = '<tr><td>'+ item.fields.date+'</td>';
-//                        tr += '<td>' + item.fields.description+'</td>';
-//                        tr += '<td>' + item.fields.price+'</td>';
-//                        tr += '</tr>';
-//                        $('#balance').children('tbody').append(tr);
+//                		var tdate = item.fields.date.split(" ")[0].replace("-", "/").replace("-", "/");
+//                		var fcol = '<abbr title="' + item.fields.date.split(" ")[1] + ' - [user]">' + tdate + '</abbr>';
+//                		var cdesc = item.fields.description + " <a href='/clientcredits/delete/" + item.pk + "'>delete</a>";
+//                		var price = '<td class="cred_price" tcash_id="'+item.fields.cash_type+'" id_cred="' + item.pk + '" value="'+ item.fields.price+'"><abbr title="' + item.fields.cash_type.name + '">' + item.fields.price + '</abbr>';
+//                	    $('.in_cred').after('<tr class="tr_cred"><td>'+ fcol +'</td><td>'+ cdesc +'</td>' + price +'</tr>');
+						var fcol = '<abbr title="' + item['user__username'] + '">' + item['date'] + '</abbr>';
+						var ed = '<a href="/clientcredits/edit/'+item['id']+'">edit</a>';
+						var cdesc = item['description'] + ed + " <a href='/clientcredits/delete/" + item['id'] + "'>delete</a>";
+						var price = '<td class="cred_price" tcash_id="'+item['cash_type']+'" id_cred="'+item['id']+'" value="'+item['price']+'"><abbr title="' + item['cash_type__name'] + '">' + item['price'] + '</abbr>';
+                	    $('.in_cred').after('<tr class="tr_cred"><td>'+ fcol +'</td><td>'+ cdesc +'</td>' + price +'</td></tr>');
                     });
-//					$('#balance').append('<tr><td>00/00/0000</td><td>'+ msg[0].description +'</td><td></td></tr>');
-//					$('.in_cred').after('<tr><td>00/00/0000</td><td>'+ msg[1].fields.description +'</td><td></td></tr>');
 				$( "#dialog_ajax_load" ).dialog("close");
+				reload_price();
                 },
                 error:function(){
                     alert("При отправке возникли проблемы");
@@ -171,7 +175,6 @@ $(function() {
                 		var fcol = '<abbr title="' + item.fields.date.split(" ")[1] + ' - [user]">' + tdate + '</abbr>';
                 		var cdesc = item.fields.description + " <a href='/clientdebts/delete/" + item.pk + "'>delete</a>";
                 	    $('.in_debt').after('<tr class="tr_debt"><td>'+ fcol +'</td><td>'+ cdesc +'</td><td>' + item.fields.price+'</td></tr>');
-                	    
                     });
 				$( "#dialog_ajax_load" ).dialog("close");                    
                 },
@@ -201,8 +204,10 @@ $(function() {
 						var fcol = '<abbr title="' + item['user__username'] + '">' + item['date'] + '</abbr>';
 						var ed = '<a href="/clientcredits/edit/'+item['id']+'">edit</a>';
 						var cdesc = item['description'] + ed + " <a href='/clientcredits/delete/" + item['id'] + "'>delete</a>";
-                	    $('.in_cred').after('<tr class="tr_cred"><td>'+ fcol +'</td><td>'+ cdesc +'</td><td>' + item['price']+'</td></tr>');
+						var price = '<td class="cred_price" tcash_id="'+item['cash_type']+'" id_cred="'+item['id']+'" value="'+item['price']+'"><abbr title="' + item['cash_type__name'] + '">' + item['price'] + '</abbr>';
+                	    $('.in_cred').after('<tr class="tr_cred"><td>'+ fcol +'</td><td>'+ cdesc +'</td>' + price +'</td></tr>');
                     });
+                    reload_price();
                 },
                 error:function(){
                     alert("При отправке возникли проблемы");
@@ -280,6 +285,34 @@ $('.bike_serv').editable('/bicycle/sale/service/', {
      submit : 'OK'
 });
 
+$('.cred_price').each(function() {
+$(this).editable('/clientcredits/set/', {
+	 loadurl : '/cashtype/list/',
+	 //loaddata : {sel: $(this).attr('tcash_id')},
+	 loaddata : function(value, settings) {
+	   console.log("load this [tcash_id]= " + $(this).attr('tcash_id'));
+       return {sel: $(this).attr('tcash_id')};
+   	 },
+     loadtype: 'POST',
+     submitdata : function() {
+      	return {id : $(this).attr('id_cred')};
+     },
+     type : 'select',
+     event : 'dblclick',
+     style : 'inherit',
+     callback : function(value, settings) {
+         var obj = jQuery.parseJSON(value);
+         $(this).attr("tcash_id", obj[0]["cash_type__id"])
+         str = '<abbr title="'+ obj[0]["cash_type__name"] +'">'+$(this).attr("value")+'</abbr>';
+         $(this).html(str);
+         sel = obj[0]["cash_type__id"];
+     },
+     tooltip   : 'Натисніть для редагування...',
+     submit : 'OK'
+});
+});
+
+
 	$('#selectall').click(function(event) {  //on click 
         if(this.checked) { // check select status
             $('.chk_inv').each(function() { //loop through each checkbox
@@ -296,6 +329,36 @@ $('.bike_serv').editable('/bicycle/sale/service/', {
 
       
 });
+
+
+function reload_price() {
+
+$('.cred_price').each(function() {
+$(this).editable('/clientcredits/set/', {
+	 loadurl : '/cashtype/list/',
+	 loaddata : function(value, settings) {
+	   console.log("load this [tcash_id]= " + $(this).attr('tcash_id'));
+       return {sel: $(this).attr('tcash_id')};
+   	 },
+     loadtype: 'POST',
+     submitdata : function() {
+      	return {id : $(this).attr('id_cred')};
+    	 },
+     type   : 'select',
+     event: 'dblclick',
+     style   : 'inherit',
+     callback : function(value, settings) {
+         var obj = jQuery.parseJSON(value);
+         $(this).attr("tcash_id", obj[0]["cash_type__id"])
+         str = '<abbr title="'+ obj[0]["cash_type__name"] +'">'+$(this).attr("value")+'</abbr>';
+         $(this).html(str);
+         sel = obj[0]["cash_type__id"];
+     },     
+     tooltip   : 'Натисніть для редагування...',
+     submit : 'OK'
+});
+});
+}
          
 </script>
 
@@ -305,7 +368,7 @@ $('.bike_serv').editable('/bicycle/sale/service/', {
     width: 800px;      
     float:left;  ">
     <h1>Виписка по клієнту:
-    <span title="Телефон: {{client_name.phone|phone2Str}} / E-mail: {{client_name.email}}">
+    <span title="Телефон: {{client_name.phone|phone2Str}} <br> E-mail: {{client_name.email}}">
     	 <a href=/client/edit/{{client_name.id}}> {{client_name.name}} ({{client_name.forumname}}) </a>
     </span>
     </h1>
@@ -475,8 +538,11 @@ $('.edit_workstatus').editable('/workticket/edit/0/', {
 	<a href="/clientcredits/delete/{{ credit.id }}" onclick="return confirm('Видалити запис?')">delete</a>
 	{% endif %}
 	</td>
-	<td>
+	<td class="cred_price" tcash_id="{{credit.cash_type.id}}" id_cred={{credit.id}} value="{{credit.price}}">
+	<abbr title="{{credit.cash_type.name}}">
 	{{credit.price}}
+	</abbr>
+	
 	</td>
 	{% endfor %}
 	</tr>

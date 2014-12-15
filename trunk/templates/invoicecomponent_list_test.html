@@ -425,7 +425,10 @@ $(".c_photo" ).click(function() {
 	$('.edit_type').each(function() {
 	$(this).editable('/catalog/set/type/', {
      loadurl : '/category/get/list/',
-     loaddata : {sel: $(this).attr('cat_id')},
+//     loaddata : {sel: $(this).attr('cat_id')},
+	 loaddata : function(value, settings) {
+       return {sel: $(this).attr('cat_id')};
+   	 },
      loadtype: 'POST',
      type   : 'select',
      submit : 'OK',
@@ -441,6 +444,7 @@ $(".c_photo" ).click(function() {
          console.log(settings);
          var obj = jQuery.parseJSON(value);
          console.log(obj);
+         $(this).attr('cat_id', obj[0]['type__id']);
          str1 = '<a href="/invoice/category/' + obj[0]['type__id'];
          str2 = '/view">' + obj[0]['type__name'] + "</a>";
          $(this).html(str1 + str2);

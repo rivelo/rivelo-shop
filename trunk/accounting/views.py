@@ -12,8 +12,8 @@ from forms import ContactForm, ManufacturerForm, CountryForm, CurencyForm, Categ
 from models import Catalog, Client, ClientDebts, ClientCredits, ClientInvoice, ClientOrder, ClientMessage
 from forms import CatalogForm, ClientForm, ClientDebtsForm, ClientCreditsForm, ClientInvoiceForm, ClientOrderForm
 
-from models import Dealer, DealerManager, DealerManager, DealerPayment, DealerInvoice, InvoiceComponentList, Bank, Exchange, PreOrder
-from forms import DealerManagerForm, DealerForm, DealerPaymentForm, DealerInvoiceForm, InvoiceComponentListForm, BankForm, ExchangeForm, PreOrderForm, InvoiceComponentForm
+from models import Dealer, DealerManager, DealerManager, DealerPayment, DealerInvoice, InvoiceComponentList, Bank, Exchange, PreOrder, CashType
+from forms import DealerManagerForm, DealerForm, DealerPaymentForm, DealerInvoiceForm, InvoiceComponentListForm, BankForm, ExchangeForm, PreOrderForm, InvoiceComponentForm, CashTypeForm
 
 from models import WorkGroup, WorkType, WorkShop, WorkStatus, WorkTicket, CostType, Costs, ShopDailySales, Rent, ShopPrice, Photo, WorkDay
 from forms import WorkGroupForm, WorkTypeForm, WorkShopForm, WorkStatusForm, WorkTicketForm, CostTypeForm, CostsForm, ShopDailySalesForm, RentForm, WorkDayForm
@@ -204,8 +204,61 @@ def bank_list(request):
     return render_to_response('index.html', {'banks': list, 'weblink': 'bank_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
-# ----------- Bicycle --------------
+#--- cash type ---
+def cashtype_list(request):
+    if request.is_ajax():
+        if request.method == 'POST':  
+            if auth_group(request.user, 'seller')==False:
+                return HttpResponse('Error: У вас не має прав для редагування')
+            list = CashType.objects.all().values_list('id', 'name')
+            
+            dictionary = {}
+            for el in list:
+                str = unicode(el[1])
+                dictionary[el[0]] = str
+            dictionary['selected'] = request.POST['sel']
+            json = simplejson.dumps(dictionary)
+            return HttpResponse(json, mimetype='application/json')            
 
+    list = CashType.objects.all()
+    return render_to_response('index.html', {'list': list, 'weblink': 'cashtype_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+
+
+def cashtype_add(request):
+    a = CashType()
+    if request.method == 'POST':
+        form = CashTypeForm(request.POST, instance=a)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            description = form.cleaned_data['description']
+            CashType(name=name, description=description).save()
+            return HttpResponseRedirect('/cashtype/view/')
+    else:
+        form = CashTypeForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'cashtype.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+
+
+def cashtype_del(request, id):
+    if auth_group(request.user, 'admin')==False:
+        return HttpResponseRedirect('/cashtype/view/')
+    obj = CashType.objects.get(id=id)
+    del_logging(obj)
+    obj.delete()
+    return HttpResponseRedirect('/cashtype/view/')
+
+
+def cashtype_edit(request, id):
+    a = CashType.objects.get(pk=id)
+    if request.method == 'POST':
+        form = CashTypeForm(request.POST, instance=a)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/cashtype/view/')
+    else:
+        form = CashTypeForm(instance=a)
+    return render_to_response('index.html', {'form': form, 'weblink': 'cashtype.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+
+# ----------- Bicycle --------------
 def bicycle_type_add(request):
     a = Bicycle_Type()
     if request.method == 'POST':
@@ -2445,7 +2498,8 @@ def clientcredits_list(request):
 
 def clientcredits_edit(request, id):
     if auth_group(request.user, "admin") == False:
-        return HttpResponseRedirect('/')
+#        return HttpResponseRedirect('/')
+        return render_to_response('index.html', {'weblink': 'error_message.html', 'mtext': 'У вас немає доступу для редагування ', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
     a = ClientCredits.objects.get(pk=id)
     if request.method == 'POST':
         form = ClientCreditsForm(request.POST, instance=a)
@@ -2456,6 +2510,21 @@ def clientcredits_edit(request, id):
         form = ClientCreditsForm(instance=a)
     return render_to_response('index.html', {'form': form, 'weblink': 'clientcredits.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
+
+def clientcredits_set(request):
+    if request.is_ajax():
+        if request.method == 'POST':  
+            POST = request.POST  
+            if POST.has_key('id') and POST.has_key('value'):
+                id = request.POST.get( 'id' )
+                ct = request.POST.get( 'value' )
+                r = ClientCredits.objects.get(id = id)
+                cashtype = CashType.objects.get(id = ct)
+                r.cash_type = cashtype
+                r.save()
+                search = ClientCredits.objects.filter(id = id).values('cash_type__name', 'cash_type__id')
+                return HttpResponse(simplejson.dumps(list(search)))    
+    
 
 def clientcredits_delete(request, id):
     if auth_group(request.user, "admin") == False:
@@ -3938,23 +4007,37 @@ def client_payform(request):
     if request.user.is_authenticated():
         user = request.user
 
-    for id in checkbox_list:
-        list_id.append( int(id.replace('checkbox_', '')) )
-    ci = ClientInvoice.objects.filter(id__in=list_id)
-    client = ci[0].client
     desc = ""
     sum = 0
-    for inv in ci:
-        inv.pay = inv.sum
-        desc = desc + inv.catalog.name + "; "
-        sum = sum + inv.sum
-        inv.save() 
+    client = None
+    if len(checkbox_list):
+        for id in checkbox_list:
+            list_id.append( int(id.replace('checkbox_', '')) )
+        ci = ClientInvoice.objects.filter(id__in=list_id)
+        client = ci[0].client
+        
+        for inv in ci:
+            inv.pay = inv.sum
+            desc = desc + inv.catalog.name + "; "
+            sum = sum + inv.sum
+            inv.save()
+    else:
+        return render_to_response('index.html', {'weblink': 'error_message.html', 'mtext':'Не вибрано жодного товару', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
     
     if 'pay' in request.POST and request.POST['pay']:
         pay = request.POST['pay']
+        cash_type = CashType.objects.get(id = 1) # готівка
         if float(request.POST['pay']) != 0:
-            ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=pay, description=desc, user=user)
+            ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=pay, description=desc, user=user, cash_type=cash_type)
             ccred.save()
+
+    if 'pay_terminal' in request.POST and request.POST['pay_terminal']:
+        pay = request.POST['pay_terminal']
+        cash_type = CashType.objects.get(id = 2) # термінал
+        if float(request.POST['pay_terminal']) != 0:
+            ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=pay, description=desc, user=user, cash_type=cash_type)
+            ccred.save()
+
         
     cdeb = ClientDebts(client=client, date=datetime.datetime.now(), price=sum, description=desc, user=user)
     cdeb.save()
@@ -4277,7 +4360,7 @@ def client_history_cred(request):
                 cyear = request.POST['cred_year']
                 cday = request.POST['cred_day']
                 n_day = int(cday) - 30;
-                p_cred_month = ClientCredits.objects.filter(client = cid, date__gt=now-datetime.timedelta(days=int(cday)), date__lt=now-datetime.timedelta(days=n_day)).values('id', 'price', 'description', 'user', 'user__username', 'date')
+                p_cred_month = ClientCredits.objects.filter(client = cid, date__gt=now-datetime.timedelta(days=int(cday)), date__lt=now-datetime.timedelta(days=n_day)).values('id', 'price', 'description', 'user', 'user__username', 'date', 'cash_type', 'cash_type__name', 'cash_type__id')
                 #p_cred_month = ClientCredits.objects.filter(client = cid, date__month = cmonth, date__year = cyear).values('id', 'price', 'description', 'user', 'user__username', 'date')
                 json = list(p_cred_month)
                 for x in json:  
@@ -4288,9 +4371,16 @@ def client_history_cred(request):
         
             if 'clientId' in request.POST and request.POST['clientId']:
                 clientId = request.POST['clientId']
-    
-                search_c = ClientCredits.objects.filter(client = clientId)
-                data_c = serializers.serialize('json',search_c)
+                p_cred_month = ClientCredits.objects.filter(client = clientId).values('id', 'price', 'description', 'user', 'user__username', 'date', 'cash_type', 'cash_type__name', 'cash_type__id')
+                #p_cred_month = ClientCredits.objects.filter(client = cid, date__month = cmonth, date__year = cyear).values('id', 'price', 'description', 'user', 'user__username', 'date')
+                json = list(p_cred_month)
+                for x in json:  
+                    x['date'] = x['date'].strftime("%d/%m/%Y")
+
+                return HttpResponse(simplejson.dumps(json), mimetype='application/json')
+
+#                search_c = ClientCredits.objects.filter(client = clientId)
+#                data_c = serializers.serialize('json',search_c)
     
     return HttpResponse(data_c, mimetype='application/json')    
     #return HttpResponse(simplejson.dumps(list(search)))

@@ -155,7 +155,17 @@ class FrameSize(models.Model):
         ordering = ["inch","name"]    
 
 
+# --- види грошових надходжень
+class CashType(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
 
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ["name",]    
+    
 
 # postach Dealer (Ukraine)
 class Dealer(models.Model):
@@ -168,16 +178,14 @@ class Dealer(models.Model):
     description = models.TextField(blank=True, null=True)
     director = models.CharField(max_length=255, null=True, blank=True)
     
-    
     def __unicode__(self):
-        #return self.name
         return u'%s' % self.name
 
     class Meta:
         ordering = ["name"]    
 
 
-# postach Dealer (Ukraine)
+# postach Dealer manager (Ukraine)
 class DealerManager(models.Model):
     name = models.CharField(max_length=255)
     email = models.CharField(max_length=100)
@@ -207,7 +215,6 @@ class DealerInvoice(models.Model):
             
     def __unicode__(self):
         return "%s - %s - %s [%s %s]" % (self.origin_id, self.company, self.manager, self.price, self.currency) 
-        #return self.origin_id 
 
     class Meta:
         ordering = ["payment", "company", "manager", "date"]    
@@ -226,7 +233,6 @@ class InvoiceComponentList(models.Model):
             
     def __unicode__(self):
         return "%s - %s" % (self.invoice, self.catalog) 
-        #return self.origin_id 
 
     class Meta:
         ordering = ["invoice", "catalog", "price", "date"]    
@@ -278,7 +284,6 @@ class ClientDebts(models.Model):
     price = models.FloatField()
     description = models.TextField()
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)    
-
     
     def __unicode__(self):
         return self.date
@@ -291,10 +296,10 @@ class ClientCredits(models.Model):
     client = models.ForeignKey(Client)
     date = models.DateTimeField()
     price = models.FloatField()
+    cash_type = models.ForeignKey(CashType, blank=True, null=True, on_delete=models.SET_NULL) 
     description = models.TextField()
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
 
-    
     def __unicode__(self):
         return self.name
 
@@ -553,6 +558,10 @@ class ShopDailySales(models.Model):
     date = models.DateField(auto_now_add=True)
     price = models.FloatField()
     description = models.TextField(blank=True, null=True)
+    user = user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
+    cash = models.FloatField()
+    wcash = models.FloatField()
+    ocash = models.FloatField()
 
     
     def __unicode__(self):
