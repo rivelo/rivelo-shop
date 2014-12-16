@@ -1623,13 +1623,12 @@ def invoice_search_result(request):
         name = request.GET['name']
         #list = Catalog.objects.filter(name__icontains = name).order_by('manufacturer') 
 #        list = InvoiceComponentList.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price', 'catalog__sale').annotate(sum_catalog=Sum('count'))
-        list = InvoiceComponentList.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__locality', 'catalog__description', 'catalog__type__id').annotate(sum_catalog=Sum('count'))        
+        list = InvoiceComponentList.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__description', 'catalog__type__id').annotate(sum_catalog=Sum('count'))        
     elif  'id' in request.GET and request.GET['id']:
         id = request.GET['id']
         #list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id)
 #        list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__description', 'catalog__type__id').annotate(sum_catalog=Sum('count')) 
-        list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id).values('catalog').annotate(sum_catalog=Sum('count')).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale'
-                                                                                                                                           , 'catalog__description', 'catalog__type__id', 'sum_catalog')
+        list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id).values('catalog').annotate(sum_catalog=Sum('count')).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__description', 'catalog__type__id', 'sum_catalog')
 #        list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__type__id').annotate(sum_catalog=Sum('count'))        
         #list = Catalog.objects.filter(ids__icontains = id).order_by('manufacturer')
 
