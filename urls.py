@@ -171,17 +171,6 @@ urlpatterns = patterns('',
     (r'^invoice/all/report/$', 'catalog.accounting.views.invoicecomponent_sum'),
     (r'^invoice/search/$', 'catalog.accounting.views.invoice_search'),
     (r'^invoice/search/result/$', 'catalog.accounting.views.invoice_search_result'),
-    
-
-    # Curency operation
-    (r'^curency/add/$', 'catalog.accounting.views.curency_add'),
-    (r'^curency/view/$', 'catalog.accounting.views.curency_list'),
-    (r'^curency/delete/(?P<id>\d+)/$', 'catalog.accounting.views.curency_del'),
-    
-    (r'^exchange/add/$', 'catalog.accounting.views.exchange_add'),
-    (r'^exchange/view/$', 'catalog.accounting.views.exchange_list'),
-    (r'^exchange/edit/(?P<id>\d+)/$', 'catalog.accounting.views.exchange_edit'),
-    (r'^exchange/delete/(?P<id>\d+)/$', 'catalog.accounting.views.exchange_del'),
 
     # Component Type operation
     (r'^category/add/$', 'catalog.accounting.views.category_add'),
@@ -284,11 +273,15 @@ urlpatterns = patterns('',
     (r'^workticket/add/$', 'catalog.accounting.views.workticket_add'),
     (r'^workticket/add/client/(?P<id>\d+)/$', 'catalog.accounting.views.workticket_add'),    
     (r'^workticket/view/$', 'catalog.accounting.views.workticket_list'),
-    (r'^workticket/edit/(?P<id>\d+)/$', 'catalog.accounting.views.workticket_edit'),
+    (r'^workticket/edit/$', 'catalog.accounting.views.workticket_edit'),
+    (r'^workticket/edit/(?P<id>\d+)/$', 'catalog.accounting.views.workticket_edit'),    
     (r'^workticket/delete/(?P<id>\d+)/$', 'catalog.accounting.views.workticket_delete'),
     (r'^workticket/year/(?P<year>\d+)/month/(?P<month>\d+)/view/$', 'catalog.accounting.views.workticket_list'),
+    (r'^workticket/status/(?P<status>\d+)/view/$', 'catalog.accounting.views.workticket_list'),
     (r'^workticket/all/view/$', 'catalog.accounting.views.workticket_list', {'all': True}),
 
+    (r'^workshop/price/list/print/$', 'catalog.accounting.views.workshop_pricelist', {'pprint': True}),
+    (r'^workshop/price/list/$', 'catalog.accounting.views.workshop_pricelist', {'pprint': False}),
     (r'^workshop/add/(?P<id>\d+)/$', 'catalog.accounting.views.workshop_add'),
     (r'^workshop/add/client/(?P<id_client>\d+)/$', 'catalog.accounting.views.workshop_add'),
     (r'^workshop/add/$', 'catalog.accounting.views.workshop_add'),
@@ -417,7 +410,15 @@ urlpatterns += patterns('',
     (r'^rent/delete/(?P<id>\d+)/$', 'catalog.accounting.views.rent_delete'),    
     (r'^rent/view/$', 'catalog.accounting.views.rent_list'),
 
+    # Curency operation
+    (r'^curency/add/$', 'catalog.accounting.views.curency_add'),
+    (r'^curency/view/$', 'catalog.accounting.views.curency_list'),
+    (r'^curency/delete/(?P<id>\d+)/$', 'catalog.accounting.views.curency_del'),
     
+    (r'^exchange/add/$', 'catalog.accounting.views.exchange_add'),
+    (r'^exchange/view/$', 'catalog.accounting.views.exchange_list'),
+    (r'^exchange/edit/(?P<id>\d+)/$', 'catalog.accounting.views.exchange_edit'),
+    (r'^exchange/delete/(?P<id>\d+)/$', 'catalog.accounting.views.exchange_del'),    
 ) 
 
 #===============================================================================

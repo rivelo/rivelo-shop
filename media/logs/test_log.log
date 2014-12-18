@@ -2914,3 +2914,18 @@ Key = user - Value = None
 Key = id - Value = 4
 Key = name - Value = тест
 Key = description - Value = тест1
+2014-12-17 13:47:52.171000 >>> DELETE FROM TABLE client credits WHERE id = 13372 
+Key = id - Value = 13372
+Key = client - Value = 2
+Key = date - Value = 2014-12-16 16:33:03
+Key = price - Value = 25000.0
+Key = cash_type - Value = 1
+Key = description - Value = Цепь инд. 112 зв. 1/2x1/8 KMC Z410 brown/brown ; Шлем BUGGIE розовый цветок, размер  XS/S; Герметик для покрышек Bontrager TLR TIRE SEALANT (0,95 литра); 
+Key = user - Value = 5
+2014-12-17 19:12:17.734000 >>> DELETE FROM TABLE work ticket WHERE id = 822 
+Key = id - Value = 822
+Key = client - Value = 1282
+Key = date - Value = 2014-12-17
+Key = end_date - Value = 2014-12-17
+Key = status - Value = 2
+Key = description - Value = уцкуцк

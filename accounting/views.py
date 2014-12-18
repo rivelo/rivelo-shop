@@ -381,7 +381,8 @@ def bicycle_add(request):
             sale = form.cleaned_data['sale']
             #processUploadedImage(request.FILES['photo']) 
             #photo = photo,
-            upload_path = processUploadedImage(photo) 
+            #upload_path = processUploadedImage(photo)
+            upload_path = ""
             #handle_uploaded_file(photo)
             Bicycle(model = model, type=type, brand = brand, color = color, photo=upload_path, weight = weight, price = price, currency = currency, description=description, year=year, sale=sale).save()
             return HttpResponseRedirect('/bicycle/view/')
@@ -2535,6 +2536,7 @@ def clientcredits_delete(request, id):
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
     #return HttpResponse('<script language="JavaScript">history.back();</script>')
 
+
 def clientcredits_delete_all(request, client_id):
     if auth_group(request.user, "admin") == False:
         return HttpResponseRedirect('/')
@@ -2571,7 +2573,8 @@ def client_invoice(request, cid=None, id=None):
             
             if pay == sum:
                 desc = catalog.name
-                ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=pay, description=desc, user=user)
+                ct = CashType.objects.get(id=1)
+                ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=pay, description=desc, user=user, cash_type=ct)
                 ccred.save()
                 cdeb = ClientDebts(client=client, date=datetime.datetime.now(), price=sum, description=desc, user=user)
                 cdeb.save()
@@ -2933,8 +2936,8 @@ def client_result(request, tdelta = 30):
 
     credit_list = ClientCredits.objects.filter(client=user, date__gt=now-datetime.timedelta(days=tdelta))
     debt_list = ClientDebts.objects.filter(client=user, date__gt=now-datetime.timedelta(days=tdelta))
-    
     client_invoice = ClientInvoice.objects.filter(Q(client=user) & (Q(pay__lt = F('sum')) | Q(date__gt=now-datetime.timedelta(days=tdelta))) ).order_by("-date", "-id")
+     
     if client_invoice.count()>45 :
         tdelta = 6
         client_invoice = ClientInvoice.objects.filter(Q(client=user) & (Q(pay__lt = F('sum')) | Q(date__gt=now-datetime.timedelta(days=tdelta))) ).order_by("-date", "-id")
@@ -2950,6 +2953,17 @@ def client_result(request, tdelta = 30):
     b_bike = Bicycle_Sale.objects.filter(client=user).values('model__model__model', 'model__model__brand__name', 'model__serial_number', 'model__size__name', 'date', 'service', 'id')
     workshop_ticket = WorkTicket.objects.filter(client=user).values('id', 'date', 'description', 'status__name').order_by('-date')
     messages = ClientMessage.objects.filter(client=user).values('msg', 'status', 'date', 'user__username', 'id')
+    
+    isum = ClientInvoice.objects.filter(client=user).aggregate(Sum('sum'))
+    bsum = Bicycle_Sale.objects.filter(client=user).aggregate(Sum('sum'))
+    client = Client.objects.get(id = user)
+    #if (isum['sum__sum'] is not None) and (bsum['sum__sum'] is not None):
+    #    client.summ = isum['sum__sum'] + client_workshop_sum + int(bsum['sum__sum'])
+    #else:
+    client.summ = float(isum['sum__sum'] or 0) + float(bsum['sum__sum'] or 0) + client_workshop_sum 
+    #client.summ = b_bike['sum__sum']
+    client.save()
+
     #list_debt = ClientDebts.objects.filter(client='2').values("client", "price").select_related('client')
     #list_debt = ClientDebts.objects.filter(client='2').select_related('client')
     #list_debt = ClientDebts.objects.filter(client='2').annotate(Sum("price"))
@@ -3008,21 +3022,9 @@ def workgroup_edit(request, id):
         form = WorkGroupForm(instance=a)
     return render_to_response('index.html', {'form': form, 'weblink': 'workgroup.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
-#===============================================================================
-# 
-# def workgroup_list(request, id=None):
-#    list = WorkGroup.objects.all()
-#    return render_to_response('index.html', {'workgroups': list, 'weblink': 'workgroup_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
-#===============================================================================
-
 
 def workgroup_list(request, id=None):
-    list = None
-    if id != None:
-        list = WorkType.objects.filter(worktype=id)
-    else:
-        list = WorkGroup.objects.all()
-    
+    list = WorkGroup.objects.all()
     return render_to_response('index.html', {'workgroups': list, 'weblink': 'workgroup_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
@@ -3162,8 +3164,7 @@ def workticket_add(request, id=None):
     return render_to_response('index.html', {'form': form, 'weblink': 'workticket.html'})
 
 
-def workticket_edit(request, id):
-        
+def workticket_edit(request, id=None):
     if request.is_ajax():
         if request.method == 'POST':  
             if auth_group(request.user, 'seller')==False:
@@ -3173,14 +3174,20 @@ def workticket_edit(request, id):
                 id = request.POST.get('id_w')
                 p = request.POST.get('value')
                 obj = WorkTicket.objects.get(pk = id)
-                print "bla-bla   =   " + p
                 obj.status = WorkStatus.objects.get(pk = p)
                 obj.save() 
                 c = WorkTicket.objects.filter(pk = id).values_list('status__name', flat=True)
                 return HttpResponse(c)
+            if POST.has_key('desc_w'):
+                id = request.POST.get('desc_w')
+                desc = request.POST.get('value')
+                obj = WorkTicket.objects.get(pk = id)
+                obj.description = desc 
+                obj.save() 
+                c = WorkTicket.objects.filter(pk = id).values_list('description', flat=True)
+                return HttpResponse(c)
             else:
                 return HttpResponse("dont work ajax")
-    
     
     a = WorkTicket.objects.get(pk=id)
     if request.method == 'POST':
@@ -3191,14 +3198,17 @@ def workticket_edit(request, id):
             end_date = form.cleaned_data['end_date']
             status = form.cleaned_data['status']
             description = form.cleaned_data['description']
-            WorkTicket(id = id, client=client, date=date, end_date=end_date, status=status, description=description).save()
+            user = form.cleaned_data['user']
+            if request.user.is_authenticated():
+                user = request.user
+            WorkTicket(id = id, client=client, date=date, end_date=end_date, status=status, description=description, user=user).save()
             return HttpResponseRedirect('/workticket/view/')
     else:
         form = WorkTicketForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'workticket.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'workticket.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
-def workticket_list(request, year=None, month=None, all=False):
+def workticket_list(request, year=None, month=None, all=False, status=None):
 #    cur_year = datetime.datetime.now().year
     list = None
     if month != None:
@@ -3209,6 +3219,9 @@ def workticket_list(request, year=None, month=None, all=False):
         list = WorkTicket.objects.filter(date__year=year, date__month=month)
     if all == True:
         list = WorkTicket.objects.all()
+    if status == '1':
+        #ws = WorkStatus.objects.get(id=status)
+        list = WorkTicket.objects.filter(status__id__in=[status,2])
     
     return render_to_response('index.html', {'workticket':list, 'sel_year':year, 'sel_month':int(month), 'weblink': 'workticket_list.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
@@ -3330,6 +3343,13 @@ def worktype_ajax(request):
     search = WorkType.objects.filter(id=q).values('price', 'description')
     return HttpResponse(simplejson.dumps(list(search)), mimetype="application/json")
 
+
+def workshop_pricelist(request, pprint=False):
+    list = WorkType.objects.all().values('name', 'price', 'id', 'description', 'work_group', 'work_group__name').order_by('work_group__tabindex')
+    if pprint:
+        return render_to_response('workshop_pricelist.html', {'work_list': list, 'pprint': True})
+    else:        
+        return render_to_response('index.html', {'work_list': list, 'weblink': 'workshop_pricelist.html', 'pprint': False}, context_instance=RequestContext(request, processors=[custom_proc]))    
 
 #------------- Shop operation --------------
 def shopdailysales_add(request):
@@ -3908,6 +3928,7 @@ def payform(request):
     client = ci[0].client
     desc = ""
     sum = 0
+    bal = 0
     for inv in ci:
         if client!=inv.client:
             return render_to_response('index.html', {'weblink': 'error_manyclients.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
@@ -3933,7 +3954,7 @@ def payform(request):
         try:
             cursor = connection.cursor()
             cursor.execute(sql1, [user])   
-            credit= cursor.fetchone()
+            credit = cursor.fetchone()
     
             cursor.execute(sql2, [user])
             debts = cursor.fetchone()
@@ -3946,7 +3967,8 @@ def payform(request):
             res = credit[0] - debts[0]
             
         except TypeError:
-            res = "Такого клієнта не існує, або в нього не має заборгованостей"    
+            #res = "Такого клієнта не існує, або в нього не має заборгованостей"    
+            res = 0
      
         bal = res
      

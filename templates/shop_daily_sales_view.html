@@ -7,6 +7,7 @@
 	<th>Клієнт</th>
 	<th>Сума (грн.)</th>
 	<th>Опис</th>
+	<th>Тип оплати</th>
 	</tr>
 
 <h2>Оплати</h2>	
@@ -21,6 +22,10 @@
 	<td>
 	{{cred.description}}
 	</td>
+	<td>
+	{{cred.cash_type}}
+	</td>
+	
 {% endfor %}
 	</tr>
 	<tr>
@@ -29,6 +34,8 @@
 	</td>
 	<td>
 	{{c_sum}}
+	</td>
+	<td>
 	</td>
 	<td>
 	</td>

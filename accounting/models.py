@@ -400,7 +400,8 @@ class Bicycle(models.Model):
     color = models.CharField(max_length=255)
     #sizes = models.CharField(max_length=255)    
     sizes = models.CommaSeparatedIntegerField(max_length=10)
-    photo = models.ImageField(upload_to = 'media/upload/', max_length=255)
+    photo = models.ImageField(upload_to = 'media/upload/', max_length=255, blank=True, null=True)
+    photo_url = models.ManyToManyField(Photo, blank=True)
     weight = models.FloatField()
     #PositiveIntegerField()
     price = models.FloatField()
@@ -449,7 +450,6 @@ class Bicycle_Sale(models.Model):
     description = models.TextField(blank=True, null=True)
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
     sum = models.FloatField(blank=True, null=True)
-
     #debt = models.ForeignKey(ClientDebts, blank=True, null=True, on_delete=models.SET_NULL)
     debt = models.ForeignKey(ClientDebts, blank=True, null=True)
     
@@ -486,13 +486,13 @@ class Bicycle_Order(models.Model):
 class WorkGroup(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-
+    tabindex = models.IntegerField()
     
     def __unicode__(self):
-        return self.name
+        return u'%s -> %s' % (self.name, self.description)
 
     class Meta:
-        ordering = ["name"]
+        ordering = ["name", "tabindex"]
 
      
 class WorkType(models.Model):
@@ -500,7 +500,6 @@ class WorkType(models.Model):
     work_group = models.ForeignKey(WorkGroup)
     price = models.FloatField()
     description = models.TextField(blank=True, null=True)
-
     
     def __unicode__(self):
         return u'Розділ %s. Робота: %s' % (self.work_group, self.name)
@@ -518,7 +517,6 @@ class WorkShop(models.Model):
     pay = models.BooleanField(default = False, verbose_name="Оплачено?")
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
     description = models.TextField(blank=True, null=True)
-
     
     def __unicode__(self):
         return self.description
@@ -530,7 +528,6 @@ class WorkShop(models.Model):
 class WorkStatus(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-
     
     def __unicode__(self):
         return self.name
@@ -545,10 +542,10 @@ class WorkTicket(models.Model):
     end_date = models.DateField()
     status = models.ForeignKey(WorkStatus)
     description = models.TextField(blank=True, null=True)
-
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)    
     
     def __unicode__(self):
-        return self.name
+        return self.description
 
     class Meta:
         ordering = ["date", "status"]

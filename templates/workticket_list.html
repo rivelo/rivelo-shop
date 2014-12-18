@@ -1,5 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Майстерня/Заявки</title>
 
 <style>
 	a.select {
@@ -10,15 +11,43 @@
 		color: #0000FF;
 		background-color:#FFFFFF;
 	}
+{% comment %}   	// виконано {% endcomment %}
+	tr.w_done_done {
+		background-color: white;
+	}
+{% comment %}   	// виконано не видано {% endcomment %}
+	tr.w_done {
+		background-color: #ССFF89;
+	}
+	
+{% comment %}   	// не виконано {% endcomment %}
+	tr.w_false {
+		background-color: red;
+	}
+{% comment %}   	// в роботі {% endcomment %}
+	tr.w_working {
+		background-color: #FFFF99;
+	}
+{% comment %}   	// прийнято {% endcomment %}
+	tr.w_true {
+		background-color: #CCFF99;
+	}
 </style>
 
-<script type="text/javascript" src="/media/jquery-1.8.3.js"></script>	
+<link rel="stylesheet" href="/media/jquery-ui.min.css">
+<script src="/media/jquery-ui.min.js"></script>
 <script src="/media/jquery.jeditable.mini.js" type="text/javascript" charset="utf-8"></script>
 
 <script>
 $(document).ready(function() {
 
-$('.editable').editable('/workticket/edit/0/', { 
+	$(document).tooltip({
+		content: function () {
+        return $(this).prop('title');
+        }
+    });
+
+$('.editable').editable('/workticket/edit/', { 
      loadurl : '/workstatus/view/',
      type   : 'select',
      submit : 'OK',
@@ -26,36 +55,43 @@ $('.editable').editable('/workticket/edit/0/', {
       	 	return {id_w : $(this).attr('id_workticket')};
      },
      callback : function(value, settings) {
-         // console.log($(this));
-         // console.log("value = "+value);
-         // console.log(settings);
-         // console.log($('.editable.select'));
-          
        switch(value) {
 		case 'Прийнято':
-         $(this).closest("tr").attr('BGCOLOR', '#CCFF99');
+         $(this).closest("tr").attr('class', 'w_true');
          break;
 		case 'Ремонтується':
-         $(this).closest("tr").attr('BGCOLOR', '#FFFF99');
+         $(this).closest("tr").attr('class', 'w_working');
+		 break;
+		case 'Виконано':
+         $(this).closest("tr").attr('class', 'w_done_done');
+		 break;
+		case 'Виконано невидано':
+         $(this).closest("tr").attr('class', 'w_done');
 		 break;
 		default :
-         $(this).closest("tr").attr('BGCOLOR', '#FFFFFF');
+         $(this).closest("tr").attr('class', 'w_true');
        }
-{% comment %}          
-         if (value == 'Прийнято') {
-         $(this).closest("tr").attr('BGCOLOR', '#CCFF99');
-         }
-         if (value == 'Ремонтується') {
-         $(this).closest("tr").attr('BGCOLOR', '#FFFF99');
-         }
-         else {
-         $(this).closest("tr").attr('BGCOLOR', '#FFFFFF');
-         }
-{% endcomment %}
-         
-         console.log("pp="+$(this).innerHTML);
      }
  });
+ 
+$(".w_desc").each(function() {
+	$(".w_desc").editable('/workticket/edit/', {
+		id : 'desc_w',
+         submitdata : function() {
+      	 	return {desc_w : $(this).attr('id_workticket')};
+    	 },         
+         type      : 'textarea',
+         cancel    : 'Cancel',
+         submit    : 'OK',
+         indicator : 'Saving',
+         tooltip   : 'dbClick to edit...',
+         style : "inherit",
+         height: 100,
+		 event : "dblclick",         
+     });
+});
+ 
+ 
 });
 
 </script>
@@ -66,6 +102,7 @@ $('.editable').editable('/workticket/edit/0/', {
     <a href="/workticket/year/2012/month/1/view">2012,</a>
 	<a href="/workticket/year/2013/month/12/view">2013,</a>
 	<a href="/workticket/year/2014/month/1/view">2014,</a>
+	<a href="/workticket/year/2015/month/1/view">2015,</a>
 <br>
 	За місяць: 
 	{% for i in "123456789012" %}
@@ -76,7 +113,8 @@ $('.editable').editable('/workticket/edit/0/', {
     {% endifequal %}
 	{% endfor %}
 	
-	<a href="/workticket/all/view" class="non">Всі</a>
+	<a href="/workticket/all/view" class="non">Всі</a>,
+	<a href="/workticket/status/1/view/" class="non">Прийняті</a>
 </h2>    
 
 
@@ -96,14 +134,24 @@ $('.editable').editable('/workticket/edit/0/', {
     </tr>
       
 {% for type in workticket %}
+{% ifequal type.status.id 1 %}
+<tr class="w_true">
+{% endifequal %}
+{% ifequal type.status.id 2 %}
+<tr class="w_working">
+{% endifequal %}
 {% ifequal type.status.id 3 %}
-<tr>
-{% else %}
-<tr BGCOLOR="#CCFF99">
+<tr class="w_done_done">
+{% endifequal %}
+{% ifequal type.status.id 4 %}
+<tr class="w_done">
+{% endifequal %}
+{% ifequal type.status.id 5 %}
+<tr class="w_false">
 {% endifequal %}
 
 	<td>       
-	{{type.id}}
+	<a href="/workticket/edit/{{ type.id }}" title="Edit"> {{type.id}}</a>
 	</td>
 	<td>       
 <!--	<a href="/workshop/done/client/{{ type.client.id }}/"> -->  
@@ -111,21 +159,20 @@ $('.editable').editable('/workticket/edit/0/', {
 	{{type.client}}
 	</a>
 	</td>
-	<td>       
+	<td title={{type.user.username}}>       
 	{{type.date|date}}
 	</td>
 	<td>       
 	{{type.end_date|date}}
 	</td>	
 	<td>
-<!-- 	<a href="/workticket/edit/{{ type.id }}/">  -->
 
-	<span class="editable" id="{{type.status.id}}" style="display: inline" id_workticket="{{type.id}}">       
+	<span class="editable" id="{{type.status.id}}" style="display: inline" id_workticket="{{type.id}}" title="click to edit...">       
 	{{type.status}}
 	</span>
 	
 	</td>
-	<td>       
+	<td class="w_desc" id_workticket="{{type.id}}">       
 	{{type.description}}
 	</td>
 	<td>
