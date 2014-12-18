@@ -1,5 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Велосипеди - магазин</title>
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
 <script type="text/javascript" src="/media/jquery-1.7.2.min.js"></script>
@@ -35,6 +36,10 @@ $(document).ready(function() {
          style  : "inherit",
          callback : function(value, settings) {
          $(this).html(value);
+         console.log("val = ", value);
+         console.log("sale = ", $(this).nextAll('.change_sale:first').html());
+         var sprice = value / 100 * (100 - $(this).nextAll('.change_sale:first').html().split('%')[0]);
+         $(this).nextAll('.sale_price:first').html(sprice + ' грн.');
      	}
      });
     

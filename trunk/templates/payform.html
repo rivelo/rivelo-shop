@@ -135,7 +135,8 @@ checkedSum();
 
 
 function AllSum() {
-	document.getElementById('pay').value = {{summ|sub:balance}};
+//	document.getElementById('pay').value = {{summ|sub:balance}};
+	document.getElementById('pay').value = Math.abs($('#AllSum').attr("value")); 
 	document.getElementById('pay').focus();
 	document.getElementById('pay').select();
 //	alert('Спасибо');
@@ -145,7 +146,7 @@ function AllSum() {
 function PaySum() {
 	document.getElementById('pay').value = $('#to_pay').attr('value'); //{{summ}};
 	document.getElementById('pay').focus();
-	document.getElementById('pay').select();
+	document.getElementById('pay').select();	
 	$('#pay').change();
 }
 
@@ -163,6 +164,7 @@ $('#to_pay').attr('value', sum.toFixed(2));
 
 var res = parseFloat($("#cl_balance").attr('value')) - sum; 
 $("#AllSum").html("Загальна сума: "+ res.toFixed(2) +" грн.");
+$('#AllSum').attr("value", res);
 
 $('#pay').change();
 }
@@ -191,7 +193,7 @@ $('#pay').change();
 <div style="float:left;">
 	<h2><font color="#fe6037" id="cl_balance" value="{{balance}}"> Ваш рахунок: {{balance}} грн. </font></h2>
     <h2 id="to_pay" value="{{summ}}" onclick="PaySum()">До сплати: {{summ}} грн. </h2>
-    <h2 onclick="AllSum()"> <font color="#006699" id="AllSum"> Загальна сума: {{summ|sub:balance}} грн.</font></h2>
+    <h2 onclick="AllSum()"> <font color="#006699" id="AllSum" value="{{summ|sub:balance}}"> Загальна сума: {{summ|sub:balance}} грн.</font></h2>
 </div>
 
 <div style="float:left;">

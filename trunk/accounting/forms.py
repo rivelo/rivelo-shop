@@ -111,7 +111,7 @@ class BicycleForm(forms.ModelForm):
     color = forms.CharField(max_length=255)
     #sizes = forms.MultipleChoiceField()
     sizes = forms.CharField(required=False)
-    photo = forms.ImageField()
+    photo = forms.ImageField(required=False)
     weight = forms.FloatField(min_value=0, initial=0)
     price = forms.FloatField(initial=0)
     #currency = SelectFromModel(objects=Currency.objects.all())
