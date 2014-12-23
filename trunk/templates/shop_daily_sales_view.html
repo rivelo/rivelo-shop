@@ -1,9 +1,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Денний звіт</title>
 
 <h1>Оборот коштів на {{date}} року</h1>
 
 	<table border=1>
 	<tr>
+	<th>id</th>
 	<th>Клієнт</th>
 	<th>Сума (грн.)</th>
 	<th>Опис</th>
@@ -13,6 +15,9 @@
 <h2>Оплати</h2>	
 {% for cred in Ccred %}
 	<tr>
+	<td>
+	<a href="/clientcredits/edit/{{cred.id}}">{{cred.id}}</a>
+	</td>
 	<td>
 	{{cred.client}}
 	</td>
@@ -30,14 +35,20 @@
 	</tr>
 	<tr>
 	<td>
+	</td>
+	<td>
 	Сума
 	</td>
 	<td>
 	{{c_sum}}
 	</td>
 	<td>
+{% for tcash in cash_sum %}	
+	{{tcash.cash_type__name}} - {{tcash.suma}} грн. / 	
+{% endfor %}
 	</td>
 	<td>
+	
 	</td>
 	</tr>	
 	</table>

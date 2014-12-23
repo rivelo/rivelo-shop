@@ -307,7 +307,7 @@ $("#dialog_photo").dialog({
       modal: true,
       width: 540,
       maxWidth: 540,
-      position: "center",
+      //position: "center",
       buttons: {
         "Додати": function() {
         	$("#dialog_photo_add").dialog("open");
@@ -325,7 +325,7 @@ $("#dialog_photo_add").dialog({
 	autoOpen: false,
       resizable: true,
       modal: true,
-      position: "center",
+      //position: "center",
       width: 650,
       buttons: {
         "Додати": function() {
@@ -347,7 +347,7 @@ $("#dialog_photo_add").dialog({
                 		$("#img_url").attr({'src' : $('#photo_url').val()});
                 	}
                 	
-                	$("#dialog_photo").dialog({ buttons: [ { text: "Ok", click: function() { $("#dialog_photo").dialog( "close" ); } }, {text: "Cancel", click: function() {$("#dialog_photo").dialog("close"); }} ] }, { position: { my: "right bottom", at: "right bottom", of: window } });
+                	$("#dialog_photo").dialog({ buttons: [ { text: "Ok", click: function() { $("#dialog_photo").dialog( "close" ); } }, {text: "Cancel", click: function() {$("#dialog_photo").dialog("close"); }} ] });
 //                	$("#dialog_photo").dialog({ position: { my: "center top", at: "center top", of: window } });
 					$("#dialog_photo").dialog("open");
 					//$("#dialog_photo").dialog("moveToTop");
