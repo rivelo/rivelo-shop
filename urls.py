@@ -232,6 +232,8 @@ urlpatterns = patterns('',
     (r'^client/invoice/report/$', 'catalog.accounting.views.client_invoice_sale_report'),
     (r'^client/invoice/check/$', 'catalog.accounting.views.client_invoice_check', {'param': 'print'}),
     (r'^client/invoice/check/email/$', 'catalog.accounting.views.client_invoice_check', {'param': 'email'}),
+    (r'^client/invoice/return/(?P<id>\d+)/add/$', 'catalog.accounting.views.client_invioce_return_add'),
+    (r'^client/invoice/return/list/$', 'catalog.accounting.views.client_invioce_return_view'),
 
     (r'^clientdebts/add/(?P<id>\d+)$', 'catalog.accounting.views.clientdebts_add'),
     (r'^clientdebts/view/$', 'catalog.accounting.views.clientdebts_list'),

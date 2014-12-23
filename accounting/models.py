@@ -301,7 +301,7 @@ class ClientCredits(models.Model):
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
 
     def __unicode__(self):
-        return self.name
+        return "[%s] - %s" % (self.client, self.description)
 
     class Meta:
         ordering = ["client", "date"]    
@@ -721,10 +721,11 @@ class ClientReturn(models.Model):
     msg = models.TextField(blank = True, null = True)
     date = models.DateTimeField(auto_now_add=True, blank=False, null=False)
     user = models.ForeignKey(User, blank=False, null=False)
+    #cash = models.BooleanField(blank=False, null=False, default = True)
     
     def __unicode__(self):
         return u'%s' % self.msg
 
     class Meta:
-        ordering = ["client", "date"]
+        ordering = ["-date", "client"]
     

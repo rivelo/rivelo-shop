@@ -9,7 +9,7 @@ from django.core.urlresolvers import resolve
 from models import Manufacturer, Country, Type, Currency, Bicycle_Type, Bicycle,  FrameSize, Bicycle_Store, Bicycle_Sale, Bicycle_Order
 from forms import ContactForm, ManufacturerForm, CountryForm, CurencyForm, CategoryForm, BicycleTypeForm, BicycleForm, BicycleFrameSizeForm, BicycleStoreForm, BicycleSaleForm, BicycleOrderForm, BicycleOrderEditForm 
 
-from models import Catalog, Client, ClientDebts, ClientCredits, ClientInvoice, ClientOrder, ClientMessage
+from models import Catalog, Client, ClientDebts, ClientCredits, ClientInvoice, ClientOrder, ClientMessage, ClientReturn
 from forms import CatalogForm, ClientForm, ClientDebtsForm, ClientCreditsForm, ClientInvoiceForm, ClientOrderForm
 
 from models import Dealer, DealerManager, DealerManager, DealerPayment, DealerInvoice, InvoiceComponentList, Bank, Exchange, PreOrder, CashType
@@ -2449,10 +2449,11 @@ def clientcredits_add(request, id=None):
             date = form.cleaned_data['date']
             price = form.cleaned_data['price']
             description = form.cleaned_data['description']
+            cash_type = form.cleaned_data['cash_type']
             user = None             
             if request.user.is_authenticated():
                 user = request.user
-            ClientCredits(client=client, date=date, price=price, description=description, user=user).save()
+            ClientCredits(client=client, date=date, price=price, description=description, user=user, cash_type=cash_type).save()
             if id != None:
                 return HttpResponseRedirect('/client/result/search/?id='+str(id))
             else:
@@ -2691,7 +2692,7 @@ def client_invoice_id(request, id):
         # If page is out of range (e.g. 9999), deliver last page of results.
         cinvoices = paginator.page(paginator.num_pages)
     
-    return render_to_response('index.html', {'buycomponents': cinvoices, 'sumall':psum, 'countall':scount, 'weblink': 'clientinvoice_list.html'})
+    return render_to_response('index.html', {'buycomponents': cinvoices, 'sumall':psum, 'countall':scount, 'weblink': 'clientinvoice_list.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def client_invoice_check(request, param=None):
@@ -2720,6 +2721,48 @@ def client_invoice_check(request, param=None):
     
     return w    
     #return HttpResponse("Ваши логин и пароль не соответствуют. Session = " + str(list_id))
+
+
+def client_invioce_return_view(request):
+    cr_list = ClientReturn.objects.all()
+    return render_to_response('index.html', {'return_list': cr_list, 'weblink': 'ci_return_list.html'}, context_instance=RequestContext(request, processors=[custom_proc])) 
+
+
+def client_invioce_return_add(request, id):
+    ci = ClientInvoice.objects.get(id=id)
+    if request.is_ajax():
+        if request.method == 'POST':  
+            POST = request.POST  
+            if POST.has_key('msg') and POST.has_key('count'):
+                msg = request.POST.get('msg')
+                count = request.POST.get('count')
+                cash = request.POST.get('cash')
+                sum = ci.sum / ci.count * int(count)
+                res_count = ci.count - int(count)
+                if res_count < 0:
+                    count = ci.count
+                    res_count = 0
+                    sum = ci.sum / ci.count * int(count)
+                if cash == "false":
+                    ClientCredits(client=ci.client, date=now, price=sum, description="Повернення/обмін: " + str(ci.catalog), cash_type=CashType.objects.get(name=u"Повернення"), user=request.user).save() 
+                cat = Catalog.objects.get(id = ci.catalog.id)
+                cat.count = cat.count + int(count)
+                cat.save() 
+                ClientReturn(client = ci.client, catalog = ci.catalog, sum = sum, buy_date = ci.date, buy_user = ci.user, user = request.user, date=now, msg=msg, count=count).save()
+                
+                if res_count == 0:
+                    ci.delete()
+                else:
+                    ci.count = res_count
+                    if ci.sale <> 100:
+                        ci.sum = res_count * ci.price
+                    ci.pay = res_count * ci.price
+                    ci.save()
+                            
+    return HttpResponse("ok", mimetype="text/plain")
+ 
+#    cr_list = ClientReturn.objects.all()
+#    return render_to_response('index.html', {'return_list': cr_list, 'weblink': 'ci_return_list.html'}, context_instance=RequestContext(request, processors=[custom_proc]))    
 
 
 def client_order_list(request):
@@ -3393,6 +3436,7 @@ def shopdailysales_view(request, year, month, day):
 #    deb = ClientDebts.objects.values('date__year').annotate(suma=Sum("price"))
     deb = ClientDebts.objects.filter(date__year=year, date__month=month, date__day=day).order_by()
     cred = ClientCredits.objects.filter(date__year=year, date__month=month, date__day=day).order_by()
+    cash_sum = cred.values('cash_type', 'cash_type__name').annotate(suma=Sum("price"))
 
     deb_sum = 0
     cred_sum = 0
@@ -3401,7 +3445,7 @@ def shopdailysales_view(request, year, month, day):
     for d in deb:    
         deb_sum = deb_sum + d.price
     strdate = pytils_ua.dt.ru_strftime(u"%d %B %Y", now, inflected=True)
-    return render_to_response('index.html', {'Cdeb': deb, 'Ccred':cred, 'date': strdate, 'd_sum': deb_sum, 'c_sum': cred_sum, 'weblink': 'shop_daily_sales_view.html'})
+    return render_to_response('index.html', {'Cdeb': deb, 'Ccred':cred, 'date': strdate, 'd_sum': deb_sum, 'c_sum': cred_sum, 'cash_sum': cash_sum, 'weblink': 'shop_daily_sales_view.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def shopdailysales_edit(request, id):
