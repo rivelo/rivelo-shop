@@ -14,6 +14,12 @@
 	<script type="text/javascript" src="/media/jquery-1.8.3.js"></script>	
 	<script type="text/javascript" src="/media/jquery-ui-1.9.2.custom.min.js"></script>	
 	
+<style type="text/css">
+  span:visited{ text-decoration:none; color:#293d6b; }
+  span:hover{ text-decoration:underline; color:#293d6b; }
+  span {color:#293d6b; cursor: pointer; }
+</style>	
+	
 <script type="text/javascript">
 
 function payed() {
@@ -21,17 +27,22 @@ $("#id_pay").val($('#id_sum').val())
 document.getElementById("UserEnter").submit();
 }
 
-	$(document).ready(function() {
-		$("#s_client").val($('#id_client').val());
-		$("#s_client").select();
-		
-//      $('select.autocomplete').select_autocomplete();
-});
+$(document).ready(function() {
+	$("#s_client").val($('#id_client').val());
+	$("#s_client").select();
+	
+	$('span').click(function(){
+    	//$(this).hide();
+    	$("#s_client").val($(this).attr('vname'));
+    	$('#id_client').val($(this).attr('val'));
+    	$('#id_sale').val($(this).attr('sale'));
+    	sum();
+    });
+//});
 
-$(function() {
+//$(function() {
 	var sale = $('#id_sale').val();
         $( "#s_client" ).autocomplete({
-        //$('select.autocomplete').autocomplete({
             source: function( request, response ) {
                 $.ajax({
                 type: "GET",
@@ -53,7 +64,7 @@ $(function() {
             minLength: 3,
             select: function( event, ui ) {
             if (sale==0){
-            $('#id_sale').val(ui.item.idid);
+            	$('#id_sale').val(ui.item.idid);
             }
             $('#id_client').val(ui.item.pk_id);
 			//alert ("OK+ sale = " + ui.item.idid)           	
@@ -70,7 +81,7 @@ $(function() {
 //      $(".ac_input").focus();
 //  		$('#id_client').hide();
       
-    });
+});
 
 
 //$('#s_client').bind('change', 
@@ -102,16 +113,16 @@ function sum() {
 }
 
 //setTimeout(sum, 100)
-setInterval(sum, 100)
+setInterval(sum, 100);
 
 //id2name();
 
 </script>
 
-<!--  <body onload="document.getElementById('id_client').focus()">  -->
 <body onload="document.getElementById('s_client').focus()">
 
-    <h1>Продаж товару</h1>
+<h1>Продаж товару</h1>
+<div style="float: left;">    
     <form id="UserEnter" action="." method="POST">
         <table>
         	<input id="s_client" style="width: 550px;" />
@@ -119,14 +130,16 @@ setInterval(sum, 100)
         </table>
         <p><input type="submit" value="Save"><input id="bpay" onclick="payed()" type="button" value="Оплатити"></p>
     </form>
+</div>
     
+<div style="float: none;">
+{% for client in clients_list %}
+<span val='{{client.client__id}}' vname="{{client.client__name}}" sale="{{client.client__sale}}"> {{client.client__name}} ({{client.num_inv}}), </span>
+{% endfor %}
+</div>
+
+<div style="clear: left;">
     <h3 id="result" style="color:red; background-color:#CCCCCC"}>Сума грн.</h3>
+</div>
     
-    <br><br>
-<a href="/invoice/list/view/">Список товару в рахунках від постачальників</a>
-<br>
-<a href="/">HOME</a>
-
-
-
-
+    

@@ -2584,7 +2584,10 @@ def client_invoice(request, cid=None, id=None):
             return HttpResponseRedirect('/client/invoice/view/')
     else:
         form = ClientInvoiceForm(instance = a, catalog_id=cid)
-    return render_to_response('index.html', {'form': form, 'weblink': 'clientinvoice.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    nday = 3
+    #clients_list = ClientInvoice.objects.filter(date__gt=now-datetime.timedelta(days=int(nday))).values('client__id', 'sale', 'client__name').annotate(num_inv=Count('client'))
+    clients_list = ClientInvoice.objects.filter(date__gt=now-datetime.timedelta(days=int(nday))).values('client__id', 'client__name', 'client__sale').annotate(num_inv=Count('client'))
+    return render_to_response('index.html', {'form': form, 'weblink': 'clientinvoice.html', 'clients_list': clients_list}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def client_invoice_edit(request, id):
