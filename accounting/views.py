@@ -2182,7 +2182,6 @@ def catalog_search_result(request):
     return render_to_response('index.html', {'catalog': list, 'url':print_url, 'weblink': 'catalog_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
-
 def catalog_lookup(request):
     # Default return list
     results = []
@@ -3358,13 +3357,11 @@ def workshop_list(request, year=None, month=None, day=None):
 
 
 def workshop_delete(request, id=None):
-    
     if request.is_ajax():
         if request.method == 'POST':  
             POST = request.POST  
             if POST.has_key('id'):
                 wid = request.POST.get( 'id' )
-
     if wid:
         id = wid 
     obj = WorkShop.objects.get(id=id)
@@ -4676,4 +4673,25 @@ def bicycle_price_set(request):
                 return HttpResponse(c)
 
 
+def storage_box_list(request, pprint=False):
+    list = Catalog.objects.exclude(locality__isnull=True).exclude(locality__exact='').order_by('locality')
+    if pprint:
+        return render_to_response('storage_box.html', {'boxes': list, 'pprint': True})
+
+    return render_to_response("index.html", {"weblink": 'storage_box.html', "boxes": list, 'pprint': False}, context_instance=RequestContext(request, processors=[custom_proc]))
+
+
+def storage_box_delete(request, id=None):
+    if request.is_ajax():
+        if request.method == 'POST':  
+            POST = request.POST  
+            if POST.has_key('id'):
+                wid = request.POST.get( 'id' )
+    if wid:
+        id = wid
+    obj = Catalog.objects.get(id=id)
+    obj.locality = ''
+    obj.save()
+    return HttpResponse("Виконано", mimetype="text/plain")
+    #return HttpResponseRedirect('/workshop/view/')
 
