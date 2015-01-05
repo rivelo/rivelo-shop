@@ -16,8 +16,19 @@
 	
 <style type="text/css">
   span:visited{ text-decoration:none; color:#293d6b; }
-  span:hover{ text-decoration:underline; color:#293d6b; }
-  span {color:#293d6b; cursor: pointer; }
+  span:hover{ text-decoration:underline; color:#FFF; }
+  span {color:#293d6b; 
+  		cursor: pointer; 
+  		border-radius: 5px;
+  		color: #FFF;
+  		background-color: #4A4A4A;
+  		}
+  span.one {background-color: #5cb85c;
+  		}
+  span.two {background-color: #FF6600;
+  		}
+  		
+  		
 </style>	
 	
 <script type="text/javascript">
@@ -37,6 +48,8 @@ $(document).ready(function() {
     	$('#id_client').val($(this).attr('val'));
     	$('#id_sale').val($(this).attr('sale'));
     	sum();
+    	$('#id_count').focus();
+    	$('#id_count').select();
     });
 //});
 
@@ -131,10 +144,19 @@ setInterval(sum, 100);
         <p><input type="submit" value="Save"><input id="bpay" onclick="payed()" type="button" value="Оплатити"></p>
     </form>
 </div>
-    
+
+<span></span>    
 <div style="float: none;">
 {% for client in clients_list %}
-<span val='{{client.client__id}}' vname="{{client.client__name}}" sale="{{client.client__sale}}"> {{client.client__name}} ({{client.num_inv}}), </span>
+{% if client.num_inv >= 7 %}
+<span class="two" val='{{client.client__id}}' vname="{{client.client__name}}" sale="{{client.client__sale}}" style="font-size:200%;"> {{client.client__name}} ({{client.num_inv}}) </span>,
+{% endif %}
+{% if client.num_inv >= 3 and client.num_inv < 7 %}
+<span class="one" val='{{client.client__id}}' vname="{{client.client__name}}" sale="{{client.client__sale}}" style="font-size:150%;"> {{client.client__name}} ({{client.num_inv}}) </span>,
+{% endif %}
+{% if client.num_inv < 3 %} 
+<span val='{{client.client__id}}' vname="{{client.client__name}}" sale="{{client.client__sale}}" style="font-size:100%;"> {{client.client__name}} ({{client.num_inv}}) </span>,
+{% endif %}
 {% endfor %}
 </div>
 
