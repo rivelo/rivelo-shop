@@ -279,14 +279,13 @@ class Client(models.Model):
 #клієнтські борги
 class ClientDebts(models.Model):
     client = models.ForeignKey(Client)
-    #date = models.DateTimeField(auto_now_add=True)
     date = models.DateTimeField()
     price = models.FloatField()
     description = models.TextField()
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)    
     
     def __unicode__(self):
-        return self.date
+        return "[%s] - %s (%s) %" % (self.date, self.client, self.description)
 
     class Meta:
         ordering = ["client", "date"]    
@@ -322,7 +321,7 @@ class ClientInvoice(models.Model):
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)    
             
     def __unicode__(self):
-        return "%s - %s шт." % (self.catalog, self.count) 
+        return "%s - %s шт." % (self.catalog.name, self.count) 
         #return self.origin_id 
 
     class Meta:

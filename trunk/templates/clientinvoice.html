@@ -27,7 +27,11 @@
   		}
   span.two {background-color: #FF6600;
   		}
-  		
+  div.box {//border-radius: 5px;
+  		   background-color: #bfbfbf;
+  		   font-size:200%;
+  		   margin: 80px 0px 0px;
+  }  		
   		
 </style>	
 	
@@ -35,12 +39,38 @@
 
 function payed() {
 $("#id_pay").val($('#id_sum').val())
+$("#id_length").val($("#id_count").val());
+$("#id_count").val(Math.round($("#id_count").val()));
 document.getElementById("UserEnter").submit();
 }
 
 $(document).ready(function() {
 	$("#s_client").val($('#id_client').val());
 	$("#s_client").select();
+	
+{% if b_len %}
+$("#id_count").after("м");
+$("label[for='id_count']").html("Довжина:");
+{% endif %}	
+
+{%if desc_len %}
+$("#id_count").val({{desc_len}});
+{% endif %}
+
+$("#UserEnter").submit(function() {
+      if ($("#id_sum").val()) {
+      	$("#id_length").val($("#id_count").val());
+      	$("#id_count").val(Math.round($("#id_count").val()));
+        return true;
+      }
+      $("#id_count").after("FALSE");
+      return false;
+    });
+
+
+$( "input[type='text']" ).change(function(){
+  sum();
+});
 	
 	$('span').click(function(){
     	//$(this).hide();
@@ -126,7 +156,7 @@ function sum() {
 }
 
 //setTimeout(sum, 100)
-setInterval(sum, 100);
+//setInterval(sum, 100);
 
 //id2name();
 
@@ -158,6 +188,12 @@ setInterval(sum, 100);
 <span val='{{client.client__id}}' vname="{{client.client__name}}" sale="{{client.client__sale}}" style="font-size:100%;"> {{client.client__name}} ({{client.num_inv}}) </span>,
 {% endif %}
 {% endfor %}
+
+<div class="box" style="float: left;">
+<p style="font-style: normal;">Номер ящика:</p>
+{{box_number}}
+</div>
+
 </div>
 
 <div style="clear: left;">

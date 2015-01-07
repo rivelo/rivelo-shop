@@ -405,6 +405,7 @@ class ClientInvoiceForm(forms.ModelForm):
 #    date = forms.DateTimeField(initial = datetime.datetime.today(), label='Дата', input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
     date = forms.DateTimeField(initial = datetime.datetime.now(), label='Дата',  input_formats=['%d/%m/%Y %H:%M:%S', '%d/%m/%Y %H:%M:%S'], widget=forms.DateTimeInput(format='%d/%m/%Y %H:%M:%S'))
     description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
+    length = forms.FloatField(initial=0, label="Довжина", widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
         cid = kwargs.pop('catalog_id', None)
