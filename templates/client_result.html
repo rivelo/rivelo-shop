@@ -164,17 +164,23 @@ $(function() {
             $.ajax({
             	beforeSend: function() {$( "#dialog_ajax_load" ).dialog({modal: true});},
                 type: "POST",
-                url: "/client_history/cred/",
+                url: "/client_history/debt/",
                 data: { clientId: Id },
                 dataType: "json",
                 success:function(msg){
                 	$("#balance .tr_debt").empty(); 
                 	$("#1month_debt").hide();
                 	$.each(msg,function(index,item){
-                		var tdate = item.fields.date.split(" ")[0].replace("-", "/").replace("-", "/");
-                		var fcol = '<abbr title="' + item.fields.date.split(" ")[1] + ' - [user]">' + tdate + '</abbr>';
-                		var cdesc = item.fields.description + " <a href='/clientdebts/delete/" + item.pk + "'>delete</a>";
-                	    $('.in_debt').after('<tr class="tr_debt"><td>'+ fcol +'</td><td>'+ cdesc +'</td><td>' + item.fields.price+'</td></tr>');
+//                		var tdate = item.fields.date.split(" ")[0].replace("-", "/").replace("-", "/");
+//                		var fcol = '<abbr title="' + item.fields.date.split(" ")[1] + ' - [user]">' + tdate + '</abbr>';
+//                		var cdesc = item.fields.description + " <a href='/clientdebts/delete/" + item.pk + "'>delete</a>";
+//                	    $('.in_debt').after('<tr class="tr_debt"><td>'+ fcol +'</td><td>'+ cdesc +'</td><td>' + item.fields.price+'</td></tr>');
+						var fcol = '<abbr title="' + item['user__username'] + '">' + item['date'] + '</abbr>';
+						var ed = '<a href="/clientdebts/edit/'+item['id']+'">edit</a>';
+						var cdesc = item['description'] + ed + " <a href='/clientdebts/delete/" + item['id'] + "'>delete</a>";
+						var price = '<td>' + item['price'];
+                	    $('.in_debt').after('<tr class="tr_debt"><td>'+ fcol +'</td><td>'+ cdesc +'</td>' + price +'</td></tr>');
+                	    
                     });
 				$( "#dialog_ajax_load" ).dialog("close");                    
                 },

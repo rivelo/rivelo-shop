@@ -197,6 +197,7 @@ if (target.prop('tagName')=="IMG") {
 	console.log("Target = ", target.parent('td').parent('tr').attr("ci_id"));
 	console.log("max = ", target.parent('td').parent("tr").attr("count"));
 	iid = target.parent('td').parent('tr').attr("ci_id");
+	cat_id = target.parent('td').parent('tr').attr("cat_id");
 	$("#sp_count").attr('max', target.parent('td').parent('tr').attr("count"))
 	$("#sp_count").attr('value',target.parent('td').parent('tr').attr("count"));
 }
@@ -204,6 +205,7 @@ if (target.prop('tagName')=="TD") {
 	console.log("Target = ", target.parent('tr').attr("ci_id"));
 	console.log("max = ", target.parent("tr").attr("count"));
 	iid = target.parent('tr').attr("ci_id");
+	cat_id = target.parent('tr').attr("cat_id");
 	$("#sp_count").attr('max', target.parent('tr').attr("count"))
 	$("#sp_count").attr('value',target.parent('tr').attr("count"));
 }
@@ -227,6 +229,7 @@ top: event.pageY+'px'
 //$('<ul/>').append('<li><a href="/client/invoice/'+ iid +'/delete/" onclick="return confirm("Видалити запис?")">Видалити</a></li>')
 $('<ul/>').append('<li><a href="/client/invoice/'+ iid +'/delete/" onclick="return confirm('+ "'Видалити запис?'" +');">Видалити</a></li>')
 .append('<li><a href="/client/invoice/'+ iid +'/edit">Редагувати</a></li>')
+.append('<li><a href="/client/invoice/catalog/'+ cat_id +'/add/">Продати ще</a></li>')
 //.append('<li><a href="/client/invoice/return/'+ iid +'/add/">Обмін/Повернення</a></li>')
 .append('<li><a href="#" onclick="show_ret();return false">Обмін/Повернення</a></li>')
 //.append('<li><a href="#">Open Inspector</a></li>'))
@@ -320,7 +323,7 @@ function calc_sum() {
 {% ifequal type.sum type.pay %}
 <tr ci_id={{type.id}} count="{{type.count}}">
 {% else %}
-<tr BGCOLOR="#F2AE6B" ci_id={{type.id}} count="{{type.count}}">
+<tr BGCOLOR="#F2AE6B" ci_id={{type.id}} cat_id={{type.catalog.id}} count="{{type.count}}">
 {% endifequal %}
 
 	<td>
@@ -391,7 +394,9 @@ function calc_sum() {
 {% endifequal %}
 	</td>
 	<td align="center">
+	<abbr title="Ящик номер: {{type.catalog.locality}}">
 	{{type.catalog.count}}
+	</abbr>
 	</td>
 </tr>
 {% endfor %}         

@@ -1586,6 +1586,7 @@ def invoicecomponent_del(request, id):
 
 def invoicecomponent_edit(request, id):
     a = InvoiceComponentList.objects.get(id=id)
+    old_count = a.count
     cid = a.catalog.id
     if request.method == 'POST':
         #form = InvoiceComponentListForm(request.POST, instance=a)
@@ -1600,7 +1601,7 @@ def invoicecomponent_edit(request, id):
             description = form.cleaned_data['description']
             form.save()
             cat = Catalog.objects.get(id = cid)
-            cat.count = cat.count + count
+            cat.count = cat.count + count - old_count
             cat.save()
             return HttpResponseRedirect('/invoice/list/10/view/')
     else:
@@ -2563,10 +2564,16 @@ def client_invoice(request, cid=None, id=None):
             sale = form.cleaned_data['sale']
             pay = form.cleaned_data['pay']
             date = form.cleaned_data['date']
+            description = form.cleaned_data['description']
+            clen = form.cleaned_data['length']
+            if (clen is not None) and (cat.type.pk == 13):
+                description = description + '\nlength:' + str(clen)
+                cat.length = cat.length + clen
+
             user = None #form.cleaned_data['user_id']            
             if request.user.is_authenticated():
                 user = request.user
-            description = form.cleaned_data['description']
+            
             ClientInvoice(client=client, catalog=catalog, count=count, sum=sum, price=price, currency=currency, sale=sale, pay=pay, date=date, description=description, user=user).save()
             cat.count = cat.count - count
             cat.save()
@@ -2584,14 +2591,20 @@ def client_invoice(request, cid=None, id=None):
     else:
         form = ClientInvoiceForm(instance = a, catalog_id=cid)
     nday = 3
+    nbox = cat.locality
+    b_len = False
+    if cat.type.pk == 13:
+        b_len = True
+        
     #clients_list = ClientInvoice.objects.filter(date__gt=now-datetime.timedelta(days=int(nday))).values('client__id', 'sale', 'client__name').annotate(num_inv=Count('client'))
     clients_list = ClientInvoice.objects.filter(date__gt=now-datetime.timedelta(days=int(nday))).values('client__id', 'client__name', 'client__sale').annotate(num_inv=Count('client'))
-    return render_to_response('index.html', {'form': form, 'weblink': 'clientinvoice.html', 'clients_list': clients_list}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'form': form, 'weblink': 'clientinvoice.html', 'clients_list': clients_list, 'box_number': nbox, 'b_len': b_len}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def client_invoice_edit(request, id):
     a = ClientInvoice.objects.get(id=id)
     old_count = a.count
+    old_length = 0
     cat_id = a.catalog.id
     cat = Catalog.objects.get(id = cat_id)
     if request.method == 'POST':
@@ -2606,7 +2619,13 @@ def client_invoice_edit(request, id):
             sale = form.cleaned_data['sale']
             pay = form.cleaned_data['pay']
             date = form.cleaned_data['date']
+            clen = form.cleaned_data['length']
             description = form.cleaned_data['description']
+            if (clen is not None) and (cat.type.pk == 13):
+                if a.description.find('length:')>=0:
+                    old_length = a.description.split('\n')[-1].split('length:')[1]
+                cat.length = cat.length - float(old_length) + float(clen)
+                description = description + '\nlength:' + str(clen)            
             cat.count = cat.count - (old_count - count)
             cat.save()
             user = a.user
@@ -2616,7 +2635,31 @@ def client_invoice_edit(request, id):
             return HttpResponseRedirect('/client/invoice/view/')
     else:
         form = ClientInvoiceForm(instance = a, catalog_id = cat_id)
-    return render_to_response('index.html', {'form': form, 'weblink': 'clientinvoice.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+        
+    nday = 3 # користувачі за останні n-днів
+    dlen = None
+    nbox = cat.locality
+    b_len = False
+    if cat.type.pk == 13:
+        b_len = True
+        if a.description.find('length:')>=0:
+            dlen = a.description.split('\n')[-1].split(':')[1]
+    clients_list = ClientInvoice.objects.filter(date__gt=now-datetime.timedelta(days=int(nday))).values('client__id', 'client__name', 'client__sale').annotate(num_inv=Count('client'))        
+    return render_to_response('index.html', {'form': form, 'weblink': 'clientinvoice.html', 'clients_list': clients_list, 'box_number': nbox, 'b_len': b_len, 'desc_len':dlen, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+
+
+def client_invoice_delete(request, id):
+    obj = ClientInvoice.objects.get(id=id)
+    cat = Catalog.objects.get(id = obj.catalog.id)
+    if cat.type.pk == 13:
+        if obj.description.find('length:')==0:
+            old_length = obj.description.split('\n')[-1].split(':')[1]
+            cat.length = cat.length - float(old_length)
+    del_logging(obj)
+    obj.delete()
+    cat.count = cat.count + obj.count
+    cat.save()
+    return HttpResponseRedirect('/client/invoice/view/')
 
 
 def client_invoice_view(request, month=None, year=None, day=None, id=None):
@@ -2886,17 +2929,6 @@ def client_invoice_sale_report(request):
 
     #list = Bicycle_Sale.objects.all().order_by('date')
     return render_to_response('index.html', {'bicycles': list, 'all_sum': sum, 'bike_sum': bike_sum, 'weblink': 'clientinvoice_sale_report.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
-
-
-
-def client_invoice_delete(request, id):
-    obj = ClientInvoice.objects.get(id=id)
-    del_logging(obj)
-    obj.delete()
-    cat = Catalog.objects.get(id = obj.catalog.id)
-    cat.count = cat.count + obj.count
-    cat.save()
-    return HttpResponseRedirect('/client/invoice/view/')
 
 
 def client_search(request):
@@ -4472,9 +4504,17 @@ def client_history_debt(request):
                 
             if 'clientId' in request.POST and request.POST['clientId']:
                 clientId = request.POST['clientId']
+                p_debt_month = ClientDebts.objects.filter(client = clientId).values('id', 'price', 'description', 'user', 'user__username', 'date')
+                #p_cred_month = ClientCredits.objects.filter(client = cid, date__month = cmonth, date__year = cyear).values('id', 'price', 'description', 'user', 'user__username', 'date')
+                json = list(p_debt_month)
+                for x in json:  
+                    x['date'] = x['date'].strftime("%d/%m/%Y")
+
+                return HttpResponse(simplejson.dumps(json), mimetype='application/json')
     
-                search_c = ClientDebts.objects.filter(client = clientId).prefetch_related('user__username')
-                data_c = serializers.serialize('json', search_c)
+#                search_c = ClientDebts.objects.filter(client = clientId).prefetch_related('user__username')
+#                data_c = serializers.serialize('json', search_c)
+                
     
     return HttpResponse(data_c, mimetype='application/json')    
 
