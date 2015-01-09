@@ -2568,7 +2568,10 @@ def client_invoice(request, cid=None, id=None):
             clen = form.cleaned_data['length']
             if (clen is not None) and (cat.type.pk == 13):
                 description = description + '\nlength:' + str(clen)
-                cat.length = cat.length + clen
+                if cat.length is not None:
+                    cat.length = cat.length + clen
+                else:
+                    cat.length = 0
 
             user = None #form.cleaned_data['user_id']            
             if request.user.is_authenticated():
@@ -2624,7 +2627,10 @@ def client_invoice_edit(request, id):
             if (clen is not None) and (cat.type.pk == 13):
                 if a.description.find('length:')>=0:
                     old_length = a.description.split('\n')[-1].split('length:')[1]
-                cat.length = cat.length - float(old_length) + float(clen)
+                if cat.length is not None:
+                    cat.length = cat.length - float(old_length) + float(clen)
+                else:
+                    cat.length = 0 - float(old_length) + float(clen)
                 description = description + '\nlength:' + str(clen)            
             cat.count = cat.count - (old_count - count)
             cat.save()
