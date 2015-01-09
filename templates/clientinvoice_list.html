@@ -321,9 +321,9 @@ function calc_sum() {
     
 {% for type in buycomponents.object_list %}
 {% ifequal type.sum type.pay %}
-<tr ci_id={{type.id}} count="{{type.count}}">
+<tr ci_id={{type.id}} count="{{type.count}}" cat_id={{type.catalog.pk}}>
 {% else %}
-<tr BGCOLOR="#F2AE6B" ci_id={{type.id}} cat_id={{type.catalog.id}} count="{{type.count}}">
+<tr BGCOLOR="#F2AE6B" ci_id={{type.id}} cat_id={{type.catalog.pk}} count="{{type.count}}">
 {% endifequal %}
 
 	<td>
