@@ -2257,6 +2257,36 @@ def client_edit(request, id):
     return render_to_response('index.html', {'form': form, 'weblink': 'client.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
+def client_join(request, id=None):
+    #a = Client.objects.get(pk=id)
+    if request.method == 'POST':
+        POST = request.POST
+        if POST.has_key('client_main') and POST.has_key('client_1'): # and POST.has_key('client_1'):
+            main_id = request.POST.get('client_main')
+            first_id = request.POST.get('client_1')
+            mc = Client.objects.get(pk=main_id)
+            fc = Client.objects.get(pk=first_id)
+            
+            ClientDebts.objects.filter(client=fc).update(client=mc)
+            ClientCredits.objects.filter(client=fc).update(client=mc)
+            ClientInvoice.objects.filter(client=fc).update(client=mc)
+            ClientOrder.objects.filter(client=fc).update(client=mc)
+            Bicycle_Sale.objects.filter(client=fc).update(client=mc)
+            Bicycle_Order.objects.filter(client=fc).update(client=mc)
+            WorkShop.objects.filter(client=fc).update(client=mc)
+            WorkTicket.objects.filter(client=fc).update(client=mc)
+            #Check.objects.filter(client=fc).update(client=mc)
+            Rent.objects.filter(client=fc).update(client=mc)
+            ClientMessage.objects.filter(client=fc).update(client=mc)
+            ClientReturn.objects.filter(client=fc).update(client=mc)
+            
+            fc.delete()
+            return HttpResponseRedirect('/client/result/search/?id=' + main_id)
+    #else:
+        
+    return render_to_response('index.html', {'weblink': 'client_join.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
+
+
 def client_balance_list(request):
     query = '''select accounting_client.id as id, accounting_client.name as name, sum(accounting_clientdebts.price) as sum_deb 
             from accounting_client 
