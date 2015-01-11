@@ -213,6 +213,7 @@ urlpatterns = patterns('',
     (r'^client/result/search/$', 'catalog.accounting.views.client_result'),
     (r'^client/lookup/$', 'catalog.accounting.views.client_lookup'),
     (r'^client/lookup/byid/$', 'catalog.accounting.views.client_lookup_by_id'),
+    (r'^client/join/$', 'catalog.accounting.views.client_join'),
     
 #delete    (r'^client/result/$', 'catalog.accounting.views.search_client_id'),
     (r'^client/invoice/view/$', 'catalog.accounting.views.client_invoice_view'),

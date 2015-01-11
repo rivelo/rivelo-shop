@@ -370,46 +370,6 @@ $("#dialog_photo_add").dialog({
 
 
 
-$(".c_photo" ).click(function() {
-	   		//console.log($(this).attr('ids'));
-	   		//console.log($("#url_"+$(this).attr('ids')).parents());
-	   		//console.log($("#td_"+$(this).attr('ids')).nextAll(".c_name:first"));
-	   		
-	   		var t = $("#td_"+$(this).attr('ids')).nextAll(".c_name:first").html();
-    		$("#dialog_photo_add").dialog({title:  t});
-    		
-			
-
-			$.ajax({
-                type: "POST",
-                url: "/photo/url/get/",
-                data: {id:  $(this).attr('ids') },
-                dataType: "json",
-                success:function(data){
-                
-//					document.getElementById("link_" + data.id).setAttribute("url", String(data.aData[0][0]));
-			
-					if (data.aData.length > 0) {
-						document.getElementById("img_url").setAttribute("src", String(data.aData[0][0]));
-						$("#dialog_photo").dialog({ title: data.cname });
-					    $("#dialog_photo").dialog("open");
-					    //$("#dialog_photo").dialog("moveToTop");
-					}
-					else {
-				   		$("#photo_url").attr({'ids': data.id});
-   						$("#dialog_photo_add").dialog("open");
-   						$("#photo_url").select();
-					}   					
-					                
-//                    alert("Все отлично ушло на сервер - " + msg.aData[0][0]);                
-                },
-                error:function(){
-                    alert("При отправке возникли проблемы");
-                }
-            });
-
- });
-
 
  $(".addprice" ).click(function() {
     $("#dtext").html($(this).attr('href'));
@@ -542,6 +502,36 @@ function fnShowHide( iCol )
     var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
     oTable.fnSetColumnVis( iCol, bVis ? false : true );
 }
+
+
+$(document).on("click", ".c_photo", function(event) {
+	   		var t = $("#td_"+$(this).attr('ids')).nextAll(".c_name:first").html();
+    		$("#dialog_photo_add").dialog({title:  t});
+			$.ajax({
+                type: "POST",
+                url: "/photo/url/get/",
+                data: {id:  $(this).attr('ids') },
+                dataType: "json",
+                success:function(data){
+					if (data.aData.length > 0) {
+						document.getElementById("img_url").setAttribute("src", String(data.aData[0][0]));
+						$("#dialog_photo").dialog({ title: data.cname });
+					    $("#dialog_photo").dialog("open");
+					    //$("#dialog_photo").dialog("moveToTop");
+					}
+					else {
+				   		$("#photo_url").attr({'ids': data.id});
+   						$("#dialog_photo_add").dialog("open");
+   						$("#photo_url").select();
+					}   					
+               
+                },
+                error:function(){
+                    alert("При отправке возникли проблемы");
+                }
+            });
+ });
+
 </script>
 
 <html lang="en">
