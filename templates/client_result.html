@@ -585,7 +585,9 @@ $('.edit_workstatus').editable('/workticket/edit/0/', {
 	{% endif %}
 	</td>
 	<td>
+	<abbr title="{{debt.cash|yesno:"Каса,Віртуальні"}}">
 	{{debt.price}}
+	</abbr>
 	</td>
 	{% endfor %}
 	</tr>

@@ -30,6 +30,9 @@
     	<th>Дата</th>
     	<th>Сума (грн.)</th>
     	<th>Опис</th>
+    	<th>Готівка</th>
+    	<th>Термінал</th>
+    	<th>Видано з каси</th>
     	<th>Дія</th>
     </tr>
  
@@ -47,6 +50,16 @@
 	<td>       
 	{{type.description}}
 	</td>
+	<td>       
+	{{type.cash}}
+	</td>
+	<td>       
+	{{type.tcash}}
+	</td>
+	<td>       
+	{{type.ocash}}
+	</td>
+	
 	<td>
 	<a href="/shop/sale/day/edit/{{ type.id }}">edit</a>
     <a href="/shop/sale/day/{{ type.id }}/delete/" onclick="return confirm('Видалити виручку?')">delete</a>
@@ -56,21 +69,15 @@
 
 <tr>
     	<th></th>
-    	<th></th>
-    	<th></th>
     	<th>Сума</th>
     	<th>{{summ}} грн.</th>
-
+    	<th></th>
+    	<th></th>
+    	<th></th>
+    	<th></th>
+    	<th></th>
 </tr> 
 
 </table>
-
-
-<br><br>
-<a href="/">Головне меню (HOME)</a>
-<br>
-<a href="/workshop/add/">Створити новий рахунок на виконані роботи</a>       
-
-
 
 

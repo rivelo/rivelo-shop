@@ -12,6 +12,7 @@
 			<li><a href="/clientdebts/view/">Боржники</a></li>
 			<li><a href="/clientcredits/view/">Платежі (Кредитори)</a></li>
 {% if user.is_authenticated %}			
+			<li><a href="/client/join/">Обєднання клієнтів</a></li>
 			<li><a href="/clients/balance/">Баланс</a></li>
 {% endif %}			
 		</ul>
@@ -117,6 +118,7 @@
 			<li><a href="/client/invoice/report/">Сума проданих аксесуарів по місяцях</a></li>
 			<li><a href="/report/sales/user/report/">Сума проданих аксесуарів by USer</a></li>
 			<li><a href="/workday/user/all/report/">Робочі дні by USer</a></li>
+			<li><a href="/shop/sale/day/add/">Денна каса</a></li>
 		</ul>
 	</li>
 {%endif%}	
