@@ -1,7 +1,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Денний звіт</title>
 
-<h1>Оборот коштів на {{date}} року</h1>
+<h1 style="display:inline;">Оборот коштів на {{date}} року </h1> <h2 style="display:inline; color: red;" >Каса: {{casa}} грн.</h2>
 
 	<table border=1>
 	<tr>
@@ -43,7 +43,7 @@
 	{{c_sum}}
 	</td>
 	<td>
-{% for tcash in cash_sum %}	
+{% for tcash in cash_credsum %}	
 	{{tcash.cash_type__name}} - {{tcash.suma}} грн. / 	
 {% endfor %}
 	</td>
@@ -82,6 +82,9 @@
 	{{d_sum}}
 	</td>
 	<td>
+	{% for tcash in cash_debsum %}	
+	{{tcash.cash}} - {{tcash.suma}} грн. / 	
+	{% endfor %}
 	</td>
 	</tr>	
 	</table>	

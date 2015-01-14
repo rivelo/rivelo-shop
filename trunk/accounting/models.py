@@ -281,6 +281,7 @@ class ClientDebts(models.Model):
     client = models.ForeignKey(Client)
     date = models.DateTimeField()
     price = models.FloatField()
+    cash = models.BooleanField(default=False, verbose_name="Каса?")
     description = models.TextField()
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)    
     
@@ -551,17 +552,17 @@ class WorkTicket(models.Model):
 
 
 class ShopDailySales(models.Model):
-    date = models.DateField(auto_now_add=True)
-    price = models.FloatField()
+    date = models.DateTimeField(auto_now_add=True)
+    #date = models.DateField(auto_now_add=True)
+    price = models.FloatField() #В касі на кінець дня
     description = models.TextField(blank=True, null=True)
-    user = user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
-    cash = models.FloatField()
-    wcash = models.FloatField()
-    ocash = models.FloatField()
-
+    user = user = models.ForeignKey(User, blank=False, null=False)
+    cash = models.FloatField() #Готівка
+    tcash = models.FloatField() #Термінал
+    ocash = models.FloatField() #Взято з каси
     
     def __unicode__(self):
-        return self.name
+        return "[%s] - %s" % self.date, self.price 
 
     class Meta:
         ordering = ["date", "price"]

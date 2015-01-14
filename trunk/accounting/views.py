@@ -2391,9 +2391,10 @@ def clientdebts_add(request, id=None):
             date = form.cleaned_data['date']
             price = form.cleaned_data['price']
             description = form.cleaned_data['description']
+            cash = form.cleaned_data['cash']
             if request.user.is_authenticated():
                 user = request.user
-            ClientDebts(client=client, date=date, price=price, description=description, user=user).save()
+            ClientDebts(client=client, date=date, price=price, description=description, user=user, cash=cash).save()
             
             update_client = Client.objects.get(id=client.id)
             update_client.summ = update_client.summ + price 
@@ -3465,16 +3466,42 @@ def workshop_pricelist(request, pprint=False):
 #------------- Shop operation --------------
 def shopdailysales_add(request):
     if request.method == 'POST':
-        form = ShopDailySalesForm(request.POST)
+        form = ShopDailySalesForm(request.POST, initial={'cash': cashCred, 'ocash': cashCred, 'tcash':TcashCred})
         if form.is_valid():
             date = form.cleaned_data['date']
             price = form.cleaned_data['price']
             description = form.cleaned_data['description']
-            ShopDailySales(date=date, price=price, description=description).save()
+            cash = form.cleaned_data['cash']
+            tcash = form.cleaned_data['tcash']
+            ocash = form.cleaned_data['ocash']
+            user = form.cleaned_data['user']
+            date = now
+            if request.user.is_authenticated():
+                user = request.user
+            ShopDailySales(date=date, price=price, description=description, user = user, cash=cash, tcash=tcash, ocash=ocash).save()
             return HttpResponseRedirect('/shop/sale/view/')
     else:        
-        form = ShopDailySalesForm()
-    return render_to_response('index.html', {'form': form, 'weblink': 'shop_daily_sales.html'})
+        deb = ClientDebts.objects.filter(date__year=now.year, date__month=now.month, date__day=now.day).order_by()
+        cred = ClientCredits.objects.filter(date__year=now.year, date__month=now.month, date__day=now.day).order_by()
+        TcashCred = 0
+#        cash_credsum = cred.values('cash_type', 'cash_type__name').annotate(suma=Sum("price"))
+        try:
+            cashCred = cred.values('cash_type', 'cash_type__name').annotate(suma=Sum("price")).get(cash_type=1)['suma']
+        except ClientCredits.DoesNotExist:
+            cashCred = 0
+        try:
+            TcashCred = cred.values('cash_type', 'cash_type__name').annotate(suma=Sum("price")).get(cash_type=2)['suma']
+        except ClientCredits.DoesNotExist:
+            TcashCred
+        try:
+            cashDeb = deb.values('cash').annotate(suma=Sum("price")).get(cash='True')['suma']
+        except ClientDebts.DoesNotExist:
+            cashDeb = 0
+        
+        casa = cashCred - cashDeb
+        
+        form = ShopDailySalesForm(initial={'cash': casa, 'ocash': cashDeb, 'tcash':TcashCred})
+    return render_to_response('index.html', {'form': form, 'weblink': 'shop_daily_sales.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def shopmonthlysales_view(request, year=now.year, month=now.month):
@@ -3504,7 +3531,11 @@ def shopdailysales_view(request, year, month, day):
 #    deb = ClientDebts.objects.values('date__year').annotate(suma=Sum("price"))
     deb = ClientDebts.objects.filter(date__year=year, date__month=month, date__day=day).order_by()
     cred = ClientCredits.objects.filter(date__year=year, date__month=month, date__day=day).order_by()
-    cash_sum = cred.values('cash_type', 'cash_type__name').annotate(suma=Sum("price"))
+    cash_credsum = cred.values('cash_type', 'cash_type__name').annotate(suma=Sum("price"))
+    cash_debsum = deb.values('cash').annotate(suma=Sum("price"))
+    cashDeb = cash_debsum.get(cash='True')['suma']
+    cashCred = cash_credsum.get(cash_type=1)['suma']
+    casa = cashCred - cashDeb
 
     deb_sum = 0
     cred_sum = 0
@@ -3513,7 +3544,7 @@ def shopdailysales_view(request, year, month, day):
     for d in deb:    
         deb_sum = deb_sum + d.price
     strdate = pytils_ua.dt.ru_strftime(u"%d %B %Y", now, inflected=True)
-    return render_to_response('index.html', {'Cdeb': deb, 'Ccred':cred, 'date': strdate, 'd_sum': deb_sum, 'c_sum': cred_sum, 'cash_sum': cash_sum, 'weblink': 'shop_daily_sales_view.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'Cdeb': deb, 'Ccred':cred, 'date': strdate, 'd_sum': deb_sum, 'c_sum': cred_sum, 'cash_credsum': cash_credsum, 'cash_debsum':cash_debsum, 'casa':casa, 'weblink': 'shop_daily_sales_view.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def shopdailysales_edit(request, id):
@@ -3524,16 +3555,23 @@ def shopdailysales_edit(request, id):
             date = form.cleaned_data['date']
             price = form.cleaned_data['price']
             description = form.cleaned_data['description']
-            ShopDailySales(id=id, date=date, price=price, description=description).save()
+            cash = form.cleaned_data['cash']
+            tcash = form.cleaned_data['tcash']
+            ocash = form.cleaned_data['ocash']
+            user = form.cleaned_data['user']
+            date = now
+            if request.user.is_authenticated():
+                user = request.user
+
+            ShopDailySales(pk=a.pk, date=date, price=price, description=description, user = user, cash=cash, tcash=tcash, ocash=ocash).save()
             return HttpResponseRedirect('/shop/sale/view/')
     else:
         form = ShopDailySalesForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'shop_monthly_sales.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'shop_daily_sales.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def shopdailysales_list(request, month=now.month):
-    #list = ShopDailySales.objects.all()
-    list = ShopDailySales.objects.filter(date__year=2011, date__month=month)
+    list = ShopDailySales.objects.filter(date__year=now.year, date__month=month)
     sum = 0 
     for item in list:
         sum = sum + item.price

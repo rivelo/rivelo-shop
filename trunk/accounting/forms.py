@@ -367,11 +367,12 @@ class ClientForm(forms.ModelForm):
 
 
 class ClientDebtsForm(forms.ModelForm):
-    client = forms.ModelChoiceField(queryset = Client.objects.all())
+    client = forms.ModelChoiceField(queryset = Client.objects.all(), label="Клієнт")
 #    date = forms.DateTimeField(initial=datetime.date.today)
     date = forms.DateTimeField(initial = datetime.date.today, label='Дата', input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
-    price = forms.FloatField()
-    description = forms.CharField(label='Description', widget=forms.Textarea(), max_length=255)    
+    price = forms.FloatField(label='Сума')
+    description = forms.CharField(label='Опис', widget=forms.Textarea(), max_length=255)
+    cash = forms.BooleanField(initial=False, label="Каса?", required=False)    
 
     class Meta:
         model = ClientDebts
@@ -477,7 +478,6 @@ class WorkTypeForm(forms.ModelForm):
     work_group = forms.ModelChoiceField(queryset = WorkGroup.objects.all())
     price = forms.FloatField()
     description = forms.CharField(label='Description', widget=forms.Textarea())
-    
     class Meta:
         model = WorkType
     
@@ -518,10 +518,10 @@ class WorkTicketForm(forms.ModelForm):
 
 class ShopDailySalesForm(forms.ModelForm):
     #date = forms.DateTimeField(initial=datetime.date.today)
-    date = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
-    price = forms.FloatField(initial=0)    
-    description = forms.CharField(label='description', widget=forms.Textarea())
-    
+    date = forms.DateTimeField(initial=datetime.datetime.today, input_formats=['%d.%m.%Y %H:%M:%S', '%d/%m/%Y %H:%M:%S'], widget=forms.DateTimeInput(format='%d.%m.%Y %H:%M:%S'))
+    price = forms.FloatField(initial=0, label="Сума в касі")    
+    description = forms.CharField(label='Опис', widget=forms.Textarea(), required=False)
+    user = forms.ModelChoiceField(queryset = User.objects.all(), required=True, label='Користувач')
     class Meta:
         model = ShopDailySales
 
