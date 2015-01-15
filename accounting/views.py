@@ -3580,7 +3580,7 @@ def shopdailysales_list(request, month=now.month):
     sum = 0 
     for item in list:
         sum = sum + item.price
-    return render_to_response('index.html', {'shopsales': list, 'summ':sum, 'weblink': 'shop_sales_list.html'})
+    return render_to_response('index.html', {'shopsales': list, 'summ':sum, 'weblink': 'shop_sales_list.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def shopdailysales_delete(request, id):

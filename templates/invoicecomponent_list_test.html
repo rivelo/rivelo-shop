@@ -47,6 +47,12 @@ tr.odd {
 	background-color: white !important;
 } 
 
+tfoot input {
+        width: 100%;
+        padding: 3px;
+        box-sizing: border-box;
+    }
+
 </style>
 
 
@@ -62,23 +68,27 @@ tr.odd {
 
 <script language="JavaScript">
 
-function res()
-{
-var p=0;
-var All=document.forms['formSum'];
-for(var i = 0; i < All.elements.length; i++) {
-	if(All.elements[i].checked){
-	p=p+parseFloat(All.elements[i].value);
-	var t = i - 3;
-	$('#ch_' + i).html("Check");
-	//document.getElementById("ch_"+t).innerHTML = "ID"+parseFloat(i)+" = "+parseFloat(t); // parseFloat(All.elements[i].value) * (1 - parseFloat(document.getElementById("sale").value) / 100) + 'грн.';
-	}
-	else {
-	$('#ch_' + i).html("empty");
-	}
-	document.getElementById('for_pay').innerHTML = p.toFixed(2)+" грн.";
-}
-}
+$(document).ready(function() {
+
+$( ".chksale" ).click(function() {
+	//console.log($(this));
+	var result = parseFloat($(this).attr("value")) * (1-(parseFloat($("#sale").attr("value"))/100.0));
+	//console.log("res = " + result); 
+	//console.log($(this).next());
+	$(this).next().html(result + " грн.");
+});
+
+$("#sale").change(function() {
+	var obj = $(".chksale:checked");
+	obj.each( function( i ) {
+		console.log("i = " + obj[i]);
+		var result = parseFloat($(this).attr("value")) * (1-(parseFloat($("#sale").attr("value"))/100.0));
+		$( this ).next().html(result + " грн." );
+  		//$( "#" + i ).next().html( "9999 ua" );
+	});
+});
+
+});
 
 jQuery.extend( jQuery.fn.dataTableExt.oSort, {
     "num-html-pre": function ( a ) {
@@ -162,30 +172,6 @@ function ShowHideRow(){
 //$(document).ready(function() {
 jQuery(document).ready(function ($) {
 
-$('#myTable').on( 'dblclick', 'tbody td:not(:first-child)', function (e) {
-//        alert("dbClick OK" + $(this).html());
-//        $(this).removeClass().addClass( "edit_area" );
-		console.log("index col = " + $(this).column());
-		//$('#myTable').column($(this)).index()
-        
-        $(this).editable('/catalog/edit/149', {
-         submitdata : function() {
-      	 	return {id : $(this).attr('id_desc')};
-    	 },         
-         type      : 'textarea',
-         cancel    : 'Cancel',
-         submit    : 'OK',
-         indicator : 'Saving',
-         tooltip   : 'dbClick to edit...',
-         style : "inherit",
-         width: 150,
-         height: 100,
-		 event : "dblclick",         
-     });
-        
-        
-    } );
-	
  oTable = $('#myTable').dataTable({
     "sPaginationType": "full_numbers",
     "iDisplayLength": 100,
@@ -218,6 +204,8 @@ $('#myTable').on( 'dblclick', 'tbody td:not(:first-child)', function (e) {
           $('td:eq(11)', nRow).addClass( "edit_area" );
     }    
  });
+
+
 
 //------ autocomplete field ----------   
 $("#combobox_company").searchable({
@@ -367,8 +355,6 @@ $("#dialog_photo_add").dialog({
         }
       }
 });
-
-
 
 
  $(".addprice" ).click(function() {
@@ -737,8 +723,7 @@ $(document).on("click", ".c_photo", function(event) {
 	
 {% if perms.accounting.delete_invoicecomponentlist %}	
 	<td>
-{#		<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{type.sum_catalog|sub:type.c_sale|mul:type.catalog__price|floatformat}}" name="checkbox_{{ type.catalog }}"/ onclick="res()">  #}
-		<input type="checkbox" id="model_workshop{{forloop.counter}}" value="{{type.catalog__price|floatformat}}" name="checkbox_{{ type.catalog }}"/ onclick="res()">		
+		<input type="checkbox" class="chksale" id="model_workshop{{forloop.counter}}" value="{{type.catalog__price|floatformat}}" name="checkbox_{{ type.catalog }}" >		
 		<p id="ch_{{forloop.counter}}"></p>
 	</td>
 {% endif %}
