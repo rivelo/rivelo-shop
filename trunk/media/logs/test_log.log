@@ -3061,3 +3061,32 @@ Key = user - Value = 1
 Key = cash - Value = 1000.0
 Key = tcash - Value = 0.0
 Key = ocash - Value = 0.0
+2015-01-14 22:03:41.468000 >>> DELETE FROM TABLE client credits WHERE id = 13620 
+Key = id - Value = 13620
+Key = client - Value = 2
+Key = date - Value = 2015-01-14 14:30:25
+Key = price - Value = 535.0
+Key = cash_type - Value = 1
+Key = description - Value = Багажник Standwell SW-CM001 черный CroMoly  26" v-brake, на 40 кг; 
+Key = user - Value = 5
+2015-01-14 22:03:59.015000 >>> DELETE FROM TABLE client debts WHERE id = 15899 
+Key = id - Value = 15899
+Key = client - Value = 2
+Key = date - Value = 2015-01-14 00:00:00
+Key = price - Value = 100.0
+Key = cash - Value = False
+Key = description - Value = bla
+Key = user - Value = 5
+2015-01-14 22:18:24.734000 >>> DELETE FROM TABLE client invoice WHERE id = 26713 
+Key = id - Value = 26713
+Key = client - Value = 2
+Key = catalog - Value = 99
+Key = count - Value = 1
+Key = price - Value = 20.0
+Key = sum - Value = 20.0
+Key = currency - Value = 3
+Key = sale - Value = 5
+Key = pay - Value = 20.0
+Key = date - Value = 2015-01-14 22:16:46
+Key = description - Value = 
+Key = user - Value = 4

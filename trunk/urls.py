@@ -424,7 +424,9 @@ urlpatterns += patterns('',
     (r'^exchange/delete/(?P<id>\d+)/$', 'catalog.accounting.views.exchange_del'),    
     
     (r'^storage/boxes/$', 'catalog.accounting.views.storage_box_list'),
+    (r'^storage/boxes/list/$', 'catalog.accounting.views.storage_boxes'),
     (r'^storage/boxes/print/$', 'catalog.accounting.views.storage_box_list', {'pprint': True}),
+    (r'^storage/box/(?P<boxname>[\w,.]+)/view/$', 'catalog.accounting.views.storage_box_list'),
     (r'^storage/box/delete/$', 'catalog.accounting.views.storage_box_delete'),
 
 ) 

@@ -98,9 +98,16 @@
 			<li><a href="/client/order/add/">Замовити</a></li>			
 			<li><a href="/client/order/view/">Список замовлених запчастин</a></li>
 		</ul>
-		
+		</li>	
+		<li><a href="#">Склад</a>
+		<ul>
+			<li><a href="/storage/boxes/list/">Список ящиків</a></li>
+       		<li><a href="/catalog/search/locality/">Назва ящика</a></li>
+       		<li><a href="/storage/boxes/">Список товарів по ящиках</a></li>
+       	</ul>
+		</li>
+
 {% if perms.accounting.add_preorder %}		
-	</li>	
 		<li><a href="#">Власні затрати</a>
 		<ul>
 			<li><a href="/cost/type/view/">Види затрат</a></li>

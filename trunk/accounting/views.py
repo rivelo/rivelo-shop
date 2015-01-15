@@ -2617,7 +2617,7 @@ def client_invoice(request, cid=None, id=None):
                 ct = CashType.objects.get(id=1)
                 ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=pay, description=desc, user=user, cash_type=ct)
                 ccred.save()
-                cdeb = ClientDebts(client=client, date=datetime.datetime.now(), price=sum, description=desc, user=user)
+                cdeb = ClientDebts(client=client, date=datetime.datetime.now(), price=sum, description=desc, user=user, cash=0)
                 cdeb.save()
 
             #WorkGroup(name=name, description=description).save()
@@ -3465,8 +3465,9 @@ def workshop_pricelist(request, pprint=False):
 
 #------------- Shop operation --------------
 def shopdailysales_add(request):
+    now = datetime.datetime.now()
     if request.method == 'POST':
-        form = ShopDailySalesForm(request.POST, initial={'cash': cashCred, 'ocash': cashCred, 'tcash':TcashCred})
+        form = ShopDailySalesForm(request.POST)
         if form.is_valid():
             date = form.cleaned_data['date']
             price = form.cleaned_data['price']
@@ -3483,7 +3484,6 @@ def shopdailysales_add(request):
     else:        
         deb = ClientDebts.objects.filter(date__year=now.year, date__month=now.month, date__day=now.day).order_by()
         cred = ClientCredits.objects.filter(date__year=now.year, date__month=now.month, date__day=now.day).order_by()
-        TcashCred = 0
 #        cash_credsum = cred.values('cash_type', 'cash_type__name').annotate(suma=Sum("price"))
         try:
             cashCred = cred.values('cash_type', 'cash_type__name').annotate(suma=Sum("price")).get(cash_type=1)['suma']
@@ -3492,16 +3492,16 @@ def shopdailysales_add(request):
         try:
             TcashCred = cred.values('cash_type', 'cash_type__name').annotate(suma=Sum("price")).get(cash_type=2)['suma']
         except ClientCredits.DoesNotExist:
-            TcashCred
+            TcashCred = 0
         try:
             cashDeb = deb.values('cash').annotate(suma=Sum("price")).get(cash='True')['suma']
         except ClientDebts.DoesNotExist:
             cashDeb = 0
-        
+
+        lastCasa = ShopDailySales.objects.filter(date__year=now.year, date__month=now.month).order_by('-pk')[0]        
         casa = cashCred - cashDeb
-        
         form = ShopDailySalesForm(initial={'cash': casa, 'ocash': cashDeb, 'tcash':TcashCred})
-    return render_to_response('index.html', {'form': form, 'weblink': 'shop_daily_sales.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'form': form, 'weblink': 'shop_daily_sales.html', 'lastcasa': lastCasa}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def shopmonthlysales_view(request, year=now.year, month=now.month):
@@ -3531,12 +3531,17 @@ def shopdailysales_view(request, year, month, day):
 #    deb = ClientDebts.objects.values('date__year').annotate(suma=Sum("price"))
     deb = ClientDebts.objects.filter(date__year=year, date__month=month, date__day=day).order_by()
     cred = ClientCredits.objects.filter(date__year=year, date__month=month, date__day=day).order_by()
-    cash_credsum = cred.values('cash_type', 'cash_type__name').annotate(suma=Sum("price"))
-    cash_debsum = deb.values('cash').annotate(suma=Sum("price"))
-    cashDeb = cash_debsum.get(cash='True')['suma']
-    cashCred = cash_credsum.get(cash_type=1)['suma']
+    try:
+        cash_credsum = cred.values('cash_type', 'cash_type__name').annotate(suma=Sum("price"))
+        cashCred = cash_credsum.get(cash_type=1)['suma']
+    except ClientCredits.DoesNotExist:
+        cashCred = 0
+    try:
+        cash_debsum = deb.values('cash').annotate(suma=Sum("price"))
+        cashDeb = cash_debsum.get(cash='True')['suma']        
+    except ClientDebts.DoesNotExist:
+        cashDeb = 0
     casa = cashCred - cashDeb
-
     deb_sum = 0
     cred_sum = 0
     for c in cred:
@@ -4157,7 +4162,7 @@ def workshop_payform(request):
     user = None            
     if request.user.is_authenticated():
         user = request.user
-    ccred = ClientDebts(client=client, date=datetime.datetime.now(), price=sum, description=desc, user=user)
+    ccred = ClientDebts(client=client, date=datetime.datetime.now(), price=sum, description=desc, user=user, cash=0)
     ccred.save()
     for item in wk:
         item.pay = True
@@ -4210,7 +4215,7 @@ def client_payform(request):
             ccred.save()
 
         
-    cdeb = ClientDebts(client=client, date=datetime.datetime.now(), price=sum, description=desc, user=user)
+    cdeb = ClientDebts(client=client, date=datetime.datetime.now(), price=sum, description=desc, user=user, cash=0)
     cdeb.save()
     if client.id == 138:
         return HttpResponseRedirect('/client/invoice/view/')
@@ -4787,8 +4792,11 @@ def bicycle_price_set(request):
                 return HttpResponse(c)
 
 
-def storage_box_list(request, pprint=False):
-    list = Catalog.objects.exclude(locality__isnull=True).exclude(locality__exact='').order_by('locality')
+def storage_box_list(request, boxname=None, pprint=False):
+    if boxname:
+        list = Catalog.objects.filter(locality = boxname)
+    else:
+        list = Catalog.objects.exclude(locality__isnull=True).exclude(locality__exact='').order_by('locality')
     if pprint:
         return render_to_response('storage_box.html', {'boxes': list, 'pprint': True})
 
@@ -4809,3 +4817,8 @@ def storage_box_delete(request, id=None):
     return HttpResponse("Виконано", mimetype="text/plain")
     #return HttpResponseRedirect('/workshop/view/')
 
+
+def storage_boxes(request):
+    boxlist = Catalog.objects.exclude(locality__isnull=True).exclude(locality__exact='').values('locality').annotate(icount=Count('locality')).order_by('locality')
+    return render_to_response("index.html", {"weblink": 'storage_boxes.html', "boxes": boxlist}, context_instance=RequestContext(request, processors=[custom_proc]))    
+    
