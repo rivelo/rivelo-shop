@@ -1,5 +1,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Каса за день</title>
+<link rel="stylesheet" href="/media/jquery-ui.min.css">
+<script src="/media/jquery-ui.min.js"></script>
 
+<script type="text/javascript">
+$(document).ready( function() {
+	$("#id_cash").after("<b id='prev_day' val='{{lastcasa.price}}'>+ "+{{lastcasa.price}}+" грн. за минулий день {{lastcasa.date}} </b>");
+	var wprev_day = $("#prev_day").attr("val") + $("#id_cash").attr("value");
+	//$("#prev_day").after("<b style='color:red'>Сума = "+ wprev_day +"</b>");
+	$("#id_tcash").after("<b style='color:red'>Сума в касі = "+ wprev_day +" грн</b>");
+})
+</script>
 
     <h1>Денна каса за {% now "jS F Y" %}</h1>
     <form action="" method="POST" enctype="multipart/form-data">

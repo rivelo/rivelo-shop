@@ -61,22 +61,12 @@ class CurencyForm(forms.ModelForm):
     country = forms.ModelChoiceField(queryset = Country.objects.all())
 
 
-#===============================================================================
-# 
-# class MyModelChoiceField(forms.ModelChoiceField):
-#    def label_from_instance(self, obj):
-#        return "My Object - %i" % obj.name
-#===============================================================================
-
-
 class ExchangeForm(forms.ModelForm):
     date = forms.DateField(initial=datetime.datetime.today)
     #date = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))    
     #currency = SelectFromModel(objects = Currency.objects.all())
     currency = forms.ModelChoiceField(queryset = Currency.objects.all())
     value = forms.DecimalField()
-    
-    
     
 
 #Type model
@@ -86,10 +76,8 @@ class CategoryForm(forms.ModelForm):
     name_ukr = forms.CharField(label='Назва (українською)')
     description_ukr = forms.CharField(label='Опис (українською)', widget=forms.Textarea())
 
-    
 
 # --------- Bicycle -------------
-    
 class BicycleTypeForm(forms.ModelForm):
     type = forms.CharField(label='Bicycle type')
     description = forms.CharField(label='Description of type', widget=forms.Textarea(), max_length=255)
@@ -122,7 +110,6 @@ class BicycleForm(forms.ModelForm):
     class Meta:
         model = Bicycle
    
-    
 
 class BicycleStoreForm(forms.ModelForm):
     model = forms.ModelChoiceField(queryset = Bicycle.objects.all(), required=False)
@@ -162,7 +149,6 @@ class BicycleSaleForm(forms.ModelForm):
         super(BicycleSaleForm, self).__init__(*args, **kwargs)
         if bike_id<>None:
             self.fields['model'].queryset = Bicycle_Store.objects.filter(model = bike_id)             
-
 
 
 class BicycleSaleEditForm(forms.ModelForm):
@@ -324,7 +310,6 @@ class ContactForm(forms.ModelForm):
 
 
 # --------- Product Catalog ------------
-
 class CatalogForm(forms.ModelForm):
     ids = forms.CharField(max_length=50)
     name = forms.CharField(max_length=255)
@@ -377,7 +362,6 @@ class ClientDebtsForm(forms.ModelForm):
     class Meta:
         model = ClientDebts
 
-   
 
 class ClientCreditsForm(forms.ModelForm):
     client = forms.ModelChoiceField(queryset = Client.objects.all())
@@ -518,10 +502,13 @@ class WorkTicketForm(forms.ModelForm):
 
 class ShopDailySalesForm(forms.ModelForm):
     #date = forms.DateTimeField(initial=datetime.date.today)
-    date = forms.DateTimeField(initial=datetime.datetime.today, input_formats=['%d.%m.%Y %H:%M:%S', '%d/%m/%Y %H:%M:%S'], widget=forms.DateTimeInput(format='%d.%m.%Y %H:%M:%S'))
+    date = forms.DateTimeField(initial=datetime.datetime.today, input_formats=['%d.%m.%Y %H:%M:%S', '%d/%m/%Y %H:%M:%S'], widget=forms.DateTimeInput(format='%d.%m.%Y %H:%M:%S'), label="Дата")
     price = forms.FloatField(initial=0, label="Сума в касі")    
     description = forms.CharField(label='Опис', widget=forms.Textarea(), required=False)
     user = forms.ModelChoiceField(queryset = User.objects.all(), required=True, label='Користувач')
+    cash = forms.FloatField(label="Готівка в касі")
+    tcash = forms.FloatField(label="Термінал")
+    ocash = forms.FloatField(label="Видано з каси")
     class Meta:
         model = ShopDailySales
 
