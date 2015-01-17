@@ -3090,3 +3090,11 @@ Key = pay - Value = 20.0
 Key = date - Value = 2015-01-14 22:16:46
 Key = description - Value = 
 Key = user - Value = 4
+2015-01-17 02:33:52.125000 >>> DELETE FROM TABLE client credits WHERE id = 13618 
+Key = id - Value = 13618
+Key = client - Value = 1287
+Key = date - Value = 2015-01-17 02:33:33
+Key = price - Value = 30.0
+Key = cash_type - Value = 2
+Key = description - Value = Роботи: Ремонт дуалконтролів; 
+Key = user - Value = 4
