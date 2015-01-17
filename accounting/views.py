@@ -3402,25 +3402,23 @@ def workshop_edit(request, id):
 
 
 def workshop_list(request, year=None, month=None, day=None):
+    now = datetime.datetime.now()
     if year == None:
-        year = datetime.datetime.now().year
+        year = now.year
     if month == None:
-        month = datetime.datetime.now().month
+        month = now.month
     
     if day == None:
-        day = datetime.datetime.now().day
+        day = now.day
         list = WorkShop.objects.filter(date__year=year, date__month=month, date__day=day).order_by("-date")
     else:
         if day == 'all':
             list = WorkShop.objects.filter(date__year=year, date__month=month).order_by("-date")
         else:
             list = WorkShop.objects.filter(date__year=year, date__month=month, date__day=day).order_by("-date")
-    
-#    list = WorkShop.objects.filter(date__year=year, date__month=month)
     sum = 0 
     for item in list:
         sum = sum + item.price
-        
     days = xrange(1, calendar.monthrange(int(year), int(month))[1]+1)
     return render_to_response('index.html', {'workshop': list, 'summ':sum, 'sel_year':year, 'sel_month':month, 'sel_day':day, 'month_days': days, 'weblink': 'workshop_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
@@ -4154,14 +4152,63 @@ def workshop_payform(request):
     if 'send_check' in request.POST:
         text = pytils_ua.numeral.in_words(int(sum))
         month = pytils_ua.dt.ru_strftime(u"%d %B %Y", wk[0].date, inflected=True)
-        #return render_to_response('index.html', {'check_invoice': ci, 'month':month, 'sum': sum, 'client': client, 'str_number':text, 'weblink': 'client_invoice_sale_check.html', 'print':'True', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
         return render_to_response('index.html', {'weblink': 'client_invoice_sale_check.html', 'check_invoice': wk, 'month':month, 'sum': sum, 'client': client, 'str_number':text, 'print':'True', 'is_workshop': 'True', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))        
-#        return HttpResponse("Workshop FORM <br>" + str(sum) + "грн" + "<br>" + request.POST)
-    
-    #------- додавання даних про розрахунок -----
+
+    user = client.id
+    if user == 138:
+        bal = 0
+    else:
+        
+        try:
+            debt = ClientDebts.objects.filter(client__id=user).aggregate(suma=Sum('price'))
+            cred = ClientCredits.objects.filter(client__id=user).aggregate(suma=Sum('price'))
+            res = cred['suma'] - debt['suma']
+            
+        except TypeError:
+            #res = "Такого клієнта не існує, або в нього не має заборгованостей"    
+            res = 0
+     
+        bal = res
+    cmsg = ClientMessage.objects.filter(client__id=user)
+    return render_to_response('index.html', {'messages': cmsg,'checkbox': list_id, 'invoice': wk, 'summ': sum, 'balance':bal, 'client': client, 'weblink': 'payform.html', 'workshop':True}, context_instance=RequestContext(request, processors=[custom_proc]))
+
+
+def client_ws_payform(request):
     user = None            
     if request.user.is_authenticated():
         user = request.user
+    
+    checkbox_list = [x for x in request.POST if x.startswith('checkbox_')]
+    if bool(checkbox_list) == False:
+        return render_to_response('index.html', {'weblink': 'error_manyclients.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    list_id = []
+    for id in checkbox_list:
+        list_id.append( int(id.replace('checkbox_', '')) )
+    wk = WorkShop.objects.filter(id__in=list_id)
+    client = wk[0].client
+    desc = u"Роботи: "
+    sum = 0
+    for inv in wk:
+        if client!=inv.client:
+            return render_to_response('index.html', {'weblink': 'error_manyclients.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+        client = inv.client
+        desc = desc + inv.work_type.name + "; "
+        sum = sum + inv.price
+            
+    if 'pay' in request.POST and request.POST['pay']:
+        pay = request.POST['pay']
+        cash_type = CashType.objects.get(id = 1) # готівка
+        if float(request.POST['pay']) != 0:
+            ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=pay, description=desc, user=user, cash_type=cash_type)
+            ccred.save()
+
+    if 'pay_terminal' in request.POST and request.POST['pay_terminal']:
+        pay = request.POST['pay_terminal']
+        cash_type = CashType.objects.get(id = 2) # термінал
+        if float(request.POST['pay_terminal']) != 0:
+            ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=pay, description=desc, user=user, cash_type=cash_type)
+            ccred.save()
+        
     ccred = ClientDebts(client=client, date=datetime.datetime.now(), price=sum, description=desc, user=user, cash=0)
     ccred.save()
     for item in wk:
@@ -4173,7 +4220,6 @@ def workshop_payform(request):
          
     url = '/client/result/search/?id=' + str(client.id)
     return HttpResponseRedirect(url)
-    #return render_to_response('index.html', {'checkbox': list_id, 'invoice': wk, 'summ': sum, 'client': client, 'weblink': 'payform.html', 'next': url}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def client_payform(request):
@@ -4213,7 +4259,6 @@ def client_payform(request):
         if float(request.POST['pay_terminal']) != 0:
             ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=pay, description=desc, user=user, cash_type=cash_type)
             ccred.save()
-
         
     cdeb = ClientDebts(client=client, date=datetime.datetime.now(), price=sum, description=desc, user=user, cash=0)
     cdeb.save()

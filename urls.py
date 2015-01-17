@@ -310,6 +310,7 @@ urlpatterns = patterns('',
     (r'^payform/$', 'catalog.accounting.views.payform'),
     (r'^catalog/saleform/$', 'catalog.accounting.views.catalog_saleform'),    
     (r'^client/payform/$', 'catalog.accounting.views.client_payform'),
+    (r'^client/workshop/payform/$', 'catalog.accounting.views.client_ws_payform'),
     # Example:
     # (r'^catalog/', include('catalog.foo.urls')),
     (r'^sendmail/$', 'catalog.accounting.views.sendemail'),
