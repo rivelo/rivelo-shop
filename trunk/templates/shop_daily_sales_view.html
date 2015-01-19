@@ -6,6 +6,7 @@
 	<table border=1>
 	<tr>
 	<th>id</th>
+	<th>Дата</th>
 	<th>Клієнт</th>
 	<th>Сума (грн.)</th>
 	<th>Опис</th>
@@ -17,6 +18,9 @@
 	<tr>
 	<td>
 	<a href="/clientcredits/edit/{{cred.id}}">{{cred.id}}</a>
+	</td>
+	<td>
+	{{cred.date|time:"H:i"}}</a>
 	</td>
 	<td>
 	{{cred.client}}
@@ -34,8 +38,8 @@
 {% endfor %}
 	</tr>
 	<tr>
-	<td>
-	</td>
+	<td>	</td>
+	<td>	</td>
 	<td>
 	Сума
 	</td>

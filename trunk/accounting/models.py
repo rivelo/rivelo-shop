@@ -340,7 +340,7 @@ class ClientOrder(models.Model):
     pay = models.FloatField(default = 0, blank = True, null = True)    
     date = models.DateTimeField(auto_now_add = False)    
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)    
-    status = models.BooleanField(default=False, verbose_name="Прокат?")
+    status = models.BooleanField(default=False, verbose_name="Статус?")
     credit = models.ForeignKey(ClientCredits, blank=True, null=True)
             
     def __unicode__(self):
@@ -502,7 +502,8 @@ class WorkType(models.Model):
     description = models.TextField(blank=True, null=True)
     
     def __unicode__(self):
-        return u'Розділ %s. Робота: %s' % (self.work_group, self.name)
+        #return u'Розділ %s. Робота: %s' % (self.work_group, self.name)
+        return u'Робота: %s' % (self.name)
         #return self.name
 
     class Meta:
@@ -658,7 +659,7 @@ class Rent(models.Model):
     description = models.TextField(blank = True, null = True)
             
     def __unicode__(self):
-        return self.file 
+        return self.catalog 
 
     class Meta:
         ordering = ["catalog", "date_start", "date_end"]    
@@ -708,7 +709,7 @@ class ClientMessage(models.Model):
         return u'%s' % self.msg
 
     class Meta:
-        ordering = ["client", "date", "status"]
+        ordering = ["client", "-date", "status"]
     
 
 class ClientReturn(models.Model):
