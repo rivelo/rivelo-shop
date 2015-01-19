@@ -399,6 +399,7 @@ urlpatterns += patterns('',
     
     (r'^clientmessage/add/$', 'catalog.accounting.views.clientmessage_add'),
     (r'^clientmessage/set/$', 'catalog.accounting.views.clientmessage_set'),
+    (r'^clientmessage/list/$', 'catalog.accounting.views.clientmessage_list'),
 
     (r'^client_history/cred/$', 'catalog.accounting.views.client_history_cred'),
     (r'^client_history/debt/$', 'catalog.accounting.views.client_history_debt'),

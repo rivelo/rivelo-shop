@@ -4094,6 +4094,8 @@ def clientmessage_set(request, id=None):
                 m = request.POST.get( 'msg_id' )
                 c_msg = ClientMessage.objects.get(id=m)
                 if (request.user):
+                    c_msg.ddate = datetime.datetime.now()
+                    c_msg.duser = request.user 
                     c_msg.status = not c_msg.status 
                     c_msg.save()
                 else:
@@ -4102,6 +4104,11 @@ def clientmessage_set(request, id=None):
             search = ClientMessage.objects.filter(id = m).values('msg')
         return HttpResponse(simplejson.dumps(list(search)))
     
+
+def clientmessage_list(request):
+    client_msg = ClientMessage.objects.all().order_by('date')
+    return render_to_response('index.html', {'msg_list': client_msg, 'weblink': 'client_msg_list.html'}, context_instance=RequestContext(request, processors=[custom_proc]))            
+
 
 def payform(request):
     checkbox_list = [x for x in request.POST if x.startswith('checkbox_')]
