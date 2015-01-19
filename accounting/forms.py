@@ -354,7 +354,7 @@ class ClientForm(forms.ModelForm):
 class ClientDebtsForm(forms.ModelForm):
     client = forms.ModelChoiceField(queryset = Client.objects.all(), label="Клієнт")
 #    date = forms.DateTimeField(initial=datetime.date.today)
-    date = forms.DateTimeField(initial = datetime.date.today, label='Дата', input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
+    date = forms.DateTimeField(initial = datetime.datetime.now(), label='Дата', input_formats=['%d/%m/%Y %H:%M:%S', '%d/%m/%Y %H:%M:%S'], widget=forms.DateTimeInput(format='%d/%m/%Y %H:%M:%S'))
     price = forms.FloatField(label='Сума')
     description = forms.CharField(label='Опис', widget=forms.Textarea(), max_length=255)
     cash = forms.BooleanField(initial=False, label="Каса?", required=False)    
@@ -365,7 +365,7 @@ class ClientDebtsForm(forms.ModelForm):
 
 class ClientCreditsForm(forms.ModelForm):
     client = forms.ModelChoiceField(queryset = Client.objects.all())
-    date = forms.DateTimeField(initial = datetime.date.today, label='Дата', input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'))
+    date = forms.DateTimeField(initial = datetime.datetime.now(), label='Дата', input_formats=['%d/%m/%Y %H:%M:%S', '%d/%m/%Y %H:%M:%S'], widget=forms.DateTimeInput(format='%d/%m/%Y %H:%M:%S'))
     price = forms.FloatField()
     cash_type = forms.ModelChoiceField(queryset = CashType.objects.all())
     description = forms.CharField(label='DescripCred', widget=forms.Textarea(), max_length=255)    
@@ -467,7 +467,8 @@ class WorkTypeForm(forms.ModelForm):
     
 
 class WorkShopForm(forms.ModelForm):
-    client = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete'}), queryset = Client.objects.all(), empty_label="", label="Клієнт")
+    #client = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete'}), queryset = Client.objects.all(), empty_label="", label="Клієнт")
+    client = forms.ModelChoiceField(widget=forms.HiddenInput(), queryset = Client.objects.all(), empty_label="")
     date = forms.DateField(initial=datetime.date.today, input_formats=['%d.%m.%Y', '%d/%m/%Y'], widget=forms.DateTimeInput(format='%d.%m.%Y'), required=False, label="Дата")
 #    work_type = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete', 'width':'340px'}), queryset = WorkType.objects.all())
     work_type = forms.ModelChoiceField(queryset = WorkType.objects.all(), label="Робота")    

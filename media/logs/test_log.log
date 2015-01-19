@@ -3098,3 +3098,34 @@ Key = price - Value = 30.0
 Key = cash_type - Value = 2
 Key = description - Value = Роботи: Ремонт дуалконтролів; 
 Key = user - Value = 4
+2015-01-18 01:42:19.796000 >>> DELETE FROM TABLE work shop WHERE id = 2482 
+Key = id - Value = 2482
+Key = client - Value = 138
+Key = date - Value = 2015-01-18 00:00:00
+Key = work_type - Value = 677
+Key = price - Value = 15.0
+Key = pay - Value = False
+Key = user - Value = 4
+Key = description - Value = 
+2015-01-18 01:54:35.093000 >>> DELETE FROM TABLE work shop WHERE id = 2483 
+Key = id - Value = 2483
+Key = client - Value = 138
+Key = date - Value = 2015-01-18 01:54:19
+Key = work_type - Value = 631
+Key = price - Value = 25.0
+Key = pay - Value = False
+Key = user - Value = 4
+Key = description - Value = 
+2015-01-18 01:58:41.406000 >>> DELETE FROM TABLE client invoice WHERE id = 26764 
+Key = id - Value = 26764
+Key = client - Value = 138
+Key = catalog - Value = 105
+Key = count - Value = 1
+Key = price - Value = 0.4
+Key = sum - Value = 0.4
+Key = currency - Value = 3
+Key = sale - Value = 0
+Key = pay - Value = 0.0
+Key = date - Value = 2015-01-18 01:58:19
+Key = description - Value = 
+Key = user - Value = 4

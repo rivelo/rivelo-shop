@@ -16,6 +16,46 @@
 #button > span.ui-icon-custom { 
     background-image: url(/media/images/Bicycle_ico.png)    
 }
+
+div.read { color:red; 
+		background-color: #CCCCCC;
+		//display: inline-block; /* Строчно-блочный элемент */
+    position: relative; /* Относительное позиционирование */
+		}
+div.standart { color:black; 
+		background-color: #999999;
+		//display: inline-block; /* Строчно-блочный элемент */
+    position: relative; /* Относительное позиционирование */
+		}
+
+div.read:hover::after {
+    content: attr(data-title); /* Выводим текст */
+    position: absolute; /* Абсолютное позиционирование */
+    left: 0; right: 0; bottom: 5px; /* Положение подсказки */
+    z-index: 1; /* Отображаем подсказку поверх других элементов */
+    background: rgba(0,42,167,0.6); /* Полупрозрачный цвет фона */
+    color: #fff; /* Цвет текста */
+    text-align: center; /* Выравнивание текста по центру */
+    font-family: Arial, sans-serif; /* Гарнитура шрифта */
+    font-size: 11px; /* Размер текста подсказки */
+    padding: 5px 10px; /* Поля */
+    border: 1px solid #333; /* Параметры рамки */
+   }
+
+div.standart:hover::after {
+    content: attr(data-title); /* Выводим текст */
+    position: absolute; /* Абсолютное позиционирование */
+    left: 0; right: 0; bottom: 5px; /* Положение подсказки */
+    z-index: 1; /* Отображаем подсказку поверх других элементов */
+    background: rgba(0,42,167,0.6); /* Полупрозрачный цвет фона */
+    color: #fff; /* Цвет текста */
+    text-align: center; /* Выравнивание текста по центру */
+    font-family: Arial, sans-serif; /* Гарнитура шрифта */
+    font-size: 11px; /* Размер текста подсказки */
+    padding: 5px 10px; /* Поля */
+    border: 1px solid #333; /* Параметры рамки */
+   }
+
 </style>
 
 {% load poll_extras %}     
@@ -41,7 +81,7 @@ $(document).ready(function() {
   		resizable: false,
       	modal: true,
   		width: 380,
-  		height:450,
+  		height:"auto",
       	buttons: {
         "Додати": function() {
         	if (!$("#msg_text").length) { 
@@ -365,6 +405,56 @@ $(this).editable('/clientcredits/set/', {
 });
 });
 }
+
+$(document).ready(function() {
+//	$('div.read').on("click", function(){
+	//$("body").on("click", "div.read", function(){	
+	
+	$("div").on("click", ".read", function(){
+		console.log('standart');
+		  $.ajax({
+            	beforeSend: function() {$( "#dialog_ajax_load" ).dialog({modal: true});},
+                type: "POST",
+                url: "/clientmessage/set/",
+                data: { msg_id: $(this).attr("msg_id") },
+                dataType: "json",
+                success:function(msg){
+			    	if ($("div").is(".read")==false) {
+		 				$("#img_msg").css('opacity', '0.2');
+					}
+				$( "#dialog_ajax_load" ).dialog("close");
+                },
+                error:function(){
+                    alert("При отправке возникли проблемы");
+                }
+            }); 
+    	$(this).removeClass('read').addClass('standart');
+    	$(this).attr("data-title", "Клікніть для зміни статусу. Статус: Доставлено")
+	});
+
+	$("div").on("click", ".standart", function(){
+		console.log('read');
+		  $.ajax({
+            	beforeSend: function() {$( "#dialog_ajax_load" ).dialog({modal: true});},
+                type: "POST",
+                url: "/clientmessage/set/",
+                data: { msg_id: $(this).attr("msg_id") },
+                dataType: "json",
+                success:function(msg){
+             		if ($("div").is(".read")) {
+						$("#img_msg").css('opacity', '1');
+					};    	
+					$( "#dialog_ajax_load" ).dialog("close");
+                },
+                error:function(){
+                    alert("При отправке возникли проблемы");
+                }
+            });
+    	$(this).removeClass('standart').addClass('read');
+    	$(this).attr("data-title", "Клікніть для зміни статусу. Статус: В черзі")
+	});    
+    
+});
          
 </script>
 
@@ -385,9 +475,18 @@ $(this).editable('/clientcredits/set/', {
 <h2>Зачекайте, триває завантаження ... </h2>
 </div>
 
+<!-- dialog for client message -->
 <div id="dialog_msg" title="Повідомлення">
 {% for msg in messages %}
-<p><b>Message: </b> <br> {{msg.msg}} </p>
+{% if msg.status  %}
+<div id="msg_{{msg.id}}" class="standart" msg_id="{{msg.id}}" data-title="Клікніть для зміни статусу. Статус: {{msg.status|yesno:'Доставлено,В черзі'}}">
+<p style="font-style: normal;"><b>Message [{{msg.date}}]: </b> <br> {{msg.msg}} </p>
+</div>
+{% else %}
+<div id="msg_{{msg.id}}" class="read" msg_id="{{msg.id}}" data-title="Клікніть для зміни статусу. Статус: {{msg.status|yesno:'Доставлено,В черзі'}}">
+<p style="font-style: normal;"><b>Message [{{msg.date}}]: </b> <br> {{msg.msg}} </p>
+</div>
+{% endif %}
 {% endfor %}  
 </div>	
 
@@ -396,7 +495,7 @@ $(this).editable('/clientcredits/set/', {
 -->
 
 <img style="display: True; opacity: 0.2" id="img_repair" src="/media/images/bicycle-repair.jpg" height="56px" title="Майстерня">
-{% if messages %}
+{% if status_msg %}
 <img style="display: True; opacity: 1" id="img_msg" src="/media/images/Message-ico.png" height="56px" title="Нові повідомлення">
 {% else %}
 <img style="display: True; opacity: 0.2" id="img_msg" src="/media/images/Message-ico.png" height="56px" title="Нові повідомлення">
@@ -406,6 +505,18 @@ $(this).editable('/clientcredits/set/', {
 {% endif %}
 
 <img style="display: None;" id="img_attention" src="/media/images/system-attention-icon.png" height="50px" title="Непроведені операції/роботи">
+
+{% if status_order %}
+<img style="display: True;" id="img_order" src="/media/images/components_order.png" height="50px" title="Замовлення компонентів">
+{% else %}
+<img style="display: None;" id="img_order" src="/media/images/components_order.png" height="50px" title="Замовлення компонентів">
+{% endif %}
+
+{% if status_rent %}
+<img style="display: True;" id="img_rent" src="/media/images/test_icon.png" height="50px" title="Тест сидінь">
+{% else %}
+<img style="display: None;" id="img_rent" src="/media/images/test_icon.png" height="50px" title="Тест сидінь">
+{% endif %}
 
 <div id="dialog_r" title="Заявки на ремонт:">
 <table width='100%' id="t_workticket">

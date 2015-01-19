@@ -2243,15 +2243,8 @@ def client_edit(request, id):
         form = ClientForm(request.POST, instance=a)
         if form.is_valid():
             form.save()
-#===============================================================================
-#            client = form.cleaned_data['client']
-#            date = form.cleaned_data['date']
-#            work_type = form.cleaned_data['work_type']
-#            price = form.cleaned_data['price']
-#            description = form.cleaned_data['description']
-#            WorkShop(id=id, client=client, date=date, work_type=work_type, price=price, description=description).save()
-#===============================================================================
-            return HttpResponseRedirect('/client/view/')
+            #return HttpResponseRedirect('/client/view/')
+            return HttpResponseRedirect('/client/result/search/?id='+id)
     else:
         form = ClientForm(instance=a)
     return render_to_response('index.html', {'form': form, 'weblink': 'client.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
@@ -2396,9 +2389,9 @@ def clientdebts_add(request, id=None):
                 user = request.user
             ClientDebts(client=client, date=date, price=price, description=description, user=user, cash=cash).save()
             
-            update_client = Client.objects.get(id=client.id)
-            update_client.summ = update_client.summ + price 
-            update_client.save()
+#            update_client = Client.objects.get(id=client.id)
+#            update_client.summ = update_client.summ + price 
+#            update_client.save()
             
             if id != None:
                 return HttpResponseRedirect('/client/result/search/?id='+str(id))
@@ -2406,7 +2399,7 @@ def clientdebts_add(request, id=None):
                 return HttpResponseRedirect('/clientdebts/view/')
     else:
         if id != None:
-            form = ClientDebtsForm(initial={'client': id, 'date': now, })
+            form = ClientDebtsForm(initial={'client': id, 'date': datetime.datetime.now(), })
         else:
             form = ClientDebtsForm()
     #return render_to_response('clientdebts.html', {'form': form})
@@ -2502,7 +2495,7 @@ def clientcredits_add(request, id=None):
             borg = deb['price__sum'] - cred['price__sum']
             if borg <= 0:
                 borg = 0
-            form = ClientCreditsForm(initial={'client': id, 'date': now, 'price': borg, 'description': "Закриття боргу "})
+            form = ClientCreditsForm(initial={'client': id, 'date': datetime.datetime.now(), 'price': borg, 'description': "Закриття боргу "})
         else:
             form = ClientCreditsForm()
         #form = ClientCreditsForm()
@@ -2527,6 +2520,7 @@ def clientcredits_list(request):
         credits = paginator.page(paginator.num_pages)
     
     return render_to_response('index.html', {'clients': credits, 'weblink': 'clientcredits_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+
 
 def clientcredits_edit(request, id):
     if auth_group(request.user, "admin") == False:
@@ -3067,7 +3061,12 @@ def client_result(request, tdelta = 30):
     b_bike = Bicycle_Sale.objects.filter(client=user).values('model__model__model', 'model__model__brand__name', 'model__serial_number', 'model__size__name', 'date', 'service', 'id')
     workshop_ticket = WorkTicket.objects.filter(client=user).values('id', 'date', 'description', 'status__name').order_by('-date')
     messages = ClientMessage.objects.filter(client=user).values('msg', 'status', 'date', 'user__username', 'id')
-    
+    status_msg = messages.values('status').filter(status=False).exists()
+    rent = Rent.objects.filter(client=user)
+    status_rent = rent.filter(status=False).exists()
+    order = ClientOrder.objects.filter(client=user)
+    status_order = order.filter(status=False).exists()
+        
     isum = ClientInvoice.objects.filter(client=user).aggregate(Sum('sum'))
     bsum = Bicycle_Sale.objects.filter(client=user).aggregate(Sum('sum'))
     client = Client.objects.get(id = user)
@@ -3076,6 +3075,17 @@ def client_result(request, tdelta = 30):
     #else:
     client.summ = float(isum['sum__sum'] or 0) + float(bsum['sum__sum'] or 0) + client_workshop_sum 
     #client.summ = b_bike['sum__sum']
+    sale_cat = [1,3,5]
+    if (client.summ > 1000) and (client.summ < 3000):
+        if client.sale < sale_cat[0] :
+            client.sale = sale_cat[0]
+    if (client.summ > 3000) and (client.summ < 7000):
+        if client.sale < sale_cat[1] :
+            client.sale = sale_cat[1]
+    if (client.summ > 7000):
+        if client.sale < sale_cat[2] :
+            client.sale = sale_cat[2]
+                        
     client.save()
 
     #list_debt = ClientDebts.objects.filter(client='2').values("client", "price").select_related('client')
@@ -3083,7 +3093,7 @@ def client_result(request, tdelta = 30):
     #list_debt = ClientDebts.objects.filter(client='2').annotate(Sum("price"))
     #return render_to_response('index.html', {'clients': list_credit.values_list(), 'weblink': 'client_result.html'})
     #return render_to_response('index.html', {'clients': list_debt.values_list(), 'weblink': 'client_result.html'})
-    return render_to_response('index.html', {'weblink': 'client_result.html', 'clients': res, 'invoice': client_invoice, 'client_invoice_sum': client_invoice_sum, 'workshop': client_workshop, 'client_workshop_sum': client_workshop_sum, 'debt_list': debt_list, 'credit_list': credit_list, 'client_name': client_name, 'b_bike': b_bike, 'workshopTicket': workshop_ticket, 'messages': messages, 'tdelta': tdelta, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'weblink': 'client_result.html', 'clients': res, 'invoice': client_invoice, 'client_invoice_sum': client_invoice_sum, 'workshop': client_workshop, 'client_workshop_sum': client_workshop_sum, 'debt_list': debt_list, 'credit_list': credit_list, 'client_name': client_name, 'b_bike': b_bike, 'workshopTicket': workshop_ticket, 'messages': messages, 'status_msg':status_msg, 'status_rent':status_rent, 'status_order':status_order, 'tdelta': tdelta}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def client_lookup(request):
@@ -3377,8 +3387,10 @@ def workshop_add(request, id=None, id_client=None):
             form = WorkShopForm(initial={'client': wclient.id})
         else:        
             form = WorkShopForm()
-        
-    return render_to_response('index.html', {'form': form, 'weblink': 'workshop.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    
+    nday = 7
+    clients_list = WorkShop.objects.filter(date__gt=now-datetime.timedelta(days=int(nday))).values('client__id', 'client__name', 'client__sale').annotate(num_inv=Count('client'))        
+    return render_to_response('index.html', {'form': form, 'weblink': 'workshop.html', 'clients_list':clients_list, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def workshop_edit(request, id):
@@ -3398,7 +3410,10 @@ def workshop_edit(request, id):
             return HttpResponseRedirect('/workshop/view/')
     else:
         form = WorkShopForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'workshop.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+
+    nday = 7
+    clients_list = WorkShop.objects.filter(date__gt=now-datetime.timedelta(days=int(nday))).values('client__id', 'client__name', 'client__sale').annotate(num_inv=Count('client'))        
+    return render_to_response('index.html', {'form': form, 'weblink': 'workshop.html', 'clients_list':clients_list}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def workshop_list(request, year=None, month=None, day=None):
@@ -4064,10 +4079,28 @@ def clientmessage_add(request):
                 if (request.user):
                     w = ClientMessage(client=cl, msg=m, status=False, date=datetime.date.today(), user=request.user, ddate=datetime.date.today()).save()    
                 else:
-                    return HttpResponse(simplejson.dumps(["Для додавання повідомлень потрібно зайти на сайті"]))
+                    return HttpResponse(simplejson.dumps(["Для додавання повідомлень потрібно зайти на сайт"]))
     
                 search = ClientMessage.objects.filter(client = c).values('msg')
             return HttpResponse(simplejson.dumps(list(search)))
+
+
+def clientmessage_set(request, id=None):
+    m = None
+    if request.is_ajax():
+        if request.method == 'POST':  
+            POST = request.POST  
+            if POST.has_key('msg_id'):
+                m = request.POST.get( 'msg_id' )
+                c_msg = ClientMessage.objects.get(id=m)
+                if (request.user):
+                    c_msg.status = not c_msg.status 
+                    c_msg.save()
+                else:
+                    return HttpResponse(simplejson.dumps(["Для додавання повідомлень потрібно зайти на сайт"]))
+    
+            search = ClientMessage.objects.filter(id = m).values('msg')
+        return HttpResponse(simplejson.dumps(list(search)))
     
 
 def payform(request):
