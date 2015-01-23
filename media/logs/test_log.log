@@ -3129,3 +3129,12 @@ Key = pay - Value = 0.0
 Key = date - Value = 2015-01-18 01:58:19
 Key = description - Value = 
 Key = user - Value = 4
+2015-01-20 00:23:30.390000 >>> DELETE FROM TABLE client message WHERE id = 5 
+Key = id - Value = 5
+Key = client - Value = 848
+Key = msg - Value =  сидушку та задаток повернено
+Key = status - Value = False
+Key = date - Value = 2015-01-14
+Key = user - Value = 7
+Key = ddate - Value = 2015-01-14 00:00:00
+Key = duser - Value = None

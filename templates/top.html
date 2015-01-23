@@ -55,7 +55,7 @@ input{
 	   
 </style>
 
-<script type="text/javascript" src="/media/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/media/jquery-1.11.2.min.js"></script>
 <script type="text/javascript" src="/media/jquery.hotkeys-0.7.9.min.js"></script>
 
 <script type="text/javascript">
@@ -111,14 +111,10 @@ $(document).ready(function() {
 <script>
 
 $(document).bind('keydown', 'alt+z', function(){
-  //alert("Привет!");
-  //document.getElementById('search_field').focus();
   $('#tsearch_field').focus();
 });
 
 $(document).bind('keydown', 'alt+x', function(){
-  //alert("Привет!");
-  //document.getElementById('search_field').focus();
   $('#asearch_field').focus();
 });
 
@@ -143,9 +139,11 @@ $(document).bind('keydown', 'alt+x', function(){
   </form>
 </td>
 
+ 
 <td id="tdlogo">
-<a href="/"><img src="/media/images/riban.gif" alt="" title=""/></a>
-
+{% comment %}
+ <a href="/"><img src="/media/images/riban.gif" alt="" title=""/></a>
+{% endcomment %} 
 {% load i18n %}
 
 
