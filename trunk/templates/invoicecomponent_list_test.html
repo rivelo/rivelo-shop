@@ -59,6 +59,7 @@ tfoot input {
 {# <link rel="stylesheet" href="/media/themes/blue/style.css" type="text/css" id="" media="print, projection, screen" /> #}
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 <link rel="stylesheet" href="/media/jquery-ui.min.css">
+<link rel="stylesheet" href="/media/css/jquery.dataTables.css">
 
 <script src="/media/jquery-ui.min.js"></script>
 <script type="text/javascript" language="javascript" src="/media/jquery.dataTables.min.js"></script>
@@ -67,8 +68,8 @@ tfoot input {
 
 
 <script language="JavaScript">
-
-$(document).ready(function() {
+jQuery(document).ready(function ($) {
+//$(document).ready(function() {
 
 $( ".chksale" ).click(function() {
 	//console.log($(this));
@@ -205,8 +206,7 @@ jQuery(document).ready(function ($) {
     }    
  });
 
-
-
+{% comment %}
 //------ autocomplete field ----------   
 $("#combobox_company").searchable({
         maxListSize: 250,                       // if list size are less than maxListSize, show them all
@@ -257,7 +257,7 @@ $("#combobox_type").change(function(){
 				}
 				
 			});
-
+{% endcomment %}
 
 $("#dialog").dialog({
 	autoOpen: false,
@@ -442,9 +442,10 @@ $("#dialog_photo_add").dialog({
      });
 
 
-     $('.locality_edit').each(function() {
-     $(this).editable('/catalog/edit/', {
-     	loadurl : '/catalog/get/locality/',
+var l_edit = {
+	url: '/catalog/edit/',
+	opts: {
+		loadurl : '/catalog/get/locality/',
      	loadtype: 'POST',
 		loaddata : {sel_id: $(this).attr('id_locality')},     	
 	   	 id   : 'id',
@@ -460,9 +461,9 @@ $("#dialog_photo_add").dialog({
          callback : function(value, settings) {
          	$(this).html(value);
      	 }
-     });
-     });
- 
+	}
+};
+
  
 // Hide the second column after initialisation
 {% if category_name %}
@@ -489,6 +490,29 @@ function fnShowHide( iCol )
     oTable.fnSetColumnVis( iCol, bVis ? false : true );
 }
 
+
+jQuery("body").on('click', $('.locality_edit'), function(event) {
+    event.preventDefault();
+    $(this).editable('/catalog/edit/', {
+         	loadurl : '/catalog/get/locality/',
+     	loadtype: 'POST',
+		loaddata : {sel_id: $(this).attr('id_locality')},     	
+	   	 id   : 'id',
+         name : 'locality',
+      
+         submitdata : function() {
+      	 	return {id : $(this).attr('id_locality')};
+    	 },
+         indicator : 'Saving...',
+         select : true,
+         event : "dblclick",
+         style : "inherit",
+         tooltip   : 'dblClick to edit...',
+         callback : function(value, settings) {
+         	$(this).html(value);
+     	 }
+    })
+});
 
 $(document).on("click", ".c_photo", function(event) {
 	   		var t = $("#td_"+$(this).attr('ids')).nextAll(".c_name:first").html();

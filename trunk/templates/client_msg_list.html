@@ -4,7 +4,6 @@
 
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
-
 <h1>Повідомлення для клієнтів</h1>
 
 <table>
@@ -17,6 +16,7 @@
 		<th>Користувач</th>
 		<th>Дата повідомлення</th>
 		<th>Користувач який повідомив</th>
+		<th>Дія</th>
 	</tr>
 	{% for element in msg_list %}
 	<tr>
@@ -27,10 +27,11 @@
 		</td>
 		<td>{{ element.msg }}</td>
 		<td>{{ element.status|yesno:'Доставлено,В черзі' }}</td>
-		<td>{{ element.date }}</td>
+		<td>{{ element.date|date:"D d M Y" }}</td>
 		<td>{{ element.user }}</td>
 		<td>{{ element.ddate }}</td>
 		<td>{{ element.duser }}</td>
+		<td><a href="/clientmessage/{{element.id}}/delete/" onclick="return confirm('Видалити запис?')">Delete</a></td>
 	</tr>
 	{% endfor %}
 	<table>
