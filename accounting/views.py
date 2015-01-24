@@ -1362,7 +1362,9 @@ def invoicecomponent_add(request, mid=None, cid=None):
 
 
 def invoicecomponent_list(request, mid=None, cid=None, limit=0, focus=0):
+    #company_list = Manufacturer.objects.none()
     company_list = Manufacturer.objects.all().only('id', 'name')
+    #type_list = Type.objects.none() 
     type_list = Type.objects.all()
     company_name = '' 
     cat_name = ''
@@ -1377,7 +1379,6 @@ def invoicecomponent_list(request, mid=None, cid=None, limit=0, focus=0):
     elif  'id' in request.GET and request.GET['id']:
         id = request.GET['id']
         list = InvoiceComponentList.objects.filter(catalog__ids__icontains=id).values('catalog').annotate(sum_catalog=Sum('count')).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count', 'catalog__type__name', 'catalog__type__id')
-    
     if mid:
         list = InvoiceComponentList.objects.filter(catalog__manufacturer__id=mid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count', 'catalog__type__name', 'catalog__type__id')
         company_name = Manufacturer.objects.get(id=mid)
@@ -1391,20 +1392,16 @@ def invoicecomponent_list(request, mid=None, cid=None, limit=0, focus=0):
         except:
             list = InvoiceComponentList.objects.none()        
     else:
-        #list = InvoiceComponentList.objects.filter(catalog__count__gt=0).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count', 'catalog__type__id', 'catalog__description').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
         list = InvoiceComponentList.objects.all().values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count', 'catalog__type__id', 'catalog__description').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
+        list = InvoiceComponentList.objects.all().values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price', 'catalog__sale', 'catalog__count', 'catalog__type__id').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
         list = list[:limit]
-#        list = InvoiceComponentList.objects.filter(catalog__count__lt=0).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count').annotate(sum_catalog=Sum('count')).order_by("-id")
-#        list = InvoiceComponentList.objects.all().values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count').annotate(sum_catalog=Sum('count')).order_by("-id")
     
     for item in list:
         id_list.append(item['catalog'])
-#        item['balance']=item['sum_catalog']
-#        item['c_sale']=0
 
     new_list = []
     sale_list = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__price').annotate(sum_catalog=Sum('count'))
-    cat_list = Catalog.objects.filter(pk__in=id_list).values('type__name', 'description', 'locality')        
+    cat_list = Catalog.objects.filter(pk__in=id_list).values('type__name', 'description', 'locality', 'id', 'manufacturer__id', 'manufacturer__name')        
     for element in list:
         element['balance']=element['sum_catalog']
         element['c_sale']=0
@@ -1412,8 +1409,14 @@ def invoicecomponent_list(request, mid=None, cid=None, limit=0, focus=0):
             if element['catalog']==sale['catalog']:
                 element['c_sale']=sale['sum_catalog']
                 element['balance']=element['sum_catalog'] - element['c_sale']
-            #else:
-            #    element['balance']=element['sum_catalog'] 
+        for cat in cat_list:
+            if element['catalog']==cat['id']:
+                element['manufacturer__id']=cat['manufacturer__id']
+                element['manufacturer__name1']=cat['manufacturer__name']
+                element['manufacturer__name']=cat['manufacturer__name']
+                element['locality']=cat['locality']
+                element['description']=cat['description']
+
         if element['balance']!=0:
             new_list.append(element)
             zsum = zsum + (element['balance'] * element['catalog__price'])
@@ -1425,165 +1428,6 @@ def invoicecomponent_list(request, mid=None, cid=None, limit=0, focus=0):
         #upd.save()
     
     return render_to_response('index.html', {'company_list': company_list, 'type_list': type_list, 'componentlist': list, 'zsum':zsum, 'zcount':zcount, 'company_name': company_name, 'company_id':mid, 'category_name':cat_name, 'weblink': 'invoicecomponent_list.html', 'focus': focus, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
- 
-
-def invoicecomponent_list_by_manufacturer(request, mid=None, availability=False):
-    company_list = Manufacturer.objects.all()
-    category_list = Type.objects.filter(name_ukr__isnull=False).order_by('name_ukr')
-    list = None
-    new_list = None
-    id_list=[]
-    psum = 0
-    zsum = 0
-    scount = 0 # загальна сума товару 
-    zcount = 0 # реальна наявність (сумарно)
-    #Наявність
-    if availability == False:
-        #old work variant
-        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__count', 'catalog__description').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
-        #list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count', 'catalog__type__name', 'count')        
-        #new_list = list.annotate(sum_catalog=Sum('count')).order_by("catalog__type")
-#        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__price', 'catalog__sale', 'catalog__count', 'count').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
-    else:
-        list = InvoiceComponentList.objects.filter(catalog__manufacturer__exact=mid, catalog__count__gt=0).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__count', 'catalog__type__name', 'catalog__description').annotate(sum_catalog=Sum('count')).order_by("catalog__type")
-
-
-    for item in list:
-#        item['sum_catalog'] = 0
-        psum = psum + (item['catalog__price'] * item['sum_catalog'])
-        scount = scount + item['sum_catalog']
-        id_list.append(item['catalog'])
-        item['balance']=item['sum_catalog']
-#        cat_count_upd = Catalog.objects.get(id = item['catalog'])
-#        cat_count_upd.count = item['balance']
-#        cat_count_upd.save()
-        
-#        list_sale = ClientInvoice.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
-#        list_sale = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
-    sale_list = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__price', 'catalog__type__name').annotate(sum_catalog=Sum('count'))        
-    for element in list:
-        element['c_sale']=0
-        for sale in sale_list:
-            if element['catalog']==sale['catalog']:
-                element['c_sale']=sale['sum_catalog']
-                element['balance']=element['sum_catalog'] - element['c_sale']
-                element['catalog__type__name'] = sale['catalog__type__name']
-# update Catalog count
-                #cat_count_upd = Catalog.objects.get(id = element['catalog'])
-                #cat_count_upd.count = element['balance']
-                #cat_count_upd.save()
-                
-        c = Catalog.objects.values('type__name', 'type__id').get(id=element['catalog'])
-        if element.get('catalog__type__name') == None:
-            element['catalog__type__name'] = c['type__name']
-            element['catalog__type__id'] = c['type__id']
-        else:
-            element['catalog__type__id'] = c['type__id']
-            
-        zsum = zsum + ((element['sum_catalog'] - element['c_sale']) * element['catalog__price'])
-        zcount = zcount + (element['sum_catalog'] - element['c_sale'])
-#        return render_to_response('index.html', {'componentlist': list, 'salelist': list_sale, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
-    
-    if mid == None:
-        company_name = ""
-    else:
-        company_name = Manufacturer.objects.get(id=mid)
-        #company_name = company_list.get(id=mid)
-    
-    return render_to_response('index.html', {'category_list': category_list, 'company_list': company_list, 'weblink': 'invoicecomponent_list_test.html',  'company_name': company_name, 'company_id':mid, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
-
-
-def invoicecomponent_list_by_category1(request, cid=None, limit=0):
-    category_list = None #Type.objects.filter(name_ukr__isnull=False).order_by('name_ukr')
-    company_list = None #Manufacturer.objects.all()
-    if cid == None:
-        cat_name = ""
-    cat_name = ""
- #   else:
- #       cat_name = category_list.get(id=cid)
-    
-    inv_list = None
-    id_list=[]
-    psum = 0 # = ціна * кількість товару 
-    zsum = 0
-    scount = 0 # Сумарна кількість компонентів на приході
-    zcount = 0 
-    
-    if limit == 0:
-        inv_list = InvoiceComponentList.objects.filter(catalog__type__exact=cid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__description', 'catalog__locality')
-        inv_list = inv_list.annotate(sum_catalog=Sum('count')).order_by('catalog__manufacturer__name')
-        
-       # inv_list = InvoiceComponentList.objects.filter(catalog__type__exact=cid).values('catalog', 'catalog__manufacturer__name', 'catalog__name').annotate(sum_catalog=Sum('count')).order_by('catalog__manufacturer__name')
-    else:
-        inv_list = InvoiceComponentList.objects.filter(catalog__type__exact=cid).values('catalog', 'catalog__manufacturer__name', 'catalog__name').annotate(sum_catalog=Sum('count')).order_by('catalog__manufacturer__name')[:limit]
-
- #   for item in inv_list:
- #       id_list.append(item['catalog'])
-    id_list = inv_list.values_list('catalog', flat=True)
-    sale_list = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__price', 'catalog__locality').annotate(sum_catalog=Sum('count'))
-    catalog_list = Catalog.objects.filter(pk__in=id_list)
-                
-    for element in inv_list:
-        #try:
-        element['c_sale'] = 555
-             #sale_list.get(catalog__id=element['catalog'])['sum_catalog']
-        #except ObjectDoesNotExist:
-            #element['c_sale'] = 0
-        element['balance']=element['sum_catalog'] - element['c_sale']
-        #cat = catalog_list.get(catalog__id=element['catalog'])
-        #element['catalog__locality'] = cat['catalog__locality']
-        
-        #zsum = zsum + ((element['sum_catalog'] - element['c_sale']) * element['catalog__price'])
-        #zcount = zcount + (element['sum_catalog'] - element['c_sale'])
-    zsum = 999
-    zcount = 9999
-        
-    return render_to_response('index.html', {'company_list': company_list, 'category_list': category_list, 'category_name': cat_name, 'componentlist': inv_list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'type_id':cid, 'weblink': 'invoicecomponent_list_test.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
-
-
-def invoicecomponent_list_by_category(request, cid=None, limit=0):
-    category_list = Type.objects.filter(name_ukr__isnull=False).order_by('name_ukr')
-    company_list = Manufacturer.objects.all()
-    list = None
-    id_list=[]
-    psum = 0
-    zsum = 0
-    scount = 0
-    zcount = 0
-    
-    if limit == 0:
-        #list = InvoiceComponentList.objects.filter(catalog__type__exact=cid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__description').annotate(sum_catalog=Sum('count')).order_by('catalog__manufacturer__name')
-        list = InvoiceComponentList.objects.filter(catalog__type__exact=cid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__description', 'catalog__locality')
-        list = list.annotate(sum_catalog=Sum('count')).order_by('catalog__manufacturer__name')
-        #list = InvoiceComponentList.objects.filter(catalog__type__exact=cid).values('catalog', 'catalog__manufacturer__name').annotate(sum_catalog=Sum('count')).order_by('catalog__manufacturer__name')
-    else:
-        list = InvoiceComponentList.objects.filter(catalog__type__exact=cid).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__manufacturer__name', 'catalog__manufacturer__id', 'catalog__price', 'catalog__sale', 'catalog__description').annotate(sum_catalog=Sum('count'))[:limit]
-        
-    for item in list:
-        psum = psum + (item['catalog__price'] * item['sum_catalog'])
-        scount = scount + item['sum_catalog']
-        id_list.append(item['catalog'])
-        item['balance']=item['sum_catalog']
-#        list_sale = ClientInvoice.objects.filter(catalog__name__icontains=name).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
-#        list_sale = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__name', 'catalog__ids', 'catalog__price').annotate(sum_catalog=Sum('count'))
-    sale_list = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__price', 'catalog__locality').annotate(sum_catalog=Sum('count'))        
-    for element in list:
-        element['c_sale']=0
-        for sale in sale_list:
-            if element['catalog']==sale['catalog']:
-                element['c_sale']=sale['sum_catalog']
-                element['balance']=element['sum_catalog'] - element['c_sale']
-                #element['catalog__locality'] = sale['catalog__locality']
-        zsum = zsum + ((element['sum_catalog'] - element['c_sale']) * element['catalog__price'])
-        zcount = zcount + (element['sum_catalog'] - element['c_sale'])
-#        return render_to_response('index.html', {'componentlist': list, 'salelist': list_sale, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'weblink': 'invoicecomponent_list_test.html'})
-
-    if cid == None:
-        cat_name = ""
-    else:
-        cat_name = category_list.get(id=cid)
-
-    return render_to_response('index.html', {'company_list': company_list, 'category_list': category_list, 'category_name': cat_name, 'componentlist': list, 'allpricesum':psum, 'zsum':zsum, 'zcount':zcount, 'countsum': scount, 'type_id':cid, 'weblink': 'invoicecomponent_list_test.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def invoicecomponent_manufacturer_html(request, mid):
@@ -3151,16 +2995,20 @@ def client_result(request, tdelta = 30):
     client.summ = float(isum['sum__sum'] or 0) + float(bsum['sum__sum'] or 0) + client_workshop_sum 
     #client.summ = b_bike['sum__sum']
     sale_cat = [1,3,5]
-    if (client.summ > 1000) and (client.summ < 3000):
+    if (client.summ > 1000) and (client.summ < 3700):
         if client.sale < sale_cat[0] :
             client.sale = sale_cat[0]
-    if (client.summ > 3000) and (client.summ < 7000):
+    if (client.summ > 3700) and (client.summ < 7000):
         if client.sale < sale_cat[1] :
             client.sale = sale_cat[1]
     if (client.summ > 7000):
         if client.sale < sale_cat[2] :
             client.sale = sale_cat[2]
-                        
+    if (client.id == 138) or (client.id == 1277):
+        client.sale = 0
+    if (client.id == 1257):
+        client.sale = 100
+        
     client.save()
 
     #list_debt = ClientDebts.objects.filter(client='2').values("client", "price").select_related('client')

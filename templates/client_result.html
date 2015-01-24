@@ -100,7 +100,7 @@ $(document).ready(function() {
   		});
 	});
 
-	$(".ok_button").live('click', function(){
+	$(".ok_button").on('click', function(){
 		console.log("Натиснуто ОК");
 		$.ajax({
                 type: "POST",
@@ -875,6 +875,8 @@ $('.edit_workstatus').editable('/workticket/edit/0/', {
 <br>
 <a href=/client/search/> Пошук клієнта </a>
  
+{% load poll_extras %}
+{% orm_debug %}
 
 
 

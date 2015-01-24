@@ -2,21 +2,17 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
 <html lang="en">
 <head>
-    <title>Список товару</title>
-
+<title>{{company_name|capfirst}}{{category_name|capfirst}} - Наявний товар</title>
 
 {# <link rel="stylesheet" type="text/css" href="/media/table.css"> #}
 <link rel="stylesheet" href="/media/jquery-ui.min.css">
 <link rel="stylesheet" href="/media/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="/media/css/dataTables.jqueryui.css">
  
-
 <script type="text/javascript" src="/media/jquery-ui.min.js"></script>
 <script type="text/javascript" language="javascript" src="/media/jquery.dataTables.min.js"></script>
 <script type="text/javascript" language="javascript" src="/media/dataTables.jqueryui.js"></script>
 <script src="/media/jquery.jeditable.mini.js" type="text/javascript" charset="utf-8"></script>
-
-
 
 </head>
 
@@ -210,39 +206,7 @@
     });
 })( jQuery );
 
-function ShowHideRow(){
-	//$('tr.zero').toggle();
-	if ($('#show_hide').attr('val') == '1') {
-		$('#show_hide').attr('val', 0);
-		$('#show_hide').html('Наявні'); 
-	}
-	if ($('#show_hide').attr('val') == '0') {
-		$('#show_hide').attr('val', 1);
-		$('#show_hide').html('Всі');
-	}
-/*	
-	if ($('tr.zero').css('display') == 'none') {
-		$('#show_hide').html('Всі'); 
-	}
-	else {
-		$('#show_hide').html('Наявні');
-	}
-*/	
-}	
 
-$.fn.dataTable.ext.search.push(
-    function( settings, data, dataIndex ) {
-        var min = parseInt($('#show_hide').attr('val')) || 0;
-        //console.log("VAL min = ", min);
-        //var min = 0;
-        var age = parseFloat( data[6] ) || 0; // use data for the age column
-        if ( min <= age ) 
-        {
-            return true;
-        }
-        return false;
-    }
-);
 
 $(document).ready(function() {
     // DataTable
@@ -260,27 +224,33 @@ $(document).ready(function() {
                 "targets": [ 2 ],
                 "visible": false
             },
+            {
+                "targets": [ 3 ],
+                "visible": false
+            },
+            
         ],
     });
 
-	table.column(9).visible(false);
+	table.column(11).visible(false);
 	
 	$('#iTable_length').append('<div class="cdiv"><label> Тип:</label><input type="text" id="s_type" placeholder="Search type" /> </div>');    
 	$('#iTable_length').append('<div class="cdiv"><label> Назва:</label><input type="text" id="s_name" placeholder="Search name" /></div>' );
 {#	$("div.toolbar").html('<a class="toggle-vis" data-column="1">Id</a>, <a class="toggle-vis" data-column="2">Type</a>'); #}
 	$('#iTable_length').append('<div class="cdiv"><a class="toggle-vis" data-column="1">Id</a></div>');
 	$('#iTable_length').append('<div class="cdiv"><a class="toggle-vis" data-column="2">Тип</a></div>');
-	$('#iTable_length').append('<div class="cdiv"><a class="toggle-vis" data-column="9">Опис</a></div>');
-	$('#iTable_length').append('<div class="cdiv"><a class="toggle-vis" data-column="10">Місце</a></div>');
-	$('#iTable_length').append('<div class="cdiv"><a href="javascript:void(0);" id="show_hide" val="0">Наявний</a></div>');
+	$('#iTable_length').append('<div class="cdiv"><a class="toggle-vis" data-column="3">Виробник</a></div>');
+	$('#iTable_length').append('<div class="cdiv"><a class="toggle-vis" data-column="-2">Опис</a></div>');
+	$('#iTable_length').append('<div class="cdiv"><a class="toggle-vis" data-column="-1">Місце</a></div>');
+	$('#iTable_length').append('<div class="cdiv"><a href="javascript:void(0);" id="show_hide" val="0">Наявні</a></div>');
 
  
-    // Apply the search
+    // Apply the search in add field
     $('#s_type').on( 'keyup change', function () {
     	table.column( 2 ).search( this.value ).draw();
     } );
     $('#s_name').on( 'keyup change', function () {
-    	table.column( 3 ).search( this.value ).draw();
+    	table.column( 5 ).search( this.value ).draw();
     } );
     
     $('a.toggle-vis').on( 'click', function (e) {
@@ -291,10 +261,34 @@ $(document).ready(function() {
         column.visible( ! column.visible() );
     } );
  
- 	$('#show_hide').on('click', function() {
- 		ShowHideRow();
+ $("body").on('click', '#show_hide', function() {
+	var status = $('#show_hide').attr('val')
+	if ( status == 1) {
+		$('#show_hide').attr('val', 0);
+		$('#show_hide').html('Всі');
+		$.fn.dataTableExt.afnFiltering.push(
+        function(oSettings, aData, iDataIndex) {
+           //Only shows columns with a COUNT > 0
+           var engineColumn = parseInt(aData[8]);
+           if (engineColumn > 0)
+               return true;
+           return false;
+        });
  		table.draw();
- 	})
+	}
+	if ( status == 0) {
+		$('#show_hide').attr('val', 1);
+		$('#show_hide').html('Наявні');
+		$.fn.dataTableExt.afnFiltering.pop();
+ 		table.draw();
+	}
+
+ });
+ 	
+ 	$('#show_hide_1').on('click', function() {
+ 		$.fn.dataTableExt.afnFiltering.pop();
+ 		table.draw();
+ 	});
  	
  	$( "#m_combobox" ).combobox();
  	$( "#t_combobox" ).combobox();
@@ -332,8 +326,9 @@ $(document).ready(function() {
      	 }
      });
     });
-    
-$('.locality_edit').each(function() {
+
+$("body").on("click",".locality_edit",function(e){ 	    
+//$('.locality_edit').each(function() {
   $(this).editable('/catalog/edit/', {
         loadurl : '/catalog/get/locality/',
      	loadtype: 'POST',
@@ -352,10 +347,11 @@ $('.locality_edit').each(function() {
          callback : function(value, settings) {
          	$(this).html(value);
      	 }
- });    
+ }).trigger("focus");    
 });
  	
-$('.edit_type').each(function() {
+$("body").on("click",".edit_type",function(e){ 	
+//$('.edit_type').each(function() {
 	$(this).editable('/catalog/set/type/', {
      loadurl : '/category/get/list/',
 	 loaddata : function(value, settings) {
@@ -381,11 +377,164 @@ $('.edit_type').each(function() {
          str2 = '/view">' + obj[0]['type__name'] + "</a>";
          $(this).html(str1 + str2);
      }
-    }); 
+    }).trigger("focus"); 
 });
- 	
+
+	//$("td[id_desc]").each(function() {
+$("body").on("click",".td_desc",function(e){	
+	//$("td[id_desc]").editable('/catalog/edit/', {
+    $(this).editable('/catalog/edit/', {
+         submitdata : function() {
+      	 	return {id : $(this).attr('id_desc')};
+    	 },         
+         type      : 'textarea',
+         cancel    : 'Cancel',
+         submit    : 'OK',
+         indicator : 'Saving',
+         tooltip   : 'dbClick to edit...',
+         style : "inherit",
+         width: 150,
+         height: 100,
+		 event : "dblclick",         
+     }).trigger("focus");
+     });
+
+
+
+$("#dialog").dialog({
+	autoOpen: false,
+      resizable: false,
+      modal: true,
+      buttons: {
+        "Додати": function() {
+			$.ajax({
+                type: "GET",
+                url: "/shop/price/print/add/",
+                data: {id:  $("#dtext").attr("ids"), url: $('#spinner').val()},
+                dataType: "text",
+                success:function(msg){
+//                    alert("Все отлично ушло на сервер - " + msg);
+//               	    $('#spinner').after('<p>ajax done</p>');
+                },
+                error:function(){
+                    alert("При отправке возникли проблемы");
+                }
+            });
+
+        
+          $( this ).dialog( "close" );
+        },
+        "Відмінити": function() {
+          $( this ).dialog( "close" );
+        }
+      }
+});
+
+
+$("#dialog_photo").dialog({
+	autoOpen: false,
+      resizable: false,
+      modal: true,
+      width: 540,
+      maxWidth: 540,
+      //position: "center",
+      buttons: {
+        "Додати": function() {
+        	$("#dialog_photo_add").dialog("open");
+        	           
+          $( this ).dialog( "close" );
+        },
+        "Відмінити": function() {
+          $( this ).dialog( "close" );
+        }
+      }
+});
+
+
+$("#dialog_photo_add").dialog({
+	autoOpen: false,
+      resizable: true,
+      modal: true,
+      //position: "center",
+      width: 650,
+      buttons: {
+        "Додати": function() {
+			$.ajax({
+                type: "POST",
+                url: "/photo/url/add/",
+                data: {id:  $("#photo_url").attr("ids"), url: $('#photo_url').val()},
+                dataType: "text",
+                success:function(value){
+                //	var obj = jQuery.parseJSON(value);
+                //	document.getElementById("link_1197").setAttribute("url", "TEST");
+                if (value != "ok") {
+                	//alert(value);
+                	$("#dialog_photo").dialog({title: value });
+                	if ($("#img_url").attr('width') > 500) {
+                		$("#img_url").attr({'src' : $('#photo_url').val()}, {'width': "500 px"});
+                	}
+                	else {
+                		$("#img_url").attr({'src' : $('#photo_url').val()});
+                	}
+                	
+                	$("#dialog_photo").dialog({ buttons: [ { text: "Ok", click: function() { $("#dialog_photo").dialog( "close" ); } }, {text: "Cancel", click: function() {$("#dialog_photo").dialog("close"); }} ] });
+//                	$("#dialog_photo").dialog({ position: { my: "center top", at: "center top", of: window } });
+					$("#dialog_photo").dialog("open");
+					//$("#dialog_photo").dialog("moveToTop");
+					$("#ui-id-2").attr({"color": '#fe011b'});
+					
+					}
+                },
+                error:function(){
+                    alert("При отправке возникли проблемы");
+                }
+            });
+        
+          $( this ).dialog( "close" );
+        },
+        "Відмінити": function() {
+          $( this ).dialog( "close" );
+        }
+      }
+});
+
 
 });
+
+$(document).on("click", ".c_photo", function(event) {
+	   		var t = $("#td_"+$(this).attr('ids')).nextAll(".c_name:first").html();
+    		$("#dialog_photo_add").dialog({title:  t});
+			$.ajax({
+                type: "POST",
+                url: "/photo/url/get/",
+                data: {id:  $(this).attr('ids') },
+                dataType: "json",
+                success:function(data){
+					if (data.aData.length > 0) {
+						document.getElementById("img_url").setAttribute("src", String(data.aData[0][0]));
+						$("#dialog_photo").dialog({ title: data.cname });
+					    $("#dialog_photo").dialog("open");
+					}
+					else {
+				   		$("#photo_url").attr({'ids': data.id});
+   						$("#dialog_photo_add").dialog("open");
+   						$("#photo_url").select();
+					}   					
+                },
+                error:function(){
+                    alert("При відправці виникли проблеми");
+                }
+            });
+});
+
+$(document).on("click", ".addprice", function(event) {
+    $("#dtext").html($(this).attr('href'));
+    $("#dtext").attr({"ids": $(this).attr('ids')});
+	var spinner = $("#spinner").spinner();
+	$("#spinner").val(1);       
+   $("#dialog").dialog("open");
+});
+
 </script>
 
 
@@ -414,6 +563,24 @@ $('.edit_type').each(function() {
      <h1>Список наявного товару <span id="c_c">({{company_name|capfirst}}{{category_name|capfirst}})</span></h1>
 </div>
 
+<!-- Dialog to add print price -->
+	<div id="dialog" title="Add price">
+	<p id="dtext">Додати цінник до списку друку</p>
+	<label for="spinner">Кількість:</label>
+  	<input id="spinner" name="value" value="1">
+	</div>
+
+<!-- Dialog to add photo -->
+	<div id="dialog_photo_add" title="Add Photo">
+	<label for="photo_url">Посилання на фото:</label>
+	<input type="text" name="photoname" id="photo_url" value="http://" ids="" size="75">
+	</div>
+
+<!-- Dialog to view photo -->
+	<div id="dialog_photo" title="Photo">
+	<img id="img_url" src="" width="500">
+	</div>
+
     <table id="iTable" class="display compact" cellspacing="0" width="100%"> 
     {# <table id="iTable" class="display compact" cellspacing="0" width="100%"> #}
     {# <table id="iTable" class="display" cellspacing="0" width="100%" border="1"> #}
@@ -422,6 +589,8 @@ $('.edit_type').each(function() {
     	<th ROWSPAN="2">#</th>	
     	<th ROWSPAN="2">ID</th>
     	<th ROWSPAN="2">Тип</th>
+    	<th ROWSPAN="2">Виробник</th>
+    	<th ROWSPAN="2">Ф</th>
     	<th ROWSPAN="2">Найменування товару</th>
     	
     	<th align="center" COLSPAN="3" >Кількість</th>
@@ -457,7 +626,7 @@ $('.edit_type').each(function() {
 {% endifequal %}
 
 	<td>
-	{{forloop.counter}}
+	<p href="/shop/price/print/{{type.catalog}}/add" class="addprice" ids="{{type.catalog}}"> {{forloop.counter}}</p>
 	</td>
 	<td>       
 		<a href="/catalog/id/{{type.catalog}}/view">{{type.catalog}}</a>
@@ -469,7 +638,12 @@ $('.edit_type').each(function() {
 {% endif %}	
 		<a href="/invoice/category/{{type.catalog__type__id}}/view/">{{type.catalog__type__name}}</a>
 	</td>
-
+	<td>
+	<a href="/invoice/manufacture/{{type.manufacturer__id}}/view/">{{type.manufacturer__name}}</a>
+	</td>
+	<td align="center" id="td_{{type.catalog}}">
+	<img class="c_photo" id="link_{{type.catalog}}" url="" ids={{type.catalog}} src="/media/images/photo_ico.png" width="24" height="24">
+	</td>
 	<td>
 	[{{type.catalog__ids}}] - ({{type.catalog__manufacturer__name}}) {{type.catalog__name}}
 	</td>
@@ -516,11 +690,15 @@ $('.edit_type').each(function() {
 	<td align="center">       
 	{{type.catalog__price|mul:type.balance}}
 	</td>
+{% if user.is_authenticated %}	
+	<td align="center" id_desc={{type.catalog}} class="td_desc">
+{% else %}
 	<td align="center">
-	{# desc #}    
+{% endif %}	
+	{{type.description}}
 	</td>
 	<td align="center" class="locality_edit" id_locality="{{type.catalog}}">
-	{{type.catalog__locality}}
+	{{type.locality}}
 	</td>
 
 </tr>
@@ -530,6 +708,8 @@ $('.edit_type').each(function() {
 	<tr>
     	<th></th>
     	<th></th>	
+    	<th></th>
+    	<th></th>    	    	
     	<th></th>
     	<th></th>
     	<th></th>
