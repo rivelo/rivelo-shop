@@ -64,7 +64,7 @@ $("#UserEnter").submit(function() {
       }
       $("#id_count").after("FALSE");
       return false;
-    });
+});
 
 
 $( "input[type='text']" ).change(function(){
@@ -132,7 +132,7 @@ function id2name(){
             $.ajax({
                 type: "GET",
                 url: "/client/lookup/byid/",
-                data: { client_id: 2 },
+                data: { client_id: $("#s_client").val() },
                 dataType: "json",
                 success:function(msg){
                 	$.each(msg,function(index,item){
@@ -157,7 +157,9 @@ function sum() {
 //setTimeout(sum, 100)
 //setInterval(sum, 100);
 
-//id2name();
+$(document).ready(function() {
+	id2name();
+});
 
 </script>
 

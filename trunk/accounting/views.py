@@ -525,16 +525,16 @@ def bicycle_store_list(request, all=False):
     if all==True:
         list = Bicycle_Store.objects.all()
     else:
-        list = Bicycle_Store.objects.filter(count=1)
+        list = Bicycle_Store.objects.filter(count=1).values('model__model', 'model__year', 'model__brand__name', 'model__price', 'model__color', 'size__name', 'size__cm', 'size__inch', 'model__type__type', 'serial_number', 'size', 'price', 'currency', 'count', 'description', 'date', 'id')
+        
     price_summ = 0
-    real_summ = 0
     bike_summ = 0
     for item in list:
-        if item.count != 0:
-            price_summ = price_summ + item.price * item.count 
-        real_summ = real_summ + item.realization
-        bike_summ = bike_summ + item.count
-    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list.html', 'price_summ': price_summ, 'real_summ': real_summ, 'bike_summ': bike_summ}, context_instance=RequestContext(request, processors=[custom_proc]))
+        price_summ = price_summ + item['price'] * item['count'] 
+        bike_summ = bike_summ + item['count']
+    
+#    fsize = FrameSize.objects.all().values('name', 'id')
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_store_list.html', 'price_summ': price_summ, 'bike_summ': bike_summ}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_store_list_by_seller(request, all=False, size='all', year='all', brand='all', html=False):
@@ -920,12 +920,15 @@ def bicycle_sale_report_by_brand(request):
 
 
 def bicycle_order_add(request):
+    
     a = Bicycle_Order(prepay=0, sale=0, currency=Currency.objects.get(id=3))
     if request.method == 'POST':
         form = BicycleOrderForm(request.POST, instance = a)
         if form.is_valid():
-            client = form.cleaned_data['client']
-            model = form.cleaned_data['model']
+            cid = form.cleaned_data['client_id']
+            client = Client.objects.get(pk = cid)
+            mid = form.cleaned_data['model_id']
+            model = Bicycle.objects.get(pk = mid)
             size = form.cleaned_data['size']
             price = form.cleaned_data['price']
             sale = form.cleaned_data['sale']
@@ -1000,6 +1003,28 @@ def bicycle_lookup_ajax(request):
 
     #search = Bicycle.objects.filter(id=q).values('price', 'sale')
     return HttpResponse(simplejson.dumps(list(search)), mimetype="application/json")
+
+def ValuesQuerySetToDict(vqs):
+    return [item for item in vqs]
+
+def bike_lookup(request):
+    data = None
+    cur_year = datetime.datetime.now().year
+    #if request.is_ajax():
+    if request.method == "POST":
+        if request.POST.has_key(u'query'):
+            value = request.POST[u'query']
+            if len(value) > 2:
+                model_results = Bicycle.objects.filter(year__gte=datetime.datetime(cur_year-1, 1, 1)).filter(Q(model__icontains = value) | Q(brand__name__icontains = value)).order_by('-year')
+                #.values('id', 'model', 'type__type', 'brand__name',  'color', 'price', 'sale')
+                #.values('id', 'model', 'type__type', 'brand__name', 'year', 'color', 'price', 'sale');
+                data = serializers.serialize("json", model_results, fields = ('id', 'model', 'type', 'brand', 'color', 'price', 'year', 'sale'), use_natural_keys=False)
+#                data = serializers.serialize("json", list(model_results))
+#                data_dict = ValuesQuerySetToDict(model_results)
+#                data = simplejson.dumps(data_dict)
+            else:
+                data = []
+    return HttpResponse(data)                
 
 
 # --------------------Dealer company ------------------------
@@ -3020,6 +3045,7 @@ def client_result(request, tdelta = 30):
 
 
 def client_lookup(request):
+    data = []
     if request.method == "GET":
         if request.GET.has_key(u'query'):
             value = request.GET[u'query']
@@ -3033,14 +3059,12 @@ def client_lookup(request):
 
 
 def client_lookup_by_id(request):
+    data = None
     if request.method == "GET":                
         if request.GET.has_key(u'client_id'):
             value = request.GET[u'client_id']
-            
-            model_results = Client.objects.get(pk = value)
-            #print "MODEL = ", model_result
-            #data = serializers.serialize("json", model_results, fields=('name','id', 'sale', 'forumname'))
-            data = json.dumps(model_results.__dict__)
+            model_results = Client.objects.values('id', 'name', 'forumname').get(pk = value)
+            data = simplejson.dumps(model_results)
     return HttpResponse(data)    
 
 

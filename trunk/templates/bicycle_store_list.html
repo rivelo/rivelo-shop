@@ -1,54 +1,151 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Велосипеди в магазині</title>
+
 <link rel="stylesheet" type="text/css" href="/media/table.css">
 
+<link rel="stylesheet" href="/media/jquery-ui.min.css">
+<link rel="stylesheet" href="/media/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="/media/css/dataTables.jqueryui.css">
+
+<script type="text/javascript" src="/media/jquery-ui.min.js"></script>
+<script type="text/javascript" language="javascript" src="/media/jquery.dataTables.min.js"></script>
+<script type="text/javascript" language="javascript" src="/media/dataTables.jqueryui.js"></script> 
+<script src="/media/jquery.jeditable.mini.js" type="text/javascript" charset="utf-8"></script>
+
+<style>
+
+.cdiv {
+ /*   float: left; */
+ 	float:left;
+    display: inline-block
+    vertical-align: middle;
+    margin: 2px;
+}
+
+</style>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    // DataTable
+    var table = $('#iTable').DataTable({
+        "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+        "iDisplayLength": 100,
+        "dom": '<"toolbar">frtip',        
+        "columnDefs": [
+            {
+                "targets": [ 1 ],
+                "visible": false,
+                "searchable": false
+            },
+            {
+                "targets": [ 2 ],
+                "visible": true,
+            },
+            {
+                "targets": [ 3 ],
+                "visible": true,
+            },
+            {
+                "targets": [ 9 ],
+                "visible": false,
+            },
+            {
+                "targets": [ 11 ],
+                "visible": false,
+            },
+            
+        ],
+    });
+
+{# $("div.toolbar").html('<b>Custom tool bar! Text/images etc.</b>'); #}
+$("div.toolbar").append('<div class="cdiv"><label> Тип:</label><input type="text" id="s_type" placeholder="Search type" /> </div>');    
+$("div.toolbar").append('<div class="cdiv"><label> Виробник:</label><input type="text" id="s_brand" placeholder="Search name" /></div>' );
+$("div.toolbar").append('<div class="cdiv"><label> Модель:</label><input type="text" id="s_model" placeholder="Search name" /></div>' );
+$("div.toolbar").append('<div class="cdiv"><label> Рік:</label><input type="text" id="s_year" placeholder="Search name" /></div>' );
+$("div.toolbar").append('<div class="cdiv"><label> Розмір:</label><input type="text" id="s_size" placeholder="Search name" /></div>' );
+
+// Apply the search in add field
+$('#s_type').on( 'keyup change', function () {
+	table.column( 2 ).search( this.value ).draw();
+});
+$('#s_brand').on( 'keyup change', function () {
+   	table.column( 3 ).search( this.value ).draw();
+});
+$('#s_model').on( 'keyup change', function () {
+   	table.column( 4 ).search( this.value ).draw();
+});
+$('#s_year').on( 'keyup change', function () {
+   	table.column( 5 ).search( this.value ).draw();
+});
+$('#s_size').on( 'keyup change', function () {
+   	table.column( 7 ).search( this.value ).draw();
+});
+
+$("body").on("click",".serial_edit",function(e){
+     $(this).editable('/bicycle-store/edit/', {
+     	 id   : 'id',
+         name : 'serial',
+         submitdata : function() {
+      	 	return {id : $(this).attr('id_serial')};
+    	 },
+         indicator : 'Saving...',
+         tooltip   : 'Click to edit...',
+         select : true,
+         style  : "inherit",
+         callback : function(value, settings) {
+         $(this).html(value);
+     	}
+     });
+  });
+
+});
+</script>
+
+<body>
+
 <h1>Список велосипедів у магазині</h1>
-<h2>{{text}}</h2>
 
-<a href="/bicycle-store/all/view/">Всі</a>
-<a href="/bicycle-store/now/view/">Наявні</a>
 <br>
-<b>Розмір рами:</b>
-{% for size in sizes %}
-<a href="/bicycle/store/report/bysize/{{size.id}}/">{{size.name}}</a>
-{% endfor %}
 
-<table border="1">
+<table id="iTable" class="display compact" cellspacing="0" width="100%">
+<thead>
 	<tr>
 		<th>#</th>
 		<th>ID</th>
+		<th>Type</th>
+		<th>Виробник</th>
 		<th>Велосипед</th>
+		<th>Рік</th>
 		<th>Номер рами</th>
 		<th>Розмір рами</th>
-		<th>Ціна</th>
-		<th>Валюта</th>
-		<!-- <th>Опис</th> -->
+		<th>Ціна (грн)</th>
+		<th>Ціна $</th>
+		<th>Опис</th>
 		<th>Реалізація</th>
-		<th align="center">Кількість</th>
+		<th>Кількість</th>
 		<th>Дата</th>
 		<th>Дія</th>
 	</tr>
+</thead>
 
-	{% for type in bicycles %}
-{% ifequal type.count 0 %}
+<tbody>
+{% for type in bicycles %}
 <tr>
-{% else %}
-<tr BGCOLOR="#CCCC99">
-{% endifequal %}
-		<td>{{forloop.counter}}</td>
-		<td><a href="/">{{type.id}}</a></td>
-		<td><a href="/bicycle/photo/{{type.model.id}}">{{type.model}}</a>
-		</td>
-		<td>{{type.serial_number}}</td>
-		<td>{{type.size}}</td>
+	<td>{{forloop.counter}}</td>
+	<td><a href="/">{{type.id}}</a></td>
+	<td><a href="/">{{type.model__type__type}}</a></td>
+	<td><a href="/">{{type.model__brand__name}}</a></td>
+	<td><a href="/bicycle/photo/{{type.model.id}}">
+	{{type.model__model}} ({{type.model__color}})
+	</a></td>
+	<td>{{type.model__year|date:"Y"}}</td>
+		<td class="serial_edit" id_serial="{{ type.id }}"> {{type.serial_number}}</td>  
+		<td>{{type.size__inch}}" / {{type.size__cm}}cm </td>
+		<td>{{type.model__price}}</td>
 		<td>{{type.price}}</td>
 		<td>{{type.currency}}</td>
-		<!-- <td>       
-	{{type.description}}
-	</td>
- -->
-		<td align="center"><!-- 	<img src="/media/{{type.photo}}" alt="" title=""/>  -->
-		{{type.realization}}</td>
+		<td align="center">{{type.realization}}</td>
 		{% ifequal type.count 1 %}
 			<td align="center">
 			<abbr title="Продати велосипед">
@@ -63,10 +160,14 @@
 		<td><a href="/bicycle-store/edit/{{ type.id }}">edit</a> <br>
 		<a href="/bicycle-store/delete/{{ type.id }}">delete</a></td>
 	</tr>
-	{% endfor %}
-
-
+{% endfor %}
+</tbody>
+<tfoot> 
 	<tr>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
 		<th></th>
 		<th></th>
 		<th></th>
@@ -79,15 +180,13 @@
 		<th></th>
 		<th></th>
 	</tr>
+</tfoot>
 
-	<table>
+</table>
 
-		<br>
-		<br>
-		<a href="/bicycle/store/report/sum/">Сумарна вартість велосипедів
-		у магазині</a>
-		<br>
-		<a href="/bicycle/view/">Каталог велосипедів</a>
-		<br>
-		<a href="/bicycle-store/add/">Додати Велосипед в Магазин (Add
-		Bicycle to shop)</a>
+{% load poll_extras %}
+{% orm_debug %}
+		
+</body>
+
+		
