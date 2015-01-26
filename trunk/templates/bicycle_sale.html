@@ -1,16 +1,17 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Велосипеди - Магазин</title> 
 
-<link rel="stylesheet" type="text/css" href="/media/jquery-ui-1.9.2.custom.css">	
+<link rel="stylesheet" href="/media/jquery-ui.min.css">
+<script type="text/javascript" src="/media/jquery-ui.min.js"></script>
 
-<script type="text/javascript" src="/media/jquery-1.8.3.js"></script>	
-<script type="text/javascript" src="/media/jquery-ui-1.9.2.custom.min.js"></script>
 <script src="/media/jquery.jeditable.mini.js" type="text/javascript" charset="utf-8"></script>
 
 <style>
   .ui-autocomplete-loading {
     background: white url('/media/images/ui-anim_basic_16x16.gif') right center no-repeat;
   }
-  #client { width: 30em; }
+
+//  #client { width: 30em; }
 </style>
 
 <script type="text/javascript">
@@ -104,20 +105,27 @@ glob_c_sale = 0;
     
 $('#id_sale').change();
 
-$('.click').editable('/bicycle-store/edit/362/', {
+$('.click').editable('/bicycle-store/edit/', {
      	 id   : 'id',
          name : 'serial',
+         data : function(value, settings) {
+	     	var retval = value.replace(/^\(/, '');
+	     	retval = retval.replace(/\)$/, '');
+      	 	return retval;
+      	 },
          submitdata : function() {
-      	 	return {id : $(this).attr('id_serial')};
+      	 	return {id : $(this).attr('id_serial'),
+      	 			};
     	 },
          indicator : 'Saving...',
          tooltip   : 'Click to edit...',
          select : true,
          style  : "inherit",
          callback : function(value, settings) {
-         $(this).html(value);
+         $(this).html("("+ value + ")");
      	}
      });
+    
 
 });
 
@@ -138,7 +146,7 @@ $('.click').editable('/bicycle-store/edit/362/', {
 <form action="." method="POST" enctype="multipart/form-data">
 <div class="ui-widget">
   <label for="client">Клієнт: </label>
-  <input id="client" />
+  <input id="client" style="width: 550px;"  />
 </div>
 
 <table>

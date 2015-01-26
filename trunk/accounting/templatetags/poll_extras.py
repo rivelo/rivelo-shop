@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django import template
+from django.contrib.auth.models import Group
 
 register = template.Library()
 
@@ -103,3 +104,14 @@ def truncate_chars(value, max_length):
             truncd_val = truncd_val[:truncd_val.rfind(" ")]
         return  truncd_val + "..."
     return value
+
+
+#register = template.Library() 
+
+@register.filter(name='has_group') 
+def has_group(user, group_name): 
+    group = Group.objects.get(name=group_name) 
+    return True if group in user.groups.all() else False
+ 
+    
+    
