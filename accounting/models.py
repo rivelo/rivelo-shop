@@ -89,6 +89,9 @@ class Manufacturer(models.Model):
     country = models.ForeignKey(Country, null=True)
     description = models.TextField(blank=True, null=True)    
     
+    def natural_key(self):
+        return (self.id, self.name)
+        
     def __unicode__(self):
         return u'%s' % self.name
 
@@ -383,6 +386,9 @@ class Costs(models.Model):
 class Bicycle_Type(models.Model):
     type = models.CharField(max_length=255) #adult, kids, mtb, road, hybrid
     description = models.TextField(blank=True, null=True)
+
+#    def natural_key(self):
+#        return (self.id, self.type)
 
     def __unicode__(self):
         return self.type

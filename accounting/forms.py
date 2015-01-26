@@ -194,14 +194,10 @@ class BicycleOrderEditForm(forms.ModelForm):
 
 class BicycleOrderForm(forms.ModelForm):
     cur_year = datetime.datetime.today().year
-    model = forms.ModelChoiceField(queryset = Bicycle.objects.filter(year__gte=datetime.datetime(cur_year-1, 1, 1)).order_by('-year'), empty_label="", label = 'Модель велосипеду')
-#    model = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete'}), queryset = Bicycle.objects.filter(year__year=cur_year), empty_label="", label = 'Модель велосипеду')    
-#    client = forms.ModelChoiceField(queryset = Client.objects.all())
-
-    #Hidden field    
-    #post_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
-    
-    client = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete'}), queryset = Client.objects.all(), empty_label="", label = 'Клієнт')    
+    client_id = forms.CharField(max_length=50, label = 'Клієнт')
+    #client = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete'}), queryset = Client.objects.all(), empty_label="", label = 'Клієнт')    
+    #model = forms.ModelChoiceField(queryset = Bicycle.objects.filter(year__gte=datetime.datetime(cur_year-1, 1, 1)).order_by('-year'), empty_label="", label = 'Модель велосипеду')
+    model_id = forms.CharField(label = 'Модель велосипеду')    
     size = forms.CharField(max_length=50, label = 'Розмір рами')
     price = forms.FloatField(initial = 0, label = 'Ціна')
     sale = forms.IntegerField(initial = 0, label = 'Знижка (%)')
@@ -211,8 +207,8 @@ class BicycleOrderForm(forms.ModelForm):
     done = forms.BooleanField(required=False) 
     description = forms.CharField(label='Description', widget=forms.Textarea(), required=False)
     
-    class Meta:
-        model = Bicycle_Order
+#    class Meta:
+#        model = Bicycle_Order
 
     
 # --------- Dealers ------------

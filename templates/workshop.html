@@ -1,28 +1,29 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Додати роботу</title>
 
-<!-- 
-	<script type="text/javascript" src="/media/sh/shCore.js"></script>
-	<script type="text/javascript" src="/media/sh/shBrushJScript.js"></script>
-	<link type="text/css" rel="stylesheet" href="/media/sh/shCore.css"/>
-	<link type="text/css" rel="stylesheet" href="/media/sh/shThemeDefault.css"/>
-	<script type="text/javascript">
-		SyntaxHighlighter.all();
-	</script>
-
-	<link rel="stylesheet" type="text/css" href="/media/autocomplete.css">
-	<script type="text/javascript" src="/media/jquery-1.3.1.min.js"></script>
-	<script type="text/javascript" src="/media/jquery.autocomplete.pack.js"></script>
-	<script type="text/javascript" src="/media/jquery.select-autocomplete.js"></script>
- -->	
 	<script type="text/javascript" src="/media/jquery.searchabledropdown-1.0.8.min.js"></script>
 	
-	<link rel="stylesheet" type="text/css" href="/media/autocomplete.css">
 	<link rel="stylesheet" href="/media/jquery-ui.min.css">
 	<script src="/media/jquery-ui.min.js"></script>
 	
 	
 <style type="text/css">
+  .custom-combobox {
+    position: relative;
+    display: inline-block;
+  }
+  .custom-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+  }
+  .custom-combobox-input {
+    margin: 0;
+    padding: 5px 10px;
+  }
+
   span:visited{ text-decoration:none; color:#293d6b; }
   span:hover{ text-decoration:underline; color:#FFF; }
   span {color:#293d6b; 
@@ -44,14 +45,150 @@
 </style>		
 	
 <script type="text/javascript">
+(function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            select: function( event, ui ){
+            $.getJSON("/worktype/price/", {id: $("select#id_work_type").val()}, function(data) {
+    			$('#id_price').val(data[0].price);
+			});
+            },
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+            ui.item.option.selected = true;
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass empty string as value to search for, displaying all results
+            input.autocomplete( "search", "" );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+        response( this.element.children( "option" ).map(function() {
+          var text = $( this ).text();
+          if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.autocomplete( "instance" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+
 $(document).ready(function() {
 
-	$("#s_client").val($('#id_client').val());
-	//$("#s_client").select();
+	$("#id_work_type").combobox();      
+	$('.ui-autocomplete-input').css('width','280px');
 
-        $( "#s_client" ).autocomplete({
-            source: function( request, response ) {
-                $.ajax({
+	$("#s_client").val($('#id_client').val());
+	
+    $( "#s_client" ).autocomplete({
+    	source: function( request, response ) {
+        	$.ajax({
                 type: "GET",
                 url: "/client/lookup",
 				data: { query: $("#s_client").val() },
@@ -66,43 +203,42 @@ $(document).ready(function() {
     							}
                         	}));                                
                             }
-                    })
-            },
-            minLength: 3,
-            select: function( event, ui ) {
-	            $('#id_client').val(ui.item.pk_id);
-            },
-            open: function() {
-                $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
-            },
-            close: function() {
-                $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
-            }
-        });
+            })
+        },
+        minLength: 3,
+        select: function( event, ui ) {
+	    	$('#id_client').val(ui.item.pk_id);
+        },
+        open: function() {
+        	$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+        },
+        close: function() {
+        	$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+        }
+    });
 
 
-
-//    $('select.autocomplete').select_autocomplete();
     $("#s_client").focus();
-      
-//      $("id_work_type").focus();
-	$("#id_work_type").searchable();
-	
+
+/*	
 	$("#id_work_type").change(function(){
 		$.getJSON("/worktype/price/", {id: $("select#id_work_type").val()}, function(data) {
     		$('#id_price').val(data[0].price);
 		});
 	});
+*/	
 	$('#id_user').parents("tr").hide();
 	//$('#id_user').hide();
 	//$('#client_cloud').insertAfter('#id_client');
 	
-	$('span').click(function(){
+	$('#client_cloud span').click(function(){
     	//$(this).hide();
     	$("#s_client").val($(this).attr('vname'));
     	$('#id_client').val($(this).attr('val'));
-    	$('#id_work_type').focus();
+    	$('#id_work_type').next().find('input').focus();
     });	
+    
+   
 });
 
 </script>
@@ -111,7 +247,9 @@ $(document).ready(function() {
     <div style="float: left;"> 
     <form action="" method="POST" enctype="multipart/form-data">
         <table>
-        	<input id="s_client" style="width: 550px;" />
+
+          <label for="tags">Клієнт: </label>
+        	<input id="s_client" style="width: 400px;" />
             {{ form.as_table }}  
 <!--             {{ form.as_ul }} -->
         </table>

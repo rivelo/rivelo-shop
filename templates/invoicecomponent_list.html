@@ -304,9 +304,10 @@ $(document).ready(function() {
 {% endifequal %}  	
 
 //---- inline edit ---
- 	$('.price_edit').each(function() {
+$("body").on("click",".price_edit",function(e){ 	    
+// 	$('.price_edit').each(function() {
      $(this).editable('/catalog/edit/149', {
-     
+  
      	 id   : 'id',
          name : 'price',
          data : function(value, settings) {
@@ -380,7 +381,6 @@ $("body").on("click",".edit_type",function(e){
     }).trigger("focus"); 
 });
 
-	//$("td[id_desc]").each(function() {
 $("body").on("click",".td_desc",function(e){	
 	//$("td[id_desc]").editable('/catalog/edit/', {
     $(this).editable('/catalog/edit/', {
@@ -539,7 +539,7 @@ $(document).on("click", ".addprice", function(event) {
 
 
 {# <body onload="document.getElementById('tsearch_field').focus()"> #}
-<body > 
+<body> 
 
 <div style="width:300px; float:left;"> 
 <select id="m_combobox">
