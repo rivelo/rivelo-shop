@@ -525,7 +525,7 @@ def bicycle_store_list(request, all=False):
     if all==True:
         list = Bicycle_Store.objects.all()
     else:
-        list = Bicycle_Store.objects.filter(count=1).values('model__model', 'model__year', 'model__brand__name', 'model__price', 'model__color', 'size__name', 'size__cm', 'size__inch', 'model__type__type', 'serial_number', 'size', 'price', 'currency', 'count', 'description', 'date', 'id')
+        list = Bicycle_Store.objects.filter(count=1).values('model__model', 'model__year', 'model__brand__name', 'model__price', 'model__color', 'model__id', 'size__name', 'size__cm', 'size__inch', 'model__type__type', 'serial_number', 'size', 'price', 'currency', 'count', 'description', 'date', 'id')
         
     price_summ = 0
     bike_summ = 0

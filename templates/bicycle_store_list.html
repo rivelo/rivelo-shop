@@ -13,7 +13,10 @@
 <script type="text/javascript" language="javascript" src="/media/dataTables.jqueryui.js"></script> 
 <script src="/media/jquery.jeditable.mini.js" type="text/javascript" charset="utf-8"></script>
 
-<style>
+<style type="text/css">
+  span:visited{ text-decoration:none; color:#293d6b; }
+  span:hover{ text-decoration:underline; color:#293d6b; }
+  span {color:#293d6b; cursor: pointer; }
 
 .cdiv {
  /*   float: left; */
@@ -23,7 +26,18 @@
     margin: 2px;
 }
 
+  
+  a.toggle-vis {color:#293d6b; 
+  		cursor: pointer; 
+  		border-radius: 3px;
+  		color: #FFF;
+  		background-color: #4A4A4A;
+  		border-right:10px solid #4A4A4A;
+  		}
+
 </style>
+
+{% load poll_extras %}
 
 <script type="text/javascript">
 $(document).ready(function() {
@@ -54,6 +68,14 @@ $(document).ready(function() {
                 "targets": [ 11 ],
                 "visible": false,
             },
+            {
+                "targets": [ 14 ],
+                "visible": false,
+            },
+            {
+                "targets": [ 15 ],
+                "visible": false,
+            },
             
         ],
     });
@@ -64,6 +86,20 @@ $("div.toolbar").append('<div class="cdiv"><label> Виробник:</label><inp
 $("div.toolbar").append('<div class="cdiv"><label> Модель:</label><input type="text" id="s_model" placeholder="Search name" /></div>' );
 $("div.toolbar").append('<div class="cdiv"><label> Рік:</label><input type="text" id="s_year" placeholder="Search name" /></div>' );
 $("div.toolbar").append('<div class="cdiv"><label> Розмір:</label><input type="text" id="s_size" placeholder="Search name" /></div>' );
+$("div.toolbar").append('<div class="cdiv"><a class="toggle-vis" data-column="-2">Дія</a></div>' );
+$("div.toolbar").append('<div class="cdiv"><a class="toggle-vis" data-column="-1">Цінники</a></div>' );
+
+{% if request.user|has_group:"admin" %}
+$("div.toolbar").append('<div class="cdiv"><a class="toggle-vis" data-column="9">Ціна $</a></div>' );
+{% endif %}
+
+    $('a.toggle-vis').on( 'click', function (e) {
+        e.preventDefault();
+         // Get the column API object
+        var column = table.column( $(this).attr('data-column') );
+         // Toggle the visibility
+        column.visible( ! column.visible() );
+    } );
 
 // Apply the search in add field
 $('#s_type').on( 'keyup change', function () {
@@ -80,6 +116,35 @@ $('#s_year').on( 'keyup change', function () {
 });
 $('#s_size').on( 'keyup change', function () {
    	table.column( 7 ).search( this.value ).draw();
+});
+
+$("span.f_type").on("click", function(){
+//$("body").on("click", "span.f_type", function(){
+	$('#s_type').val( $(this).html() );
+	table.column( 2 ).search( $(this).html() ).draw();
+	$('#s_type').focus();
+	$('#s_type').select();
+});
+
+$("body").on("click", "span.f_brand", function(){
+	$('#s_brand').val( $(this).html() );
+	table.column( 3 ).search( $(this).html() ).draw();
+	$('#s_brand').focus();
+	$('#s_brand').select();
+});
+
+$("body").on("click", "span.f_year", function(){
+	$('#s_year').val( $(this).html() );
+	table.column( 5 ).search( $(this).html() ).draw();
+	$('#s_year').focus();
+	$('#s_year').select();
+});
+
+$("body").on("click", "span.f_size", function(){
+	$('#s_size').val( $(this).html() );
+	table.column( 7 ).search( $(this).html() ).draw();
+	$('#s_size').focus();
+	$('#s_size').select();
 });
 
 $("body").on("click",".serial_edit",function(e){
@@ -104,10 +169,12 @@ $("body").on("click",".serial_edit",function(e){
 
 <body>
 
+
+
 <h1>Список велосипедів у магазині</h1>
 
 <br>
-
+<form action="/bicycle/store/price/print/" method="post" name="formBPrice">
 <table id="iTable" class="display compact" cellspacing="0" width="100%">
 <thead>
 	<tr>
@@ -126,6 +193,7 @@ $("body").on("click",".serial_edit",function(e){
 		<th>Кількість</th>
 		<th>Дата</th>
 		<th>Дія</th>
+		<th>Цінник</th>
 	</tr>
 </thead>
 
@@ -134,16 +202,22 @@ $("body").on("click",".serial_edit",function(e){
 <tr>
 	<td>{{forloop.counter}}</td>
 	<td><a href="/">{{type.id}}</a></td>
-	<td><a href="/">{{type.model__type__type}}</a></td>
-	<td><a href="/">{{type.model__brand__name}}</a></td>
+	<td><span class="f_type">{{type.model__type__type}}</span></td>
+	<td><span class="f_brand">{{type.model__brand__name}}</span></td>
 	<td><a href="/bicycle/photo/{{type.model.id}}">
 	{{type.model__model}} ({{type.model__color}})
 	</a></td>
-	<td>{{type.model__year|date:"Y"}}</td>
+	<td><span class="f_year">{{type.model__year|date:"Y"}}</span></td>
 		<td class="serial_edit" id_serial="{{ type.id }}"> {{type.serial_number}}</td>  
-		<td>{{type.size__inch}}" / {{type.size__cm}}cm </td>
+		<td><span class="f_size">{{type.size__inch}}" / {{type.size__cm}}cm</span></td>
 		<td>{{type.model__price}}</td>
-		<td>{{type.price}}</td>
+
+{% if request.user|has_group:"admin" %}
+		<td>{{type.price}}</td> 
+{% else %} 
+ 		<td></td>
+{% endif %}
+		
 		<td>{{type.currency}}</td>
 		<td align="center">{{type.realization}}</td>
 		{% ifequal type.count 1 %}
@@ -159,6 +233,9 @@ $("body").on("click",".serial_edit",function(e){
 		<td>{{type.date|date:"D d M Y"}}</td>
 		<td><a href="/bicycle-store/edit/{{ type.id }}">edit</a> <br>
 		<a href="/bicycle-store/delete/{{ type.id }}">delete</a></td>
+		<td align="center">
+		<input type="checkbox" id="bikeid_{{type.model__id}}" value="{{type.model__id}}" name="checkbox_{{ type.id }}"/ onclick="">	
+		</td>
 	</tr>
 {% endfor %}
 </tbody>
@@ -179,14 +256,16 @@ $("body").on("click",".serial_edit",function(e){
 		<th>{{bike_summ}}</th>
 		<th></th>
 		<th></th>
+		<th><input type="submit" value="Цінники" name="BPrice"></th>
 	</tr>
 </tfoot>
 
 </table>
+</form>
 
-{% load poll_extras %}
+
 {% orm_debug %}
-		
+	
 </body>
 
 		
