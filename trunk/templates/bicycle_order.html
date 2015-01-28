@@ -298,6 +298,10 @@ function id2name(){
 
 };
 
+$("#id_prepay").after('<select name="cash" id="id_cash">' +
+'<option value="2">Термінал pb.ua</option>' +
+'<option value="1" selected="selected">Готівка</option>' +
+'</select>');
 });
   
 
@@ -311,7 +315,4 @@ function id2name(){
 </table>
 <p><input type="submit" value="Save"></p>
 </form>
-
-<a href="/bicycle/view/">Каталог велосипедів</a>
-
 

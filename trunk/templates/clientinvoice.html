@@ -158,7 +158,9 @@ function sum() {
 //setInterval(sum, 100);
 
 $(document).ready(function() {
-	id2name();
+	if ($("#s_client").val() != '') {
+		id2name();
+	}
 });
 
 </script>

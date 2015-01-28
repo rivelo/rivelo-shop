@@ -938,10 +938,16 @@ def bicycle_order_add(request):
             done = form.cleaned_data['done']
             description = form.cleaned_data['description']
             user = None             
+            cashtype = None
             if request.user.is_authenticated():
-                user = request.user            
+                user = request.user
+              
+            if request.POST.has_key('cash'):
+                o_id = request.POST.get( 'cash' )            
+                cashtype = CashType.objects.get(id = o_id)
+                
             Bicycle_Order(client=client, model=model, size=size, price=price, sale=sale, currency=currency, date=date, done=done, description=description, prepay=prepay, user=user).save()
-            ClientCredits(client=client, date=date, price=prepay, description="Передоплата за "+str(model), user=user).save()                        
+            ClientCredits(client=client, date=date, price=prepay, description="Передоплата за "+str(model), user=user, cash_type=cashtype).save()                        
             return HttpResponseRedirect('/bicycle/order/view/')
     else:
         form = BicycleOrderForm(instance = a)
@@ -949,7 +955,8 @@ def bicycle_order_add(request):
     
 
 def bicycle_order_list(request):
-    list = Bicycle_Order.objects.all().order_by("-date")
+    #list = Bicycle_Order.objects.all().order_by("-date")
+    list = Bicycle_Order.objects.all().order_by("-date").values('model__id', 'model__model', 'model__brand__name', 'model__year', 'model__color', 'model__type__type', 'client__id', 'client__name', 'client__forumname', 'size', 'price', 'prepay', 'sale', 'date', 'done', 'id', 'currency__name')
     return render_to_response('index.html', {'order': list, 'weblink': 'bicycle_order_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
     
 
@@ -976,11 +983,23 @@ def bicycle_order_del(request, id):
     return HttpResponseRedirect('/bicycle/order/view/')    
 
 
-def bicycle_order_done(request, id):
-    obj = Bicycle_Order.objects.get(id=id)
-    obj.done = True
-    obj.save()
-    return HttpResponseRedirect('/bicycle/order/view/')
+def bicycle_order_done(request, id=None):
+    if request.is_ajax():
+        if request.method == 'POST':  
+            POST = request.POST  
+            if POST.has_key('border_id'):
+                o_id = request.POST.get( 'border_id' )
+                obj = Bicycle_Order.objects.get(id = o_id)
+                obj.done = not obj.done
+                res = obj.done 
+                obj.save()
+                return HttpResponse(res, mimetype="text/plain")
+                #search = Bicycle_Order.objects.filter(id=o_id).values('done', 'description')
+                #return HttpResponse(simplejson.dumps(list(search)), mimetype="application/json")
+
+    #            return HttpResponse(simplejson.dumps(list()), mimetype="application/json")
+    return HttpResponse("Помилка скрипта", mimetype="text/plain")
+    #return HttpResponseRedirect('/bicycle/order/view/')
 
 # lookup bicycle price
 def bicycle_lookup_ajax(request):

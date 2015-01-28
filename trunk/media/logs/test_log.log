@@ -3138,3 +3138,16 @@ Key = date - Value = 2015-01-14
 Key = user - Value = 7
 Key = ddate - Value = 2015-01-14 00:00:00
 Key = duser - Value = None
+2015-01-28 03:19:30.675000 >>> DELETE FROM TABLE bicycle_ order WHERE id = 93 
+Key = id - Value = 93
+Key = client - Value = 2
+Key = model - Value = 422
+Key = size - Value = 19
+Key = price - Value = 7330.0
+Key = sale - Value = 0
+Key = prepay - Value = 1000.0
+Key = currency - Value = 3
+Key = date - Value = 2015-01-28
+Key = done - Value = False
+Key = description - Value = 
+Key = user - Value = 4

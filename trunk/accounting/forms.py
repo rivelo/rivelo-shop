@@ -172,8 +172,11 @@ class BicycleSaleEditForm(forms.ModelForm):
 
 
 class BicycleOrderEditForm(forms.ModelForm):
-    cur_year = datetime.datetime.today().year
-    model = forms.ModelChoiceField(queryset = Bicycle.objects.filter(year__year=cur_year))
+#    cur_year = datetime.datetime.today().year
+    now = datetime.datetime.today()
+    resn = now - datetime.timedelta(days=365)
+#    model = forms.ModelChoiceField(queryset = Bicycle.objects.filter(year__year = cur_year-1))
+    model = forms.ModelChoiceField(queryset = Bicycle.objects.filter(year__gt = resn))
     client = forms.ModelChoiceField(queryset = Client.objects.all())
     size = forms.CharField(max_length=50)
     price = forms.FloatField(initial = 0)
