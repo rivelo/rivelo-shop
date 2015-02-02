@@ -3444,6 +3444,7 @@ def workshop_pricelist(request, pprint=False):
 
 #------------- Shop operation --------------
 def shopdailysales_add(request):
+    lastCasa = None
     now = datetime.datetime.now()
     if request.method == 'POST':
         form = ShopDailySalesForm(request.POST)
@@ -3477,7 +3478,10 @@ def shopdailysales_add(request):
         except ClientDebts.DoesNotExist:
             cashDeb = 0
 
-        lastCasa = ShopDailySales.objects.filter(date__year=now.year, date__month=now.month).order_by('-pk')[0]        
+        #lastCasa = ShopDailySales.objects.filter(date__year=now.year, date__month=now.month).order_by('-pk')[0]
+        #lastCasa = ShopDailySales.objects.filter(date__gt = now - datetime.timedelta(days=int(10))).order_by('-pk')[0]
+        lastCasa = ShopDailySales.objects.latest('date')
+                
         casa = cashCred - cashDeb
         form = ShopDailySalesForm(initial={'cash': casa, 'ocash': cashDeb, 'tcash':TcashCred})
     return render_to_response('index.html', {'form': form, 'weblink': 'shop_daily_sales.html', 'lastcasa': lastCasa}, context_instance=RequestContext(request, processors=[custom_proc]))
@@ -4874,6 +4878,19 @@ def storage_box_delete(request, id=None):
     obj.save()
     return HttpResponse("Виконано", mimetype="text/plain")
     #return HttpResponseRedirect('/workshop/view/')
+
+def storage_box_rename(request):
+    if request.is_ajax():
+        if request.method == 'POST':  
+            POST = request.POST  
+            if POST.has_key('old_name') and POST.has_key('new_name'):
+                box_name = request.POST.get( 'old_name' )
+                new_name = request.POST.get( 'new_name' )
+                obj = Catalog.objects.filter(locality = box_name).update(locality=new_name)
+#                obj.locality = ''
+#                obj.save()
+    return HttpResponse("Виконано", mimetype="text/plain")
+
 
 
 def storage_boxes(request):

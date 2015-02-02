@@ -439,6 +439,7 @@ urlpatterns += patterns('',
     (r'^storage/boxes/print/$', 'catalog.accounting.views.storage_box_list', {'pprint': True}),
     (r'^storage/box/(?P<boxname>[\w,.]+)/view/$', 'catalog.accounting.views.storage_box_list'),
     (r'^storage/box/delete/$', 'catalog.accounting.views.storage_box_delete'),
+    (r'^storage/box/rename/$', 'catalog.accounting.views.storage_box_rename'),
 
 ) 
 
