@@ -69,6 +69,26 @@
 </style>
 
 <script type="text/javascript">
+jQuery(document).ready(function ($) {
+
+jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+    "currency-html-pre": function ( a ) {
+        var x = a.replace( /<.*?>/g, "" );
+        a = (x==="-") ? 0 : x.replace( /[^\d\-\.]/g, "" );
+        return parseFloat( a );
+    },
+ 
+    "currency-html-asc": function ( a, b ) {
+        return a - b;
+    },
+ 
+    "currency-html-desc": function ( a, b ) {
+        return b - a;
+    }
+} );
+
+});
+
 (function( $ ) {
     $.widget( "custom.combobox", {
       _create: function() {
@@ -228,6 +248,12 @@ $(document).ready(function() {
                 "targets": [ 3 ],
                 "visible": false
             },
+            {
+                "targets": [ 9 ],
+                "visible": true,
+                "sType": "currency-html",
+            },
+            
             
         ],
     });
@@ -636,7 +662,7 @@ $(document).on("click", ".addprice", function(event) {
 {% else %}
 	<td id_type="{{type.catalog}}" cat_id="{{type.catalog__type__id}}">
 {% endif %}	
-		<a href="/invoice/category/{{type.catalog__type__id}}/view/">{{type.catalog__type__name}}</a>
+		<a href="/invoice/category/{{type.catalog__type__id}}/view/">{{type.catalog__type__name}} / {{type.type__name_ukr}}</a>
 	</td>
 	<td>
 	<a href="/invoice/manufacture/{{type.manufacturer__id}}/view/">{{type.manufacturer__name}}</a>
