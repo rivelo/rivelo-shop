@@ -1445,7 +1445,7 @@ def invoicecomponent_list(request, mid=None, cid=None, limit=0, focus=0):
 
     new_list = []
     sale_list = ClientInvoice.objects.filter(catalog__in=id_list).values('catalog', 'catalog__price').annotate(sum_catalog=Sum('count'))
-    cat_list = Catalog.objects.filter(pk__in=id_list).values('type__name', 'description', 'locality', 'id', 'manufacturer__id', 'manufacturer__name')        
+    cat_list = Catalog.objects.filter(pk__in=id_list).values('type__name_ukr', 'description', 'locality', 'id', 'manufacturer__id', 'manufacturer__name')        
     for element in list:
         element['balance']=element['sum_catalog']
         element['c_sale']=0
@@ -1459,6 +1459,7 @@ def invoicecomponent_list(request, mid=None, cid=None, limit=0, focus=0):
                 element['manufacturer__name1']=cat['manufacturer__name']
                 element['manufacturer__name']=cat['manufacturer__name']
                 element['locality']=cat['locality']
+                element['type__name_ukr']=cat['type__name_ukr']
                 element['description']=cat['description']
 
         if element['balance']!=0:
