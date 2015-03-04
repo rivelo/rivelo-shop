@@ -1,6 +1,43 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Денний звіт</title>
 
+	<link rel="stylesheet" href="/media/jquery-ui.min.css">
+	<script src="/media/jquery-ui.min.js"></script>	
+
+	<script src="/media/jquery.jeditable.mini.js" type="text/javascript" charset="utf-8"></script>
+
+<script language="JavaScript">
+$(document).ready(function() {
+ $('.cred_price').each(function() {
+ $(this).editable('/clientcredits/set/', {
+	 loadurl : '/cashtype/list/',
+	 loaddata : function(value, settings) {
+	   console.log("load this [tcash_id]= " + $(this).attr('tcash_id'));
+       return {sel: $(this).attr('tcash_id')};
+   	 },
+     loadtype: 'POST',
+     submitdata : function() {
+      	return {id : $(this).attr('id_cred')};
+    	 },
+     type   : 'select',
+     event: 'dblclick',
+     style   : 'inherit',
+     callback : function(value, settings) {
+         var obj = jQuery.parseJSON(value);
+         $(this).attr("tcash_id", obj[0]["cash_type__id"])
+         str = '<abbr title="'+ obj[0]["cash_type__name"] +'">'+ obj[0]["cash_type__name"] +'</abbr>';
+         $(this).html(str);
+         sel = obj[0]["cash_type__id"];
+     },     
+     tooltip   : 'Натисніть для редагування...',
+     submit : 'OK'
+ });
+ });
+
+});
+</script>
+
+
 <h1 style="display:inline;">Оборот коштів на {{date}} року </h1> <h2 style="display:inline; color: red;" >Каса: {{casa}} грн.</h2>
 
 	<table border=1>
@@ -20,7 +57,12 @@
 	<a href="/clientcredits/edit/{{cred.id}}">{{cred.id}}</a>
 	</td>
 	<td>
-	{{cred.date|time:"H:i"}}</a>
+	{% comment %}
+	{{cred.date|time:"H:i"}}
+	{% endcomment %}
+		<abbr title="[{{cred.user.username}}]">
+		{{cred.date|time:"H:i"}}
+		</abbr>	
 	</td>
 	<td>
 	{{cred.client}}
@@ -31,10 +73,16 @@
 	<td>
 	{{cred.description}}
 	</td>
+	<td class="cred_price" tcash_id="{{cred.cash_type.id}}" id_cred={{cred.id}} value="{{cred.price}}">
+	<abbr title="{{cred.cash_type.name}}">
+	{{cred.cash_type}}
+	</abbr>
+	</td>
+<!-- 
 	<td>
 	{{cred.cash_type}}
 	</td>
-	
+ -->	
 {% endfor %}
 	</tr>
 	<tr>

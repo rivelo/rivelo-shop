@@ -351,7 +351,7 @@ class ClientOrder(models.Model):
         #return self.origin_id 
 
     class Meta:
-        ordering = ["status", "client", "-date", "catalog"]    
+        ordering = ["status", "-date", "client"]    
 
 
 #my costs (Затрати)
@@ -668,7 +668,7 @@ class Rent(models.Model):
         return self.catalog 
 
     class Meta:
-        ordering = ["catalog", "date_start", "date_end"]    
+        ordering = ["status", "-date_start", "date_end"]    
     
     
 #--- Цінники ---
