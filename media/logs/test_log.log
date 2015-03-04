@@ -3151,3 +3151,112 @@ Key = date - Value = 2015-01-28
 Key = done - Value = False
 Key = description - Value = 
 Key = user - Value = 4
+2015-02-18 02:26:19.491000 >>> DELETE FROM TABLE work day WHERE id = 10 
+Key = id - Value = 10
+Key = date - Value = 2015-02-16
+Key = user - Value = 4
+Key = status - Value = 0
+Key = description - Value = пішов з обіду
+2015-02-25 13:13:16.453000 >>> DELETE FROM TABLE bicycle_ sale WHERE id = 590 
+Key = id - Value = 590
+Key = model - Value = 624
+Key = client - Value = 1315
+Key = price - Value = 15540.0
+Key = currency - Value = 3
+Key = sale - Value = 0
+Key = date - Value = 2015-02-25
+Key = service - Value = False
+Key = description - Value = 
+Key = user - Value = 5
+Key = sum - Value = 15540.0
+Key = debt - Value = 16335
+2015-02-25 23:48:09.375000 >>> DELETE FROM TABLE client invoice WHERE id = 27313 
+Key = id - Value = 27313
+Key = client - Value = 76
+Key = catalog - Value = 2289
+Key = count - Value = 10
+Key = price - Value = 35.0
+Key = sum - Value = 297.5
+Key = currency - Value = 3
+Key = sale - Value = 15
+Key = pay - Value = 297.5
+Key = date - Value = 2015-02-24 19:43:37
+Key = description - Value = 
+length:10.0
+Key = user - Value = 5
+2015-02-25 23:48:44.906000 >>> DELETE FROM TABLE client invoice WHERE id = 27315 
+Key = id - Value = 27315
+Key = client - Value = 76
+Key = catalog - Value = 634
+Key = count - Value = 5
+Key = price - Value = 40.0
+Key = sum - Value = 170.0
+Key = currency - Value = 3
+Key = sale - Value = 15
+Key = pay - Value = 170.0
+Key = date - Value = 2015-02-24 19:43:16
+Key = description - Value = 
+length:5.0
+Key = user - Value = 5
+2015-02-25 23:49:03.734000 >>> DELETE FROM TABLE client debts WHERE id = 16331 
+Key = id - Value = 16331
+Key = client - Value = 76
+Key = date - Value = 2015-02-24 19:48:44
+Key = price - Value = 854.25
+Key = cash - Value = False
+Key = description - Value = Тросик гальмівний Alligator супер полірована оцинковка (бухта 100шт); Тросик тормозной Alligator нерж. полированный бухта 100шт ; Тросик переключения Alligator нерж. полированный бухта 100шт ; Грипсы FireEye Honeycomb с замками ; Рулевая A-H Al/Fe 28,6мм -1 1/8", черн  ; 
+Key = user - Value = 5
+2015-02-25 23:49:19.875000 >>> DELETE FROM TABLE client invoice WHERE id = 27312 
+Key = id - Value = 27312
+Key = client - Value = 76
+Key = catalog - Value = 50
+Key = count - Value = 1
+Key = price - Value = 150.0
+Key = sum - Value = 127.5
+Key = currency - Value = 3
+Key = sale - Value = 15
+Key = pay - Value = 127.5
+Key = date - Value = 2015-02-24 19:39:34
+Key = description - Value = 
+Key = user - Value = 5
+2015-02-25 23:50:13.515000 >>> DELETE FROM TABLE client invoice WHERE id = 27314 
+Key = id - Value = 27314
+Key = client - Value = 76
+Key = catalog - Value = 8126
+Key = count - Value = 5
+Key = price - Value = 20.0
+Key = sum - Value = 85.0
+Key = currency - Value = 3
+Key = sale - Value = 15
+Key = pay - Value = 85.0
+Key = date - Value = 2015-02-24 19:43:07
+Key = description - Value = 
+length:5.0
+Key = user - Value = 5
+2015-02-25 23:50:27.265000 >>> DELETE FROM TABLE client invoice WHERE id = 27311 
+Key = id - Value = 27311
+Key = client - Value = 76
+Key = catalog - Value = 2112
+Key = count - Value = 1
+Key = price - Value = 205.0
+Key = sum - Value = 174.25
+Key = currency - Value = 3
+Key = sale - Value = 15
+Key = pay - Value = 174.25
+Key = date - Value = 2015-02-24 19:35:04
+Key = description - Value = 
+Key = user - Value = 5
+2015-02-26 01:46:33.125000 >>> DELETE FROM TABLE catalog WHERE id = 6661 
+Key = id - Value = 6661
+Key = ids - 2015-02-26 01:47:56.437000 >>> DELETE FROM TABLE catalog WHERE id = 6661 
+Key = id - Value = 6661
+Key = ids - 2015-02-26 01:49:48.812000 >>> DELETE FROM TABLE catalog WHERE id = 6661 
+Key = id - Value = 6661
+Key = ids - 2015-02-27 03:33:49.921000 >>> DELETE FROM TABLE client debts WHERE id = 16362 
+Key = id - Value = 16362
+Key = client - Value = 528
+Key = date - Value = 2015-02-26 16:28:37
+Key = price - Value = 40.0
+Key = cash - Value = False
+Key = description - Value = камера
+Key = user - Value = 7

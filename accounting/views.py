@@ -525,7 +525,7 @@ def bicycle_store_list(request, all=False):
     if all==True:
         list = Bicycle_Store.objects.all()
     else:
-        list = Bicycle_Store.objects.filter(count=1).values('model__model', 'model__year', 'model__brand__name', 'model__price', 'model__color', 'model__id', 'size__name', 'size__cm', 'size__inch', 'model__type__type', 'serial_number', 'size', 'price', 'currency', 'count', 'description', 'date', 'id')
+        list = Bicycle_Store.objects.filter(count=1).values('model__model', 'model__sale', 'model__year', 'model__brand__name', 'model__price', 'model__color', 'model__id', 'size__name', 'size__cm', 'size__inch', 'model__type__type', 'serial_number', 'size', 'price', 'currency', 'count', 'description', 'date', 'id')
         
     price_summ = 0
     bike_summ = 0
@@ -762,13 +762,15 @@ def bicycle_sale_list(request, year=False, month=False, id=None):
     else:
        list = Bicycle_Sale.objects.filter(date__year=year, date__month=month).order_by('date')
        
+    psum = 0
     price_summ = 0
     service_summ = 0
     for item in list:
         price_summ = price_summ + item.price
+        psum = psum + item.sum
         if item.service == False:
             service_summ =  service_summ + 1
-    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_sale_list.html', 'price_summ':price_summ, 'service_summ':service_summ, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'bicycles': list, 'weblink': 'bicycle_sale_list.html', 'price_summ':price_summ, 'pay_sum':psum, 'service_summ':service_summ, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def bicycle_sale_list_by_brand(request, year=False, month=False, id=None):
@@ -1376,10 +1378,13 @@ def invoice_new_item(request):
 
 #-------------- InvoiceComponentList -----------------------
 def invoicecomponent_add(request, mid=None, cid=None):
-    company_list = Manufacturer.objects.all()
+#    company_list = Manufacturer.objects.all()
+    price = 0
     if cid<>None:
-        #a = InvoiceComponentList(date=datetime.date.today(), price=0, count=1, currency=Currency.objects.get(id=2), invoice=DealerInvoice.objects.get(id=187), catalog=Catalog.objects.get(id=cid))        
-        a = InvoiceComponentList(date=datetime.date.today(), price=0, count=1, currency=Currency.objects.get(id=2), invoice=DealerInvoice.objects.get(id=187), catalog=Catalog.objects.get(id=cid))
+        #a = InvoiceComponentList(date=datetime.date.today(), price=0, count=1, currency=Currency.objects.get(id=2), invoice=DealerInvoice.objects.get(id=187), catalog=Catalog.objects.get(id=cid))
+        c = Catalog.objects.get(id=cid)        
+        a = InvoiceComponentList(date=datetime.date.today(), price=0, count=1, currency=Currency.objects.get(id=2), invoice=DealerInvoice.objects.get(id=187), catalog = c)
+        price = c.price
     else:    
         a = InvoiceComponentList(date=datetime.date.today(), price=0, count=1, currency=Currency.objects.get(id=2), invoice=DealerInvoice.objects.get(id=187))
     if request.method == 'POST':
@@ -1402,7 +1407,8 @@ def invoicecomponent_add(request, mid=None, cid=None):
             return HttpResponseRedirect('/invoice/list/10/view/')
     else:
         form = InvoiceComponentListForm(instance = a, test1=mid, catalog_id=cid)
-    return render_to_response('index.html', {'form': form, 'weblink': 'invoicecomponent.html', 'company_list': company_list, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+    return render_to_response('index.html', {'form': form, 'weblink': 'invoicecomponent.html', 'price_ua': price, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))    
+#    return render_to_response('index.html', {'form': form, 'weblink': 'invoicecomponent.html', 'company_list': company_list, 'price_ua': price, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def invoicecomponent_list(request, mid=None, cid=None, limit=0, focus=0):
@@ -2116,7 +2122,7 @@ def catalog_type_list(request, id):
 
 def catalog_delete(request, id):
     obj = Catalog.objects.get(id=id)
-    del_logging(obj)
+    #del_logging(obj)
     obj.delete()
     return HttpResponseRedirect('/catalog/search/')
 
@@ -2806,7 +2812,8 @@ def client_invioce_return_add(request, id):
 
 
 def client_order_list(request):
-    list = ClientOrder.objects.all()    
+    #list = ClientOrder.objects.filter(Q(status = False) | Q(date__year__gt = 2015))
+    list = ClientOrder.objects.filter((Q(status = False)) | Q(date__gt=now-datetime.timedelta(days=360)))
     return render_to_response('index.html', {'c_order': list, 'weblink': 'client_order_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))    
 
 
@@ -2832,6 +2839,7 @@ def client_order_add(request, cid=None):
             currency = form.cleaned_data['currency']
             pay = form.cleaned_data['pay']
             date = form.cleaned_data['date']
+            cash_type = form.cleaned_data['cash_type']
             user = None #form.cleaned_data['user_id']
             if request.user.is_authenticated():
                 user = request.user
@@ -2839,7 +2847,7 @@ def client_order_add(request, cid=None):
                 s = u"Аванс - " + catalog.name + "(" + description + ")"
             else:
                 s = u"Аванс - " + description 
-            ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=pay, description=s, user=user)
+            ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=pay, description=s, cash_type=cash_type, user=user)
             ccred.save()
 
             ClientOrder(client=client, catalog=catalog, count=count, sum=sum, price=price, currency=currency, pay=pay, date=date, description=description, user=user, credit=ccred).save()
@@ -2862,12 +2870,16 @@ def client_order_edit(request, id):
                 search = ClientOrder.objects.filter(id = id).values('status')
                 return HttpResponse(simplejson.dumps(list(search)))
     
+    cash_type = CashType.objects.get(name=u"Готівка")
+    
     a = ClientOrder.objects.get(pk=id)
     if request.method == 'POST':
         form = ClientOrderForm(request.POST, instance=a)
+
         if form.is_valid():
             pay = form.cleaned_data['pay']
             post = form.cleaned_data['post_id']
+            cash_type = form.cleaned_data['cash_type']
             catalog = None
             if post:
                 catalog = Catalog.objects.get(id=post)
@@ -2876,10 +2888,13 @@ def client_order_edit(request, id):
             a.save()
             cred = ClientCredits.objects.get(id = a.credit.id)
             cred.price = pay
+#            cred.cash_type = CashType.objects.get(name=u"Готівка")
+            cred.cash_type = cash_type
             cred.save()
             return HttpResponseRedirect('/client/order/view/')
     else:
         form = ClientOrderForm(instance=a)
+
     return render_to_response('index.html', {'form': form, 'weblink': 'clientorder.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
@@ -3313,6 +3328,9 @@ def workticket_list(request, year=None, month=None, all=False, status=None):
     if status == '1':
         #ws = WorkStatus.objects.get(id=status)
         list = WorkTicket.objects.filter(status__id__in=[status,2])
+    if status == '4':
+        list = WorkTicket.objects.filter(status__id__in=[status,4])
+        
     
     return render_to_response('index.html', {'workticket':list, 'sel_year':year, 'sel_month':int(month), 'weblink': 'workticket_list.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
@@ -4367,10 +4385,11 @@ def user_workshop_report(request, month=None, year=None, day=None, user_id=None)
     #user_id = 5; #choper
     #user_id = 6; #andre
     #user_id = 4; #ygrik
+    #user_id = 7; #Vadymyr
 
     if request.user.is_authenticated():
         user_id = request.user.id
-        user_id = 5;
+        #user_id = 4;
     else:
         user_id = None
     
@@ -4411,6 +4430,42 @@ def user_workshop_report(request, month=None, year=None, day=None, user_id=None)
     user = User.objects.get(id=user_id)
             
     return render_to_response('index.html', {'sel_user':user, 'sel_year':year, 'sel_month':month, 'sel_day':day, 'month_days':days, 'workshop': cinvoices, 'sumall':psum, 'sum_salary':psum*0.4, 'countall':scount, 'weblink': 'report_workshop_byuser.html', 'view': True, 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+
+
+def all_user_salary_report(request, month=None, year=None, day=None):
+   
+    if year == None:
+        year = datetime.datetime.now().year
+    if month == None:
+        month = datetime.datetime.now().month
+
+    if day == None:
+        day = datetime.datetime.now().day
+        w_list = WorkShop.objects.filter(date__year=year, date__month=month, date__day=day).values('user', 'user__username', 'user').annotate(total_price=Sum('price'))
+        c_list = ClientInvoice.objects.filter(date__year=year, date__month=month, date__day=day).values('user', 'user__username').annotate(total_price=Sum('sum'))
+        b_list = Bicycle_Sale.objects.filter(date__year=year, date__month=month, date__day=day).values('user', 'user__username').annotate(total_price=Sum('sum'))        
+    else:
+        if day == 'all':
+            w_list = WorkShop.objects.filter(date__year=year, date__month=month).values('user', 'user__username', 'user').annotate(total_price=Sum('price'))
+            c_list = ClientInvoice.objects.filter(date__year=year, date__month=month).values('user', 'user__username').annotate(total_price=Sum('sum'))
+            b_list = Bicycle_Sale.objects.filter(date__year=year, date__month=month).values('user', 'user__username').annotate(total_price=Sum('sum'))
+        else:
+            w_list = WorkShop.objects.filter(date__year=year, date__month=month, date__day=day).values('user', 'user__username', 'user').annotate(total_price=Sum('price'))
+            c_list = ClientInvoice.objects.filter(date__year=year, date__month=month, date__day=day).values('user', 'user__username').annotate(total_price=Sum('sum'))
+            b_list = Bicycle_Sale.objects.filter(date__year=year, date__month=month, date__day=day).values('user', 'user__username').annotate(total_price=Sum('sum'))
+    
+    bsum = 0
+    csum = 0
+    wsum = 0
+    for b in b_list:
+        bsum = bsum + b['total_price']
+    for c in c_list:
+        csum = csum + c['total_price']
+    for w in w_list:
+        wsum = wsum + w['total_price']
+
+    
+    return render_to_response('index.html', {'sel_year':year, 'sel_month':month, 'workshop':w_list, 'cinvoice': c_list, 'bicycle_list':b_list, 'bike_sum': bsum, 'c_sum': csum, 'w_sum': wsum, 'weblink': 'report_salary_all_user.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def rent_add(request):
@@ -4464,7 +4519,7 @@ def rent_edit(request, id):
 
 
 def rent_list(request):
-    list = Rent.objects.all()    
+    list = Rent.objects.filter((Q(status = False)) | Q(date_end__gt=now-datetime.timedelta(days=360)))    
     return render_to_response('index.html', {'rent': list, 'weblink': 'rent_list.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))    
 
 

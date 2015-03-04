@@ -114,7 +114,8 @@ $(".w_desc").each(function() {
 	{% endfor %}
 	
 	<a href="/workticket/all/view" class="non">Всі</a>,
-	<a href="/workticket/status/1/view/" class="non">Прийняті</a>
+	<a href="/workticket/status/1/view/" class="non">Прийняті</a>,
+	<a href="/workticket/status/4/view/" class="non">Невидані</a>
 </h2>    
 
 
@@ -167,7 +168,7 @@ $(".w_desc").each(function() {
 	</td>	
 	<td>
 
-	<span class="editable" id="{{type.status.id}}" style="display: inline" id_workticket="{{type.id}}" title="click to edit...">       
+	<span class="editable" id="{{type.status.id}}" style="display: inline" id_workticket="{{type.id}}" >       
 	{{type.status}}
 	</span>
 	

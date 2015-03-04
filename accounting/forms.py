@@ -399,17 +399,19 @@ class ClientInvoiceForm(forms.ModelForm):
 
 
 class ClientOrderForm(forms.ModelForm):
-    client = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete'}), queryset = Client.objects.all(), empty_label="")
+    #client = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete'}), queryset = Client.objects.all(), empty_label="")
+    client = forms.ModelChoiceField(widget=forms.HiddenInput(), queryset = Client.objects.all(), empty_label="")
 #    catalog = forms.ModelChoiceField(widget=forms.Select(attrs={'class':'autocomplete'}), queryset = Catalog.objects.all())
 #    catalog = forms.CharField(label='Товар', widget=forms.TextInput(attrs={'width':'300px'}), required=True)    
     #catalog = forms.ModelChoiceField(queryset = '')    
     post_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)    
     description = forms.CharField(label='Опис товару', widget=forms.Textarea(), required=False)    
-    count = forms.IntegerField(min_value=0, initial = 1)
-    price = forms.FloatField(initial=0)
-    sum = forms.FloatField(initial=0)
-    currency = forms.ModelChoiceField(queryset = Currency.objects.all())
-    pay = forms.FloatField(initial=0)
+    count = forms.IntegerField(min_value=0, initial = 1, label='Кількість')
+    price = forms.FloatField(initial=0, label='Ціна')
+    sum = forms.FloatField(initial=0, label='Сума')
+    currency = forms.ModelChoiceField(queryset = Currency.objects.all(), label='Валюта')
+    pay = forms.FloatField(initial=0, label='Передоплата')
+    cash_type = forms.ModelChoiceField(queryset = CashType.objects.all())
     date = forms.DateTimeField(initial = datetime.datetime.now(), label='Дата',  input_formats=['%d/%m/%Y %H:%M:%S', '%d/%m/%Y %H:%M:%S'], widget=forms.DateTimeInput(format='%d/%m/%Y %H:%M:%S'))
     status = forms.BooleanField(initial = False, required=False)
 #===============================================================================
