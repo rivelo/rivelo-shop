@@ -9,12 +9,16 @@ $(document).ready( function() {
 	var wprev_day = parseFloat($("#prev_day").attr("val")) + parseFloat($("#id_cash").attr("value"));
 	//$("#prev_day").after("<b style='color:red'>Сума = "+ wprev_day +"</b>");
 	$("#id_tcash").after("<b style='color:red'>Сума в касі = "+ wprev_day +" грн</b>");
+	
+	$("#id_price").after("<b style='color:red' id='day_sum'>Каса за день = "+ 0 +" грн.</b>");
 
 
 $("#id_price").change(function() {
 	console.log("work");
-	var casa_day = parseFloat($("#prev_day").attr("val")) + parseFloat($("#id_cash").attr("value")) - parseFloat($("#id_price").attr("value"));
-  	$("#id_price").after("<b style='color:red'>Каса за день = "+ casa_day +" грн.</b>");
+	var casa_day = parseFloat($("#prev_day").attr("val")) + parseFloat($("#id_cash").attr("value")) - parseFloat($("#id_price").val());
+//	$("#id_price").after("<b style='color:red' id="day_sum">Каса за день = "+ casa_day +" грн.</b>");
+	$("#day_sum").html("Каса за день = "+ casa_day +" грн.")
+
 });
 
 })
