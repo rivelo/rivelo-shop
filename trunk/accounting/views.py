@@ -1372,7 +1372,10 @@ def invoice_new_item(request):
     
     di = DealerInvoice.objects.filter(received = False).values_list("id", flat=True)
     
-    list_comp = InvoiceComponentList.objects.filter(invoice__date__year = date.year, invoice__date__month = date.month, invoice__id__in = di) #(invoice = list[1].id)
+#    list_comp = InvoiceComponentList.objects.filter(invoice__date__year = date.year, invoice__date__month = date.month, invoice__id__in = di) #(invoice = list[1].id)
+    nday = 10
+    list_comp = InvoiceComponentList.objects.filter(invoice__date__gt = date - datetime.timedelta(days=int(nday)), invoice__id__in = di).order_by("invoice__id")    
+    #date__gt=now-datetime.timedelta(days=int(nday))
     return render_to_response('index.html', {'dinvoice_list': list_comp, 'weblink': 'dealer_invoice_new_item.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))  
 
 

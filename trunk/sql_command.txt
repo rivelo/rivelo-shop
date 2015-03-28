@@ -102,4 +102,8 @@ update accounting_clientinvoice set client_id=11 where client_id=234;
 update accounting_clientdebts set client_id=11 where client_id=234;
 update accounting_clientcredits set client_id=11 where client_id=234;
 update accounting_bicycle_sale set client_id=11 where client_id=234;
+
+#add currency price 
+alter table accounting_catalog add `c_price` double precision;
+
  

@@ -128,6 +128,7 @@ class Catalog(models.Model):
     sale_to = models.DateField(auto_now_add=True)
     color = models.CharField(max_length=255, blank=True, null=True)
     price = models.FloatField()
+#    c_price = models.FloatField(blank=True, null=True)
     currency = models.ForeignKey(Currency)
     sale = models.FloatField()
     country = models.ForeignKey(Country, null=True)
