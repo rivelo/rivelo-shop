@@ -1379,6 +1379,19 @@ def invoice_new_item(request):
     return render_to_response('index.html', {'dinvoice_list': list_comp, 'weblink': 'dealer_invoice_new_item.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))  
 
 
+def invoice_miss_stuff(request):
+    date=datetime.date.today()
+    start_date = datetime.date(date.year, 1, 1)
+    end_date = datetime.date(date.year, 3, 31)    
+    
+    di = DealerInvoice.objects.filter(received = False).values_list("id", flat=True)
+    
+    nday = 180
+    list_comp = InvoiceComponentList.objects.filter(invoice__date__gt = date - datetime.timedelta(days=int(nday)), invoice__id__in = di).exclude(rcount = F('count')).order_by("invoice__id")    
+    return render_to_response('index.html', {'dinvoice_list': list_comp, 'weblink': 'dealer_invoice_new_item.html', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))  
+    
+    
+
 #-------------- InvoiceComponentList -----------------------
 def invoicecomponent_add(request, mid=None, cid=None):
 #    company_list = Manufacturer.objects.all()
@@ -1717,10 +1730,11 @@ def invoice_import(request):
         ids_list.append(row[0])
         try:
             cat = Catalog.objects.get(ids = id)
-            c = Currency.objects.get(id = row[8])
-            inv = DealerInvoice.objects.get(id = row[9])
-            InvoiceComponentList(invoice = inv, catalog = cat, count = row[6], price= row[7], currency = c, date= now).save()
-            cat.count = cat.count + int(row[6])
+            cat.price = row[6]
+            c = Currency.objects.get(id = row[4])
+            inv = DealerInvoice.objects.get(id = row[5])
+            InvoiceComponentList(invoice = inv, catalog = cat, count = row[2], price= row[3], currency = c, date= now).save()
+            cat.count = cat.count + int(row[2])
             cat.save()
             #if row[6]: 
             #    cat.price = row[6]
@@ -1961,7 +1975,7 @@ def catalog_import(request):
             t = Type.objects.get(id=row[3])
             c = Currency.objects.get(id = row[11])
             country = Country.objects.get(id=row[5])                                        
-            Catalog(ids=row[0], name=row[1], manufacturer=m, type=t, year=2014, color=row[4], price=row[10], currency=c, sale=0, country=country, count = 0).save()          
+            Catalog(ids=row[0], name=row[1], manufacturer=m, type=t, year=2015, color=row[4], price=row[10], currency=c, sale=0, country=country, count = 0).save()          
             spamwriter.writerow([row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]])
         #return HttpResponse("Виконано", mimetype="text/plain")
 

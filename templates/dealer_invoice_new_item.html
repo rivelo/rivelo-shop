@@ -27,10 +27,27 @@ for(var i = 0; i < All.elements.length; ++i) {
 }
 
 $(function() {
-    $( "#accordion" ).accordion({
-    	heightStyle: "content",
-    	collapsible: true
-    });
+//    $( "#accordion" ).accordion({
+//    	heightStyle: "content",
+//    	collapsible: true,
+//    	active: false
+//    });
+
+$("#accordion").addClass("ui-accordion ui-accordion-icons ui-widget ui-helper-reset")
+  .find("h3")
+    .addClass("ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-corner-bottom")
+    .hover(function() { $(this).toggleClass("ui-state-hover"); })
+    .prepend('<span class="ui-icon ui-icon-triangle-1-e"></span>')
+    .click(function() {
+      $(this).find("> .ui-icon").toggleClass("ui-icon-triangle-1-e ui-icon-triangle-1-s").end()
+        .next().toggleClass("ui-accordion-content-active").slideToggle();
+        return false;
+    })
+    .next()
+      .addClass("ui-accordion-content  ui-helper-reset ui-widget-content ui-corner-bottom")
+  .hide();
+      
+    
     $( ".selector" ).accordion({ animate: false });
     $('#ui-id-1').remove();
     $('#ui-id-2').remove();
@@ -65,12 +82,35 @@ $(function() {
      	 }
      });
 
+$("body").on("click",".locality_edit",function(e){ 	    
+//$('.locality_edit').each(function() {
+  $(this).editable('/catalog/edit/', {
+        loadurl : '/catalog/get/locality/',
+     	loadtype: 'POST',
+		loaddata : {sel_id: $(this).attr('id_locality')},     	
+	   	 id   : 'id',
+         name : 'locality',
+      
+         submitdata : function() {
+      	 	return {id : $(this).attr('id_locality')};
+    	 },
+         indicator : 'Saving...',
+         select : true,
+         event : "dblclick",
+         style : "inherit",
+         tooltip   : 'dblClick to edit...',
+         callback : function(value, settings) {
+         	$(this).html(value);
+     	 }
+ }).trigger("focus");    
+});
 
 });   
 </script>
 <br>    
 
-<div id="accordion">
+<div id="accordion" >
+
 <h3>EMPTY{{x.invoice.origin_id}}</h3> <div> <table>
 <tr>
 	<th>#</th>
@@ -83,9 +123,10 @@ $(function() {
 </tr>
 
 {% for x in dinvoice_list %}
-{% ifchanged x.invoice %}  
-</table></div> 
-<h3>{{x.invoice.origin_id}}</h3> <div> <table>
+{% ifchanged x.invoice %}
+  
+</table></div>
+<h3>{{x.invoice.origin_id}}</h3> <div class="content"> <table>
 <tr>
 	<th>#</th>
    	<th>[ID] - Назва </th>
@@ -95,6 +136,7 @@ $(function() {
    	<th style="width:80px">Наявна кількість</th>
    	<th>Ціна</th>
    	<th>Користувач</th>
+   	<th>Ящик</th>
 </tr> 
 {% endifchanged %}
 {% if x.count == x.rcount %}
@@ -129,6 +171,9 @@ $(function() {
 
 <td align="center">{{x.catalog.price}} грн.</td>
 <td id="userid{{x.id}}" align="center">{{x.user}}</td>
+<td align="center" class="locality_edit" id_locality="{{x.catalog.id}}">
+{{x.catalog.locality}}
+</td>
 </tr>
 
 {% endfor %}
