@@ -141,6 +141,7 @@ urlpatterns = patterns('',
     (r'^dealer/invoice/import/$', 'catalog.accounting.views.invoice_import'),
     (r'^dealer/invoice/new/$', 'catalog.accounting.views.invoice_new_item'),
     (r'^dealer/invoice/new/edit/$', 'catalog.accounting.views.invoice_new_edit'),
+    (r'^dealer/invoice/miss/$', 'catalog.accounting.views.invoice_miss_stuff'),
     
     (r'^dealer/add/$', 'catalog.accounting.views.dealer_add'),
     (r'^dealer/view/$', 'catalog.accounting.views.dealer_list'),
