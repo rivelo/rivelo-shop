@@ -106,4 +106,6 @@ update accounting_bicycle_sale set client_id=11 where client_id=234;
 #add currency price 
 alter table accounting_catalog add `c_price` double precision;
 
+#RENT
+alter table accounting_rent add `cred_id` integer ;
  
