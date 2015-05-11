@@ -664,7 +664,8 @@ class Rent(models.Model):
     status = models.BooleanField(default=False, verbose_name="Прокат?")
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
     description = models.TextField(blank = True, null = True)
-            
+    cred = models.ForeignKey(ClientCredits, blank=True, null=True)
+                
     def __unicode__(self):
         return self.catalog 
 

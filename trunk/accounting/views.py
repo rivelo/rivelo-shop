@@ -1730,7 +1730,8 @@ def invoice_import(request):
         ids_list.append(row[0])
         try:
             cat = Catalog.objects.get(ids = id)
-            cat.price = row[6]
+            if row[6] > 0:
+                cat.price = row[6]
             c = Currency.objects.get(id = row[4])
             inv = DealerInvoice.objects.get(id = row[5])
             InvoiceComponentList(invoice = inv, catalog = cat, count = row[2], price= row[3], currency = c, date= now).save()
@@ -2650,6 +2651,15 @@ def client_invoice_edit(request, id):
             if request.user.is_authenticated():
                 user = request.user
             ClientInvoice(id=id, client=client, catalog=catalog, count=count, sum=sum, price=price, currency=currency, sale=sale, pay=pay, date=date, description=description, user=user).save()
+
+            if pay == sum:
+                desc = catalog.name
+                ct = CashType.objects.get(id=1)
+                ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=pay, description=desc, user=user, cash_type=ct)
+                ccred.save()
+                cdeb = ClientDebts(client=client, date=datetime.datetime.now(), price=sum, description=desc, user=user, cash=0)
+                cdeb.save()
+            
             return HttpResponseRedirect('/client/invoice/view/')
     else:
         form = ClientInvoiceForm(instance = a, catalog_id = cat_id)
@@ -4503,7 +4513,14 @@ def rent_add(request):
             if request.user.is_authenticated():
                 user = request.user
 
-            Rent(catalog=catalog, client=client, date_start=date_start, date_end=date_end, count=count, deposit=deposit, status=status, description=description, user=user).save()
+            r = Rent(catalog=catalog, client=client, date_start=date_start, date_end=date_end, count=count, deposit=deposit, status=status, description=description, user=user)
+            r.save()
+            cash_type = CashType.objects.get(id = 1) # готівка
+            ccred = ClientCredits(client=client, date=datetime.datetime.now(), price=deposit, description="Завдаток за прокат "+str(catalog), user=user, cash_type=cash_type)
+            ccred.save()
+            r.cred = ccred
+            r.save()
+            
             return HttpResponseRedirect('/rent/view/')
     else:
         form = RentForm(instance = a)
@@ -4529,10 +4546,20 @@ def rent_edit(request, id):
         form = RentForm(request.POST, instance=a)
         if form.is_valid():
             form.save()
+            try:
+                ccred = ClientCredits.objects.get(pk=a.cred.id)
+                ccred.price = form.cleaned_data['deposit']
+                if request.user.is_authenticated():
+                    user = request.user
+                    ccred.user = user
+                ccred.save()
+            except:
+                pass
+
             return HttpResponseRedirect('/rent/view/')
     else:
         form = RentForm(instance=a)
-    return render_to_response('index.html', {'form': form, 'weblink': 'rent.html'})
+    return render_to_response('index.html', {'form': form, 'weblink': 'rent.html'}, context_instance=RequestContext(request, processors=[custom_proc]))
 
 
 def rent_list(request):
@@ -4544,6 +4571,12 @@ def rent_delete(request, id):
     if auth_group(request.user, 'admin')==False:
         return HttpResponseRedirect('/preorder/view/')
     obj = Rent.objects.get(id=id)
+    try:
+        ccred = ClientCredits.objects.get(pk=obj.cred.id)
+        ccred.delete()
+    except:
+        pass
+
     del_logging(obj)
     obj.delete()
     return HttpResponseRedirect('/rent/view/')
