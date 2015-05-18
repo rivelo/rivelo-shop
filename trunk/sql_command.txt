@@ -108,4 +108,6 @@ alter table accounting_catalog add `c_price` double precision;
 
 #RENT
 alter table accounting_rent add `cred_id` integer ;
+
+alter table accounting_clientreturn add `cash` bool NOT NULL;
  

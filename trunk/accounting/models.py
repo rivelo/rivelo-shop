@@ -730,7 +730,7 @@ class ClientReturn(models.Model):
     msg = models.TextField(blank = True, null = True)
     date = models.DateTimeField(auto_now_add=True, blank=False, null=False)
     user = models.ForeignKey(User, blank=False, null=False)
-    #cash = models.BooleanField(blank=False, null=False, default = True)
+    cash = models.BooleanField(blank=False, null=False, default = True)
     
     def __unicode__(self):
         return u'%s' % self.msg
