@@ -2817,7 +2817,10 @@ def client_invioce_return_add(request, id):
                     res_count = 0
                     sum = ci.sum / ci.count * int(count)
                 if cash == "false":
+                    ClientCredits(client=ci.client, date=now, price=sum, description="Повернення/обмін: " + str(ci.catalog), cash_type=CashType.objects.get(name=u"Повернення"), user=request.user).save()
+                if cash == "true":
                     ClientCredits(client=ci.client, date=now, price=sum, description="Повернення/обмін: " + str(ci.catalog), cash_type=CashType.objects.get(name=u"Повернення"), user=request.user).save() 
+                    ClientDebts(client=ci.client, date=now, price=sum, description="Повернення/обмін: " + str(ci.catalog), cash=True, user=request.user).save() 
                 cat = Catalog.objects.get(id = ci.catalog.id)
                 cat.count = cat.count + int(count)
                 cat.save() 
