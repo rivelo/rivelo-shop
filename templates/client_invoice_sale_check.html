@@ -116,8 +116,18 @@
 
 </p>
 
+{% if is_workshop %}
+
+{% if print %}
+<a href="/client/workshop/check/">Версія для друку</a>
+<a href="/client/workshop/check/email/">Відправити на Email</a>
+{% endif %}
+
+{% else %}
+
 {% if print %}
 <a href="/client/invoice/check/">Версія для друку</a>
 <a href="/client/invoice/check/email/">Відправити на Email</a>
 {% endif %}
 
+{% endif %}

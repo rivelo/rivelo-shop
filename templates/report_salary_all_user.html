@@ -11,6 +11,7 @@ c4 = 0;
 c5 = 0;
 c7 = 0;
 c8 = 0;
+c9 = 0;
 $('.client_4').each(function() { 
 	c4 += parseFloat($(this).attr('val')); 
 })
@@ -23,11 +24,15 @@ $('.client_7').each(function() {
 $('.client_8').each(function() { 
 	c8 += parseFloat($(this).attr('val')); 
 })
+$('.client_9').each(function() { 
+	c9 += parseFloat($(this).attr('val')); 
+})
 
 $('#client_4').html(c4.toFixed(2).toString() + ' грн.');
 $('#client_5').html(c5.toFixed(2).toString() + ' грн.');
 $('#client_7').html(c7.toFixed(2) + ' грн.');
 $('#client_8').html(c8.toFixed(2) + ' грн.');
+$('#client_9').html(c9.toFixed(2) + ' грн.');
 
 });    
 </script>
@@ -185,6 +190,11 @@ $('#client_8').html(c8.toFixed(2) + ' грн.');
     	<td>8</td>
     	<td>ma</td>
     	<td id='client_8'> </td>
+    </tr>
+    <tr>
+    	<td>9</td>
+    	<td>liza</td>
+    	<td id='client_9'> </td>
     </tr>
     
 </table>
