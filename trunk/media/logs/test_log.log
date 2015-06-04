@@ -3260,3 +3260,39 @@ Key = price - Value = 40.0
 Key = cash - Value = False
 Key = description - Value = камера
 Key = user - Value = 7
+2015-05-23 00:33:43.734000 >>> DELETE FROM TABLE work day WHERE id = 30 
+Key = id - Value = 30
+Key = date - Value = 2015-05-23
+Key = user - Value = 7
+Key = status - Value = 0
+Key = description - Value = зник безв≥ст≥
+2015-05-23 00:49:12.531000 >>> DELETE FROM TABLE invoice component list WHERE id = 12955 
+Key = id - Value = 12955
+Key = invoice - Value = 939
+Key = catalog - Value = 3443
+Key = count - Value = 2
+Key = price - Value = 2.22
+Key = currency - Value = 2
+Key = date - Value = 2015-05-20
+Key = rcount - Value = 2
+Key = description - Value = 
+Key = user - Value = 9
+2015-05-23 00:49:19.406000 >>> DELETE FROM TABLE invoice component list WHERE id = 12953 
+Key = id - Value = 12953
+Key = invoice - Value = 939
+Key = catalog - Value = 7289
+Key = count - Value = 3
+Key = price - Value = 2.0
+Key = currency - Value = 2
+Key = date - Value = 2015-05-20
+Key = rcount - Value = 3
+Key = description - Value = 
+Key = user - Value = 9
+2015-05-24 00:34:01.392000 >>> DELETE FROM TABLE client debts WHERE id = 18183 
+Key = id - Value = 18183
+Key = client - Value = 82
+Key = date - Value = 2015-05-23 17:27:39
+Key = price - Value = 1360.0
+Key = cash - Value = False
+Key = description - Value = –юкзак Cross Bike 18 цвет 3333 coolblue-midnight; 
+Key = user - Value = 5

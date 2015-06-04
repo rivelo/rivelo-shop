@@ -2796,6 +2796,36 @@ def client_invoice_check(request, param=None):
     #return HttpResponse("Ваши логин и пароль не соответствуют. Session = " + str(list_id))
 
 
+def client_workshop_check(request, param=None):
+    list_id = request.session['invoice_id']
+    wk = WorkShop.objects.filter(id__in=list_id)
+    client = wk[0].client
+    desc = u"Роботи: "
+    sum = 0
+    #-------- показ і відправка чеку на електронку ------
+    sum = wk.aggregate(Sum('price'))
+    sum = sum['price__sum']
+    text = pytils_ua.numeral.in_words(int(sum))
+    month = pytils_ua.dt.ru_strftime(u"%d %B %Y", wk[0].date, inflected=True)
+
+    w = render_to_response('client_invoice_sale_check.html', {'check_invoice': wk, 'month':month, 'sum': sum, 'client': client, 'str_number':text, 'print':'True', 'is_workshop': 'True', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))
+#    w = render_to_response('client_invoice_sale_check.html', {'check_invoice': ci, 'month':month, 'sum': sum, 'client': client, 'str_number':text})
+    if param == 'print':
+        return w
+    if param == 'email': 
+        if client.email == '':
+            return HttpResponse("Заповніть поле Email для відправки чеку")
+        subject, from_email, to = 'Товарний чек від веломагазину Rivelo', 'rivelo@ymail.com', client.email
+        text_content = 'www.rivelo.com.ua'
+        html_content = w.content
+        msg = EmailMultiAlternatives(subject, text_content, from_email, [to, 'rivelo@ukr.net'])
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+        return HttpResponse("Лист з чеком успішно відправлено")        
+    
+    return w    
+
+
 def client_invioce_return_view(request):
     cr_list = ClientReturn.objects.all()
     return render_to_response('index.html', {'return_list': cr_list, 'weblink': 'ci_return_list.html'}, context_instance=RequestContext(request, processors=[custom_proc])) 
@@ -4218,6 +4248,7 @@ def workshop_payform(request):
     if 'send_check' in request.POST:
         text = pytils_ua.numeral.in_words(int(sum))
         month = pytils_ua.dt.ru_strftime(u"%d %B %Y", wk[0].date, inflected=True)
+        request.session['invoice_id'] = list_id
         return render_to_response('index.html', {'weblink': 'client_invoice_sale_check.html', 'check_invoice': wk, 'month':month, 'sum': sum, 'client': client, 'str_number':text, 'print':'True', 'is_workshop': 'True', 'next': current_url(request)}, context_instance=RequestContext(request, processors=[custom_proc]))        
 
     user = client.id
