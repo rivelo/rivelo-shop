@@ -38,11 +38,11 @@
  
 {% for type in shopsales %}
 <tr>
-	<td>       
-	{{type.id}}
+	<td>
+	 	<a href="/shop/year/{{type.date|date:"Y"}}/month/{{type.date|date:"m"}}/day/{{type.date|date:"d"}}/view/">{{type.id}}</a>
 	</td>
 	<td>       
-	{{type.date|date}}
+	<abbr title="[{{type.date|time:"H:i"}}]"> {{type.date|date}} </abbr>
 	</td>
 	<td>       
 	{{type.price}}
