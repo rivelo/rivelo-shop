@@ -3755,6 +3755,7 @@ def shop_price_print_add(request, id=None):
             GET = request.GET  
             if GET.has_key('id'):
                 q = request.GET.get( 'id' )
+                s = 1 
                 if GET.has_key('scount'):
                     s = request.GET.get( 'scount' )
                 cat = Catalog.objects.get(id=q)
