@@ -2560,6 +2560,11 @@ def clientcredits_delete_all(request, client_id):
 
 def client_invoice(request, cid=None, id=None):
     cat = Catalog.objects.get(id = cid)
+    if not request.user.is_authenticated():
+        nbox = cat.locality
+        return render_to_response('index.html', {'weblink': 'guestinvoice.html', 'box_number': nbox, 'cat': cat}, context_instance=RequestContext(request, processors=[custom_proc]))
+        #return HttpResponseRedirect('/')
+    
     if (id):
         client = Client.objects.get(pk = id)
         a = ClientInvoice(client = client, date=datetime.datetime.today(), price=cat.price, sum=Catalog.objects.get(id = cid).price, sale=int(Catalog.objects.get(id = cid).sale), pay=0, count=1, currency=Currency.objects.get(id=3), catalog=Catalog.objects.get(id = cid))
